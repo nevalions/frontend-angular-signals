@@ -1,0 +1,52 @@
+<div class="sport-detail">
+  @if (sport(); as s) {
+    <header class="sport-detail__header">
+      <button tuiButton (click)="navigateBack()">Back</button>
+      <h1 class="sport-detail__title">{{ s.title }}</h1>
+    </header>
+
+    <div class="sport-detail__content">
+      <div class="sport-detail__info">
+        <div class="sport-detail__info-label">Title</div>
+        <div class="sport-detail__info-value">{{ s.title }}</div>
+      </div>
+
+      @if (s.description) {
+        <div class="sport-detail__info">
+          <div class="sport-detail__info-label">Description</div>
+          <div class="sport-detail__info-value">{{ s.description }}</div>
+        </div>
+      }
+
+      <div class="sport-detail__seasons">
+        <h2 class="sport-detail__seasons-title">Seasons</h2>
+        @if (seasons().length === 0) {
+          <div class="sport-detail__seasons-empty">No seasons available</div>
+        } @else {
+          <div class="sport-detail__seasons-list">
+            @for (season of seasons(); track season.id) {
+              <div class="sport-detail__season-item" (click)="navigateToTournaments(season.year)">
+                <div class="sport-detail__season-item-title">Season {{ season.year }}</div>
+                @if (season.description) {
+                  <div class="sport-detail__season-item-subtitle">{{ season.description }}</div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="sport-detail__links">
+        <h2 class="sport-detail__links-title">Related Data</h2>
+        <div class="sport-detail__links-grid">
+          <div class="sport-detail__link-card" (click)="navigateToSportTournaments()">
+            <div class="sport-detail__link-card-title">Tournaments</div>
+            <div class="sport-detail__link-card-subtitle">View tournaments for {{ s.title }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="sport-detail__not-found">Sport not found</div>
+  }
+</div>
