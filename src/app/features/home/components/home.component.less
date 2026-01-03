@@ -1,0 +1,101 @@
+.home {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+
+  &__container {
+    max-width: 900px;
+    width: 100%;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 4rem;
+    color: #fff;
+  }
+
+  &__title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &__subtitle {
+    font-size: 1.25rem;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  &__links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  &__link-card {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &__link-card-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__link-card-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #333;
+  }
+
+  &__link-card-subtitle {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 768px) {
+  .home {
+    &__title {
+      font-size: 2rem;
+    }
+
+    &__subtitle {
+      font-size: 1rem;
+    }
+
+    &__links {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    &__link-card {
+      padding: 2rem 1.5rem;
+    }
+
+    &__link-card-icon {
+      font-size: 3rem;
+    }
+
+    &__link-card-title {
+      font-size: 1.5rem;
+    }
+  }
+}
