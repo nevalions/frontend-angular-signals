@@ -1,0 +1,50 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "angular-cli": {
+      "type": "local",
+      "command": ["npx", "-y", "@angular/cli", "mcp"],
+      "enabled": true
+    },
+    "taiga-ui": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@taiga-ui/mcp@latest",
+        "--source-url=https://taiga-ui.dev/llms-full.txt"
+      ],
+      "enabled": true
+    },
+    "eslint": {
+      "type": "local",
+      "command": ["npx", "-y", "@eslint/mcp@latest"],
+      "enabled": true
+    }
+  },
+  "command": {
+    "preflight": {
+      "description": "Verify Angular dev server health",
+      "template": "Run the Angular preflight checklist:\n\n1. Detect package manager (npm)\n2. Install deps if needed\n3. Start/restart server\n4. Verify server is up\n5. Scan logs for critical errors\n6. Output PREFLIGHT_STATUS=PASS or FAIL"
+    },
+    "plan-front-lint": {
+      "description": "Create a Linear plan to eliminate ESLint warnings/errors (no code changes)",
+      "agent": "plan",
+      "template": "Scan the frontend workspace and make a refactoring plan to eliminate ESLint warnings/errors.\n\nRequirements:\n- Create a Linear parent issue in team \"StatsboardFront\" titled \"ESLint cleanup + refactor plan\".\n- Create child issues (or a checklist) grouped by theme:\n  1) Unused imports/vars, no-explicit-any, ts/no-floating-promises\n  2) Use Angular signals pattern 3) Angular template issues (async pipe, trackBy, accessibility)\n  4) Formatting/consistency (prefer-const, eqeqeq, etc.)\n- For each child issue include:\n  - What rules are violated (rule name)\n  - Files/paths affected (top offenders first)\n  - Proposed approach + safety notes\n  - Estimated effort (S/M/L)\n- Do NOT change code yet; just produce the plan + tickets.\n\nThen, after tickets are created, propose an execution order that minimizes risk."
+    },
+    "work": {
+      "description": "Work on a Linear issue (e.g. /work STAF-8)",
+      "template": "Start working on Linear issue $ARGUMENTS.\n\nRules:\n- Linear team: StatsboardFront\n - Set status of linear issue $ARGUMENTS In Progress\n- Only change files related to the issue\n- Follow ESLint and Angular best practices\n- Re-run eslint after changes\n- Update the Linear issue with progress\n- Move to Done only when ESLint is clean for the scope"
+    },
+    "review": {
+      "description": "Review work for a Linear issue (e.g. /review STAF-8)",
+      "template": "Review work done for Linear issue $ARGUMENTS.\n\nCheck:\n- ESLint compliance\n- Signals patterns\n- Scope discipline (no unrelated refactors)\n\nPost findings to Linear.",
+      "agent": "plan"
+    },
+    "scan-security-front": {
+      "description": "Run Semgrep mcp security scan and file results to Linear (Frontend team, plan only)",
+      "agent": "plan",
+      "template": "Run a security scan with semgrep mcp of this repository using Semgrep MCP.\n\nScope:\n- Frontend code (Angular / TypeScript)\n\nRequirements:\n- Use high-signal Semgrep rules for frontend security.\n- Focus on: XSS, DOM-based injection, unsafe HTML, auth token handling, CSP issues, insecure dependencies.\n\nAfter scanning:\n1) Summarize findings by severity and category.\n2) Create a Linear parent issue in team \"StatsboardFront\" titled \"Security scan findings (Semgrep)\".\n3) Create child issues (or a checklist) grouped by severity and category.\n4) For each finding include:\n   - Semgrep rule id and message\n   - File path and line numbers\n   - Why it matters (brief)\n   - Recommended remediation (minimal and safe)\n   - Verification steps\n5) Do NOT change code. Do NOT auto-fix.\n\nFinally, propose an execution order that minimizes risk (exploitable issues first, refactors last)."
+    }
+  }
+}
