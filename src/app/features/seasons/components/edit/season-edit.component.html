@@ -1,0 +1,44 @@
+<div class="season-edit">
+  <header class="season-edit__header">
+    <h1 class="season-edit__title">Edit Season</h1>
+    <div class="season-edit__actions">
+      <button tuiButton type="button" (click)="navigateToDetail()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="seasonForm.invalid">Update Season</button>
+    </div>
+  </header>
+
+  <form [formGroup]="seasonForm" class="season-edit__form">
+    <div class="season-edit__field">
+      <label for="year" class="season-edit__label">Year *</label>
+      <input
+        id="year"
+        type="number"
+        formControlName="year"
+        class="season-edit__input"
+        [class.season-edit__input--invalid]="yearControl?.invalid && yearControl?.touched"
+      />
+      @if (yearControl?.invalid && yearControl?.touched) {
+        @if (yearControl?.errors?.['required']) {
+          <div class="season-edit__error">Year is required</div>
+        }
+        @if (yearControl?.errors?.['min']) {
+          <div class="season-edit__error">Year must be at least 1900</div>
+        }
+        @if (yearControl?.errors?.['max']) {
+          <div class="season-edit__error">Year must be at most 2999</div>
+        }
+      }
+    </div>
+
+    <div class="season-edit__field">
+      <label for="description" class="season-edit__label">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="season-edit__textarea"
+        rows="4"
+        placeholder="Enter a description for season (optional)"
+      ></textarea>
+    </div>
+  </form>
+</div>

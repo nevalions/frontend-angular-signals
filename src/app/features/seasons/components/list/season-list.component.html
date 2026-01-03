@@ -1,0 +1,29 @@
+<div class="season-list">
+  <header class="season-list__header">
+    <h1 class="season-list__title">Seasons</h1>
+    <button tuiButton (click)="navigateToCreate()">Add New Season</button>
+  </header>
+
+  @if (loading()) {
+    <div class="season-list__loading">
+      <div class="season-list__loader"></div>
+    </div>
+  } @else if (error()) {
+    <div class="season-list__error">
+      Error loading seasons: {{ error()?.message }}
+    </div>
+  } @else if (seasons().length === 0) {
+    <div class="season-list__empty">No seasons found</div>
+  } @else {
+    <div class="season-list__grid">
+      @for (season of seasons(); track season.id) {
+        <div class="season-list__card" (click)="navigateToDetail(season.id)">
+          <div class="season-list__card-year">{{ season.year }}</div>
+          @if (season.description) {
+            <div class="season-list__card-description">{{ season.description }}</div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

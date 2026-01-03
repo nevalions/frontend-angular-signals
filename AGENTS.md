@@ -15,25 +15,18 @@ npm run watch          # Build with watch mode
 - Do not start parallel builds on different ports
 - Always connect to the existing development server on http://localhost:4200
 
-### Test Commands
+ ### Test Commands
 
 ```bash
-npm run test           # Run all tests (jsdom mode - fastest)
-npx vitest run        # Run tests in single-run mode
-npx vitest            # Run tests in watch mode
-npx vitest run --coverage  # Run tests with coverage
+npm run test           # Run all tests (Vitest/jsdom mode - fast)
+npm run test:coverage  # Run tests with coverage
 
-# Run tests in browser mode
-npx vitest run --browser=chromiumHeadless  # Chromium headless for CI
-npx vitest run --browser=chromium           # Chromium headed for debugging
+# Run specific test files with Vitest
+npm run test src/app/features/seasons/models/season.model.spec.ts
+npm run test src/app/features/seasons/**/*.spec.ts  # Run all season tests
 
-# Run specific test files
-npx vitest run **/person.component.spec.ts
-npx vitest run **/person/**/*.spec.ts  # Run all tests in person feature
-
-# Hybrid testing (recommended)
-npx vitest run **/store/*.spec.ts              # Unit tests in jsdom
-npx vitest run --browser=chromiumHeadless **/*.component.spec.ts  # Component tests in browser
+# Run browser tests (hybrid mode)
+npm run test:browser      # Run component tests in Happy-DOM (real browser environment)
 ```
 
 ## Code Style Guidelines
