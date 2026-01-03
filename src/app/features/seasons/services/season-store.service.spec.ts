@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
@@ -60,6 +60,23 @@ describe('SeasonStoreService', () => {
       expect(alertServiceMock.open).toHaveBeenCalledWith('Season created successfully', { label: 'Success' });
     });
 
+    it('should handle createSeason error', () => {
+      const seasonData: SeasonCreate = {
+        year: 2024,
+        description: 'Test season',
+      };
+
+      service.createSeason(seasonData).subscribe({
+        error: (err) => expect(err).toBeTruthy(),
+      });
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/'));
+      req.flush('Error', { status: 400, statusText: 'Bad Request' });
+
+      expect(req.request.method).toBe('POST');
+      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Season created successfully', { label: 'Success' });
+    });
+
     it('should call updateSeason with correct data', () => {
       const seasonData: SeasonUpdate = {
         year: 2025,
@@ -76,6 +93,23 @@ describe('SeasonStoreService', () => {
       expect(alertServiceMock.open).toHaveBeenCalledWith('Season updated successfully', { label: 'Success' });
     });
 
+    it('should handle updateSeason error', () => {
+      const seasonData: SeasonUpdate = {
+        year: 2025,
+        description: 'Updated description',
+      };
+
+      service.updateSeason(2, seasonData).subscribe({
+        error: (err) => expect(err).toBeTruthy(),
+      });
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/') + '?item_id=2');
+      req.flush('Error', { status: 404, statusText: 'Not Found' });
+
+      expect(req.request.method).toBe('PUT');
+      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Season updated successfully', { label: 'Success' });
+    });
+
     it('should call deleteSeason with correct URL', () => {
       service.deleteSeason(1).subscribe();
 
@@ -86,6 +120,18 @@ describe('SeasonStoreService', () => {
       expect(alertServiceMock.open).toHaveBeenCalledWith('Season deleted successfully', { label: 'Success' });
     });
 
+    it('should handle deleteSeason error', () => {
+      service.deleteSeason(1).subscribe({
+        error: (err) => expect(err).toBeTruthy(),
+      });
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/id/1'));
+      req.flush('Error', { status: 404, statusText: 'Not Found' });
+
+      expect(req.request.method).toBe('DELETE');
+      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Season deleted successfully', { label: 'Success' });
+    });
+
     it('should call getTournamentsByYear with correct URL', () => {
       service.getTournamentsByYear(2024).subscribe();
 
@@ -94,23 +140,49 @@ describe('SeasonStoreService', () => {
 
       expect(req.request.method).toBe('GET');
     });
+
+    it('should call getTeamsByYear with correct URL', () => {
+      service.getTeamsByYear(2024).subscribe();
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/year/2024/teams'));
+      req.flush([]);
+
+      expect(req.request.method).toBe('GET');
+    });
+
+    it('should call getMatchesByYear with correct URL', () => {
+      service.getMatchesByYear(2024).subscribe();
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/year/2024/matches'));
+      req.flush([]);
+
+      expect(req.request.method).toBe('GET');
+    });
   });
 
-  describe('Computed signals', () => {
+  describe('Signal properties', () => {
     it('should have seasons signal', () => {
       expect(service.seasons).toBeDefined();
+      expect(typeof service.seasons === 'function').toBe(true);
     });
 
     it('should have loading signal', () => {
       expect(service.loading).toBeDefined();
+      expect(typeof service.loading === 'function').toBe(true);
     });
 
     it('should have error signal', () => {
       expect(service.error).toBeDefined();
+      expect(typeof service.error === 'function').toBe(true);
     });
 
     it('should have seasonByYear computed signal', () => {
       expect(service.seasonByYear).toBeDefined();
+      expect(typeof service.seasonByYear === 'function').toBe(true);
+    });
+
+    it('should have seasonsResource', () => {
+      expect(service.seasonsResource).toBeDefined();
     });
   });
 
@@ -118,6 +190,14 @@ describe('SeasonStoreService', () => {
     it('should have reload method', () => {
       expect(service.reload).toBeDefined();
       expect(typeof service.reload).toBe('function');
+    });
+
+    it('should trigger reload of seasonsResource', () => {
+      const reloadSpy = vi.spyOn(service.seasonsResource, 'reload');
+
+      service.reload();
+
+      expect(reloadSpy).toHaveBeenCalled();
     });
   });
 });

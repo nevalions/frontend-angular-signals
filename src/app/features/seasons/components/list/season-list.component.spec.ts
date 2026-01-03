@@ -16,10 +16,15 @@ describe('SeasonListComponent', () => {
       navigate: vi.fn(),
     };
 
+    const mockSeasons: Season[] = [
+      { id: 1, year: 2024, description: 'Season 2024' },
+      { id: 2, year: 2025, description: 'Season 2025' },
+    ];
+
     storeMock = {
-      seasons: { value: () => [] },
-      loading: { value: () => false },
-      error: { value: () => null },
+      seasons: vi.fn(() => mockSeasons),
+      loading: vi.fn(() => false),
+      error: vi.fn(() => null),
     };
 
     TestBed.configureTestingModule({
@@ -47,5 +52,54 @@ describe('SeasonListComponent', () => {
     component.navigateToDetail(1);
 
     expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 1]);
+  });
+
+  it('should expose seasons from store', () => {
+    const seasons = component.seasons();
+
+    expect(seasons).toEqual([
+      { id: 1, year: 2024, description: 'Season 2024' },
+      { id: 2, year: 2025, description: 'Season 2025' },
+    ]);
+  });
+
+  it('should expose loading state from store', () => {
+    const loading = component.loading();
+
+    expect(loading).toBe(false);
+  });
+
+  it('should expose error state from store', () => {
+    const error = component.error();
+
+    expect(error).toBe(null);
+  });
+
+  it('should handle loading state correctly', () => {
+    storeMock.loading = vi.fn(() => true);
+    const newComponent = TestBed.createComponent(SeasonListComponent).componentInstance;
+
+    expect(newComponent.loading()).toBe(true);
+  });
+
+  it('should handle error state correctly', () => {
+    const mockError = new Error('API Error');
+    storeMock.error = vi.fn(() => mockError);
+    const newComponent = TestBed.createComponent(SeasonListComponent).componentInstance;
+
+    expect(newComponent.error()).toBe(mockError);
+  });
+
+  it('should handle empty seasons list', () => {
+    storeMock.seasons = vi.fn(() => []);
+    const newComponent = TestBed.createComponent(SeasonListComponent).componentInstance;
+
+    expect(newComponent.seasons()).toEqual([]);
+  });
+
+  it('should call navigate with correct season id', () => {
+    component.navigateToDetail(5);
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 5]);
   });
 });

@@ -5,6 +5,7 @@ import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SeasonCreateComponent } from './season-create.component';
 import { SeasonStoreService } from '../../services/season-store.service';
+import { of } from 'rxjs';
 
 describe('SeasonCreateComponent', () => {
   let component: SeasonCreateComponent;
@@ -18,7 +19,7 @@ describe('SeasonCreateComponent', () => {
     };
 
     storeMock = {
-      createSeason: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
+      createSeason: vi.fn().mockReturnValue(of(undefined)),
     };
 
     TestBed.configureTestingModule({
@@ -71,5 +72,58 @@ describe('SeasonCreateComponent', () => {
     component.onSubmit();
 
     expect(storeMock.createSeason).not.toHaveBeenCalled();
+  });
+
+  it('should navigate to list after successful creation', () => {
+    component.seasonForm.setValue({
+      year: 2024,
+      description: 'Test season',
+    });
+
+    component.onSubmit();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
+  });
+
+  it('should handle year validation - min 1900', () => {
+    component.yearControl?.setValue(1899);
+
+    expect(component.yearControl?.valid).toBe(false);
+    expect(component.yearControl?.errors?.['min']).toBeDefined();
+  });
+
+  it('should handle year validation - max 2999', () => {
+    component.yearControl?.setValue(3000);
+
+    expect(component.yearControl?.valid).toBe(false);
+    expect(component.yearControl?.errors?.['max']).toBeDefined();
+  });
+
+  it('should accept valid year within range', () => {
+    component.yearControl?.setValue(2024);
+
+    expect(component.yearControl?.valid).toBe(true);
+  });
+
+  it('should require year field', () => {
+    component.yearControl?.setValue('');
+
+    expect(component.yearControl?.hasError('required')).toBe(true);
+  });
+
+  it('should allow optional description', () => {
+    component.descriptionControl?.setValue('');
+
+    expect(component.descriptionControl?.valid).toBe(true);
+  });
+
+  it('should provide yearControl accessor', () => {
+    expect(component.yearControl).toBeDefined();
+    expect(component.yearControl).toBe(component.seasonForm.get('year'));
+  });
+
+  it('should provide descriptionControl accessor', () => {
+    expect(component.descriptionControl).toBeDefined();
+    expect(component.descriptionControl).toBe(component.seasonForm.get('description'));
   });
 });

@@ -412,35 +412,179 @@ All components MUST follow these signal patterns:
 ### Testing Patterns
 
 1. **Test Setup**
-   ```typescript
-   import { TestBed, flushEffects } from '@angular/core/testing';
+    ```typescript
+    import { TestBed } from '@angular/core/testing';
 
-   beforeEach(() => {
-     TestBed.configureTestingModule({ /* ... */ });
-     fixture = TestBed.createComponent(MyComponent);
-     component = fixture.componentInstance;
-   });
-
-   it('should update when signal changes', () => {
-     // Update signal
-     fixture.detectChanges();
-     flushEffects(); // Flush effect scheduler
-     // Assert
-   });
-   ```
+    beforeEach(() => {
+      TestBed.configureTestingModule({ /* ... */ });
+      fixture = TestBed.createComponent(MyComponent);
+      component = fixture.componentInstance;
+    });
+    ```
 
 2. **Signal Testing Utilities**
-   ```typescript
-   import { createMockSignal, createMockComputed } from '@your-org/signal-testing-utils';
+    ```typescript
+    import { createMockSignal, createMockComputed } from '@your-org/signal-testing-utils';
 
-   const mockSeasons = createMockSignal([]);
-   const mockLoading = createMockComputed(false);
-   ```
+    const mockSeasons = createMockSignal([]);
+    const mockLoading = createMockComputed(false);
+    ```
 
 3. **Avoid Mocking Signal Methods**
-   - Use real signals in tests when possible
-   - Only mock services, not signal implementations
-   - Test reactivity through actual signal updates
+    - Use real signals in tests when possible
+    - Only mock services, not signal implementations
+    - Test reactivity through actual signal updates
+
+4. **Component Testing Patterns**
+
+    **Form Validation Tests**
+    ```typescript
+    it('should handle year validation - min 1900', () => {
+      component.yearControl?.setValue(1899);
+      expect(component.yearControl?.valid).toBe(false);
+      expect(component.yearControl?.errors?.['min']).toBeDefined();
+    });
+
+    it('should require year field', () => {
+      component.yearControl?.setValue('');
+      expect(component.yearControl?.hasError('required')).toBe(true);
+    });
+
+    it('should provide yearControl accessor', () => {
+      expect(component.yearControl).toBeDefined();
+      expect(component.yearControl).toBe(component.seasonForm.get('year'));
+    });
+    ```
+
+    **Signal-Based State Tests**
+    ```typescript
+    it('should expose seasons from store', () => {
+      const seasons = component.seasons();
+      expect(seasons).toEqual(mockSeasons);
+    });
+
+    it('should expose loading state from store', () => {
+      expect(component.loading()).toBe(false);
+    });
+
+    it('should handle loading state correctly', () => {
+      storeMock.loading = vi.fn(() => true);
+      const newComponent = TestBed.createComponent(MyComponent).componentInstance;
+      expect(newComponent.loading()).toBe(true);
+    });
+    ```
+
+    **Navigation After Operations**
+    ```typescript
+    it('should navigate to list after successful creation', () => {
+      component.seasonForm.setValue({ year: 2024, description: 'Test' });
+      component.onSubmit();
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
+    });
+    ```
+
+    **Delete Confirmation Tests**
+    ```typescript
+    it('should delete season on button click with confirmation', () => {
+      window.confirm = vi.fn(() => true);
+      component.deleteSeason();
+      expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this season?');
+      expect(storeMock.deleteSeason).toHaveBeenCalledWith(1);
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
+    });
+
+    it('should not delete season when confirmation is cancelled', () => {
+      window.confirm = vi.fn(() => false);
+      component.deleteSeason();
+      expect(window.confirm).toHaveBeenCalled();
+      expect(storeMock.deleteSeason).not.toHaveBeenCalled();
+    });
+    ```
+
+    **Null/Not-Found Handling**
+    ```typescript
+    it('should return null when season is not found', () => {
+      const id99RouteMock = { paramMap: of({ get: (_key: string) => '99' }) };
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: ActivatedRoute, useValue: id99RouteMock },
+          { provide: SeasonStoreService, useValue: storeMock },
+        ],
+      });
+      const newComponent = TestBed.createComponent(MyComponent).componentInstance;
+      expect(newComponent.season()).toBe(null);
+    });
+    ```
+
+5. **Service Testing Patterns**
+
+    **CRUD Operation Tests**
+    ```typescript
+    it('should call createSeason with correct data', () => {
+      const seasonData: SeasonCreate = { year: 2024, description: 'Test' };
+      service.createSeason(seasonData).subscribe();
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/'));
+      req.flush({ id: 1, year: 2024, description: 'Test' } as Season);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(seasonData);
+    });
+
+    it('should handle createSeason error', () => {
+      service.createSeason(seasonData).subscribe({ error: (err) => expect(err).toBeTruthy() });
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/'));
+      req.flush('Error', { status: 400, statusText: 'Bad Request' });
+      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Season created successfully');
+    });
+    ```
+
+    **Signal Property Validation**
+    ```typescript
+    it('should have seasons signal', () => {
+      expect(service.seasons).toBeDefined();
+      expect(typeof service.seasons === 'function').toBe(true);
+    });
+
+    it('should have seasonsResource', () => {
+      expect(service.seasonsResource).toBeDefined();
+    });
+    ```
+
+    **Reload Method Tests**
+    ```typescript
+    it('should have reload method', () => {
+      expect(service.reload).toBeDefined();
+      expect(typeof service.reload).toBe('function');
+    });
+
+    it('should trigger reload of seasonsResource', () => {
+      const reloadSpy = vi.spyOn(service.seasonsResource, 'reload');
+      service.reload();
+      expect(reloadSpy).toHaveBeenCalled();
+    });
+    ```
+
+6. **Model Testing Patterns**
+
+    ```typescript
+    describe('SeasonCreate interface', () => {
+      it('should accept valid SeasonCreate object', () => {
+        const seasonData: SeasonCreate = { year: 2024, description: 'New season' };
+        expect(seasonData.year).toBe(2024);
+        expect(seasonData.description).toBe('New season');
+      });
+
+      it('should accept SeasonCreate without description', () => {
+        const seasonData: SeasonCreate = { year: 2024 };
+        expect(seasonData.year).toBe(2024);
+        expect(seasonData.description).toBeUndefined();
+      });
+
+      it('should handle year as number', () => {
+        const season: Season = { id: 1, year: 2024 };
+        expect(typeof season.year).toBe('number');
+      });
+    });
+    ```
 
 ### Common Anti-Patterns
 

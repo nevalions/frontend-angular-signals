@@ -65,4 +65,12 @@ export class SeasonStoreService {
   getTournamentsByYear(year: number): Observable<unknown> {
     return this.apiService.customGet(buildApiUrl(`/api/seasons/year/${year}/tournaments`));
   }
+
+  getTeamsByYear(year: number): Observable<unknown> {
+    return this.apiService.customGet(buildApiUrl(`/api/seasons/year/${year}/teams`));
+  }
+
+  getMatchesByYear(year: number): Observable<unknown> {
+    return this.apiService.customGet(buildApiUrl(`/api/seasons/year/${year}/matches`));
+  }
 }

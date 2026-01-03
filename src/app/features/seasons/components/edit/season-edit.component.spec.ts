@@ -29,7 +29,7 @@ describe('SeasonEditComponent', () => {
       seasons: vi.fn().mockReturnValue([
         { id: 1, year: 2024, description: 'Test season' } as Season,
       ]),
-      updateSeason: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
+      updateSeason: vi.fn().mockReturnValue(of(undefined)),
     };
 
     TestBed.configureTestingModule({
@@ -79,5 +79,89 @@ describe('SeasonEditComponent', () => {
     component.onSubmit();
 
     expect(storeMock.updateSeason).not.toHaveBeenCalled();
+  });
+
+  it('should navigate to detail after successful update', () => {
+    component.seasonForm.setValue({
+      year: 2025,
+      description: 'Updated season',
+    });
+
+    component.onSubmit();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 1]);
+  });
+
+  it('should find season by id from store', () => {
+    const season = component.season();
+
+    expect(season).toEqual({ id: 1, year: 2024, description: 'Test season' });
+  });
+
+  it('should pre-populate form from season (via effect)', () => {
+    fixture.detectChanges();
+
+    expect(component.seasonForm.value.year).toBe(2024);
+    expect(component.seasonForm.value.description).toBe('Test season');
+  });
+
+  it('should handle year validation - min 1900', () => {
+    component.yearControl?.setValue(1899);
+
+    expect(component.yearControl?.valid).toBe(false);
+    expect(component.yearControl?.errors?.['min']).toBeDefined();
+  });
+
+  it('should handle year validation - max 2999', () => {
+    component.yearControl?.setValue(3000);
+
+    expect(component.yearControl?.valid).toBe(false);
+    expect(component.yearControl?.errors?.['max']).toBeDefined();
+  });
+
+  it('should accept valid year within range', () => {
+    component.yearControl?.setValue(2025);
+
+    expect(component.yearControl?.valid).toBe(true);
+  });
+
+  it('should require year field', () => {
+    component.yearControl?.setValue('');
+
+    expect(component.yearControl?.hasError('required')).toBe(true);
+  });
+
+  it('should allow optional description', () => {
+    component.descriptionControl?.setValue('');
+
+    expect(component.descriptionControl?.valid).toBe(true);
+  });
+
+  it('should provide yearControl accessor', () => {
+    expect(component.yearControl).toBeDefined();
+    expect(component.yearControl).toBe(component.seasonForm.get('year'));
+  });
+
+  it('should provide descriptionControl accessor', () => {
+    expect(component.descriptionControl).toBeDefined();
+    expect(component.descriptionControl).toBe(component.seasonForm.get('description'));
+  });
+
+  it('should not call updateSeason when form is invalid', () => {
+    component.yearControl?.setValue(1900);
+    component.yearControl?.setValue('');
+
+    component.onSubmit();
+
+    expect(storeMock.updateSeason).not.toHaveBeenCalled();
+  });
+
+  it('should not navigate when form is invalid', () => {
+    component.yearControl?.setValue('');
+    component.descriptionControl?.setValue('');
+
+    component.onSubmit();
+
+    expect(routerMock.navigate).not.toHaveBeenCalled();
   });
 });
