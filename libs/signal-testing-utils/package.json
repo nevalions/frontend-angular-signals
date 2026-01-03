@@ -1,0 +1,12 @@
+{
+  "name": "@statsboard/signal-testing-utils",
+  "version": "1.0.0",
+  "description": "Signal testing utilities for Angular 21+ applications",
+  "main": "index.ts",
+  "types": "index.ts",
+  "keywords": ["angular", "signals", "testing", "vitest"],
+  "peerDependencies": {
+    "@angular/core": "^21.0.0"
+  },
+  "private": true
+}

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TuiButton } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../services/season-store.service';
@@ -6,6 +6,7 @@ import { SeasonStoreService } from '../../services/season-store.service';
 @Component({
   selector: 'app-season-list',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TuiButton],
   templateUrl: './season-list.component.html',
   styleUrl: './season-list.component.less',

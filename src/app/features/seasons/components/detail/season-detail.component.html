@@ -1,8 +1,8 @@
 <div class="season-detail">
-  @if (season) {
+  @if (season(); as s) {
     <header class="season-detail__header">
       <button tuiButton (click)="navigateBack()">Back</button>
-      <h1 class="season-detail__title">Season {{ season.year }}</h1>
+      <h1 class="season-detail__title">Season {{ s.year }}</h1>
       <div class="season-detail__actions">
         <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
         <button tuiButton type="button" (click)="deleteSeason()">Delete</button>
@@ -12,13 +12,13 @@
     <div class="season-detail__content">
       <div class="season-detail__info">
         <div class="season-detail__info-label">Year</div>
-        <div class="season-detail__info-value">{{ season.year }}</div>
+        <div class="season-detail__info-value">{{ s.year }}</div>
       </div>
 
-      @if (season.description) {
+      @if (s.description) {
         <div class="season-detail__info">
           <div class="season-detail__info-label">Description</div>
-          <div class="season-detail__info-value">{{ season.description }}</div>
+          <div class="season-detail__info-value">{{ s.description }}</div>
         </div>
       }
 
@@ -27,15 +27,15 @@
         <div class="season-detail__links-grid">
           <div class="season-detail__link-card" (click)="navigateToTournaments()">
             <div class="season-detail__link-card-title">Tournaments</div>
-            <div class="season-detail__link-card-subtitle">View tournaments for {{ season.year }}</div>
+            <div class="season-detail__link-card-subtitle">View tournaments for {{ s.year }}</div>
           </div>
           <div class="season-detail__link-card" (click)="navigateToTeams()">
             <div class="season-detail__link-card-title">Teams</div>
-            <div class="season-detail__link-card-subtitle">View teams for {{ season.year }}</div>
+            <div class="season-detail__link-card-subtitle">View teams for {{ s.year }}</div>
           </div>
           <div class="season-detail__link-card" (click)="navigateToMatches()">
             <div class="season-detail__link-card-title">Matches</div>
-            <div class="season-detail__link-card-subtitle">View matches for {{ season.year }}</div>
+            <div class="season-detail__link-card-subtitle">View matches for {{ s.year }}</div>
           </div>
         </div>
       </div>

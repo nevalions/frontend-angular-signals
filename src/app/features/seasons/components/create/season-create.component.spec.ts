@@ -23,7 +23,7 @@ describe('SeasonCreateComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: FormBuilder, useValue: TestBed.inject(FormBuilder) },
+        FormBuilder,
         { provide: Router, useValue: routerMock },
         { provide: SeasonStoreService, useValue: storeMock },
       ],

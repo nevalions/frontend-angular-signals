@@ -1,7 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, untracked } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { map } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiButton } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season, SeasonUpdate } from '../../models/season.model';
@@ -9,11 +11,12 @@ import { Season, SeasonUpdate } from '../../models/season.model';
 @Component({
   selector: 'app-season-edit',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TuiButton],
   templateUrl: './season-edit.component.html',
   styleUrl: './season-edit.component.less',
 })
-export class SeasonEditComponent implements OnInit {
+export class SeasonEditComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -24,38 +27,45 @@ export class SeasonEditComponent implements OnInit {
     description: [''],
   });
 
-  seasonId: number | null = null;
-  season: Season | null = null;
+  seasonId = toSignal(
+    this.route.paramMap.pipe(map((params) => Number(params.get('id')))),
+    { initialValue: null }
+  );
 
-  ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.seasonId = Number(idParam);
-      this.season = this.seasonStore.seasons().find((s) => s.id === this.seasonId) || null;
+  season = computed(() => {
+    const id = this.seasonId();
+    if (!id) return null;
+    return this.seasonStore.seasons().find((s) => s.id === id) || null;
+  });
 
-      if (this.season) {
+  private patchFormOnSeasonChange = effect(() => {
+    const season = this.season();
+    if (season) {
+      untracked(() => {
         this.seasonForm.patchValue({
-          year: this.season.year,
-          description: this.season.description,
+          year: season.year,
+          description: season.description,
         });
-      }
+      });
     }
-  }
+  });
 
   navigateToDetail(): void {
-    if (this.seasonId) {
-      this.router.navigate(['/seasons', this.seasonId]);
+    const id = this.seasonId();
+    if (id) {
+      this.router.navigate(['/seasons', id]);
     }
   }
 
   onSubmit(): void {
-    if (this.seasonForm.valid && this.seasonId) {
+    const id = this.seasonId();
+    if (this.seasonForm.valid && id) {
       const seasonData: SeasonUpdate = {
         year: this.seasonForm.value.year,
         description: this.seasonForm.value.description,
       };
 
-      this.seasonStore.updateSeason(this.seasonId, seasonData).subscribe(() => {
+      this.seasonStore.updateSeason(id, seasonData).subscribe(() => {
         this.navigateToDetail();
       });
     }

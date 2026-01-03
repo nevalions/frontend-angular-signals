@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { SeasonListComponent } from './season-list.component';
 import { SeasonStoreService } from '../../services/season-store.service';
+import { Season } from '../../models/season.model';
 
 describe('SeasonListComponent', () => {
   let component: SeasonListComponent;
@@ -11,8 +12,6 @@ describe('SeasonListComponent', () => {
   let storeMock: any;
 
   beforeEach(() => {
-    TestBed.initTestEnvironment();
-
     routerMock = {
       navigate: vi.fn(),
     };
@@ -34,7 +33,7 @@ describe('SeasonListComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create the component', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 

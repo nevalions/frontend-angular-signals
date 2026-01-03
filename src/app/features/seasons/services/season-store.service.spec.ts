@@ -6,6 +6,8 @@ import { provideRouter } from '@angular/router';
 import { SeasonStoreService } from './season-store.service';
 import { Season, SeasonCreate, SeasonUpdate } from '../models/season.model';
 import { TuiAlertService } from '@taiga-ui/core';
+import { ErrorHandlingService } from '../../../core/services/error.service';
+import { buildApiUrl } from '../../../core/config/api.constants';
 
 describe('SeasonStoreService', () => {
   let service: SeasonStoreService;
@@ -17,12 +19,20 @@ describe('SeasonStoreService', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter(),
+        provideRouter([]),
         SeasonStoreService,
         {
           provide: TuiAlertService,
           useValue: {
             open: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
+          },
+        },
+        {
+          provide: ErrorHandlingService,
+          useValue: {
+            handleError: vi.fn((error) => {
+              throw error;
+            }),
           },
         },
       ],
@@ -40,10 +50,10 @@ describe('SeasonStoreService', () => {
         description: 'Test season',
       };
 
-      const req = httpMock.expectOne('/api/seasons/');
-      req.flush({ id: 1, year: 2024, description: 'Test season' } as Season);
-
       service.createSeason(seasonData).subscribe();
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/'));
+      req.flush({ id: 1, year: 2024, description: 'Test season' } as Season);
 
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(seasonData);
@@ -56,12 +66,10 @@ describe('SeasonStoreService', () => {
         description: 'Updated description',
       };
 
-      const req = httpMock.expectOne((request) =>
-        request.url === '/api/seasons/' && request.params.get('item_id') === '2'
-      );
-      req.flush({ id: 2, year: 2025, description: 'Updated description' } as Season);
-
       service.updateSeason(2, seasonData).subscribe();
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/') + '?item_id=2');
+      req.flush({ id: 2, year: 2025, description: 'Updated description' } as Season);
 
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(seasonData);
@@ -69,20 +77,20 @@ describe('SeasonStoreService', () => {
     });
 
     it('should call deleteSeason with correct URL', () => {
-      const req = httpMock.expectOne('/api/seasons/id/1');
-      req.flush(null);
-
       service.deleteSeason(1).subscribe();
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/id/1'));
+      req.flush(null);
 
       expect(req.request.method).toBe('DELETE');
       expect(alertServiceMock.open).toHaveBeenCalledWith('Season deleted successfully', { label: 'Success' });
     });
 
     it('should call getTournamentsByYear with correct URL', () => {
-      const req = httpMock.expectOne('/api/seasons/year/2024/tournaments');
-      req.flush([]);
-
       service.getTournamentsByYear(2024).subscribe();
+
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/year/2024/tournaments'));
+      req.flush([]);
 
       expect(req.request.method).toBe('GET');
     });

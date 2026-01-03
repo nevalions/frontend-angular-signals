@@ -1,4 +1,162 @@
 # AGENTS.md - Development Guidelines
+### Service Patterns
+#### Canonical Signal-Based Service Pattern
+
+**All services use `httpResource` for async data and return `Observable` for CRUD operations. Components consume via `toSignal()` for flexible signal/observable choice.**
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class SeasonStoreService {
+  private http = inject(HttpClient);
+  private alerts = inject(TuiAlertService);
+
+  // ✅ httpResource for async data fetching (canonical)
+  seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
+
+  // ✅ Computed signals for derived state
+  seasons = computed(() => this.seasonsResource.value() ?? []);
+  loading = computed(() => this.seasonsResource.isLoading());
+  error = computed(() => this.seasonsResource.error());
+  seasonByYear = computed(() => {
+    const seasons = this.seasons();
+    const map = new Map<number, Season>();
+    seasons.forEach(s => map.set(s.year, s));
+    return map;
+  });
+
+  // ✅ CRUD methods return Observable for async flexibility (hybrid pattern)
+  createSeason(data: SeasonCreate): Observable<Season> {
+    return this.http.post<Season>(buildApiUrl('/api/seasons/'), data).pipe(
+      tap(() => this.seasonsResource.reload())
+    );
+  }
+
+  updateSeason(id: number, data: SeasonUpdate): Observable<Season> {
+    return this.http.put<Season>(buildApiUrl('/api/seasons/'), id, data).pipe(
+      tap(() => this.seasonsResource.reload())
+    );
+  }
+
+  deleteSeason(id: number): Observable<void> {
+    return this.http.delete(buildApiUrl(`/api/seasons/id/${id}`)).pipe(
+      tap(() => this.seasonsResource.reload())
+    );
+  }
+
+  reload(): void {
+    this.seasonsResource.reload();
+  }
+}
+```
+
+**Why this hybrid pattern works:**
+- Services return `Observable` for async operations (cancellation, retry, RxJS operators)
+- Components convert to signals via `toSignal()` as needed
+- Both patterns coexist and integrate seamlessly
+import sys
+
+# Read AGENTS.md
+with open('/home/linroot/code/statsboard/frontend-angular-signals/AGENTS.md', 'r') as f:
+    lines = f.readlines()
+
+# Find Service Patterns section
+for i, line in enumerate(lines, start=1):
+    line = line.strip()
+    if '### Service Patterns' in line:
+        # Found it! Mark start line
+        service_start_line = i if not service_start_line else service_start_line
+        
+        # Check for next section
+        if i < len(lines) and lines[i].strip() in ['### Component', '### Template', '### Service', '### Service Patterns']:
+            # Found next section! Check if it's our target
+            if '### Service Patterns' in lines[i].strip():
+                # This is the target section!
+                service_end_line = i
+                service_patterns_section = []
+                in_pattern = True
+            elif lines[i].strip().startswith('#') and len(service_patterns_section) == 0:
+                # Start of a different section
+                break
+    
+    # Collect Service Patterns section content
+    if service_start_line and service_end_line:
+        service_section_content = lines[service_start_line:service_end_line]
+        
+        if in_pattern:
+            new_content.extend(service_section_content)
+        in_pattern = False
+
+print(f"Processing Service Patterns section...")
+
+# Build new content
+new_content.extend(lines[:service_start_line])
+
+# Add canonical service section
+new_content.extend([
+    "### Service Patterns",
+    "",
+    "#### Canonical Signal-Based Service Pattern",
+    "",
+    "**All services use `httpResource` for async data and return `Observable` for CRUD operations. Components consume via `toSignal()` for flexible signal/observable choice.**",
+    "",
+    "```typescript",
+    "@Injectable({ providedIn: 'root' })",
+    "export class SeasonStoreService {",
+    "  private http = inject(HttpClient);",
+    "  private alerts = inject(TuiAlertService);",
+    "",
+    "  // ✅ httpResource for async data fetching (canonical)",
+    "  seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));",
+    "",
+    "  // ✅ Computed signals for derived state",
+    "  seasons = computed(() => this.seasonsResource.value() ?? []);",
+    "  loading = computed(() => this.seasonsResource.isLoading());",
+    "  error = computed(() => this.seasonsResource.error());",
+    "  seasonByYear = computed(() => {",
+    "    const seasons = this.seasons();",
+    "    const map = new Map<number, Season>();",
+    "    seasons.forEach(s => map.set(s.year, s));",
+    "    return map;",
+    "  });",
+    "",
+    "  // ✅ CRUD methods return Observable for async flexibility (hybrid pattern)",
+    "  createSeason(data: SeasonCreate): Observable<Season> {",
+    "    return this.http.post<Season>(buildApiUrl('/api/seasons/'), data).pipe(",
+    "      tap(() => this.seasonsResource.reload())",
+    "    );",
+    "  }",
+    "",
+    "  updateSeason(id: number, data: SeasonUpdate): Observable<Season> {",
+    "    return this.http.put<Season>(buildApiUrl('/api/seasons/'), id, data).pipe(",
+    "      tap(() => this.seasonsResource.reload())",
+    "    );",
+    "  }",
+    "",
+    "  deleteSeason(id: number): Observable<void> {",
+    "    return this.http.delete(buildApiUrl(`/api/seasons/id/${id}`)).pipe(",
+    "      tap(() => this.seasonsResource.reload())",
+    "    );",
+    "  }",
+    "",
+    "  reload(): void {",
+    "    this.seasonsResource.reload();",
+    "  }",
+    "```",
+    "",
+    "**Why this hybrid pattern works:**",
+    "- Services return `Observable` for async operations (cancellation, retry, RxJS operators)",
+    "- Components convert to signals via `toSignal()` as needed",
+    "- Both patterns coexist and integrate seamlessly"
+])
+
+# Append rest of file
+new_content.extend(lines[service_end_line:])
+
+# Write new content
+with open('/home/linroot/code/statsboard/frontend-angular-signals/AGENTS.md', 'w') as f:
+    f.writelines(new_content)
+
+print(f"Successfully updated AGENTS.md with canonical service patterns!")
 
 ## Build, Lint, and Test Commands
 
@@ -81,19 +239,6 @@ export class FeatureNameComponent {
 }
 ```
 
-### Service Patterns
-
-Services extending BaseApiService for CRUD operations:
-
-```typescript
-@Injectable({
-  providedIn: "root",
-})
-export class PersonService extends BaseApiService<IPerson> {
-  constructor(http: HttpClient, errorHandlingService: ErrorHandlingService) {
-    super("persons", http, errorHandlingService);
-  }
-}
 ```
 
 Facade services for state management:
@@ -250,6 +395,189 @@ eslint_lint -
 
 - All components must be standalone (no NgModules)
 - Signal based angular project
+- All components must use `ChangeDetectionStrategy.OnPush`
+- Prefer signals over imperative state for all reactive patterns
+
+## Angular Signals Best Practices
+
+### Component Requirements
+
+All components MUST follow these signal patterns:
+
+1. **Change Detection Strategy**
+   ```typescript
+   @Component({
+     changeDetection: ChangeDetectionStrategy.OnPush, // REQUIRED for all components
+   })
+   ```
+
+2. **Signals for State**
+   - Use `signal()` for local writable state
+   - Use `computed()` for derived state
+   - Use `toSignal()` to convert Observables to signals
+   - Avoid imperative state variables that should be signals
+
+3. **Reactive Route Params**
+   ```typescript
+   // GOOD - Reactive route params as signal
+   import { toSignal } from '@angular/core/rxjs-interop';
+   
+   seasonId = toSignal(
+     this.route.paramMap.pipe(map(params => Number(params.get('id')))),
+     { initialValue: null }
+   );
+
+   // BAD - Imperative route param
+   seasonId: number | null = null;
+   ngOnInit() {
+     this.seasonId = Number(this.route.snapshot.paramMap.get('id'));
+   }
+   ```
+
+4. **Computed Signals for Lookup**
+   ```typescript
+   // GOOD - Computed signal for reactive lookup
+   season = computed(() => {
+     const id = this.seasonId();
+     if (!id) return null;
+     return this.seasonStore.seasons().find(s => s.id === id) || null;
+   });
+
+   // BAD - Imperative state
+   season: Season | null = null;
+   ngOnInit() {
+     this.season = this.seasonStore.seasons().find(s => s.id === this.id) || null;
+   }
+   ```
+
+5. **Effect() Usage**
+   - Use sparingly - only for non-reactive API side effects
+   - Avoid calling methods that read signals inside effects
+   - Use `untracked()` when calling external functions
+
+   ```typescript
+   private patchFormOnSeasonChange = effect(() => {
+     const season = this.season();
+     if (season) {
+       this.seasonForm.patchValue({
+         year: season.year,
+         description: season.description,
+       });
+     }
+   });
+   ```
+
+### Service Patterns
+
+1. **httpResource for Async Data**
+   ```typescript
+   @Injectable({ providedIn: 'root' })
+   export class SeasonStoreService {
+     seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
+
+     seasons = computed(() => this.seasonsResource.value() ?? []);
+     loading = computed(() => this.seasonsResource.isLoading());
+     error = computed(() => this.seasonsResource.error());
+   }
+   ```
+
+2. **Signal Immutability**
+   - Never mutate signal values directly
+   - Always use `.set()` or `.update()` for writable signals
+   - Computed signals are read-only by design
+
+3. **Signal Testing Utilities**
+   - Located in separate library: `libs/signal-testing-utils`
+   - Provides helpers for testing signals and effects
+
+### Template Requirements
+
+1. **Modern Control Flow**
+   - Use `@if` instead of `*ngIf`
+   - Use `@for` instead of `*ngFor`
+   - Use `track` for list iteration
+
+2. **Signal Bindings**
+   ```html
+   <!-- GOOD - Direct signal binding -->
+   @if (loading()) {
+     <div>Loading...</div>
+   }
+
+   @for (season of seasons(); track season.id) {
+     <div>{{ season.year }}</div>
+   }
+   ```
+
+3. **Class Bindings**
+   - Use `[class.name]` instead of `ngClass`
+   - Use `[style.property]` instead of `ngStyle`
+
+### Testing Patterns
+
+1. **Test Setup**
+   ```typescript
+   import { TestBed, flushEffects } from '@angular/core/testing';
+
+   beforeEach(() => {
+     TestBed.configureTestingModule({ /* ... */ });
+     fixture = TestBed.createComponent(MyComponent);
+     component = fixture.componentInstance;
+   });
+
+   it('should update when signal changes', () => {
+     // Update signal
+     fixture.detectChanges();
+     flushEffects(); // Flush effect scheduler
+     // Assert
+   });
+   ```
+
+2. **Signal Testing Utilities**
+   ```typescript
+   import { createMockSignal, createMockComputed } from '@your-org/signal-testing-utils';
+
+   const mockSeasons = createMockSignal([]);
+   const mockLoading = createMockComputed(false);
+   ```
+
+3. **Avoid Mocking Signal Methods**
+   - Use real signals in tests when possible
+   - Only mock services, not signal implementations
+   - Test reactivity through actual signal updates
+
+### Common Anti-Patterns
+
+❌ **DO NOT** use imperative state for reactive data:
+```typescript
+season: Season | null = null; // Wrong
+```
+
+✅ **DO use signals**:
+```typescript
+season = signal<Season | null>(null); // Correct
+```
+
+❌ **DO NOT** use `ngOnChanges` for signal inputs:
+```typescript
+@Input({ required: true }) seasonId!: number;
+ngOnChanges() { ... } // Wrong
+```
+
+✅ **DO use computed** for reactive transformations:
+```typescript
+season = computed(() => { ... }); // Correct
+```
+
+❌ **DO NOT** use `*ngIf` with async pipes:
+```html
+<div *ngIf="data$ | async">...</div> <!-- Old pattern -->
+```
+
+✅ **DO use `@if` with signals**:
+```html
+@if (data()) { ... } <!-- Modern pattern -->
+```
 
 ## GitHub workflow (this repo)
 

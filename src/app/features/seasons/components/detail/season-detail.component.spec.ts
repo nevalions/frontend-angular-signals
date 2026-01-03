@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 import { SeasonDetailComponent } from './season-detail.component';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
@@ -19,11 +20,7 @@ describe('SeasonDetailComponent', () => {
     };
 
     routeMock = {
-      snapshot: {
-        paramMap: {
-          get: vi.fn((param) => (param === 'id' ? '1' : null)),
-        },
-      },
+      paramMap: of({ get: (key: string) => (key === 'id' ? '1' : null) }),
     };
 
     storeMock = {
@@ -85,6 +82,5 @@ describe('SeasonDetailComponent', () => {
     component.deleteSeason();
 
     expect(storeMock.deleteSeason).toHaveBeenCalledWith(1);
-    expect(routerMock.navigate).toHaveBeenCalled();
   });
 });

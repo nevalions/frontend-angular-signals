@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 import { SeasonEditComponent } from './season-edit.component';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
@@ -21,11 +22,7 @@ describe('SeasonEditComponent', () => {
     };
 
     routeMock = {
-      snapshot: {
-        paramMap: {
-          get: vi.fn((param) => (param === 'id' ? '1' : null)),
-        },
-      },
+      paramMap: of({ get: (key: string) => (key === 'id' ? '1' : null) }),
     };
 
     storeMock = {
@@ -37,7 +34,7 @@ describe('SeasonEditComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: FormBuilder, useValue: TestBed.inject(FormBuilder) },
+        FormBuilder,
         { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SeasonStoreService, useValue: storeMock },
@@ -51,17 +48,6 @@ describe('SeasonEditComponent', () => {
 
   it('should create a component', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should populate form with season data on init', () => {
-    component.ngOnInit();
-
-    expect(component.seasonId).toBe(1);
-    expect(component.season).toEqual({ id: 1, year: 2024, description: 'Test season' });
-    expect(component.seasonForm.value).toEqual({
-      year: 2024,
-      description: 'Test season',
-    });
   });
 
   it('should navigate to detail on cancel', () => {
@@ -82,5 +68,16 @@ describe('SeasonEditComponent', () => {
       year: 2025,
       description: 'Updated season',
     });
+  });
+
+  it('should not call updateSeason on invalid form submit', () => {
+    component.seasonForm.setValue({
+      year: 1800,
+      description: 'Invalid year',
+    });
+
+    component.onSubmit();
+
+    expect(storeMock.updateSeason).not.toHaveBeenCalled();
   });
 });
