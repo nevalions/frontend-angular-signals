@@ -4,8 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { buildApiUrl } from '../../../core/config/api.constants';
 import { TuiAlertService } from '@taiga-ui/core';
+import { ApiService } from '../../../core/services/api.service';
+import { buildApiUrl } from '../../../core/config/api.constants';
 import { Season, SeasonCreate, SeasonUpdate } from '../models/season.model';
 
 @Injectable({
@@ -14,6 +15,7 @@ import { Season, SeasonCreate, SeasonUpdate } from '../models/season.model';
 export class SeasonStoreService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private apiService = inject(ApiService);
   private readonly alerts = inject(TuiAlertService);
 
   seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
@@ -34,7 +36,7 @@ export class SeasonStoreService {
   }
 
   createSeason(seasonData: SeasonCreate): Observable<Season> {
-    return this.http.post<Season>(buildApiUrl('/api/seasons/'), seasonData).pipe(
+    return this.apiService.post<Season>('/api/seasons/', seasonData).pipe(
       tap(() => {
         this.reload();
         this.alerts.open('Season created successfully', { label: 'Success' }).subscribe();
@@ -43,7 +45,7 @@ export class SeasonStoreService {
   }
 
   updateSeason(id: number, seasonData: SeasonUpdate): Observable<Season> {
-    return this.http.put<Season>(buildApiUrl(`/api/seasons/${id}`), seasonData).pipe(
+    return this.apiService.put<Season>('/api/seasons/', id, seasonData).pipe(
       tap(() => {
         this.reload();
         this.alerts.open('Season updated successfully', { label: 'Success' }).subscribe();
@@ -52,7 +54,7 @@ export class SeasonStoreService {
   }
 
   deleteSeason(id: number): Observable<void> {
-    return this.http.delete<void>(buildApiUrl(`/api/seasons/${id}`)).pipe(
+    return this.apiService.delete('/api/seasons/', id).pipe(
       tap(() => {
         this.reload();
         this.alerts.open('Season deleted successfully', { label: 'Success' }).subscribe();
