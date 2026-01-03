@@ -1,0 +1,57 @@
+.navbar {
+  background-color: var(--tui-background-base);
+  border-bottom: 1px solid var(--tui-border-normal);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--tui-text-primary);
+}
+
+.navbar-nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+
+  a {
+    text-decoration: none;
+    color: var(--tui-text-primary);
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--tui-primary);
+    }
+
+    &.active {
+      color: var(--tui-primary);
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--tui-primary);
+      }
+    }
+  }
+}
