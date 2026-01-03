@@ -1,9 +1,5 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './features/home/components/home.component';
-import { SeasonListComponent } from './features/seasons/components/list/season-list.component';
-import { SeasonDetailComponent } from './features/seasons/components/detail/season-detail.component';
-import { SeasonCreateComponent } from './features/seasons/components/create/season-create.component';
-import { SeasonEditComponent } from './features/seasons/components/edit/season-edit.component';
+import { EmptyPageComponent } from './shared/components/empty-page/empty-page.component';
 import { SportListComponent } from './features/sports/components/list/sport-list.component';
 import { SportDetailComponent } from './features/sports/components/detail/sport-detail.component';
 import { TournamentListComponent } from './features/tournaments/components/list/tournament-list.component';
@@ -16,29 +12,8 @@ import { Error404Component } from './shared/components/error404/error404.compone
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    component: EmptyPageComponent,
     pathMatch: 'full',
-  },
-  {
-    path: 'seasons',
-    children: [
-      {
-        path: '',
-        component: SeasonListComponent,
-      },
-      {
-        path: 'new',
-        component: SeasonCreateComponent,
-      },
-      {
-        path: ':id',
-        component: SeasonDetailComponent,
-      },
-      {
-        path: ':id/edit',
-        component: SeasonEditComponent,
-      },
-    ],
   },
   {
     path: 'sports',
