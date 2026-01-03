@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { HomeComponent } from './features/home/components/home.component';
 import { SeasonListComponent } from './features/seasons/components/list/season-list.component';
 import { SeasonDetailComponent } from './features/seasons/components/detail/season-detail.component';
 import { SeasonCreateComponent } from './features/seasons/components/create/season-create.component';
@@ -10,7 +11,7 @@ import { Error404Component } from './shared/components/error404/error404.compone
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/seasons',
+    component: HomeComponent,
     pathMatch: 'full',
   },
   {
