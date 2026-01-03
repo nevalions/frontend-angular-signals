@@ -1,0 +1,28 @@
+<div class="sport-list">
+  <header class="sport-list__header">
+    <h1 class="sport-list__title">Sports</h1>
+  </header>
+
+  @if (loading()) {
+    <div class="sport-list__loading">
+      <div class="sport-list__loader"></div>
+    </div>
+  } @else if (error()) {
+    <div class="sport-list__error">
+      Error loading sports: {{ error()?.message }}
+    </div>
+  } @else if (sports().length === 0) {
+    <div class="sport-list__empty">No sports found</div>
+  } @else {
+    <div class="sport-list__grid">
+      @for (sport of sports(); track sport.id) {
+        <div class="sport-list__card" (click)="navigateToDetail(sport.id)">
+          <div class="sport-list__card-title">{{ sport.title }}</div>
+          @if (sport.description) {
+            <div class="sport-list__card-description">{{ sport.description }}</div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
