@@ -18,13 +18,12 @@ npm run watch          # Build with watch mode
  ### Test Commands
 
 ```bash
-npm run test           # Run all tests (ng test - uses Vitest via angular.json)
-npm run test:unit      # Run all tests (Vitest in jsdom mode)
+npm run test           # Run all tests (Vitest via angular.json)
 npm run test:coverage  # Run tests with coverage
 
 # Run specific test files with Vitest
-npx vitest run src/app/features/seasons/models/season.model.spec.ts
-npx vitest run src/app/features/seasons/**/*.spec.ts  # Run all season tests
+npm run test src/app/features/seasons/models/season.model.spec.ts
+npm run test src/app/features/seasons/**/*.spec.ts  # Run all season tests
 ```
 
 ## Code Style Guidelines
