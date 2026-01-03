@@ -1,0 +1,44 @@
+<div class="season-create">
+  <header class="season-create__header">
+    <h1 class="season-create__title">Create New Season</h1>
+    <div class="season-create__actions">
+      <button tuiButton type="button" (click)="navigateToList()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="seasonForm.invalid">Create Season</button>
+    </div>
+  </header>
+
+  <form [formGroup]="seasonForm" class="season-create__form">
+    <div class="season-create__field">
+      <label for="year" class="season-create__label">Year *</label>
+      <input
+        id="year"
+        type="number"
+        formControlName="year"
+        class="season-create__input"
+        [class.season-create__input--invalid]="yearControl?.invalid && yearControl?.touched"
+      />
+      @if (yearControl?.invalid && yearControl?.touched) {
+        @if (yearControl?.errors?.['required']) {
+          <div class="season-create__error">Year is required</div>
+        }
+        @if (yearControl?.errors?.['min']) {
+          <div class="season-create__error">Year must be at least 1900</div>
+        }
+        @if (yearControl?.errors?.['max']) {
+          <div class="season-create__error">Year must be at most 2999</div>
+        }
+      }
+    </div>
+
+    <div class="season-create__field">
+      <label for="description" class="season-create__label">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="season-create__textarea"
+        rows="4"
+        placeholder="Enter a description for the season (optional)"
+      ></textarea>
+    </div>
+  </form>
+</div>

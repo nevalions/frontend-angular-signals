@@ -1,0 +1,50 @@
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TuiButton } from '@taiga-ui/core';
+import { SeasonStoreService } from '../../services/season-store.service';
+import { SeasonCreate } from '../../models/season.model';
+
+@Component({
+  selector: 'app-season-create',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TuiButton],
+  templateUrl: './season-create.component.html',
+  styleUrl: './season-create.component.less',
+})
+export class SeasonCreateComponent {
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private seasonStore = inject(SeasonStoreService);
+
+  seasonForm: FormGroup = this.fb.group({
+    year: ['', [Validators.required, Validators.min(1900), Validators.max(2999)]],
+    description: [''],
+  });
+
+  navigateToList(): void {
+    this.router.navigate(['/seasons']);
+  }
+
+  onSubmit(): void {
+    if (this.seasonForm.valid) {
+      const seasonData: SeasonCreate = {
+        year: this.seasonForm.value.year!,
+        description: this.seasonForm.value.description || null,
+      };
+
+      this.seasonStore.createSeason(seasonData).subscribe(() => {
+        this.router.navigate(['/seasons']);
+      });
+    }
+  }
+
+  get yearControl() {
+    return this.seasonForm.get('year');
+  }
+
+  get descriptionControl() {
+    return this.seasonForm.get('description');
+  }
+}
