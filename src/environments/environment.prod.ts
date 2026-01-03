@@ -1,4 +1,18 @@
+// let protocol = 'https';
+// let apiUrl = 'statsboard.ru';
+
+let protocol = 'https';
+let apiUrl = 'butakov.su';
+
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://butakov.su'
+  currentYear: new Date().getFullYear(),
+  currentSeasonId: 3,
+  url: apiUrl,
+  port: '',
+  angular_port: '',
+  protocol: protocol,
+  wsProtocol: 'wss',
+  apiUrl: apiUrl,
+  backendUrl: protocol + '://' + apiUrl,
 };
