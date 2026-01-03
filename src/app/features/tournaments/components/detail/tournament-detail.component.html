@@ -1,0 +1,51 @@
+<div class="tournament-detail">
+  <header class="tournament-detail__header">
+    @if (tournament()) {
+      <h1 class="tournament-detail__title">{{ tournament()!.title }}</h1>
+    } @else {
+      <h1 class="tournament-detail__title">Tournament</h1>
+    }
+    @if (sport() && season()) {
+      <div class="tournament-detail__context">
+        <span>{{ sport()!.title }}</span>
+        <span>›</span>
+        <span>{{ season()!.year }}</span>
+      </div>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="tournament-detail__loading">Loading tournament...</div>
+  } @else if (tournament()) {
+    <div class="tournament-detail__content">
+      @if (tournament()!.description) {
+        <section class="tournament-detail__section">
+          <h2 class="tournament-detail__section-title">Description</h2>
+          <p>{{ tournament()!.description }}</p>
+        </section>
+      }
+
+      <section class="tournament-detail__section">
+        <h2 class="tournament-detail__section-title">Details</h2>
+        <div class="tournament-detail__details">
+          <div class="tournament-detail__detail">
+            <span class="tournament-detail__label">Sport:</span>
+            <span>{{ sport()!.title }}</span>
+          </div>
+          <div class="tournament-detail__detail">
+            <span class="tournament-detail__label">Season:</span>
+            <span>{{ season()!.year }}</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="tournament-detail__actions">
+      <button tuiButton type="button" (click)="navigateBack()">Back</button>
+      <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
+      <button tuiButton type="button" appearance="destructive" (click)="deleteTournament()">Delete</button>
+    </footer>
+  } @else {
+    <div class="tournament-detail__not-found">Tournament not found</div>
+  }
+</div>

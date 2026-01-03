@@ -6,6 +6,10 @@ import { SeasonCreateComponent } from './features/seasons/components/create/seas
 import { SeasonEditComponent } from './features/seasons/components/edit/season-edit.component';
 import { SportListComponent } from './features/sports/components/list/sport-list.component';
 import { SportDetailComponent } from './features/sports/components/detail/sport-detail.component';
+import { TournamentListComponent } from './features/tournaments/components/list/tournament-list.component';
+import { TournamentDetailComponent } from './features/tournaments/components/detail/tournament-detail.component';
+import { TournamentCreateComponent } from './features/tournaments/components/create/tournament-create.component';
+import { TournamentEditComponent } from './features/tournaments/components/edit/tournament-edit.component';
 import { Error404Component } from './shared/components/error404/error404.component';
 
 export const routes: Routes = [
@@ -41,6 +45,22 @@ export const routes: Routes = [
       {
         path: '',
         component: SportListComponent,
+      },
+      {
+        path: ':sportId/seasons/:year/tournaments',
+        component: TournamentListComponent,
+      },
+      {
+        path: ':sportId/seasons/:year/tournaments/new',
+        component: TournamentCreateComponent,
+      },
+      {
+        path: ':sportId/seasons/:year/tournaments/:id',
+        component: TournamentDetailComponent,
+      },
+      {
+        path: ':sportId/seasons/:year/tournaments/:id/edit',
+        component: TournamentEditComponent,
       },
       {
         path: ':id',

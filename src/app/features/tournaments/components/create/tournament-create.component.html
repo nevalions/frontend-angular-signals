@@ -1,0 +1,45 @@
+<div class="tournament-create">
+  <header class="tournament-create__header">
+    <h1 class="tournament-create__title">Create New Tournament</h1>
+    @if (sport() && season()) {
+      <div class="tournament-create__context">
+        <span>{{ sport()!.title }}</span>
+        <span>›</span>
+        <span>{{ season()!.year }}</span>
+      </div>
+    }
+    <div class="tournament-create__actions">
+      <button tuiButton type="button" (click)="navigateBack()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="tournamentForm.invalid">Create Tournament</button>
+    </div>
+  </header>
+
+  <form [formGroup]="tournamentForm" class="tournament-create__form">
+    <div class="tournament-create__field">
+      <label for="title" class="tournament-create__label">Title *</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        class="tournament-create__input"
+        [class.tournament-create__input--invalid]="titleControl?.invalid && titleControl?.touched"
+      />
+      @if (titleControl?.invalid && titleControl?.touched) {
+        @if (titleControl?.errors?.['required']) {
+          <div class="tournament-create__error">Title is required</div>
+        }
+      }
+    </div>
+
+    <div class="tournament-create__field">
+      <label for="description" class="tournament-create__label">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="tournament-create__textarea"
+        rows="4"
+        placeholder="Enter a description for tournament (optional)"
+      ></textarea>
+    </div>
+  </form>
+</div>

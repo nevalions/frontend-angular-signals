@@ -1,0 +1,37 @@
+<div class="tournament-list">
+  <header class="tournament-list__header">
+    <h1>Tournaments</h1>
+    <div class="tournament-list__context">
+      @if (sport()) {
+        <span class="tournament-list__sport">{{ sport()!.title }}</span>
+      }
+      @if (season()) {
+        <span class="tournament-list__season">{{ season()!.year }}</span>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="tournament-list__loading">Loading tournaments...</div>
+  } @else {
+    @if (tournaments().length === 0) {
+      <div class="tournament-list__empty">No tournaments found</div>
+    } @else {
+      <div class="tournament-list__items">
+        @for (tournament of tournaments(); track tournament.id) {
+          <div class="tournament-list__item" (click)="navigateToDetail(tournament.id)">
+            <h3>{{ tournament.title }}</h3>
+            @if (tournament.description) {
+              <p>{{ tournament.description }}</p>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <footer class="tournament-list__actions">
+    <button tuiButton type="button" (click)="navigateBack()">Back</button>
+    <button tuiButton type="button" appearance="primary" (click)="navigateToCreate()">Create Tournament</button>
+  </footer>
+</div>

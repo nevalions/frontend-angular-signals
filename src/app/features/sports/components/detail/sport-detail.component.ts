@@ -38,14 +38,9 @@ export class SportDetailComponent {
   }
 
   navigateToTournaments(seasonYear: number): void {
-    this.router.navigate(['/seasons', 'year', seasonYear, 'tournaments']);
-  }
-
-  navigateToSportTournaments(): void {
     const id = this.sportId();
     if (id) {
-      this.sportStore.getTournamentsBySport(id).subscribe(() => {
-      });
+      this.router.navigate(['/sports', id, 'seasons', seasonYear, 'tournaments']);
     }
   }
 }

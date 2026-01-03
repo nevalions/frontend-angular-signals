@@ -66,13 +66,7 @@ describe('SportDetailComponent', () => {
   it('should navigate to tournaments on season item click', () => {
     component.navigateToTournaments(2024);
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'tournaments']);
-  });
-
-  it('should call getTournamentsBySport on sport tournaments click', () => {
-    component.navigateToSportTournaments();
-
-    expect(sportStoreMock.getTournamentsBySport).toHaveBeenCalledWith(1);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1, 'seasons', 2024, 'tournaments']);
   });
 
   it('should find sport by id from store', () => {
@@ -132,28 +126,5 @@ describe('SportDetailComponent', () => {
 
     expect(newComponent.sportId()).toBe(99);
     expect(newComponent.sport()).toBe(null);
-  });
-
-  it('should not call getTournamentsBySport when sportId is null', () => {
-    const nullRouteMock = {
-      paramMap: of({ get: (_key: string) => null }),
-    };
-
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: Router, useValue: routerMock },
-        { provide: ActivatedRoute, useValue: nullRouteMock },
-        { provide: SportStoreService, useValue: sportStoreMock },
-        { provide: SeasonStoreService, useValue: seasonStoreMock },
-      ],
-    });
-
-    const newFixture = TestBed.createComponent(SportDetailComponent);
-    const newComponent = newFixture.componentInstance;
-
-    newComponent.navigateToSportTournaments();
-
-    expect(sportStoreMock.getTournamentsBySport).not.toHaveBeenCalled();
   });
 });

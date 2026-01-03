@@ -1,0 +1,72 @@
+.tournament-create {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+
+  &__header {
+    margin-bottom: 2rem;
+  }
+
+  &__title {
+    margin: 0 0 0.5rem 0;
+  }
+
+  &__context {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: #666;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  &__input,
+  &__textarea {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: #0066cc;
+    }
+
+    &--invalid {
+      border-color: #dc3545;
+    }
+  }
+
+  &__textarea {
+    resize: vertical;
+  }
+
+  &__error {
+    color: #dc3545;
+    font-size: 0.875rem;
+  }
+}

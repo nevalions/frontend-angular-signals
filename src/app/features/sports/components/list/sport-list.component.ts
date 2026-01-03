@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { TuiButton } from '@taiga-ui/core';
 import { SportStoreService } from '../../services/sport-store.service';
 
 @Component({
   selector: 'app-sport-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiButton],
+  imports: [],
   templateUrl: './sport-list.component.html',
   styleUrl: './sport-list.component.less',
 })
