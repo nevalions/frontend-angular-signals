@@ -31,16 +31,16 @@ export class ApiService {
   }
 
   put<T>(endpoint: string, id: number, data: unknown): Observable<T> {
-    const url = buildApiUrl(`${endpoint}/${id}`);
-    console.log(`[API] PUT ${url}`, data);
-    return this.http.put<T>(url, data).pipe(
-      tap(() => console.log(`[API] PUT ${url} - Success`)),
+    const url = buildApiUrl(endpoint);
+    console.log(`[API] PUT ${url}?item_id=${id}`, data);
+    return this.http.put<T>(`${url}?item_id=${id}`, data).pipe(
+      tap(() => console.log(`[API] PUT ${url}?item_id=${id} - Success`)),
       catchError((error: HttpErrorResponse) => this.errorHandlingService.handleError(error))
     );
   }
 
   delete(endpoint: string, id: number): Observable<void> {
-    const url = buildApiUrl(`${endpoint}/${id}`);
+    const url = buildApiUrl(`${endpoint}/id/${id}`);
     console.log(`[API] DELETE ${url}`);
     return this.http.delete<void>(url).pipe(
       tap(() => console.log(`[API] DELETE ${url} - Success`)),
