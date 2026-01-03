@@ -2,8 +2,23 @@
   <div class="navbar-container">
     <h1 class="navbar-title">{{ title }}</h1>
     <nav class="navbar-nav">
-      <a routerLink="/" routerLinkActive="active">Home</a>
-      <a routerLink="/seasons" routerLinkActive="active">Seasons</a>
+      <a routerLink="/persons" routerLinkActive="active">Persons</a>
+      
+      <div class="dropdown">
+        <button class="dropdown-toggle" (click)="toggleDropdown(0); $event.stopPropagation()" [class.open]="isDropdownOpen(0)">
+          Sports
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        @if (isDropdownOpen(0)) {
+          <div class="dropdown-menu">
+            @for (sport of sports(); track sport.id) {
+              <a class="dropdown-item" [routerLink]="'/sports/' + sport.id" (click)="$event.stopPropagation()">
+                {{ sport.title }}
+              </a>
+            }
+          </div>
+        }
+      </div>
     </nav>
   </div>
 </header>
