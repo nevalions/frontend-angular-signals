@@ -1,0 +1,71 @@
+<div class="person-list">
+  <h1>Persons</h1>
+
+  @if (loading()) {
+    <div class="loading">Loading persons...</div>
+  } @else if (error()) {
+    <div class="error">Error loading persons</div>
+  } @else {
+    <div class="controls">
+      <label for="itemsPerPage">Items per page:</label>
+      <select id="itemsPerPage" (change)="changeItemsPerPage($any($event.target).value)">
+        @for (option of itemsPerPageOptions; track option) {
+          <option [value]="option" [selected]="itemsPerPage() === option">{{ option }}</option>
+        }
+      </select>
+    </div>
+
+    <table class="person-table">
+      <thead>
+        <tr>
+          <th (click)="toggleSort('first_name')">
+            First Name {{ getSortIcon('first_name') }}
+          </th>
+          <th (click)="toggleSort('second_name')">
+            Second Name {{ getSortIcon('second_name') }}
+          </th>
+          <th>Photo</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (paginatedPersons().length === 0) {
+          <tr>
+            <td colspan="3">No persons found</td>
+          </tr>
+        } @else {
+          @for (person of paginatedPersons(); track person.id) {
+            <tr>
+              <td>{{ person.first_name }}</td>
+              <td>{{ person.second_name }}</td>
+              <td>
+                @if (person.person_photo_url) {
+                  <img [src]="person.person_photo_url" alt="{{ person.first_name }} {{ person.second_name }}" />
+                } @else {
+                  <span>No photo</span>
+                }
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button
+          (click)="changePage(currentPage() - 1)"
+          [disabled]="currentPage() === 1">
+          Previous
+        </button>
+
+        <span>Page {{ currentPage() }} of {{ totalPages() }}</span>
+
+        <button
+          (click)="changePage(currentPage() + 1)"
+          [disabled]="currentPage() === totalPages()">
+          Next
+        </button>
+      </div>
+    }
+  }
+</div>

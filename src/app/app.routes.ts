@@ -10,6 +10,7 @@ import { TournamentListComponent } from './features/tournaments/components/list/
 import { TournamentDetailComponent } from './features/tournaments/components/detail/tournament-detail.component';
 import { TournamentCreateComponent } from './features/tournaments/components/create/tournament-create.component';
 import { TournamentEditComponent } from './features/tournaments/components/edit/tournament-edit.component';
+import { PersonListComponent } from './features/persons/components/list/person-list.component';
 import { Error404Component } from './shared/components/error404/error404.component';
 
 export const routes: Routes = [
@@ -67,6 +68,10 @@ export const routes: Routes = [
         component: SportDetailComponent,
       },
     ],
+  },
+  {
+    path: 'persons',
+    component: PersonListComponent,
   },
   {
     path: 'error404',
