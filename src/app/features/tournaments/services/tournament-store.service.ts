@@ -4,6 +4,7 @@ import { httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TuiAlertService } from '@taiga-ui/core';
+import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Tournament, TournamentCreate, TournamentUpdate } from '../models/tournament.model';
 
@@ -13,6 +14,7 @@ import { Tournament, TournamentCreate, TournamentUpdate } from '../models/tourna
 export class TournamentStoreService {
   private http = inject(HttpClient);
   private readonly alerts = inject(TuiAlertService);
+  private apiService = inject(ApiService);
 
   tournamentsResource = httpResource<Tournament[]>(() => buildApiUrl('/api/tournaments/'));
 
@@ -82,6 +84,12 @@ export class TournamentStoreService {
         this.reload();
         this.alerts.open('Tournament deleted successfully', { label: 'Success' }).subscribe();
       })
+    );
+  }
+
+  getTournamentsBySeasonAndSport(year: number, sportId: number): Observable<Tournament[]> {
+    return this.apiService.customGet<Tournament[]>(
+      buildApiUrl(`/api/seasons/year/${year}/sports/id/${sportId}/tournaments`)
     );
   }
 }
