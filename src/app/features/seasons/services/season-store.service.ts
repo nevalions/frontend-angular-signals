@@ -54,7 +54,7 @@ export class SeasonStoreService {
   }
 
   deleteSeason(id: number): Observable<void> {
-    return this.apiService.delete('/api/seasons/', id).pipe(
+    return this.apiService.delete('/api/seasons', id).pipe(
       tap(() => {
         this.reload();
         this.alerts.open('Season deleted successfully', { label: 'Success' }).subscribe();
