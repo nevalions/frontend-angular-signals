@@ -3,8 +3,14 @@ import { SeasonListComponent } from './features/seasons/components/list/season-l
 import { SeasonDetailComponent } from './features/seasons/components/detail/season-detail.component';
 import { SeasonCreateComponent } from './features/seasons/components/create/season-create.component';
 import { SeasonEditComponent } from './features/seasons/components/edit/season-edit.component';
+import { Error404Component } from './shared/components/error404/error404.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: '/seasons',
+    pathMatch: 'full',
+  },
   {
     path: 'seasons',
     children: [
@@ -13,7 +19,7 @@ export const routes: Routes = [
         component: SeasonListComponent,
       },
       {
-        path: 'create',
+        path: 'new',
         component: SeasonCreateComponent,
       },
       {
@@ -25,5 +31,13 @@ export const routes: Routes = [
         component: SeasonEditComponent,
       },
     ],
+  },
+  {
+    path: 'error404',
+    component: Error404Component,
+  },
+  {
+    path: '**',
+    redirectTo: '/error404',
   },
 ];

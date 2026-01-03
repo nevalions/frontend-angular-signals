@@ -1,0 +1,45 @@
+.app-header {
+  background-color: var(--tui-background-base);
+  border-bottom: 1px solid var(--tui-border-normal);
+  padding: 1rem 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.app-nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+
+  a {
+    text-decoration: none;
+    color: var(--tui-text-primary);
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--tui-primary);
+    }
+
+    &.router-link-active {
+      color: var(--tui-primary);
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--tui-primary);
+      }
+    }
+  }
+}
+
+.app-main {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
