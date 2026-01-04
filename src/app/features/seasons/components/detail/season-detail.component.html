@@ -1,46 +1,67 @@
-<div class="season-detail">
-  @if (season(); as s) {
-    <header class="season-detail__header">
-      <button tuiButton (click)="navigateBack()">Back</button>
-      <h1 class="season-detail__title">Season {{ s.year }}</h1>
+@if (season(); as s) {
+  <div tuiCardLarge>
+    <div tui-header>
+      <button
+        tuiButton
+        iconStart="@tui.chevron-left"
+        (click)="navigateBack()"
+        >Back</button>
+      <h1>Season {{ s.year }}</h1>
       <div class="season-detail__actions">
-        <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
-        <button tuiButton type="button" (click)="deleteSeason()">Delete</button>
+        <button
+          tuiButton
+          iconStart="@tui.pencil"
+          appearance="flat"
+          (click)="navigateToEdit()"
+          >Edit</button>
+        <button
+          tuiButton
+          iconStart="@tui.trash"
+          appearance="flat-destructive"
+          (click)="deleteSeason()"
+          >Delete</button>
       </div>
-    </header>
-
-    <div class="season-detail__content">
-      <div class="season-detail__info">
-        <div class="season-detail__info-label">Year</div>
-        <div class="season-detail__info-value">{{ s.year }}</div>
-      </div>
-
-      @if (s.description) {
-        <div class="season-detail__info">
-          <div class="season-detail__info-label">Description</div>
-          <div class="season-detail__info-value">{{ s.description }}</div>
+      <div>
+        <div tuiBlock>
+          <div tui-info-label>Year</div>
+          <div class="tui-info-value">{{ s.year }}</div>
         </div>
-      }
 
-      <div class="season-detail__links">
-        <h2 class="season-detail__links-title">Related Data</h2>
-        <div class="season-detail__links-grid">
-          <div class="season-detail__link-card" (click)="navigateToTournaments()">
-            <div class="season-detail__link-card-title">Tournaments</div>
-            <div class="season-detail__link-card-subtitle">View tournaments for {{ s.year }}</div>
+        @if (s.description) {
+          <div class="season-detail__info">
+            <div class="season-detail__info-label">Description</div>
+            <div class="season-detail__info-value">{{ s.description }}</div>
           </div>
-          <div class="season-detail__link-card" (click)="navigateToTeams()">
-            <div class="season-detail__link-card-title">Teams</div>
-            <div class="season-detail__link-card-subtitle">View teams for {{ s.year }}</div>
-          </div>
-          <div class="season-detail__link-card" (click)="navigateToMatches()">
-            <div class="season-detail__link-card-title">Matches</div>
-            <div class="season-detail__link-card-subtitle">View matches for {{ s.year }}</div>
+        }
+
+        <div class="season-detail__links">
+          <h2 class="season-detail__links-title">Related Data</h2>
+          <div class="season-detail__links-grid">
+            <div
+              class="season-detail__link-card"
+              (click)="navigateToTournaments()">
+              <div class="season-detail__link-card-title">Tournaments</div>
+              <div class="season-detail__link-card-subtitle">View tournaments for {{ s.year }}</div>
+            </div>
+
+            <div
+              class="season-detail__link-card"
+              (click)="navigateToTeams()">
+              <div class="season-detail__link-card-title">Teams</div>
+              <div class="season-detail__link-card-subtitle">View teams for {{ s.year }}</div>
+            </div>
+
+            <div
+              class="season-detail__link-card"
+              (click)="navigateToMatches()">
+              <div class="season-detail__link-card-title">Matches</div>
+              <div class="season-detail__link-card-subtitle">View matches for {{ s.year }}</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  } @else {
-    <div class="season-detail__not-found">Season not found</div>
-  }
-</div>
+  </div>
+} @else {
+  <div class="season-detail__not-found">Season not found</div>
+}

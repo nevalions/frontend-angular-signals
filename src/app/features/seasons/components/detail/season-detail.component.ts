@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TuiButton } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
 
@@ -10,9 +9,7 @@ import { Season } from '../../models/season.model';
   selector: 'app-season-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiButton],
   templateUrl: './season-detail.component.html',
-  styleUrl: './season-detail.component.less',
 })
 export class SeasonDetailComponent {
   private route = inject(ActivatedRoute);
@@ -27,7 +24,7 @@ export class SeasonDetailComponent {
   season = computed(() => {
     const id = this.seasonId();
     if (!id) return null;
-    return this.seasonStore.seasons().find((s) => s.id === id) || null;
+    return this.seasonStore.seasons().find((s: Season) => s.id === id) || null;
   });
 
   navigateBack(): void {
@@ -63,9 +60,11 @@ export class SeasonDetailComponent {
   }
 
   deleteSeason(): void {
-    const id = this.seasonId();
-    if (id && confirm('Are you sure you want to delete this season?')) {
-      this.seasonStore.deleteSeason(id).subscribe(() => {
+    const season = this.season();
+    if (!season) return;
+
+    if (confirm(`Are you sure you want to delete season ${season.year}?`)) {
+      this.seasonStore.deleteSeason(season.id).subscribe(() => {
         this.navigateBack();
       });
     }
