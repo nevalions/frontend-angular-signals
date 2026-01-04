@@ -216,6 +216,18 @@ import { urlWithProtocol } from "../../base/constants";
 
 Never hardcode API URLs. Use environment variables via `constants.ts`.
 
+## API Documentation
+
+Backend API documentation is available at:
+- Interactive docs: http://localhost:9000/docs
+- Backend codebase: ../statsboards-backend
+
+Refer to these resources for:
+- Available endpoints and their parameters
+- Request/response schemas
+- Authentication requirements
+- Example requests
+
 ## Console Logging
 
 Current codebase uses console.log for debugging. When making changes:
