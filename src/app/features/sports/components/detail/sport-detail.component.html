@@ -1,20 +1,23 @@
-<div class="sport-detail">
-  @if (sport(); as s) {
-    <header class="sport-detail__header">
-      <button tuiButton (click)="navigateBack()">Back</button>
-      <h1 class="sport-detail__title">{{ s.title }}</h1>
-    </header>
-
-    <div class="sport-detail__content">
-      <div class="sport-detail__info">
-        <div class="sport-detail__info-label">Title</div>
-        <div class="sport-detail__info-value">{{ s.title }}</div>
+@if (sport(); as s) {
+  <div tuiCardLarge>
+    <div tui-header>
+      <button
+        tuiButton
+        iconStart="@tui.chevron-left"
+        (click)="navigateBack()"
+        >Back</button>
+      <h1>{{ s.title }}</h1>
+    </div>
+    <div>
+      <div tuiBlock>
+        <div tui-info-label>Title</div>
+        <div class="tui-info-value">{{ s.title }}</div>
       </div>
 
       @if (s.description) {
-        <div class="sport-detail__info">
-          <div class="sport-detail__info-label">Description</div>
-          <div class="sport-detail__info-value">{{ s.description }}</div>
+        <div tuiBlock>
+          <div tui-info-label>Description</div>
+          <div class="tui-info-value">{{ s.description }}</div>
         </div>
       }
 
@@ -25,7 +28,10 @@
         } @else {
           <div class="sport-detail__seasons-list">
             @for (season of seasons(); track season.id) {
-              <div class="sport-detail__season-item" (click)="navigateToTournaments(season.year)">
+              <div
+                tuiCard
+                class="sport-detail__season-item"
+                (click)="navigateToTournaments(season.year)">
                 <div class="sport-detail__season-item-title">Season {{ season.year }}</div>
                 @if (season.description) {
                   <div class="sport-detail__season-item-subtitle">{{ season.description }}</div>
@@ -35,10 +41,8 @@
           </div>
         }
       </div>
-
-
     </div>
-  } @else {
-    <div class="sport-detail__not-found">Sport not found</div>
-  }
-</div>
+  </div>
+} @else {
+  <div class="sport-detail__not-found">Sport not found</div>
+}

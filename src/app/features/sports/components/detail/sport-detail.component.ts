@@ -2,15 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TuiButton } from '@taiga-ui/core';
 import { SportStoreService } from '../../services/sport-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
+import { Sport } from '../../models/sport.model';
 
 @Component({
   selector: 'app-sport-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiButton],
   templateUrl: './sport-detail.component.html',
   styleUrl: './sport-detail.component.less',
 })
@@ -28,7 +27,7 @@ export class SportDetailComponent {
   sport = computed(() => {
     const id = this.sportId();
     if (!id) return null;
-    return this.sportStore.sports().find((s) => s.id === id) || null;
+    return this.sportStore.sports().find((s: Sport) => s.id === id) || null;
   });
 
   seasons = this.seasonStore.seasons;
