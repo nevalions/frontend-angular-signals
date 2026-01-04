@@ -358,45 +358,171 @@ All components MUST follow these signal patterns:
    }
    ```
 
-5. **Effect() Usage**
-   - Use sparingly - only for non-reactive API side effects
-   - Avoid calling methods that read signals inside effects
-   - Use `untracked()` when calling external functions
+ 5. **Effect() Usage**
+    - Use sparingly - only for non-reactive API side effects
+    - Avoid calling methods that read signals inside effects
+    - Use `untracked()` when calling external functions
 
-   ```typescript
-   private patchFormOnSeasonChange = effect(() => {
-     const season = this.season();
-     if (season) {
-       this.seasonForm.patchValue({
-         year: season.year,
-         description: season.description,
-       });
-     }
-   });
-   ```
+    ```typescript
+    private patchFormOnSeasonChange = effect(() => {
+      const season = this.season();
+      if (season) {
+        this.seasonForm.patchValue({
+          year: season.year,
+          description: season.description,
+        });
+      }
+    });
+    ```
+
+6. **Signal Inputs/Outputs**
+    ```typescript
+    // Read-only signal input
+    seasonId = input.required<number>();
+
+    // Optional signal input with default
+    disabled = input(false);
+
+    // Signal output
+    seasonChange = output<Season>();
+
+    // Signal model for two-way binding
+    checked = model(false);
+    ```
+
+7. **Signal Forms (model())**
+    ```typescript
+    // Signal-based two-way binding with validation
+    year = model('', {
+      validators: [Validators.required, Validators.min(1900)]
+    });
+    description = model('');
+
+    // Template usage
+    // <input [(ngModel)]="year()" />
+    // <input [(ngModel)]="description()" />
+    ```
+
+8. **linkedSignal() for Advanced Derived State**
+    ```typescript
+    // Dependent writable state
+    filteredList = linkedSignal((options) => computed(() => {
+      const list = this.items();
+      const filter = this.filter();
+      return list.filter(item => item.type === filter);
+    }));
+
+    // Or simpler form for read-only derived with dependencies
+    filteredList = linkedSignal(() => {
+      return this.items().filter(item => item.type === this.filter());
+    });
+    ```
+
+9. **Experimental Features**
+    ```typescript
+    @Component({
+      // signals: true // EXPERIMENTAL - NOT RECOMMENDED FOR PRODUCTION
+    })
+    ```
+    - `signals: true` is experimental and not recommended for production use
+    - Wait for stable release before adoption
+    - Monitor Angular release notes for updates
 
 ### Service Patterns
 
-1. **httpResource for Async Data**
-   ```typescript
-   @Injectable({ providedIn: 'root' })
-   export class SeasonStoreService {
-     seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
+#### httpResource vs rxResource Decision Matrix
 
-     seasons = computed(() => this.seasonsResource.value() ?? []);
-     loading = computed(() => this.seasonsResource.isLoading());
-     error = computed(() => this.seasonsResource.error());
-   }
-   ```
+**Use `httpResource()` for:**
+- Simple GET requests without complex query logic
+- Data that needs automatic loading based on reactive dependencies
+- Requests that don't need RxJS operators (debounce, retry, etc.)
+- Standard CRUD list/data fetching patterns
+
+```typescript
+// ✅ GOOD - Simple data fetching
+seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
+```
+
+**Use `rxResource()` for:**
+- Complex async patterns with RxJS operators
+- Search with debouncing and minimum length filters
+- Requests needing retry logic, timeout handling, or complex error recovery
+- Multiple interdependent API calls
+
+```typescript
+// ✅ GOOD - Complex search with RxJS operators
+searchResource = rxResource<Season[]>({
+  request: computed(() => ({
+    url: buildApiUrl('/api/seasons/'),
+    params: { q: this.searchQuery() }
+  })),
+  loader: (params) => this.http.get<Season[]>(params.url, { params }).pipe(
+    debounceTime(300),
+    filter(q => q.length >= 2),
+    retry(3),
+    catchError(err => of([]))
+  )
+});
+```
+
+**Decision Criteria:**
+- Need RxJS operators? → Use `rxResource()`
+- Need debouncing/filtering? → Use `rxResource()`
+- Need retry logic? → Use `rxResource()`
+- Simple GET with reactive deps? → Use `httpResource()`
+- Want less boilerplate? → Use `httpResource()`
+
+#### Service Anti-Patterns
+
+```typescript
+// ❌ BAD - Don't use toSignal() in services to expose Observables
+@Injectable({ providedIn: 'root' })
+export class BadService {
+  items$ = this.http.get<Item[]>('/items');
+  items = toSignal(this.items$); // Memory leak risk
+}
+
+// ✅ GOOD - Use httpResource or expose Observable directly
+@Injectable({ providedIn: 'root' })
+export class GoodService {
+  itemsResource = httpResource<Item[]>(() => '/items');
+  // Or expose Observable for components to convert
+  items$ = this.http.get<Item[]>('/items');
+}
+```
+
+```typescript
+// ❌ BAD - Don't use httpResource for mutations
+createItem(item: Item) {
+  httpResource(() => ({ url: '/items', method: 'POST', body: item }));
+}
+
+// ✅ GOOD - Use HttpClient for mutations
+createItem(item: Item): Observable<Item> {
+  return this.http.post<Item>('/items', item);
+}
+```
+
+1. **httpResource for Async Data**
+    ```typescript
+    @Injectable({ providedIn: 'root' })
+    export class SeasonStoreService {
+      seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
+
+      seasons = computed(() => this.seasonsResource.value() ?? []);
+      loading = computed(() => this.seasonsResource.isLoading());
+      error = computed(() => this.seasonsResource.error());
+    }
+    ```
 
 2. **Signal Immutability**
-   - Never mutate signal values directly
-   - Always use `.set()` or `.update()` for writable signals
-   - Computed signals are read-only by design
+    - Never mutate signal values directly
+    - Always use `.set()` or `.update()` for writable signals
+    - Computed signals are read-only by design
 
 3. **Signal Testing Utilities**
-   - Located in separate library: `libs/signal-testing-utils`
-   - Provides helpers for testing signals and effects
+    - Located in separate library: `libs/signal-testing-utils`
+    - Provides helpers for testing signals and effects
 
 ### Template Requirements
 
@@ -599,6 +725,252 @@ All components MUST follow these signal patterns:
     ```
 
 ### Common Anti-Patterns
+
+#### Service Anti-Patterns
+
+❌ **BAD - Don't use toSignal() in services to expose Observables**
+```typescript
+@Injectable({ providedIn: 'root' })
+export class BadService {
+  items$ = this.http.get<Item[]>('/items');
+  items = toSignal(this.items$); // Memory leak risk
+}
+```
+
+✅ **GOOD - Use httpResource or expose Observable directly**
+```typescript
+@Injectable({ providedIn: 'root' })
+export class GoodService {
+  itemsResource = httpResource<Item[]>(() => '/items');
+  // Or expose Observable for components to convert
+  items$ = this.http.get<Item[]>('/items');
+}
+```
+
+#### Mutation Anti-Patterns
+
+❌ **BAD - Don't use httpResource for mutations**
+```typescript
+createItem(item: Item) {
+  httpResource(() => ({ url: '/items', method: 'POST', body: item }));
+}
+```
+
+✅ **GOOD - Use HttpClient for mutations**
+```typescript
+createItem(item: Item): Observable<Item> {
+  return this.http.post<Item>('/items', item);
+}
+```
+
+#### Effect Anti-Patterns
+
+❌ **BAD - Don't use effect() for state propagation**
+```typescript
+items = signal<Item[]>([]);
+filteredItems = signal<Item[]>([]);
+
+constructor() {
+  effect(() => {
+    this.filteredItems.set(
+      this.items().filter(item => item.active)
+    ); // Violates best practices
+  });
+}
+```
+
+✅ **GOOD - Use computed for derived state**
+```typescript
+items = signal<Item[]>([]);
+filteredItems = computed(() =>
+  this.items().filter(item => item.active)
+);
+```
+
+#### Lifecycle Anti-Patterns
+
+❌ **BAD - Don't use ngOnChanges with signals**
+```typescript
+@Input({ required: true }) seasonId!: number;
+ngOnChanges() {
+  // Reacting to input changes
+}
+```
+
+✅ **GOOD - Use computed for reactive transformations**
+```typescript
+seasonId = input.required<number>();
+season = computed(() =>
+  this.store.seasons().find(s => s.id === this.seasonId())
+);
+```
+
+#### Template Anti-Patterns
+
+❌ **BAD - Don't use *ngIf with async pipes**
+```html
+<div *ngIf="data$ | async">{{ data }}</div>
+```
+
+✅ **GOOD - Use @if with signals**
+```html
+@if (data()) {
+  <div>{{ data() }}</div>
+}
+```
+
+#### State Management Anti-Patterns
+
+❌ **DO NOT** use imperative state for reactive data:
+```typescript
+season: Season | null = null; // Wrong
+```
+
+✅ **DO use signals**:
+```typescript
+season = signal<Season | null>(null); // Correct
+```
+
+❌ **DO NOT** use `ngOnChanges` for signal inputs:
+```typescript
+@Input({ required: true }) seasonId!: number;
+ngOnChanges() { ... } // Wrong
+```
+
+✅ **DO use computed** for reactive transformations:
+```typescript
+season = computed(() => { ... }); // Correct
+```
+
+❌ **DO NOT** use `*ngIf` with async pipes:
+```html
+<div *ngIf="data$ | async">...</div> <!-- Old pattern -->
+```
+
+✅ **DO use `@if` with signals**:
+```html
+@if (data()) { ... } <!-- Modern pattern -->
+```
+
+### When to Use Signals vs RxJS
+
+**Use Signals when:**
+- Managing component local state
+- Deriving computed values from other state
+- Working with template bindings and control flow
+- Simple reactive dependencies without complex async patterns
+- State that needs synchronous updates
+
+**Use RxJS when:**
+- Working with complex async operations (HTTP requests, timers, events)
+- Need advanced operators (debounce, throttle, retry, combineLatest, etc.)
+- Managing complex error handling and recovery
+- Handling backpressure or stream buffering
+- Interacting with external libraries or APIs that use Observables
+
+**Interop Patterns:**
+```typescript
+// Convert Observable to Signal
+data = toSignal(http.get('/api/data'), { initialValue: null });
+
+// Convert Signal to Observable (rarely needed)
+data$ = toObservable(data);
+
+// Hybrid: Signal service returns Observable for flexibility
+createItem(item: Item): Observable<Item> {
+  return this.http.post<Item>('/items', item);
+}
+```
+
+**Trade-offs:**
+- **Signals**: Simpler syntax, better template integration, synchronous
+- **RxJS**: More powerful operators, better for complex async streams, mature ecosystem
+
+**Recommendation:** Use signals as the default for local state, use RxJS for async operations and complex stream manipulation.
+
+✅ **GOOD - Use httpResource or expose Observable directly**
+```typescript
+@Injectable({ providedIn: 'root' })
+export class GoodService {
+  itemsResource = httpResource<Item[]>(() => '/items');
+  // Or expose Observable for components to convert
+  items$ = this.http.get<Item[]>('/items');
+}
+```
+
+#### Mutation Anti-Patterns
+
+❌ **BAD - Don't use httpResource for mutations**
+```typescript
+createItem(item: Item) {
+  httpResource(() => ({ url: '/items', method: 'POST', body: item }));
+}
+```
+
+✅ **GOOD - Use HttpClient for mutations**
+```typescript
+createItem(item: Item): Observable<Item> {
+  return this.http.post<Item>('/items', item);
+}
+```
+
+#### Effect Anti-Patterns
+
+❌ **BAD - Don't use effect() for state propagation**
+```typescript
+items = signal<Item[]>([]);
+filteredItems = signal<Item[]>([]);
+
+constructor() {
+  effect(() => {
+    this.filteredItems.set(
+      this.items().filter(item => item.active)
+    ); // Violates best practices
+  });
+}
+```
+
+✅ **GOOD - Use computed for derived state**
+```typescript
+items = signal<Item[]>([]);
+filteredItems = computed(() =>
+  this.items().filter(item => item.active)
+);
+```
+
+#### Lifecycle Anti-Patterns
+
+❌ **BAD - Don't use ngOnChanges with signals**
+```typescript
+@Input({ required: true }) seasonId!: number;
+ngOnChanges() {
+  // Reacting to input changes
+}
+```
+
+✅ **GOOD - Use computed for reactive transformations**
+```typescript
+seasonId = input.required<number>();
+season = computed(() =>
+  this.store.seasons().find(s => s.id === this.seasonId())
+);
+```
+
+#### Template Anti-Patterns
+
+❌ **BAD - Don't use *ngIf with async pipes**
+```html
+<div *ngIf="data$ | async">{{ data }}</div>
+```
+
+✅ **GOOD - Use @if with signals**
+```html
+@if (data()) {
+  <div>{{ data() }}</div>
+}
+```
+
+#### State Management Anti-Patterns
 
 ❌ **DO NOT** use imperative state for reactive data:
 ```typescript
