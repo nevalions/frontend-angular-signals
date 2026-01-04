@@ -1,13 +1,15 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { debounceTime, filter, catchError, retry, tap } from 'rxjs/operators';
 import { TuiAlertService } from '@taiga-ui/core';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Season, SeasonCreate, SeasonUpdate } from '../models/season.model';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -73,4 +75,29 @@ export class SeasonStoreService {
   getMatchesByYear(year: number): Observable<unknown> {
     return this.apiService.customGet(buildApiUrl(`/api/seasons/year/${year}/matches`));
   }
+
+  searchQuery = signal('');
+
+  searchSeasonsResource = rxResource<Season[], { query: string }>({
+    params: computed(() => ({ query: this.searchQuery() })),
+    stream: ({ params }) =>
+      this.http.get<Season[]>(buildApiUrl('/api/seasons/'), {
+        params: { q: params.query },
+      }).pipe(
+        debounceTime(300),
+        filter(() => this.searchQuery().length >= 2),
+        tap(() => {
+          console.log(`Searching seasons: ${this.searchQuery()}`);
+        }),
+        retry(3),
+        catchError((err) => {
+          console.error('Search error:', err);
+          return of([]);
+        }),
+      ),
+  });
+
+  searchResults = computed(() => this.searchSeasonsResource.value() ?? []);
+  searchLoading = computed(() => this.searchSeasonsResource.isLoading());
+  searchError = computed(() => this.searchSeasonsResource.error());
 }

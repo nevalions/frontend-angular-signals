@@ -152,10 +152,20 @@ All components MUST follow these signal patterns:
 - Data that needs automatic loading based on reactive dependencies
 - Requests that don't need RxJS operators (debounce, retry, etc.)
 - Standard CRUD list/data fetching patterns
+- Detail views by ID (direct URL binding)
+- When you want simpler, cleaner code
 
 ```typescript
 // ✅ GOOD - Simple data fetching
 seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
+
+// ✅ GOOD - Detail by ID
+seasonResource = httpResource<Season>(() => buildApiUrl(`/api/seasons/${id}`));
+
+// ✅ GOOD - With reactive dependencies
+seasonsBySportResource = httpResource<Season[]>(() =>
+  buildApiUrl(`/api/sports/${sportId()}/seasons`)
+);
 ```
 
 **Use `rxResource()` for:**
@@ -163,24 +173,71 @@ seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
 - Complex async patterns with RxJS operators
 - Search with debouncing and minimum length filters
 - Requests needing retry logic, timeout handling, or complex error recovery
-- Multiple interdependent API calls
+- Multiple interdependent API calls or orchestration
+- Request cancellation and race condition handling
+- Custom request/response transformation
+- Complex filtering or query composition
 
 ```typescript
 // ✅ GOOD - Complex search with RxJS operators
+searchQuery = signal('');
+
 searchResource = rxResource<Season[]>({
   request: computed(() => ({
     url: buildApiUrl('/api/seasons/'),
     params: { q: this.searchQuery() },
   })),
   loader: (params) =>
-    this.http.get<Season[]>(params.url, { params }).pipe(
+    this.http.get<Season[]>(params.url, { params: params.params }).pipe(
       debounceTime(300),
-      filter((q) => q.length >= 2),
+      filter(() => this.searchQuery().length >= 2),
       retry(3),
-      catchError((err) => of([])),
+      catchError((err) => {
+        this.errorService.log(err);
+        return of([]);
+      }),
     ),
 });
 ```
+
+```typescript
+// ✅ GOOD - Complex request orchestration
+complexDataResource = rxResource<CombinedData>({
+  request: computed(() => ({
+    userId: this.userId(),
+    seasonId: this.seasonId(),
+  })),
+  loader: (params) =>
+    this.http.get<User>(`/api/users/${params.request.userId}`).pipe(
+      switchMap((user) =>
+        this.http.get<Season[]>(`/api/users/${params.request.userId}/seasons`).pipe(
+          map((seasons) => ({ user, seasons, filteredSeasons: seasons })),
+        ),
+      ),
+      timeout(5000),
+      catchError((err) => {
+        this.errorService.log(err);
+        return of({ user: null, seasons: [], filteredSeasons: [] });
+      }),
+    ),
+});
+```
+
+**Decision Matrix:**
+
+| Scenario | Recommended | Reasoning |
+| -- | -- | -- |
+| Simple list fetch | `httpResource()` | Simpler, cleaner API |
+| Detail by ID | `httpResource()` | Direct URL binding |
+| Search with debounce | `rxResource()` | Need debounceTime operator |
+| Auto-retry on failure | `rxResource()` | Need retry operator |
+| Request cancellation | Both work, `rxResource()` has built-in switchMap | Both cancel previous requests |
+| Response transformation | Both work, `httpResource()` has `parse` | Use `httpResource().parse` for simple cases |
+| Multiple dependent requests | `rxResource()` | Need switchMap/combineLatest |
+| Timeout handling | `rxResource()` | Need timeout operator |
+| Complex error recovery | `rxResource()` | Need catchError + retryWhen |
+| Rate limiting | `rxResource()` | Need throttleTime/sampleTime |
+| Data polling | `rxResource()` | Need interval/timer |
 
 **Decision Criteria:**
 
@@ -189,6 +246,40 @@ searchResource = rxResource<Season[]>({
 - Need retry logic? → Use `rxResource()`
 - Simple GET with reactive deps? → Use `httpResource()`
 - Want less boilerplate? → Use `httpResource()`
+- Need request orchestration? → Use `rxResource()`
+- Need timeout handling? → Use `rxResource()`
+
+#### Current Codebase Evaluation
+
+**Evaluated Services (STAF-117):**
+
+All current services correctly use `httpResource()` for simple GET requests:
+
+1. **SeasonStoreService** - `httpResource<Season[]>()` for seasons list
+2. **TournamentStoreService** - `httpResource<Tournament[]>()` for tournaments list
+3. **SportStoreService** - `httpResource<Sport[]>()` for sports list
+4. **PersonStoreService** - `httpResource<Person[]>()` for persons list
+
+**Evaluation Result:** ✅ All services appropriately use `httpResource()`
+
+**Rationale:**
+- All current use cases are simple GET requests without complex query logic
+- No need for RxJS operators (debounce, retry, switchMap, etc.)
+- Direct URL-based fetching with no complex parameter transformations
+- Standard CRUD list/data fetching patterns
+
+**Potential Future Use Cases for `rxResource()`:**
+
+1. **Search functionality** - When implementing search with debouncing (debounceTime, filter)
+2. **Auto-refresh with error recovery** - Network failures with retry logic
+3. **Complex filtering** - Multiple query parameters changing frequently with throttle/debounce
+4. **Data composition** - Combining multiple API calls with switchMap/combineLatest
+5. **Progressive loading** - Timeout handling with fallback data
+6. **Real-time data polling** - Using interval/timer with automatic cleanup
+
+**Proof-of-Concept Examples:**
+
+See `SeasonStoreService.searchSeasons()` for a practical example of `rxResource()` usage with search debouncing.
 
 #### Service Anti-Patterns
 
