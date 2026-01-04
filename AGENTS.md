@@ -132,15 +132,52 @@ All components MUST follow these signal patterns:
    ```
 
 9. **Experimental Features**
+
+   **⚠️ IMPORTANT: `signals: true` is NOT AVAILABLE in Angular 21.x**
+
+   The experimental `signals: true` component decorator option does not exist in Angular 21.0.6 and cannot be used. The TypeScript compiler will reject this option with: "Object literal may only specify known properties, and 'signals' does not exist in type 'Component'."
+
+   See `STAF-119-RESEARCH.md` for comprehensive evaluation.
+
+   **What IS Available (Stable):**
+
+   Function-based component APIs can be used without `signals: true`:
+
    ```typescript
+   import { Component, input, output, model, viewChild } from '@angular/core';
+
    @Component({
-     // signals: true // EXPERIMENTAL - NOT RECOMMENDED FOR PRODUCTION
+     selector: 'app-example',
+     standalone: true,
+     changeDetection: ChangeDetectionStrategy.OnPush,
    })
+   export class ExampleComponent {
+     // Signal inputs (replaces @Input)
+     title = input.required<string>();
+
+     // Signal outputs (replaces @Output)
+     save = output<void>();
+
+     // Two-way binding (replaces [(ngModel)])
+     checked = model(false);
+
+     // Signal queries (replaces @ViewChild)
+     button = viewChild.required('button');
+   }
    ```
 
-   - `signals: true` is experimental and not recommended for production use
-   - Wait for stable release before adoption
-   - Monitor Angular release notes for updates
+   **Recommendation:**
+   - DO NOT use `signals: true` - it does not exist in Angular 21.x
+   - DO use function-based component APIs (`input()`, `output()`, `model()`) for new components
+   - DO continue using `signal()`, `computed()`, `effect()` for state management
+   - DO monitor Angular release notes for stable `signals: true` announcement
+   - Re-evaluate in Q2 2026 or when Angular team announces stable release
+
+   See `STAF-119-RESEARCH.md` for detailed evaluation, including:
+   - What `signals: true` would do if available
+   - Current status in Angular 21.x
+   - Comparison with available function-based APIs
+   - Re-evaluation criteria and timeline
 
 ### Service Patterns
 
