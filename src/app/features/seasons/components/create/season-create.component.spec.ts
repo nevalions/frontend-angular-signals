@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
+import { Field, min, max, form } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { SeasonCreateComponent } from './season-create.component';
 import { SeasonStoreService } from '../../services/season-store.service';
@@ -24,11 +23,10 @@ describe('SeasonCreateComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        FormBuilder,
         { provide: Router, useValue: routerMock },
         { provide: SeasonStoreService, useValue: storeMock },
       ],
-      imports: [ReactiveFormsModule, FormsModule],
+      imports: [],
     });
 
     fixture = TestBed.createComponent(SeasonCreateComponent);
@@ -39,21 +37,14 @@ describe('SeasonCreateComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have invalid form initially', () => {
-    expect(component.seasonForm.invalid).toBe(true);
-  });
-
   it('should navigate to list on cancel', () => {
     component.navigateToList();
-
     expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
   });
 
   it('should call createSeason on valid form submit', () => {
-    component.seasonForm.setValue({
-      year: 2024,
-      description: 'Test season',
-    });
+    component.formModel.set({ year: '2024', description: 'Test season' });
+    fixture.detectChanges();
 
     component.onSubmit();
 
@@ -64,10 +55,8 @@ describe('SeasonCreateComponent', () => {
   });
 
   it('should not call createSeason on invalid form submit', () => {
-    component.seasonForm.setValue({
-      year: 1800,
-      description: 'Invalid year',
-    });
+    component.formModel.set({ year: '1800', description: 'Invalid year' });
+    fixture.detectChanges();
 
     component.onSubmit();
 
@@ -75,10 +64,8 @@ describe('SeasonCreateComponent', () => {
   });
 
   it('should navigate to list after successful creation', () => {
-    component.seasonForm.setValue({
-      year: 2024,
-      description: 'Test season',
-    });
+    component.formModel.set({ year: '2024', description: 'Test season' });
+    fixture.detectChanges();
 
     component.onSubmit();
 
@@ -86,44 +73,66 @@ describe('SeasonCreateComponent', () => {
   });
 
   it('should handle year validation - min 1900', () => {
-    component.yearControl?.setValue(1899);
+    component.formModel.set({ year: '1899', description: '' });
+    fixture.detectChanges();
 
-    expect(component.yearControl?.valid).toBe(false);
-    expect(component.yearControl?.errors?.['min']).toBeDefined();
+    const yearState = component.seasonForm.year();
+    expect(yearState.invalid()).toBe(true);
   });
 
   it('should handle year validation - max 2999', () => {
-    component.yearControl?.setValue(3000);
+    component.formModel.set({ year: '3000', description: '' });
+    fixture.detectChanges();
 
-    expect(component.yearControl?.valid).toBe(false);
-    expect(component.yearControl?.errors?.['max']).toBeDefined();
+    const yearState = component.seasonForm.year();
+    expect(yearState.invalid()).toBe(true);
   });
 
   it('should accept valid year within range', () => {
-    component.yearControl?.setValue(2024);
+    component.formModel.set({ year: '2024', description: '' });
+    fixture.detectChanges();
 
-    expect(component.yearControl?.valid).toBe(true);
+    const yearState = component.seasonForm.year();
+    expect(yearState.invalid()).toBe(false);
   });
 
   it('should require year field', () => {
-    component.yearControl?.setValue('');
+    component.formModel.set({ year: '', description: '' });
+    fixture.detectChanges();
 
-    expect(component.yearControl?.hasError('required')).toBe(true);
+    const yearState = component.seasonForm.year();
+    expect(yearState.invalid()).toBe(true);
   });
 
-  it('should allow optional description', () => {
-    component.descriptionControl?.setValue('');
+  it('should allow empty description', () => {
+    component.formModel.set({ year: '2024', description: '' });
+    fixture.detectChanges();
 
-    expect(component.descriptionControl?.valid).toBe(true);
+    const descState = component.seasonForm.description();
+    expect(descState.valid()).toBe(true);
   });
 
-  it('should provide yearControl accessor', () => {
-    expect(component.yearControl).toBeDefined();
-    expect(component.yearControl).toBe(component.seasonForm.get('year'));
+  it('should have seasonForm signal', () => {
+    expect(component.seasonForm).toBeDefined();
   });
 
-  it('should provide descriptionControl accessor', () => {
-    expect(component.descriptionControl).toBeDefined();
-    expect(component.descriptionControl).toBe(component.seasonForm.get('description'));
+  it('should have formModel signal', () => {
+    expect(component.formModel).toBeDefined();
+  });
+
+  it('should not call createSeason when form is invalid', () => {
+    component.formModel.set({ year: '', description: '' });
+
+    component.onSubmit();
+
+    expect(storeMock.createSeason).not.toHaveBeenCalled();
+  });
+
+  it('should not navigate when form is invalid', () => {
+    component.formModel.set({ year: '', description: '' });
+
+    component.onSubmit();
+
+    expect(routerMock.navigate).not.toHaveBeenCalled();
   });
 });

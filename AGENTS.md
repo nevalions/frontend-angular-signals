@@ -99,19 +99,32 @@ All components MUST follow these signal patterns:
    checked = model(false);
    ```
 
-7. **Signal Forms (model())**
+7. **Signal Forms (form())**
 
    ```typescript
-   // Signal-based two-way binding with validation
-   year = model('', {
-     validators: [Validators.required, Validators.min(1900)],
+   import { form, Field, required, min, max } from '@angular/forms/signals';
+
+   // ✅ CORRECT - Signal Forms with field-level validation
+   formModel = signal({
+     year: '',
+     description: '',
    });
-   description = model('');
+
+   formGroup = form(this.formModel, (fieldPath) => {
+     required(fieldPath.year, { message: 'Year is required' });
+     min(fieldPath.year, 1900, { message: 'Year must be at least 1900' });
+   });
 
    // Template usage
-   // <input [(ngModel)]="year()" />
-   // <input [(ngModel)]="description()" />
+   // <input [formControl]="formGroup.controls.year" />
+   // <input [formControl]="formGroup.controls.description" />
+   // @if (formGroup.controls.year.errors?.required) { <div>Year is required</div> }
    ```
+
+   **IMPORTANT:**
+   - `model()` from `@angular/core` is for **component input/output** (parent-child communication), NOT for form validation
+   - Signal Forms use `form()` from `@angular/forms/signals` with field-level validation functions
+   - Do NOT use `Validators.required` or `Validators.min` with `model()` - the `validators` option doesn't exist
 
 8. **linkedSignal() for Advanced Derived State**
 
