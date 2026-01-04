@@ -1,46 +1,35 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Field, required, form } from '@angular/forms/signals';
 import { TuiButton } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { TournamentCreate } from '../../models/tournament.model';
 
+interface TournamentFormModel {
+  title: string;
+  description: string;
+}
+
 @Component({
   selector: 'app-tournament-create',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TuiButton],
+  imports: [CommonModule, Field, TuiButton],
   templateUrl: './tournament-create.component.html',
   styleUrl: './tournament-create.component.less',
 })
-export class TournamentCreateComponent implements OnInit {
-  private fb = inject(FormBuilder);
+export class TournamentCreateComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private tournamentStore = inject(TournamentStoreService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
 
-  sportId = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('sportId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
-
-  year = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('year');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  sportId = signal<number | null>(null);
+  year = signal<number | null>(null);
 
   sport = computed(() => {
     const id = this.sportId();
@@ -54,16 +43,20 @@ export class TournamentCreateComponent implements OnInit {
     return this.seasonStore.seasonByYear().get(y) || null;
   });
 
-  tournamentForm: FormGroup = this.fb.group({
-    title: ['', Validators.required],
-    description: [''],
+  formModel = signal<TournamentFormModel>({
+    title: '',
+    description: '',
+  });
+
+  tournamentForm = form(this.formModel, (fieldPath) => {
+    required(fieldPath.title, { message: 'Title is required' });
   });
 
   constructor() {
     effect(() => {
       const season = this.season();
       if (season) {
-        this.tournamentForm.patchValue({});
+        this.formModel.set({ title: '', description: '' });
       }
     });
   }
@@ -71,7 +64,7 @@ export class TournamentCreateComponent implements OnInit {
   ngOnInit(): void {}
 
   onSubmit(): void {
-    if (this.tournamentForm.valid) {
+    if (this.tournamentForm().valid()) {
       const sportId = this.sportId();
       const year = this.year();
       if (!sportId || !year) {
@@ -81,9 +74,10 @@ export class TournamentCreateComponent implements OnInit {
       if (!season) {
         return;
       }
+      const formData = this.formModel();
       const data: TournamentCreate = {
-        title: this.tournamentForm.value.title as string,
-        description: this.tournamentForm.value.description as string | null,
+        title: formData.title,
+        description: formData.description || null,
         sport_id: sportId,
         season_id: season.id,
       };
@@ -99,13 +93,5 @@ export class TournamentCreateComponent implements OnInit {
     if (sportId && year) {
       this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments']);
     }
-  }
-
-  get titleControl() {
-    return this.tournamentForm.get('title');
-  }
-
-  get descriptionControl() {
-    return this.tournamentForm.get('description');
   }
 }

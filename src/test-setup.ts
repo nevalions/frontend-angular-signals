@@ -11,13 +11,3 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 });
-
-vi.stubGlobal('TestBed', {
-  initTestEnvironment: vi.fn(),
-});
-
-vi.stubGlobal('TestBedImpl', {
-  getCompilerFacade: vi.fn(() => ({
-    applyProviderOverridesInScope: vi.fn(),
-  })),
-});

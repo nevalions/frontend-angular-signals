@@ -10,25 +10,25 @@
     }
     <div class="tournament-edit__actions">
       <button tuiButton type="button" (click)="navigateBack()">Cancel</button>
-      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="tournamentForm.invalid">Save Changes</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="tournamentForm().invalid()">Save Changes</button>
     </div>
   </header>
 
   @if (loading()) {
     <div class="tournament-edit__loading">Loading tournament...</div>
   } @else if (tournament()) {
-    <form [formGroup]="tournamentForm" class="tournament-edit__form">
+    <form class="tournament-edit__form">
       <div class="tournament-edit__field">
         <label for="title" class="tournament-edit__label">Title *</label>
         <input
           id="title"
           type="text"
-          formControlName="title"
+          [field]="tournamentForm.title"
           class="tournament-edit__input"
-          [class.tournament-edit__input--invalid]="titleControl?.invalid && titleControl?.touched"
+          [class.tournament-edit__input--invalid]="tournamentForm.title().touched() && tournamentForm.title().invalid()"
         />
-        @if (titleControl?.invalid && titleControl?.touched) {
-          @if (titleControl?.errors?.['required']) {
+        @if (tournamentForm.title().touched() && tournamentForm.title().invalid()) {
+          @if (tournamentForm.title().errors()[0]?.message === 'Title is required') {
             <div class="tournament-edit__error">Title is required</div>
           }
         }
@@ -38,7 +38,7 @@
         <label for="description" class="tournament-edit__label">Description</label>
         <textarea
           id="description"
-          formControlName="description"
+          [field]="tournamentForm.description"
           class="tournament-edit__textarea"
           rows="4"
           placeholder="Enter a description for tournament (optional)"

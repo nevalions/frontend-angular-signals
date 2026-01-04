@@ -1,27 +1,37 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Field, required, min, max, form } from '@angular/forms/signals';
 import { TuiButton } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { SeasonCreate } from '../../models/season.model';
+
+interface SeasonFormModel {
+  year: string;
+  description: string;
+}
 
 @Component({
   selector: 'app-season-create',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TuiButton],
+  imports: [CommonModule, Field, TuiButton],
   templateUrl: './season-create.component.html',
   styleUrl: './season-create.component.less',
 })
 export class SeasonCreateComponent {
-  private fb = inject(FormBuilder);
   private router = inject(Router);
   private seasonStore = inject(SeasonStoreService);
 
-  seasonForm: FormGroup = this.fb.group({
-    year: ['', [Validators.required, Validators.min(1900), Validators.max(2999)]],
-    description: [''],
+  formModel = signal<SeasonFormModel>({
+    year: '',
+    description: '',
+  });
+
+  seasonForm = form(this.formModel, (fieldPath) => {
+    required(fieldPath.year, { message: 'Year is required' });
+    min(fieldPath.year, 1900, { message: 'Year must be at least 1900' });
+    max(fieldPath.year, 2999, { message: 'Year must be at most 2999' });
   });
 
   navigateToList(): void {
@@ -29,23 +39,15 @@ export class SeasonCreateComponent {
   }
 
   onSubmit(): void {
-    if (this.seasonForm.valid) {
+    if (this.seasonForm().valid()) {
+      const formData = this.formModel();
       const seasonData: SeasonCreate = {
-        year: this.seasonForm.value.year!,
-        description: this.seasonForm.value.description || null,
+        year: Number(formData.year),
+        description: formData.description || null,
       };
-
       this.seasonStore.createSeason(seasonData).subscribe(() => {
         this.router.navigate(['/seasons']);
       });
     }
-  }
-
-  get yearControl() {
-    return this.seasonForm.get('year');
-  }
-
-  get descriptionControl() {
-    return this.seasonForm.get('description');
   }
 }

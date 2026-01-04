@@ -10,22 +10,22 @@
     }
     <div class="tournament-create__actions">
       <button tuiButton type="button" (click)="navigateBack()">Cancel</button>
-      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="tournamentForm.invalid">Create Tournament</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="tournamentForm().invalid()">Create Tournament</button>
     </div>
   </header>
 
-  <form [formGroup]="tournamentForm" class="tournament-create__form">
+  <form class="tournament-create__form">
     <div class="tournament-create__field">
       <label for="title" class="tournament-create__label">Title *</label>
       <input
         id="title"
         type="text"
-        formControlName="title"
+        [field]="tournamentForm.title"
         class="tournament-create__input"
-        [class.tournament-create__input--invalid]="titleControl?.invalid && titleControl?.touched"
+        [class.tournament-create__input--invalid]="tournamentForm.title().touched() && tournamentForm.title().invalid()"
       />
-      @if (titleControl?.invalid && titleControl?.touched) {
-        @if (titleControl?.errors?.['required']) {
+      @if (tournamentForm.title().touched() && tournamentForm.title().invalid()) {
+        @if (tournamentForm.title().errors()[0]?.message === 'Title is required') {
           <div class="tournament-create__error">Title is required</div>
         }
       }
@@ -35,7 +35,7 @@
       <label for="description" class="tournament-create__label">Description</label>
       <textarea
         id="description"
-        formControlName="description"
+        [field]="tournamentForm.description"
         class="tournament-create__textarea"
         rows="4"
         placeholder="Enter a description for tournament (optional)"
