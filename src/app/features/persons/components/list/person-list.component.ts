@@ -45,6 +45,17 @@ export class PersonListComponent {
     });
   });
 
+  paginatedPersons = computed(() => {
+    const persons = this.sortedPersons();
+    const currentPage = this.page();
+    const currentPageSize = this.size();
+
+    const start = currentPage * currentPageSize;
+    const end = start + currentPageSize;
+
+    return persons.slice(start, end);
+  });
+
   onSortChange({ sortKey, sortDirection }: TuiSortChange<Person>): void {
     this.sortBy.set(sortKey);
     this.sortDirection.set(sortDirection);
