@@ -1,5 +1,12 @@
 # AGENTS.md - Development Guidelines
 
+## UI/Styles Development
+
+**IMPORTANT**: When editing styles and UI components, use the built-in MCP tools:
+- Use `angular-cli_*` MCP tools for Angular-specific tasks
+- Use `taiga-ui_*` MCP tools for Taiga UI component library
+- Delegate to the `frontend-angular-taiga` agent for Angular + Taiga UI development tasks with Playwright testing
+
 ### Service Patterns
 
 #### Canonical Signal-Based Service Pattern
