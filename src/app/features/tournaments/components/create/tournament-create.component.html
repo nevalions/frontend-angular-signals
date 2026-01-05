@@ -1,33 +1,31 @@
 <div class="tournament-create">
   <header class="tournament-create__header">
     <h1 class="tournament-create__title">Create New Tournament</h1>
-    @if (sport() && season()) {
+    @if (sport && season) {
       <div class="tournament-create__context">
-        <span>{{ sport()!.title }}</span>
+        <span>{{ sport.title }}</span>
         <span>›</span>
-        <span>{{ season()!.year }}</span>
+        <span>{{ season.year }}</span>
       </div>
     }
     <div class="tournament-create__actions">
       <button tuiButton type="button" (click)="navigateBack()">Cancel</button>
-      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="tournamentForm().invalid()">Create Tournament</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="tournamentForm.invalid">Create Tournament</button>
     </div>
   </header>
 
-  <form class="tournament-create__form">
+  <form class="tournament-create__form" [formGroup]="tournamentForm">
     <div class="tournament-create__field">
       <label for="title" class="tournament-create__label">Title *</label>
       <input
         id="title"
         type="text"
-        [field]="tournamentForm.title"
+        formControlName="title"
         class="tournament-create__input"
-        [class.tournament-create__input--invalid]="tournamentForm.title().touched() && tournamentForm.title().invalid()"
+        [class.tournament-create__input--invalid]="tournamentForm.get('title')?.touched && tournamentForm.get('title')?.invalid"
       />
-      @if (tournamentForm.title().touched() && tournamentForm.title().invalid()) {
-        @if (tournamentForm.title().errors()[0]?.message === 'Title is required') {
-          <div class="tournament-create__error">Title is required</div>
-        }
+      @if (tournamentForm.get('title')?.touched && tournamentForm.get('title')?.errors?.['required']) {
+        <div class="tournament-create__error">Title is required</div>
       }
     </div>
 
@@ -35,7 +33,7 @@
       <label for="description" class="tournament-create__label">Description</label>
       <textarea
         id="description"
-        [field]="tournamentForm.description"
+        formControlName="description"
         class="tournament-create__textarea"
         rows="4"
         placeholder="Enter a description for tournament (optional)"
