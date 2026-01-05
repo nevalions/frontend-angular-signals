@@ -52,3 +52,9 @@ __screenshots__
 CLAUDE.md
 refactor.md
 
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/**/*.spec.ts-snapshots/

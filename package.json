@@ -11,7 +11,10 @@
     "lint": "ng lint",
     "test:unit": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:browser": "vitest run --config vitest.config.browser.ts"
+    "test:browser": "vitest run --config vitest.config.browser.ts",
+    "test:visual": "playwright test",
+    "test:visual:ui": "playwright test --ui",
+    "test:visual:report": "playwright show-report"
   },
   "prettier": {
     "printWidth": 100,
@@ -56,6 +59,8 @@
     "@angular/compiler-cli": "^21.0.0",
     "@angular/language-service": "^21.0.6",
     "@eslint/js": "^9.39.2",
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.3",
     "@typescript-eslint/eslint-plugin": "^8.51.0",
     "@typescript-eslint/parser": "^8.51.0",
     "@vitest/coverage-v8": "^4.0.16",
