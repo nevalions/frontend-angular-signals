@@ -12,10 +12,17 @@ import { Sport } from '../../../sports/models/sport.model';
 
 describe('TournamentListComponent', () => {
   let component: TournamentListComponent;
-  let routerMock: any;
-  let tournamentStoreMock: any;
-  let seasonStoreMock: any;
-  let sportStoreMock: any;
+  let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let tournamentStoreMock: {
+    tournaments: ReturnType<typeof vi.fn>;
+    loading: ReturnType<typeof vi.fn>;
+    tournamentsBySportAndSeason: ReturnType<typeof vi.fn>;
+  };
+  let seasonStoreMock: {
+    seasons: ReturnType<typeof vi.fn>;
+    seasonByYear: ReturnType<typeof vi.fn>;
+  };
+  let sportStoreMock: { sports: ReturnType<typeof vi.fn> };
 
   const mockTournaments: Tournament[] = [
     { id: 1, title: 'Championship 2024', season_id: 1, sport_id: 1, description: 'Main tournament' },

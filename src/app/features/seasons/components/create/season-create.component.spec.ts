@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Field, min, max, form } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { SeasonCreateComponent } from './season-create.component';
 import { SeasonStoreService } from '../../services/season-store.service';
@@ -9,8 +8,8 @@ import { of } from 'rxjs';
 describe('SeasonCreateComponent', () => {
   let component: SeasonCreateComponent;
   let fixture: ComponentFixture<SeasonCreateComponent>;
-  let routerMock: any;
-  let storeMock: any;
+  let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let storeMock: { createSeason: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerMock = {

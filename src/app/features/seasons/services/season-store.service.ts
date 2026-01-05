@@ -1,15 +1,13 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
-import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
-import { debounceTime, filter, catchError, retry, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { TuiAlertService } from '@taiga-ui/core';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Season, SeasonCreate, SeasonUpdate } from '../models/season.model';
-import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

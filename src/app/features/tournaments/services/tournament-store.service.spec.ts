@@ -12,7 +12,7 @@ import { buildApiUrl } from '../../../core/config/api.constants';
 describe('TournamentStoreService', () => {
   let service: TournamentStoreService;
   let httpMock: HttpTestingController;
-  let alertServiceMock: any;
+  let alertServiceMock: Partial<TuiAlertService>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({

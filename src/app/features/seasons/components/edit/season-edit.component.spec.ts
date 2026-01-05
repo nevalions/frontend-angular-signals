@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { SeasonEditComponent } from './season-edit.component';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
@@ -12,9 +12,9 @@ import { Season } from '../../models/season.model';
 describe('SeasonEditComponent', () => {
   let component: SeasonEditComponent;
   let fixture: ComponentFixture<SeasonEditComponent>;
-  let routerMock: any;
-  let routeMock: any;
-  let storeMock: any;
+  let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }> };
+  let storeMock: { seasons: ReturnType<typeof vi.fn>; updateSeason: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerMock = {

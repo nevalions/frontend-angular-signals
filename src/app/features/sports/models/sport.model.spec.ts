@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { describe, it, expect } from 'vitest';
 import { Sport, SportCreate, SportUpdate } from './sport.model';
 
 describe('Sport Models', () => {

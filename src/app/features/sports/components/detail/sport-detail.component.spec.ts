@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { SportDetailComponent } from './sport-detail.component';
 import { SportStoreService } from '../../services/sport-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
@@ -11,10 +11,10 @@ import { Sport } from '../../models/sport.model';
 describe('SportDetailComponent', () => {
   let component: SportDetailComponent;
   let fixture: ComponentFixture<SportDetailComponent>;
-  let routerMock: any;
-  let routeMock: any;
-  let sportStoreMock: any;
-  let seasonStoreMock: any;
+  let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }> };
+  let sportStoreMock: { sports: ReturnType<typeof vi.fn>; getTournamentsBySport: ReturnType<typeof vi.fn> };
+  let seasonStoreMock: { seasons: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerMock = {

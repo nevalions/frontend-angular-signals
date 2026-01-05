@@ -5,11 +5,17 @@ import { SportListComponent } from './sport-list.component';
 import { SportStoreService } from '../../services/sport-store.service';
 import { Sport } from '../../models/sport.model';
 
+interface SportStoreMock {
+  sports: ReturnType<typeof vi.fn>;
+  loading: ReturnType<typeof vi.fn>;
+  error: ReturnType<typeof vi.fn>;
+}
+
 describe('SportListComponent', () => {
   let component: SportListComponent;
   let fixture: ComponentFixture<SportListComponent>;
-  let routerMock: any;
-  let storeMock: any;
+  let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let storeMock: SportStoreMock;
 
   beforeEach(() => {
     routerMock = {

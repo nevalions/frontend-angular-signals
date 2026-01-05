@@ -5,11 +5,17 @@ import { SeasonListComponent } from './season-list.component';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
 
+interface SeasonStoreMock {
+  seasons: ReturnType<typeof vi.fn>;
+  loading: ReturnType<typeof vi.fn>;
+  error: ReturnType<typeof vi.fn>;
+}
+
 describe('SeasonListComponent', () => {
   let component: SeasonListComponent;
   let fixture: ComponentFixture<SeasonListComponent>;
-  let routerMock: any;
-  let storeMock: any;
+  let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let storeMock: SeasonStoreMock;
 
   beforeEach(() => {
     routerMock = {

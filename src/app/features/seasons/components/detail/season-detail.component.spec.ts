@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { SeasonDetailComponent } from './season-detail.component';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
@@ -10,13 +10,25 @@ import { Season } from '../../models/season.model';
 describe('SeasonDetailComponent', () => {
   let component: SeasonDetailComponent;
   let fixture: ComponentFixture<SeasonDetailComponent>;
-  let routerMock: any;
-  let routeMock: any;
-  let storeMock: any;
+  let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let routeMock: { paramMap: Observable<{ get: (_key: string) => string }> };
+  let storeMock: { seasons: ReturnType<typeof vi.fn>; deleteSeason: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerMock = {
       navigate: vi.fn(),
+    };
+
+    routeMock = {
+      paramMap: of({ get: (_key: string) => '1' }),
+    };
+
+    storeMock = {
+      seasons: vi.fn().mockReturnValue([
+        { id: 1, year: 2024, description: 'Test season' } as Season,
+        { id: 2, year: 2025, description: 'Another season' } as Season,
+      ]),
+      deleteSeason: vi.fn().mockReturnValue(of(undefined)),
     };
 
     routeMock = {
@@ -104,7 +116,7 @@ describe('SeasonDetailComponent', () => {
 
   it('should return 0 when seasonId is null (Number() conversion)', () => {
     const nullRouteMock = {
-      paramMap: of({ get: (key: string) => null }),
+      paramMap: of({ get: (_key: string) => null }),
     };
 
     TestBed.resetTestingModule();

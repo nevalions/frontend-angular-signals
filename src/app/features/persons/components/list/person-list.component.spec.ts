@@ -6,7 +6,11 @@ import { PersonStoreService } from '../../services/person-store.service';
 describe('PersonListComponent', () => {
   let component: PersonListComponent;
   let fixture: ComponentFixture<PersonListComponent>;
-  let storeMock: any;
+  let storeMock: {
+    persons: ReturnType<typeof vi.fn>;
+    loading: ReturnType<typeof vi.fn>;
+    error: ReturnType<typeof vi.fn>;
+  };
 
   const mockPersons = [
     { id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null },
