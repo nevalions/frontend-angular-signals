@@ -9,14 +9,6 @@
   "projects": {
     "frontend-angular-signals": {
       "projectType": "application",
-      "allowedCommonJsDependencies": [
-        "@taiga-ui/core",
-        "@taiga-ui/kit",
-        "@taiga-ui/cdk",
-        "@taiga-ui/i18n",
-        "@taiga-ui/addon-table",
-        "@taiga-ui/addon-mobile"
-      ],
       "schematics": {
         "@schematics/angular:component": {
           "style": "less",
@@ -51,6 +43,14 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "allowedCommonJsDependencies": [
+              "@taiga-ui/core",
+              "@taiga-ui/kit",
+              "@taiga-ui/cdk",
+              "@taiga-ui/i18n",
+              "@taiga-ui/addon-table",
+              "@taiga-ui/addon-mobile"
+            ],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "less",
