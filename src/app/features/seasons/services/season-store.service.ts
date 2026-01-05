@@ -75,29 +75,4 @@ export class SeasonStoreService {
   getMatchesByYear(year: number): Observable<unknown> {
     return this.apiService.customGet(buildApiUrl(`/api/seasons/year/${year}/matches`));
   }
-
-  searchQuery = signal('');
-
-  searchSeasonsResource = rxResource<Season[], { query: string }>({
-    params: computed(() => ({ query: this.searchQuery() })),
-    stream: ({ params }) =>
-      this.http.get<Season[]>(buildApiUrl('/api/seasons/'), {
-        params: { q: params.query },
-      }).pipe(
-        debounceTime(300),
-        filter(() => this.searchQuery().length >= 2),
-        tap(() => {
-          console.log(`Searching seasons: ${this.searchQuery()}`);
-        }),
-        retry(3),
-        catchError((err) => {
-          console.error('Search error:', err);
-          return of([]);
-        }),
-      ),
-  });
-
-  searchResults = computed(() => this.searchSeasonsResource.value() ?? []);
-  searchLoading = computed(() => this.searchSeasonsResource.isLoading());
-  searchError = computed(() => this.searchSeasonsResource.error());
 }
