@@ -99,32 +99,28 @@ All components MUST follow these signal patterns:
    checked = model(false);
    ```
 
-7. **Signal Forms (form())**
+7. **Reactive Forms (Traditional)**
 
-   ```typescript
-   import { form, Field, required, min, max } from '@angular/forms/signals';
+    ```typescript
+    import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 
-   // ✅ CORRECT - Signal Forms with field-level validation
-   formModel = signal({
-     year: '',
-     description: '',
-   });
+    // ✅ CORRECT - Traditional Reactive Forms with validation
+    seasonForm = this.fb.group({
+      year: ['', [Validators.required, Validators.min(1900)]],
+      description: [''],
+    });
 
-   formGroup = form(this.formModel, (fieldPath) => {
-     required(fieldPath.year, { message: 'Year is required' });
-     min(fieldPath.year, 1900, { message: 'Year must be at least 1900' });
-   });
+    // Template usage
+    // <input formControlName="year" />
+    // <input formControlName="description" />
+    // @if (seasonForm.get('year')?.errors?.required) { <div>Year is required</div> }
+    ```
 
-   // Template usage
-   // <input [formControl]="formGroup.controls.year" />
-   // <input [formControl]="formGroup.controls.description" />
-   // @if (formGroup.controls.year.errors?.required) { <div>Year is required</div> }
-   ```
-
-   **IMPORTANT:**
-   - `model()` from `@angular/core` is for **component input/output** (parent-child communication), NOT for form validation
-   - Signal Forms use `form()` from `@angular/forms/signals` with field-level validation functions
-   - Do NOT use `Validators.required` or `Validators.min` with `model()` - the `validators` option doesn't exist
+    **⚠️ IMPORTANT - DO NOT use Signal Forms:**
+    - Signal Forms (`form()` from `@angular/forms/signals`) are in BETA
+    - Use traditional Reactive Forms (`FormBuilder`, `FormGroup`, `FormControl`)
+    - Signal Forms may have breaking changes in future releases
+    - Use `Validators.required`, `Validators.min` etc. from `@angular/forms`
 
 8. **linkedSignal() for Advanced Derived State**
 
