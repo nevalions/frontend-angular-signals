@@ -1,10 +1,9 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { TuiAlertService } from '@taiga-ui/core';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Season, SeasonCreate, SeasonUpdate } from '../models/season.model';
@@ -16,9 +15,9 @@ export class SeasonStoreService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private apiService = inject(ApiService);
-  private readonly alerts = inject(TuiAlertService);
+  private readonly injector = inject(Injector);
 
-  seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'));
+  seasonsResource = httpResource<Season[]>(() => buildApiUrl('/api/seasons/'), { injector: this.injector });
 
   seasons = computed(() => this.seasonsResource.value() ?? []);
   loading = computed(() => this.seasonsResource.isLoading());
@@ -36,30 +35,15 @@ export class SeasonStoreService {
   }
 
   createSeason(seasonData: SeasonCreate): Observable<Season> {
-    return this.apiService.post<Season>('/api/seasons/', seasonData).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Season created successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.post<Season>('/api/seasons/', seasonData).pipe(tap(() => this.reload()));
   }
 
   updateSeason(id: number, seasonData: SeasonUpdate): Observable<Season> {
-    return this.apiService.put<Season>('/api/seasons/', id, seasonData).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Season updated successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.put<Season>('/api/seasons/', id, seasonData).pipe(tap(() => this.reload()));
   }
 
   deleteSeason(id: number): Observable<void> {
-    return this.apiService.delete('/api/seasons', id).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Season deleted successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.delete('/api/seasons', id).pipe(tap(() => this.reload()));
   }
 
   getTournamentsByYear(year: number): Observable<unknown> {

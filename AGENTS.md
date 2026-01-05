@@ -3,6 +3,7 @@
 ## UI/Styles Development
 
 **IMPORTANT**: When editing styles and UI components, use the built-in MCP tools:
+
 - Use `angular-cli_*` MCP tools for Angular-specific tasks
 - Use `taiga-ui_*` MCP tools for Taiga UI component library
 - Delegate to the `frontend-angular-taiga` agent for Angular + Taiga UI development tasks with Playwright testing
@@ -108,26 +109,26 @@ All components MUST follow these signal patterns:
 
 7. **Reactive Forms (Traditional)**
 
-    ```typescript
-    import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+   ```typescript
+   import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 
-    // ✅ CORRECT - Traditional Reactive Forms with validation
-    seasonForm = this.fb.group({
-      year: ['', [Validators.required, Validators.min(1900)]],
-      description: [''],
-    });
+   // ✅ CORRECT - Traditional Reactive Forms with validation
+   seasonForm = this.fb.group({
+     year: ['', [Validators.required, Validators.min(1900)]],
+     description: [''],
+   });
 
-    // Template usage
-    // <input formControlName="year" />
-    // <input formControlName="description" />
-    // @if (seasonForm.get('year')?.errors?.required) { <div>Year is required</div> }
-    ```
+   // Template usage
+   // <input formControlName="year" />
+   // <input formControlName="description" />
+   // @if (seasonForm.get('year')?.errors?.required) { <div>Year is required</div> }
+   ```
 
-    **⚠️ IMPORTANT - DO NOT use Signal Forms:**
-    - Signal Forms (`form()` from `@angular/forms/signals`) are in BETA
-    - Use traditional Reactive Forms (`FormBuilder`, `FormGroup`, `FormControl`)
-    - Signal Forms may have breaking changes in future releases
-    - Use `Validators.required`, `Validators.min` etc. from `@angular/forms`
+   **⚠️ IMPORTANT - DO NOT use Signal Forms:**
+   - Signal Forms (`form()` from `@angular/forms/signals`) are in BETA
+   - Use traditional Reactive Forms (`FormBuilder`, `FormGroup`, `FormControl`)
+   - Signal Forms may have breaking changes in future releases
+   - Use `Validators.required`, `Validators.min` etc. from `@angular/forms`
 
 8. **linkedSignal() for Advanced Derived State**
 
@@ -217,7 +218,7 @@ seasonResource = httpResource<Season>(() => buildApiUrl(`/api/seasons/${id}`));
 
 // ✅ GOOD - With reactive dependencies
 seasonsBySportResource = httpResource<Season[]>(() =>
-  buildApiUrl(`/api/sports/${sportId()}/seasons`)
+  buildApiUrl(`/api/sports/${sportId()}/seasons`),
 );
 ```
 
@@ -263,9 +264,9 @@ complexDataResource = rxResource<CombinedData>({
   loader: (params) =>
     this.http.get<User>(`/api/users/${params.request.userId}`).pipe(
       switchMap((user) =>
-        this.http.get<Season[]>(`/api/users/${params.request.userId}/seasons`).pipe(
-          map((seasons) => ({ user, seasons, filteredSeasons: seasons })),
-        ),
+        this.http
+          .get<Season[]>(`/api/users/${params.request.userId}/seasons`)
+          .pipe(map((seasons) => ({ user, seasons, filteredSeasons: seasons }))),
       ),
       timeout(5000),
       catchError((err) => {
@@ -278,19 +279,19 @@ complexDataResource = rxResource<CombinedData>({
 
 **Decision Matrix:**
 
-| Scenario | Recommended | Reasoning |
-| -- | -- | -- |
-| Simple list fetch | `httpResource()` | Simpler, cleaner API |
-| Detail by ID | `httpResource()` | Direct URL binding |
-| Search with debounce | `rxResource()` | Need debounceTime operator |
-| Auto-retry on failure | `rxResource()` | Need retry operator |
-| Request cancellation | Both work, `rxResource()` has built-in switchMap | Both cancel previous requests |
-| Response transformation | Both work, `httpResource()` has `parse` | Use `httpResource().parse` for simple cases |
-| Multiple dependent requests | `rxResource()` | Need switchMap/combineLatest |
-| Timeout handling | `rxResource()` | Need timeout operator |
-| Complex error recovery | `rxResource()` | Need catchError + retryWhen |
-| Rate limiting | `rxResource()` | Need throttleTime/sampleTime |
-| Data polling | `rxResource()` | Need interval/timer |
+| Scenario                    | Recommended                                      | Reasoning                                   |
+| --------------------------- | ------------------------------------------------ | ------------------------------------------- |
+| Simple list fetch           | `httpResource()`                                 | Simpler, cleaner API                        |
+| Detail by ID                | `httpResource()`                                 | Direct URL binding                          |
+| Search with debounce        | `rxResource()`                                   | Need debounceTime operator                  |
+| Auto-retry on failure       | `rxResource()`                                   | Need retry operator                         |
+| Request cancellation        | Both work, `rxResource()` has built-in switchMap | Both cancel previous requests               |
+| Response transformation     | Both work, `httpResource()` has `parse`          | Use `httpResource().parse` for simple cases |
+| Multiple dependent requests | `rxResource()`                                   | Need switchMap/combineLatest                |
+| Timeout handling            | `rxResource()`                                   | Need timeout operator                       |
+| Complex error recovery      | `rxResource()`                                   | Need catchError + retryWhen                 |
+| Rate limiting               | `rxResource()`                                   | Need throttleTime/sampleTime                |
+| Data polling                | `rxResource()`                                   | Need interval/timer                         |
 
 **Decision Criteria:**
 
@@ -316,6 +317,7 @@ All current services correctly use `httpResource()` for simple GET requests:
 **Evaluation Result:** ✅ All services appropriately use `httpResource()`
 
 **Rationale:**
+
 - All current use cases are simple GET requests without complex query logic
 - No need for RxJS operators (debounce, retry, switchMap, etc.)
 - Direct URL-based fetching with no complex parameter transformations
@@ -383,51 +385,51 @@ createItem(item: Item): Observable<Item> {
    - Always use `.set()` or `.update()` for writable signals
    - Computed signals are read-only by design
 
- 3. **Signal Testing Utilities**
-    - Located in separate library: `libs/signal-testing-utils`
-    - Provides helpers for testing signals and effects
+3. **Signal Testing Utilities**
+   - Located in separate library: `libs/signal-testing-utils`
+   - Provides helpers for testing signals and effects
 
 4. **Navigation Helper Pattern**
 
-    Use `NavigationHelperService` for common navigation routes to avoid repetition:
+   Use `NavigationHelperService` for common navigation routes to avoid repetition:
 
-    ```typescript
-    import { NavigationHelperService } from '../../../shared/services/navigation-helper.service';
+   ```typescript
+   import { NavigationHelperService } from '../../../shared/services/navigation-helper.service';
 
-    @Component({ ... })
-    export class ExampleComponent {
-      private navigationHelper = inject(NavigationHelperService);
+   @Component({ ... })
+   export class ExampleComponent {
+     private navigationHelper = inject(NavigationHelperService);
 
-      cancel(): void {
-        this.navigationHelper.toTournamentsList(this.sportId, this.year);
-      }
+     cancel(): void {
+       this.navigationHelper.toTournamentsList(this.sportId, this.year);
+     }
 
-      onSubmit(): void {
-        this.service.save().subscribe(() => {
-          this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
-        });
-      }
-    }
-    ```
+     onSubmit(): void {
+       this.service.save().subscribe(() => {
+         this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
+       });
+     }
+   }
+   ```
 
-    Available methods:
+   Available methods:
 
-    ```typescript
-    // Navigate to tournaments list
-    toTournamentsList(sportId: number | string, year: number | string)
+   ```typescript
+   // Navigate to tournaments list
+   toTournamentsList(sportId: number | string, year: number | string)
 
-    // Navigate to tournament detail
-    toTournamentDetail(sportId: number | string, year: number | string, tournamentId: number | string)
+   // Navigate to tournament detail
+   toTournamentDetail(sportId: number | string, year: number | string, tournamentId: number | string)
 
-    // Navigate to tournament edit
-    toTournamentEdit(sportId: number | string, year: number | string, tournamentId: number | string)
+   // Navigate to tournament edit
+   toTournamentEdit(sportId: number | string, year: number | string, tournamentId: number | string)
 
-    // Navigate to tournament create
-    toTournamentCreate(sportId: number | string, year: number | string)
+   // Navigate to tournament create
+   toTournamentCreate(sportId: number | string, year: number | string)
 
-    // Navigate to sport detail
-    toSportDetail(sportId: number | string)
-    ```
+   // Navigate to sport detail
+   toSportDetail(sportId: number | string)
+   ```
 
 ### Template Requirements
 
@@ -585,7 +587,6 @@ createItem(item: Item): Observable<Item> {
      service.createSeason(seasonData).subscribe({ error: (err) => expect(err).toBeTruthy() });
      const req = httpMock.expectOne(buildApiUrl('/api/seasons/'));
      req.flush('Error', { status: 400, statusText: 'Bad Request' });
-     expect(alertServiceMock.open).not.toHaveBeenCalledWith('Season created successfully');
    });
    ```
 

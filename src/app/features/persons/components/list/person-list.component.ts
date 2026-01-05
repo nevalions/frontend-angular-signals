@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TuiButton } from '@taiga-ui/core';
 import { PersonStoreService } from '../../services/person-store.service';
 import { SortBy, SortOrder } from '../../models/person.model';
 
@@ -6,6 +7,7 @@ import { SortBy, SortOrder } from '../../models/person.model';
   selector: 'app-person-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TuiButton],
   templateUrl: './person-list.component.html',
   styleUrl: './person-list.component.less',
 })

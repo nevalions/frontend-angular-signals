@@ -43,7 +43,9 @@
     <footer class="tournament-detail__actions">
       <button tuiButton type="button" (click)="navigateBack()">Back</button>
       <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
-      <button tuiButton type="button" appearance="destructive" (click)="deleteTournament()">Delete</button>
+      <button tuiButton type="button" appearance="destructive" (click)="deleteTournament()">
+        Delete
+      </button>
     </footer>
   } @else {
     <div class="tournament-detail__not-found">Tournament not found</div>

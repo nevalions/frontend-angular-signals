@@ -1,9 +1,8 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { TuiAlertService } from '@taiga-ui/core';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Tournament, TournamentCreate, TournamentUpdate } from '../models/tournament.model';
@@ -13,10 +12,10 @@ import { Tournament, TournamentCreate, TournamentUpdate } from '../models/tourna
 })
 export class TournamentStoreService {
   private http = inject(HttpClient);
-  private readonly alerts = inject(TuiAlertService);
   private apiService = inject(ApiService);
+  private readonly injector = inject(Injector);
 
-  tournamentsResource = httpResource<Tournament[]>(() => buildApiUrl('/api/tournaments/'));
+  tournamentsResource = httpResource<Tournament[]>(() => buildApiUrl('/api/tournaments/'), { injector: this.injector });
 
   tournaments = computed(() => this.tournamentsResource.value() ?? []);
   loading = computed(() => this.tournamentsResource.isLoading());
@@ -61,30 +60,15 @@ export class TournamentStoreService {
   }
 
   createTournament(data: TournamentCreate): Observable<Tournament> {
-    return this.http.post<Tournament>(buildApiUrl('/api/tournaments/'), data).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Tournament created successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.http.post<Tournament>(buildApiUrl('/api/tournaments/'), data).pipe(tap(() => this.reload()));
   }
 
   updateTournament(id: number, data: TournamentUpdate): Observable<Tournament> {
-    return this.http.put<Tournament>(buildApiUrl(`/api/tournaments/${id}`), data).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Tournament updated successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.http.put<Tournament>(buildApiUrl(`/api/tournaments/${id}`), data).pipe(tap(() => this.reload()));
   }
 
   deleteTournament(id: number): Observable<void> {
-    return this.http.delete<void>(buildApiUrl(`/api/tournaments/${id}`)).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Tournament deleted successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.delete('/api/tournaments', id).pipe(tap(() => this.reload()));
   }
 
   getTournamentsBySeasonAndSport(year: number, sportId: number): Observable<Tournament[]> {

@@ -3,28 +3,28 @@
     <h1 class="season-create__title">Create New Season</h1>
     <div class="season-create__actions">
       <button tuiButton type="button" (click)="navigateToList()">Cancel</button>
-      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="seasonForm().invalid()">Create Season</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="seasonForm.invalid">Create Season</button>
     </div>
   </header>
 
-  <form class="season-create__form">
+  <form class="season-create__form" [formGroup]="seasonForm">
     <div class="season-create__field">
       <label for="year" class="season-create__label">Year *</label>
       <input
         id="year"
         type="text"
-        [field]="seasonForm.year"
+        formControlName="year"
         class="season-create__input"
-        [class.season-create__input--invalid]="seasonForm.year().touched() && seasonForm.year().invalid()"
+        [class.season-create__input--invalid]="seasonForm.get('year')?.invalid && seasonForm.get('year')?.touched"
       />
-      @if (seasonForm.year().touched() && seasonForm.year().invalid()) {
-        @if (seasonForm.year().errors()[0]?.message === 'Year is required') {
+      @if (seasonForm.get('year')?.invalid && seasonForm.get('year')?.touched) {
+        @if (seasonForm.get('year')?.errors?.['required']) {
           <div class="season-create__error">Year is required</div>
         }
-        @if (seasonForm.year().errors()[0]?.message === 'Year must be at least 1900') {
+        @if (seasonForm.get('year')?.errors?.['min']) {
           <div class="season-create__error">Year must be at least 1900</div>
         }
-        @if (seasonForm.year().errors()[0]?.message === 'Year must be at most 2999') {
+        @if (seasonForm.get('year')?.errors?.['max']) {
           <div class="season-create__error">Year must be at most 2999</div>
         }
       }
@@ -34,7 +34,7 @@
       <label for="description" class="season-create__label">Description</label>
       <textarea
         id="description"
-        [field]="seasonForm.description"
+        formControlName="description"
         class="season-create__textarea"
         rows="4"
         placeholder="Enter a description for the season (optional)"

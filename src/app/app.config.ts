@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideEventPlugins } from '@taiga-ui/event-plugins';
+import { TuiConfirmService } from '@taiga-ui/kit';
 
 import { routes } from './app.routes';
 
@@ -12,6 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(),
-    provideEventPlugins()
+    provideEventPlugins(),
+    TuiConfirmService,
   ]
 };

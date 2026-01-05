@@ -1,9 +1,8 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { TuiAlertService } from '@taiga-ui/core';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Person, PersonCreate, PersonUpdate } from '../models/person.model';
@@ -14,9 +13,9 @@ import { Person, PersonCreate, PersonUpdate } from '../models/person.model';
 export class PersonStoreService {
   private http = inject(HttpClient);
   private apiService = inject(ApiService);
-  private readonly alerts = inject(TuiAlertService);
+  private readonly injector = inject(Injector);
 
-  personsResource = httpResource<Person[]>(() => buildApiUrl('/api/persons/'));
+  personsResource = httpResource<Person[]>(() => buildApiUrl('/api/persons/'), { injector: this.injector });
 
   persons = computed(() => this.personsResource.value() ?? []);
   loading = computed(() => this.personsResource.isLoading());
@@ -27,29 +26,14 @@ export class PersonStoreService {
   }
 
   createPerson(personData: PersonCreate): Observable<Person> {
-    return this.apiService.post<Person>('/api/persons/', personData).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Person created successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.post<Person>('/api/persons/', personData).pipe(tap(() => this.reload()));
   }
 
   updatePerson(id: number, personData: PersonUpdate): Observable<Person> {
-    return this.apiService.put<Person>('/api/persons/', id, personData).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Person updated successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.put<Person>('/api/persons/', id, personData).pipe(tap(() => this.reload()));
   }
 
   deletePerson(id: number): Observable<void> {
-    return this.apiService.delete('/api/persons', id).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Person deleted successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.delete('/api/persons', id).pipe(tap(() => this.reload()));
   }
 }

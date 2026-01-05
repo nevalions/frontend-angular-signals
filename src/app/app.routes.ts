@@ -31,26 +31,13 @@ export const routes: Routes = [
         component: TournamentCreateComponent,
       },
       {
+        path: ':sportId/seasons/:year/tournaments/:id/edit',
+        component: TournamentEditComponent,
+      },
+      {
         path: ':sportId/seasons/:year/tournaments/:id',
         component: TournamentDetailComponent,
       },
-  {
-      path: ':sportId/seasons/:year/tournaments/:id',
-      children: [
-        {
-          path: 'edit',
-          component: TournamentEditComponent,
-        },
-        {
-          path: '',
-          component: TournamentDetailComponent,
-        },
-      ],
-    },
-    {
-      path: ':sportId/seasons/:year/tournaments/:id',
-      component: TournamentDetailComponent,
-    },
       {
         path: ':id',
         component: SportDetailComponent,

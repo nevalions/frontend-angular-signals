@@ -3,25 +3,25 @@
     <h1 class="season-edit__title">Edit Season</h1>
     <div class="season-edit__actions">
       <button tuiButton type="button" (click)="navigateToDetail()">Cancel</button>
-      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="seasonForm().invalid()">Update Season</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="seasonForm.invalid">Update Season</button>
     </div>
   </header>
 
-  <form class="season-edit__form">
+  <form class="season-edit__form" [formGroup]="seasonForm">
     <div class="season-edit__field">
       <label for="year" class="season-edit__label">Year *</label>
       <input
         id="year"
         type="text"
-        [field]="seasonForm.year"
+        formControlName="year"
         class="season-edit__input"
-        [class.season-edit__input--invalid]="seasonForm.year().touched() && seasonForm.year().invalid()"
+        [class.season-edit__input--invalid]="seasonForm.get('year')?.invalid && seasonForm.get('year')?.touched"
       />
-      @if (seasonForm.year().touched() && seasonForm.year().invalid()) {
-        @if (seasonForm.year().errors()[0]?.message === 'Year must be at least 1900') {
+      @if (seasonForm.get('year')?.invalid && seasonForm.get('year')?.touched) {
+        @if (seasonForm.get('year')?.errors?.['min']) {
           <div class="season-edit__error">Year must be at least 1900</div>
         }
-        @if (seasonForm.year().errors()[0]?.message === 'Year must be at most 2999') {
+        @if (seasonForm.get('year')?.errors?.['max']) {
           <div class="season-edit__error">Year must be at most 2999</div>
         }
       }
@@ -31,7 +31,7 @@
       <label for="description" class="season-edit__label">Description</label>
       <textarea
         id="description"
-        [field]="seasonForm.description"
+        formControlName="description"
         class="season-edit__textarea"
         rows="4"
         placeholder="Enter a description for season (optional)"

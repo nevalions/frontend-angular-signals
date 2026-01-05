@@ -53,6 +53,8 @@
     @if (totalPages() > 1) {
       <div class="pagination">
         <button
+          tuiButton
+          type="button"
           (click)="changePage(currentPage() - 1)"
           [disabled]="currentPage() === 1">
           Previous
@@ -61,6 +63,8 @@
         <span>Page {{ currentPage() }} of {{ totalPages() }}</span>
 
         <button
+          tuiButton
+          type="button"
           (click)="changePage(currentPage() + 1)"
           [disabled]="currentPage() === totalPages()">
           Next

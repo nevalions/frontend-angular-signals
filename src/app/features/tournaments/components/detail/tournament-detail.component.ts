@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiButton } from '@taiga-ui/core';
+import { TuiConfirmService } from '@taiga-ui/kit';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
@@ -21,6 +22,7 @@ export class TournamentDetailComponent {
   private tournamentStore = inject(TournamentStoreService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
+  private readonly dialogs = inject(TuiConfirmService);
 
   sportId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -84,10 +86,23 @@ export class TournamentDetailComponent {
 
   deleteTournament(): void {
     const id = this.tournamentId();
-    if (id && confirm('Are you sure you want to delete this tournament?')) {
-      this.tournamentStore.deleteTournament(id).subscribe(() => {
-        this.navigateBack();
+    const tournament = this.tournament();
+    if (!tournament) return;
+
+    this.dialogs
+      .withConfirm({
+        data: {
+          content: `Are you sure you want to delete tournament ${tournament.title}?`,
+          yes: 'Delete',
+          no: 'Cancel',
+        },
+      })
+      .subscribe((confirmed: boolean) => {
+        if (confirmed && id) {
+          this.tournamentStore.deleteTournament(id).subscribe(() => {
+            this.navigateBack();
+          });
+        }
       });
-    }
   }
 }

@@ -14,7 +14,14 @@
     "test:browser": "vitest run --config vitest.config.browser.ts",
     "test:visual": "playwright test",
     "test:visual:ui": "playwright test --ui",
-    "test:visual:report": "playwright show-report"
+    "test:visual:report": "playwright show-report",
+    "test:visual:grep": "playwright test --grep",
+    "test:visual:list": "playwright test --list",
+    "test:visual:desktop": "playwright test --grep \"desktop\"",
+    "test:visual:mobile": "playwright test --grep \"mobile\"",
+    "test:visual:tablet": "playwright test --grep \"tablet\"",
+    "test:visual:list-only": "playwright test --grep \"list page\"",
+    "test:visual:detail-only": "playwright test --grep \"detail page\""
   },
   "prettier": {
     "printWidth": 100,
@@ -41,9 +48,10 @@
     "@taiga-ui/addon-table": "^4.66.0",
     "@taiga-ui/cdk": "^4.66.0",
     "@taiga-ui/core": "^4.66.0",
-    "@taiga-ui/event-plugins": "^5.0.0",
+    "@taiga-ui/event-plugins": "^4.7.0",
     "@taiga-ui/icons": "^4.66.0",
     "@taiga-ui/kit": "^4.66.0",
+    "@taiga-ui/layout": "^4.66.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

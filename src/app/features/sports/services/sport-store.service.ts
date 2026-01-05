@@ -1,10 +1,7 @@
-import { computed, inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { computed, inject, Injectable, Injector } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { TuiAlertService } from '@taiga-ui/core';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Sport, SportCreate, SportUpdate } from '../models/sport.model';
@@ -13,12 +10,10 @@ import { Sport, SportCreate, SportUpdate } from '../models/sport.model';
   providedIn: 'root',
 })
 export class SportStoreService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
   private apiService = inject(ApiService);
-  private readonly alerts = inject(TuiAlertService);
+  private readonly injector = inject(Injector);
 
-  sportsResource = httpResource<Sport[]>(() => buildApiUrl('/api/sports/'));
+  sportsResource = httpResource<Sport[]>(() => buildApiUrl('/api/sports/'), { injector: this.injector });
 
   sports = computed(() => this.sportsResource.value() ?? []);
   loading = computed(() => this.sportsResource.isLoading());
@@ -36,30 +31,15 @@ export class SportStoreService {
   }
 
   createSport(sportData: SportCreate): Observable<Sport> {
-    return this.apiService.post<Sport>('/api/sports/', sportData).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Sport created successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.post<Sport>('/api/sports/', sportData).pipe(tap(() => this.reload()));
   }
 
   updateSport(id: number, sportData: SportUpdate): Observable<Sport> {
-    return this.apiService.put<Sport>('/api/sports/', id, sportData).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Sport updated successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.put<Sport>('/api/sports/', id, sportData).pipe(tap(() => this.reload()));
   }
 
   deleteSport(id: number): Observable<void> {
-    return this.apiService.delete('/api/sports', id).pipe(
-      tap(() => {
-        this.reload();
-        this.alerts.open('Sport deleted successfully', { label: 'Success' }).subscribe();
-      })
-    );
+    return this.apiService.delete('/api/sports', id).pipe(tap(() => this.reload()));
   }
 
   getTournamentsBySport(sportId: number): Observable<unknown> {

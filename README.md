@@ -38,10 +38,60 @@ This will compile your project and store the build artifacts in the `dist/` dire
 
 ## Running unit tests
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+To execute unit tests with [Vitest](https://vitest.dev/) test runner, use the following command:
 
 ```bash
 ng test
+```
+
+## Running visual tests
+
+Visual tests use [Playwright](https://playwright.dev/) to capture and compare screenshots across different browsers and devices.
+
+### Run all visual tests
+
+```bash
+npm run test:visual
+```
+
+### Run specific test by name pattern
+
+```bash
+npm run test:visual:grep -- "sports list.*desktop"
+```
+
+### Run tests by device type
+
+```bash
+npm run test:visual:desktop  # Only desktop tests
+npm run test:visual:mobile   # Only mobile tests
+npm run test:visual:tablet   # Only tablet tests
+```
+
+### Run tests by page type
+
+```bash
+npm run test:visual:list-only    # All list page tests
+npm run test:visual:detail-only  # All detail page tests
+```
+
+### Interactive modes
+
+```bash
+npm run test:visual:ui      # Run tests in interactive UI mode
+npm run test:visual:report   # View HTML report of last run
+```
+
+### List all available tests
+
+```bash
+npm run test:visual:list
+```
+
+### Run specific test file
+
+```bash
+npx playwright test sports.spec.ts
 ```
 
 ## Running end-to-end tests

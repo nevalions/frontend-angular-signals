@@ -6,6 +6,8 @@ import { TuiButton } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+
 
 @Component({
   selector: 'app-tournament-list',
@@ -18,6 +20,7 @@ import { SportStoreService } from '../../../sports/services/sport-store.service'
 export class TournamentListComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private navigationHelper = inject(NavigationHelperService);
   private tournamentStore = inject(TournamentStoreService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
@@ -84,7 +87,7 @@ export class TournamentListComponent {
     const sportId = this.sportId();
     const year = this.year();
     if (sportId && year) {
-      this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', id]);
+      this.navigationHelper.toTournamentDetail(sportId, year, id);
     }
   }
 }
