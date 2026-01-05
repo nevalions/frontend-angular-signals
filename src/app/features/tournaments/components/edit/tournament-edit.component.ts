@@ -5,6 +5,7 @@ import { TuiButton } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
+import { TournamentUpdate } from '../../models/tournament.model';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -48,14 +49,26 @@ export class TournamentEditComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.tournamentForm.valid && this.tournamentId) {
+    if (this.tournamentForm.valid && this.tournamentId && this.tournament) {
       const formData = this.tournamentForm.value;
-      this.tournamentStore.updateTournament(Number(this.tournamentId), {
-        title: formData.title as string,
-        description: formData.description || null,
-      }).subscribe(() => {
+      const updateData: Partial<TournamentUpdate> = {};
+
+      if (formData.title !== this.tournament.title) {
+        updateData.title = formData.title as string;
+      }
+
+      const newDescription = formData.description || null;
+      if (newDescription !== this.tournament.description) {
+        updateData.description = newDescription;
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        this.tournamentStore.updateTournament(Number(this.tournamentId), updateData).subscribe(() => {
+          this.cancel();
+        });
+      } else {
         this.cancel();
-      });
+      }
     }
   }
 
