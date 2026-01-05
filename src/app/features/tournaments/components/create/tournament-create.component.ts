@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Field, required, form } from '@angular/forms/signals';
@@ -60,8 +60,6 @@ export class TournamentCreateComponent {
       }
     });
   }
-
-  ngOnInit(): void {}
 
   onSubmit(): void {
     if (this.tournamentForm().valid()) {

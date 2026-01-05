@@ -1,34 +1,34 @@
 <div class="tournament-edit">
   <header class="tournament-edit__header">
     <h1 class="tournament-edit__title">Edit Tournament</h1>
-    @if (sport() && season()) {
-      <div class="tournament-edit__context">
-        <span>{{ sport()!.title }}</span>
-        <span>›</span>
-        <span>{{ season()!.year }}</span>
-      </div>
-    }
+    <div class="tournament-edit__context">
+      <span>{{ sport?.title }}</span>
+      <span>›</span>
+      <span>{{ season?.year }}</span>
+    </div>
     <div class="tournament-edit__actions">
-      <button tuiButton type="button" (click)="navigateBack()">Cancel</button>
-      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="tournamentForm().invalid()">Save Changes</button>
+      <button tuiButton type="button" (click)="cancel()">Cancel</button>
+      <button tuiButton type="button" (click)="onSubmit()" [disabled]="tournamentForm.invalid">Save Changes</button>
     </div>
   </header>
 
-  @if (loading()) {
+  @if (this.loading()) {
     <div class="tournament-edit__loading">Loading tournament...</div>
-  } @else if (tournament()) {
-    <form class="tournament-edit__form">
+  }
+
+  @if (tournament) {
+    <form class="tournament-edit__form" [formGroup]="tournamentForm">
       <div class="tournament-edit__field">
         <label for="title" class="tournament-edit__label">Title *</label>
         <input
           id="title"
           type="text"
-          [field]="tournamentForm.title"
+          formControlName="title"
           class="tournament-edit__input"
-          [class.tournament-edit__input--invalid]="tournamentForm.title().touched() && tournamentForm.title().invalid()"
+          [class.tournament-edit__input--invalid]="tournamentForm.controls.title.touched && tournamentForm.controls.title.invalid"
         />
-        @if (tournamentForm.title().touched() && tournamentForm.title().invalid()) {
-          @if (tournamentForm.title().errors()[0]?.message === 'Title is required') {
+        @if (tournamentForm.controls.title.touched && tournamentForm.controls.title.invalid) {
+          @if (tournamentForm.controls.title.errors?.['required']) {
             <div class="tournament-edit__error">Title is required</div>
           }
         }
@@ -38,7 +38,7 @@
         <label for="description" class="tournament-edit__label">Description</label>
         <textarea
           id="description"
-          [field]="tournamentForm.description"
+          formControlName="description"
           class="tournament-edit__textarea"
           rows="4"
           placeholder="Enter a description for tournament (optional)"
@@ -48,4 +48,9 @@
   } @else {
     <div class="tournament-edit__not-found">Tournament not found</div>
   }
+
+  <div class="tournament-edit__actions">
+    <button tuiButton type="button" (click)="cancel()">Cancel</button>
+    <button tuiButton type="button" (click)="onSubmit()" [disabled]="tournamentForm.invalid">Save Changes</button>
+  </div>
 </div>
