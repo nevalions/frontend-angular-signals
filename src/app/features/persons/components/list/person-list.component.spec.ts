@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PersonListComponent } from './person-list.component';
 import { PersonStoreService } from '../../services/person-store.service';
+import type { TuiSortChange, TuiTablePaginationEvent } from '@taiga-ui/addon-table';
 
 describe('PersonListComponent', () => {
   let component: PersonListComponent;
@@ -18,7 +19,7 @@ describe('PersonListComponent', () => {
     { id: 3, first_name: 'Bob', second_name: 'Johnson', person_photo_url: null },
   ];
 
-  beforeEach(() => {
+  beforeEach(async () => {
     storeMock = {
       persons: vi.fn(() => mockPersons),
       loading: vi.fn(() => false),
@@ -26,11 +27,13 @@ describe('PersonListComponent', () => {
     };
 
     TestBed.configureTestingModule({
+      imports: [PersonListComponent],
       providers: [
         { provide: PersonStoreService, useValue: storeMock },
       ],
     });
 
+    await TestBed.compileComponents();
     fixture = TestBed.createComponent(PersonListComponent);
     component = fixture.componentInstance;
   });
@@ -40,10 +43,10 @@ describe('PersonListComponent', () => {
   });
 
   it('should initialize with default pagination values', () => {
-    expect(component.currentPage()).toBe(1);
-    expect(component.itemsPerPage()).toBe(10);
+    expect(component.page()).toBe(0);
+    expect(component.size()).toBe(10);
     expect(component.sortBy()).toBe('second_name');
-    expect(component.sortOrder()).toBe('asc');
+    expect(component.sortDirection()).toBe(1);
   });
 
   it('should expose persons from store', () => {
@@ -59,79 +62,12 @@ describe('PersonListComponent', () => {
     expect(component.error()).toBe(null);
   });
 
-  describe('Pagination', () => {
-    it('should calculate total pages correctly', () => {
-      expect(component.totalPages()).toBe(1);
-    });
+  it('should have itemsPerPageOptions', () => {
+    expect(component['itemsPerPageOptions']).toEqual([10, 20, 50]);
+  });
 
-    it('should calculate total pages with more items', () => {
-      const largePersonList = Array.from({ length: 25 }, (_, i) => ({
-        id: i + 1,
-        first_name: `First${i}`,
-        second_name: `Last${i}`,
-        person_photo_url: null,
-      }));
-      storeMock.persons = vi.fn(() => largePersonList);
-      fixture = TestBed.createComponent(PersonListComponent);
-      component = fixture.componentInstance;
-
-      expect(component.totalPages()).toBe(3);
-    });
-
-    it('should paginate items correctly', () => {
-      const largePersonList = Array.from({ length: 25 }, (_, i) => ({
-        id: i + 1,
-        first_name: `First${i}`,
-        second_name: `Last${i}`,
-        person_photo_url: null,
-      }));
-      storeMock.persons = vi.fn(() => largePersonList);
-      fixture = TestBed.createComponent(PersonListComponent);
-      component = fixture.componentInstance;
-
-      expect(component.paginatedPersons().length).toBe(10);
-    });
-
-    it('should change to next page', () => {
-      const largePersonList = Array.from({ length: 25 }, (_, i) => ({
-        id: i + 1,
-        first_name: `First${i}`,
-        second_name: `Last${i}`,
-        person_photo_url: null,
-      }));
-      storeMock.persons = vi.fn(() => largePersonList);
-      fixture = TestBed.createComponent(PersonListComponent);
-      component = fixture.componentInstance;
-
-      component.changePage(2);
-      expect(component.currentPage()).toBe(2);
-    });
-
-    it('should not change page when out of bounds', () => {
-      component.changePage(0);
-      expect(component.currentPage()).toBe(1);
-
-      component.changePage(100);
-      expect(component.currentPage()).toBe(1);
-    });
-
-    it('should change items per page and reset to page 1', () => {
-      const largePersonList = Array.from({ length: 25 }, (_, i) => ({
-        id: i + 1,
-        first_name: `First${i}`,
-        second_name: `Last${i}`,
-        person_photo_url: null,
-      }));
-      storeMock.persons = vi.fn(() => largePersonList);
-      fixture = TestBed.createComponent(PersonListComponent);
-      component = fixture.componentInstance;
-
-      component.changePage(2);
-      component.changeItemsPerPage(20);
-
-      expect(component.itemsPerPage()).toBe(20);
-      expect(component.currentPage()).toBe(1);
-    });
+  it('should have columns defined', () => {
+    expect(component['columns']).toEqual(['first_name', 'second_name', 'person_photo_url']);
   });
 
   describe('Sorting', () => {
@@ -143,7 +79,7 @@ describe('PersonListComponent', () => {
     });
 
     it('should sort by second name in descending order', () => {
-      component.sortOrder.set('desc');
+      component.sortDirection.set(-1);
       const sorted = component.sortedPersons();
       expect(sorted[0].second_name).toBe('Smith');
       expect(sorted[1].second_name).toBe('Johnson');
@@ -158,40 +94,56 @@ describe('PersonListComponent', () => {
       expect(sorted[2].first_name).toBe('John');
     });
 
-    it('should toggle sort order when clicking same field', () => {
-      component.toggleSort('second_name');
-      expect(component.sortOrder()).toBe('desc');
+    it('should handle onSortChange event', () => {
+      const sortChangeEvent = {
+        sortKey: 'first_name' as const,
+        sortDirection: -1 as const,
+      } as TuiSortChange<typeof mockPersons[0]>;
 
-      component.toggleSort('second_name');
-      expect(component.sortOrder()).toBe('asc');
-    });
+      component.onSortChange(sortChangeEvent);
 
-    it('should reset sort order to asc when changing field', () => {
-      component.sortOrder.set('desc');
-      component.toggleSort('first_name');
       expect(component.sortBy()).toBe('first_name');
-      expect(component.sortOrder()).toBe('asc');
-    });
-
-    it('should reset to page 1 when sorting changes', () => {
-      component.currentPage.set(2);
-      component.toggleSort('second_name');
-      expect(component.currentPage()).toBe(1);
+      expect(component.sortDirection()).toBe(-1);
     });
   });
 
-  describe('Sort Icons', () => {
-    it('should return double arrow for unsorted field', () => {
-      expect(component.getSortIcon('first_name')).toBe('↕');
+  describe('Pagination', () => {
+    it('should handle onPaginationChange event', () => {
+      const paginationEvent: TuiTablePaginationEvent = {
+        page: 2,
+        size: 20,
+      };
+
+      component.onPaginationChange(paginationEvent);
+
+      expect(component.page()).toBe(2);
+      expect(component.size()).toBe(20);
     });
 
-    it('should return up arrow for ascending sort', () => {
-      expect(component.getSortIcon('second_name')).toBe('↑');
+    it('should handle onPaginationChange with new page only', () => {
+      const paginationEvent: TuiTablePaginationEvent = {
+        page: 1,
+        size: 10,
+      };
+
+      component.onPaginationChange(paginationEvent);
+
+      expect(component.page()).toBe(1);
+      expect(component.size()).toBe(10);
+    });
+  });
+
+  describe('Signal Computed Properties', () => {
+    it('should compute sortedPersons correctly', () => {
+      const sorted = component.sortedPersons();
+      expect(sorted).toHaveLength(3);
+      expect(sorted[0].second_name).toBe('Doe');
     });
 
-    it('should return down arrow for descending sort', () => {
-      component.sortOrder.set('desc');
-      expect(component.getSortIcon('second_name')).toBe('↓');
+    it('should return unsorted persons when sortBy is null', () => {
+      component.sortBy.set(null);
+      const sorted = component.sortedPersons();
+      expect(sorted).toEqual(mockPersons);
     });
   });
 });
