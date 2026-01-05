@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { LoginRequest } from '../models/login.model';
 import { LoginResponse, UserInfo } from '../models/login-response.model';
+import { RegisterRequest, UserResponse } from '../models/register.model';
 import { buildApiUrl } from '../../../core/config/api.constants';
 
 @Injectable({ providedIn: 'root' })
@@ -38,6 +39,14 @@ export class AuthService {
         localStorage.setItem(this.TOKEN_KEY, response.access_token);
         this.fetchCurrentUser();
       }),
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+  register(userData: RegisterRequest): Observable<UserResponse> {
+    return this.http.post<UserResponse>(buildApiUrl('/api/users/register'), userData).pipe(
       catchError((error) => {
         return throwError(() => error);
       })
@@ -81,7 +90,7 @@ export class AuthService {
       try {
         const user = JSON.parse(userStr) as UserInfo;
         this.currentUserSignal.set(user);
-      } catch (e) {
+      } catch {
         localStorage.removeItem(this.USER_KEY);
       }
     }

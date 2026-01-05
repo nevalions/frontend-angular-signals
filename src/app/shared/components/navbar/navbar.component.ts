@@ -3,13 +3,13 @@ import { RouterLink } from '@angular/router';
 import { TuiLink } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../../features/seasons/services/season-store.service';
 import { SportStoreService } from '../../../features/sports/services/sport-store.service';
-import { LoginIconComponent } from '../../../features/auth/components/login-icon/login-icon.component';
+import { AuthButtonsComponent } from '../../../features/auth/components/auth-buttons/auth-buttons.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TuiLink, LoginIconComponent],
+  imports: [RouterLink, TuiLink, AuthButtonsComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.less',
 })

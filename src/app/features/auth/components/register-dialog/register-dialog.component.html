@@ -1,0 +1,108 @@
+<form class="register-dialog" [formGroup]="registerForm">
+  <div class="register-dialog__header">
+    <h2 class="register-dialog__title">Create Account</h2>
+    <p class="register-dialog__subtitle">Enter your information to create a new account</p>
+  </div>
+
+  <div class="register-dialog__fields">
+    <div class="register-dialog__field">
+      <label for="username" class="register-dialog__label">Username</label>
+      <input
+        id="username"
+        type="text"
+        formControlName="username"
+        class="register-dialog__input"
+        [class.register-dialog__input--invalid]="usernameControl?.invalid && usernameControl?.touched"
+        placeholder="Choose a username"
+      />
+      @if (usernameControl?.invalid && usernameControl?.touched) {
+        @if (usernameControl?.errors?.['required']) {
+          <div class="register-dialog__error">Username is required</div>
+        }
+        @if (usernameControl?.errors?.['minlength']) {
+          <div class="register-dialog__error">Username must be at least 3 characters</div>
+        }
+        @if (usernameControl?.errors?.['maxlength']) {
+          <div class="register-dialog__error">Username must be at most 100 characters</div>
+        }
+      }
+    </div>
+
+    <div class="register-dialog__field">
+      <label for="email" class="register-dialog__label">Email</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        class="register-dialog__input"
+        [class.register-dialog__input--invalid]="emailControl?.invalid && emailControl?.touched"
+        placeholder="Enter your email"
+      />
+      @if (emailControl?.invalid && emailControl?.touched) {
+        @if (emailControl?.errors?.['required']) {
+          <div class="register-dialog__error">Email is required</div>
+        }
+        @if (emailControl?.errors?.['email']) {
+          <div class="register-dialog__error">Please enter a valid email</div>
+        }
+      }
+    </div>
+
+    <div class="register-dialog__field">
+      <label for="password" class="register-dialog__label">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        class="register-dialog__input"
+        [class.register-dialog__input--invalid]="passwordControl?.invalid && passwordControl?.touched"
+        placeholder="Create a password"
+      />
+      @if (passwordControl?.invalid && passwordControl?.touched) {
+        @if (passwordControl?.errors?.['required']) {
+          <div class="register-dialog__error">Password is required</div>
+        }
+        @if (passwordControl?.errors?.['minlength']) {
+          <div class="register-dialog__error">Password must be at least 6 characters</div>
+        }
+      }
+    </div>
+
+    <div class="register-dialog__field">
+      <label for="confirm_password" class="register-dialog__label">Confirm Password</label>
+      <input
+        id="confirm_password"
+        type="password"
+        formControlName="confirm_password"
+        class="register-dialog__input"
+        [class.register-dialog__input--invalid]="confirmPasswordControl?.invalid && confirmPasswordControl?.touched"
+        placeholder="Confirm your password"
+      />
+      @if (confirmPasswordControl?.invalid && confirmPasswordControl?.touched) {
+        @if (confirmPasswordControl?.errors?.['required']) {
+          <div class="register-dialog__error">Please confirm your password</div>
+        }
+        @if (confirmPasswordControl?.errors?.['mismatch']) {
+          <div class="register-dialog__error">Passwords do not match</div>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="register-dialog__actions">
+    <button type="submit" tuiButton (click)="onSubmit()" [disabled]="registerForm.invalid || loading()">
+      @if (loading()) {
+        <span>Creating account...</span>
+      } @else {
+        <span>Create Account</span>
+      }
+    </button>
+  </div>
+
+  <div class="register-dialog__footer">
+    <span class="register-dialog__footer-text">Already have an account?</span>
+    <button type="button" tuiButton appearance="flat" class="register-dialog__link">
+      Sign In
+    </button>
+  </div>
+</form>

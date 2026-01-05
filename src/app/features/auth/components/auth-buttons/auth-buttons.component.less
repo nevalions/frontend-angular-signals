@@ -1,0 +1,52 @@
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-buttons__register {
+  font-weight: 500;
+}
+
+.auth-buttons__login {
+  font-weight: 400;
+}
+
+.auth-buttons__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.auth-buttons__text {
+  display: inline;
+}
+
+.auth-buttons--logged-in {
+  gap: 1rem;
+}
+
+.auth-buttons__user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-buttons__avatar {
+  flex-shrink: 0;
+}
+
+.auth-buttons__username {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--tui-text-primary);
+}
+
+.auth-buttons__logout {
+  font-weight: 400;
+}
+
+.auth-buttons__text--hide-mobile {
+  @media (max-width: 640px) {
+    display: none;
+  }
+}

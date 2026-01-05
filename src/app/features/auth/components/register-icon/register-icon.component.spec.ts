@@ -1,0 +1,34 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TuiDialogService } from '@taiga-ui/core';
+import { of } from 'rxjs';
+import { RegisterIconComponent } from './register-icon.component';
+
+describe('RegisterIconComponent', () => {
+  let component: RegisterIconComponent;
+  let fixture: ComponentFixture<RegisterIconComponent>;
+  let dialogsMock: any;
+
+  beforeEach(() => {
+    dialogsMock = {
+      open: vi.fn(() => of({})),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [{ provide: TuiDialogService, useValue: dialogsMock }],
+    });
+
+    fixture = TestBed.createComponent(RegisterIconComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should open register dialog on click', () => {
+    component.openRegisterDialog();
+    expect(dialogsMock.open).toHaveBeenCalled();
+  });
+});
