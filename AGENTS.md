@@ -427,8 +427,60 @@ createItem(item: Item): Observable<Item> {
    // Navigate to tournament create
    toTournamentCreate(sportId: number | string, year: number | string)
 
-   // Navigate to sport detail
-   toSportDetail(sportId: number | string)
+    // Navigate to sport detail
+    toSportDetail(sportId: number | string)
+    ```
+
+5. **Delete Confirmation Pattern**
+
+   Use `withDeleteConfirm()` utility from `src/app/core/utils/delete-helper.util.ts` for consistent delete operations:
+
+   ```typescript
+   import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
+
+   @Component({ ... })
+   export class ExampleComponent {
+     private dialogs = inject(TuiDialogService);
+     private alerts = inject(TuiAlertService);
+
+     deleteEntity(): void {
+       const entity = this.entity();
+       const id = entity?.id;
+       if (!entity || !id) return;
+
+       withDeleteConfirm(
+         this.dialogs,
+         this.alerts,
+         {
+           label: `Delete ${entity.name}?`,
+           content: 'This action cannot be undone!',
+         },
+         () => this.store.deleteEntity(id),
+         () => this.navigateBack(),
+         'Entity'
+       );
+     }
+   }
+   ```
+
+   **Benefits:**
+   - ✅ Consistent UX across all delete operations
+   - ✅ Automatic success/error alerts
+   - ✅ Confirmation dialog with destructive appearance
+   - ✅ Reusable and maintainable
+   - ✅ Type-safe with generics
+
+   **Behavior:**
+   - Shows Taiga UI confirm dialog with `appearance: 'error'`
+   - On confirmation: executes delete operation
+   - On success: Shows positive alert with 3s auto-close, then navigates
+   - On error: Shows negative alert (stays open until user closes), stays on page
+   - On cancel: Closes dialog, no action taken
+
+   **Import Requirements:**
+   ```typescript
+   import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
+   import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
    ```
 
 ### Template Requirements
@@ -534,24 +586,60 @@ createItem(item: Item): Observable<Item> {
    });
    ```
 
-   **Delete Confirmation Tests**
+    **Delete Confirmation Tests**
 
-   ```typescript
-   it('should delete season on button click with confirmation', () => {
-     window.confirm = vi.fn(() => true);
-     component.deleteSeason();
-     expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this season?');
-     expect(storeMock.deleteSeason).toHaveBeenCalledWith(1);
-     expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
-   });
+    ```typescript
+    it('should show confirm dialog and delete on confirmation', () => {
+      const dialogOpenSpy = vi.spyOn(dialogsMock, 'open').mockReturnValue(of(true));
+      const alertOpenSpy = vi.spyOn(alertsMock, 'open').mockReturnValue(of({}));
 
-   it('should not delete season when confirmation is cancelled', () => {
-     window.confirm = vi.fn(() => false);
-     component.deleteSeason();
-     expect(window.confirm).toHaveBeenCalled();
-     expect(storeMock.deleteSeason).not.toHaveBeenCalled();
-   });
-   ```
+      component.deleteSeason();
+
+      expect(dialogOpenSpy).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({
+          label: 'Delete season 2024?',
+          size: 's',
+          data: expect.objectContaining({
+            content: 'This action cannot be undone!',
+            appearance: 'error',
+          }),
+        })
+      );
+      expect(storeMock.deleteSeason).toHaveBeenCalledWith(1);
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
+      expect(alertOpenSpy).toHaveBeenCalledWith('Season deleted successfully', expect.any(Object));
+    });
+
+    it('should not delete when dialog is cancelled', () => {
+      const dialogOpenSpy = vi.spyOn(dialogsMock, 'open').mockReturnValue(of(false));
+      const alertOpenSpy = vi.spyOn(alertsMock, 'open');
+
+      component.deleteSeason();
+
+      expect(dialogOpenSpy).toHaveBeenCalled();
+      expect(storeMock.deleteSeason).not.toHaveBeenCalled();
+      expect(alertOpenSpy).not.toHaveBeenCalled();
+    });
+
+    it('should show error alert and stay on page when delete fails', () => {
+      const error = new Error('Network error');
+      const dialogOpenSpy = vi.spyOn(dialogsMock, 'open').mockReturnValue(of(true));
+      const alertOpenSpy = vi.spyOn(alertsMock, 'open').mockReturnValue(of({}));
+      vi.spyOn(storeMock, 'deleteSeason').mockReturnValue(throwError(() => error));
+
+      component.deleteSeason();
+
+      expect(alertOpenSpy).toHaveBeenCalledWith(
+        'Failed to delete: Network error',
+        expect.objectContaining({
+          label: 'Error',
+          appearance: 'negative',
+        })
+      );
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+    });
+    ```
 
    **Null/Not-Found Handling**
 
@@ -1100,6 +1188,7 @@ export type PaginationState = {
 5. Create facade service in component directory
 6. Add route to `src/app/app.routes.ts` with state injection
 7. Update `src/app/store/appstate.ts` with feature state interface
+8. For delete operations, use `withDeleteConfirm()` utility from `src/app/core/utils/delete-helper.util.ts` for consistent UX
 
 ## API Configuration
 
