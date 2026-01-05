@@ -6,7 +6,8 @@ import { TournamentStoreService } from '../../services/tournament-store.service'
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { TournamentCreate } from '../../models/tournament.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 @Component({
   selector: 'app-tournament-create',
@@ -17,8 +18,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './tournament-create.component.less',
 })
 export class TournamentCreateComponent {
-  private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private navigationHelper = inject(NavigationHelperService);
   private tournamentStore = inject(TournamentStoreService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
@@ -49,12 +50,12 @@ export class TournamentCreateComponent {
         season_id: season.id,
       };
       this.tournamentStore.createTournament(data).subscribe(() => {
-        this.navigateBack();
+        this.cancel();
       });
     }
   }
 
-  navigateBack(): void {
-    this.router.navigate(['/sports', this.sportId]);
+  cancel(): void {
+    this.navigationHelper.toTournamentsList(this.sportId, this.year);
   }
 }

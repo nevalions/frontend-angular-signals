@@ -383,9 +383,51 @@ createItem(item: Item): Observable<Item> {
    - Always use `.set()` or `.update()` for writable signals
    - Computed signals are read-only by design
 
-3. **Signal Testing Utilities**
-   - Located in separate library: `libs/signal-testing-utils`
-   - Provides helpers for testing signals and effects
+ 3. **Signal Testing Utilities**
+    - Located in separate library: `libs/signal-testing-utils`
+    - Provides helpers for testing signals and effects
+
+4. **Navigation Helper Pattern**
+
+    Use `NavigationHelperService` for common navigation routes to avoid repetition:
+
+    ```typescript
+    import { NavigationHelperService } from '../../../shared/services/navigation-helper.service';
+
+    @Component({ ... })
+    export class ExampleComponent {
+      private navigationHelper = inject(NavigationHelperService);
+
+      cancel(): void {
+        this.navigationHelper.toTournamentsList(this.sportId, this.year);
+      }
+
+      onSubmit(): void {
+        this.service.save().subscribe(() => {
+          this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
+        });
+      }
+    }
+    ```
+
+    Available methods:
+
+    ```typescript
+    // Navigate to tournaments list
+    toTournamentsList(sportId: number | string, year: number | string)
+
+    // Navigate to tournament detail
+    toTournamentDetail(sportId: number | string, year: number | string, tournamentId: number | string)
+
+    // Navigate to tournament edit
+    toTournamentEdit(sportId: number | string, year: number | string, tournamentId: number | string)
+
+    // Navigate to tournament create
+    toTournamentCreate(sportId: number | string, year: number | string)
+
+    // Navigate to sport detail
+    toSportDetail(sportId: number | string)
+    ```
 
 ### Template Requirements
 

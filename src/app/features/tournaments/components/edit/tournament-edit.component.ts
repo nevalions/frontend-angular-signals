@@ -6,8 +6,8 @@ import { TournamentStoreService } from '../../services/tournament-store.service'
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { TournamentUpdate } from '../../models/tournament.model';
-
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 @Component({
   selector: 'app-tournament-edit',
@@ -18,8 +18,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './tournament-edit.component.less',
 })
 export class TournamentEditComponent implements OnInit {
-  private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private navigationHelper = inject(NavigationHelperService);
   private tournamentStore = inject(TournamentStoreService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
@@ -64,15 +64,15 @@ export class TournamentEditComponent implements OnInit {
 
       if (Object.keys(updateData).length > 0) {
         this.tournamentStore.updateTournament(Number(this.tournamentId), updateData).subscribe(() => {
-          this.cancel();
+          this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
         });
       } else {
-        this.cancel();
+        this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
       }
     }
   }
 
   cancel(): void {
-    this.router.navigate(['/sports', this.sportId]);
+    this.navigationHelper.toTournamentsList(this.sportId, this.year);
   }
 }
