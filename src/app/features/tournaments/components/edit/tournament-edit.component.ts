@@ -60,6 +60,6 @@ export class TournamentEditComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/sports']);
+    this.router.navigate(['/sports', this.sportId, 'seasons', this.year, 'tournaments']);
   }
 }

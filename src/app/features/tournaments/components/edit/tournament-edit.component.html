@@ -48,9 +48,4 @@
   } @else {
     <div class="tournament-edit__not-found">Tournament not found</div>
   }
-
-  <div class="tournament-edit__actions">
-    <button tuiButton type="button" (click)="cancel()">Cancel</button>
-    <button tuiButton type="button" (click)="onSubmit()" [disabled]="tournamentForm.invalid">Save Changes</button>
-  </div>
 </div>
