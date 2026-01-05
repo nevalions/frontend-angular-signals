@@ -68,9 +68,8 @@ export class TournamentDetailComponent {
 
   navigateBack(): void {
     const sportId = this.sportId();
-    const year = this.year();
-    if (sportId && year) {
-      this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments']);
+    if (sportId) {
+      this.router.navigate(['/sports', sportId]);
     }
   }
 

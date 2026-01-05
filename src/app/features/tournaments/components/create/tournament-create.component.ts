@@ -55,6 +55,6 @@ export class TournamentCreateComponent {
   }
 
   navigateBack(): void {
-    this.router.navigate(['/sports', this.sportId, 'seasons', this.year, 'tournaments']);
+    this.router.navigate(['/sports', this.sportId]);
   }
 }

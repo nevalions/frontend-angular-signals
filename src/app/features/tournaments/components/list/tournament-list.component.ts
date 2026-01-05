@@ -66,9 +66,9 @@ export class TournamentListComponent {
   loading = this.tournamentStore.loading;
 
   navigateBack(): void {
-    const year = this.year();
-    if (year) {
-      this.router.navigate(['/seasons', 'year', year]);
+    const sportId = this.sportId();
+    if (sportId) {
+      this.router.navigate(['/sports', sportId]);
     }
   }
 
