@@ -1,9 +1,24 @@
 <header class="navbar">
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
   <div class="navbar-container">
     <div class="navbar-brand">
       <h1 class="navbar-title">{{ title }}</h1>
     </div>
-    <nav class="navbar-nav">
+
+    <button
+      class="hamburger-menu"
+      [class.open]="mobileMenuOpen()"
+      (click)="toggleMobileMenu()"
+      aria-label="Toggle navigation menu"
+      [attr.aria-expanded]="mobileMenuOpen()"
+      type="button"
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+
+    <nav class="navbar-nav" [class.mobile-open]="mobileMenuOpen()">
       <a tuiLink routerLink="/persons" routerLinkActive="active">Persons</a>
 
       <div class="dropdown">
@@ -11,6 +26,8 @@
           class="dropdown-toggle"
           (click)="toggleDropdown(0); $event.stopPropagation()"
           [class.open]="isDropdownOpen(0)"
+          aria-haspopup="true"
+          [attr.aria-expanded]="isDropdownOpen(0)"
           type="button"
         >
           <span class="dropdown-text">Sports</span>
@@ -29,7 +46,7 @@
         @if (isDropdownOpen(0)) {
           <div class="dropdown-menu">
             @for (sport of sports(); track sport.id) {
-              <a class="dropdown-item" [routerLink]="'/sports/' + sport.id" (click)="$event.stopPropagation()">
+              <a class="dropdown-item" [routerLink]="'/sports/' + sport.id" (click)="closeMobileMenu(); $event.stopPropagation()">
                 <span class="dropdown-item-text">{{ sport.title }}</span>
               </a>
             }
@@ -37,8 +54,29 @@
         }
       </div>
     </nav>
-    <div class="navbar-auth">
-      <app-auth-buttons />
+
+    <div class="navbar-actions">
+      <button
+        class="dark-mode-toggle"
+        (click)="toggleTheme()"
+        aria-label="Toggle dark mode"
+        type="button"
+      >
+        @if (getThemeIcon() === 'moon') {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3ZM12 19C8.13 19 5 15.87 5 12C5 8.13 8.13 5 12 5C15.87 5 19 8.13 19 12C19 15.87 15.87 19 12 19Z" fill="currentColor"/>
+            <path d="M12 8C12 8 12 10 12 12C12 14 12 16 12 16C12 16 10 16 8 16C8 16 8 14 8 12C8 10 8 8 12 8Z" fill="currentColor"/>
+          </svg>
+        } @else {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 7C9.24 7 7 9.24 7 12C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12C17 9.24 14.76 7 12 7ZM12 15C10.34 15 9 13.66 9 12C9 10.34 10.34 9 12 9C13.66 9 15 10.34 15 12C15 13.66 13.66 15 12 15Z" fill="currentColor"/>
+            <path d="M12 2V4M12 20V22M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M2 12H4M20 12H22M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        }
+      </button>
+      <div class="navbar-auth">
+        <app-auth-buttons />
+      </div>
     </div>
   </div>
 </header>

@@ -4,6 +4,7 @@ import { TuiLink } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../../features/seasons/services/season-store.service';
 import { SportStoreService } from '../../../features/sports/services/sport-store.service';
 import { AuthButtonsComponent } from '../../../features/auth/components/auth-buttons/auth-buttons.component';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -16,12 +17,15 @@ import { AuthButtonsComponent } from '../../../features/auth/components/auth-but
 export class NavbarComponent {
   private readonly seasonStore = inject(SeasonStoreService);
   private readonly sportStore = inject(SportStoreService);
+  private readonly themeService = inject(ThemeService);
 
   readonly title = 'statsboard';
   readonly sports = this.sportStore.sports;
   readonly seasons = this.seasonStore.seasons;
 
   readonly openDropdowns = signal<Set<number>>(new Set<number>());
+  readonly mobileMenuOpen = signal(false);
+  readonly currentTheme = this.themeService.currentTheme;
 
   toggleDropdown(sportId: number): void {
     const current = new Set(this.openDropdowns());
@@ -39,5 +43,25 @@ export class NavbarComponent {
 
   closeAllDropdowns(): void {
     this.openDropdowns.set(new Set());
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(open => !open);
+    if (this.mobileMenuOpen()) {
+      this.closeAllDropdowns();
+    }
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+    this.closeAllDropdowns();
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  getThemeIcon(): string {
+    return this.currentTheme() === 'dark' ? 'sun' : 'moon';
   }
 }
