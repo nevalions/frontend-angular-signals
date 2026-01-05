@@ -13,9 +13,9 @@ export interface TournamentCreate {
   description?: string | null;
 }
 
-export interface TournamentUpdate {
-  title?: string;
-  season_id?: number;
-  sport_id?: number;
+  export interface TournamentUpdate {
+  title?: string | null;
+  season_id?: number | null;
+  sport_id?: number | null;
   description?: string | null;
 }
