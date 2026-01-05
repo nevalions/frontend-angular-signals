@@ -1,19 +1,36 @@
 <header class="navbar">
   <div class="navbar-container">
-    <h1 class="navbar-title">{{ title }}</h1>
+    <div class="navbar-brand">
+      <h1 class="navbar-title">{{ title }}</h1>
+    </div>
     <nav class="navbar-nav">
-      <a routerLink="/persons" routerLinkActive="active">Persons</a>
+      <a tuiLink routerLink="/persons" routerLinkActive="active">Persons</a>
       
       <div class="dropdown">
-        <button class="dropdown-toggle" (click)="toggleDropdown(0); $event.stopPropagation()" [class.open]="isDropdownOpen(0)">
-          Sports
-          <span class="dropdown-arrow">▼</span>
+        <button 
+          class="dropdown-toggle" 
+          (click)="toggleDropdown(0); $event.stopPropagation()" 
+          [class.open]="isDropdownOpen(0)"
+          type="button"
+        >
+          <span class="dropdown-text">Sports</span>
+          <span class="dropdown-icon">
+            @if (isDropdownOpen(0)) {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            }
+          </span>
         </button>
         @if (isDropdownOpen(0)) {
           <div class="dropdown-menu">
             @for (sport of sports(); track sport.id) {
               <a class="dropdown-item" [routerLink]="'/sports/' + sport.id" (click)="$event.stopPropagation()">
-                {{ sport.title }}
+                <span class="dropdown-item-text">{{ sport.title }}</span>
               </a>
             }
           </div>

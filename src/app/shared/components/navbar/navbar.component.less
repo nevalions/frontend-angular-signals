@@ -1,54 +1,64 @@
 .navbar {
   background-color: var(--tui-background-base);
   border-bottom: 1px solid var(--tui-border-normal);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 1000;
+  backdrop-filter: blur(8px);
 }
 
 .navbar-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 0.875rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
 .navbar-title {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.625rem;
+  font-weight: 700;
   color: var(--tui-text-primary);
+  letter-spacing: -0.02em;
 }
 
 .navbar-nav {
   display: flex;
-  gap: 1.5rem;
+  gap: 0.5rem;
   align-items: center;
 
   a {
     text-decoration: none;
-    color: var(--tui-text-primary);
+    color: var(--tui-text-secondary);
     font-weight: 500;
-    padding: 0.5rem 0;
+    padding: 0.625rem 1rem;
+    border-radius: 0.5rem;
     position: relative;
-    transition: color 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      color: var(--tui-primary);
+      background-color: var(--tui-background-neutral);
+      color: var(--tui-text-primary);
     }
 
     &.active {
       color: var(--tui-primary);
+      background-color: var(--tui-background-neutral);
 
       &::after {
         content: '';
         position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        bottom: -1rem;
+        left: 1rem;
+        right: 1rem;
         height: 2px;
         background-color: var(--tui-primary);
       }
@@ -65,62 +75,87 @@
 .dropdown-toggle {
   background: none;
   border: none;
-  color: var(--tui-text-primary);
+  color: var(--tui-text-secondary);
   font-weight: 500;
   cursor: pointer;
-  padding: 0.5rem 0;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  transition: color 0.2s;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9375rem;
 
   &:hover {
-    color: var(--tui-primary);
+    background-color: var(--tui-background-neutral);
+    color: var(--tui-text-primary);
   }
 
   &.open {
+    background-color: var(--tui-background-neutral);
     color: var(--tui-primary);
   }
 }
 
-.dropdown-arrow {
-  font-size: 0.75rem;
-  transition: transform 0.2s;
+.dropdown-text {
+  line-height: 1;
 }
 
-.dropdown-toggle.open .dropdown-arrow {
-  transform: rotate(180deg);
+.dropdown-icon {
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 0.5rem);
   left: 0;
   background-color: var(--tui-background-base);
   border: 1px solid var(--tui-border-normal);
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 200px;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  min-width: 220px;
   z-index: 1001;
-  margin-top: 0.5rem;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropdown-item {
   position: relative;
+  display: block;
+  border-bottom: 1px solid var(--tui-border-hover);
+
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .dropdown-item > a {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1rem;
   color: var(--tui-text-primary);
   text-decoration: none;
-  transition: background-color 0.2s;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+}
 
-  &:hover {
-    background-color: var(--tui-background-neutral);
-  }
+.dropdown-item > a:hover {
+  background-color: var(--tui-background-neutral);
+  color: var(--tui-primary);
+  padding-left: 1.25rem;
 }
 
 .submenu {
@@ -129,8 +164,8 @@
   left: 100%;
   background-color: var(--tui-background-base);
   border: 1px solid var(--tui-border-normal);
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   min-width: 180px;
   z-index: 1002;
   display: none;
@@ -142,12 +177,14 @@
 
 .submenu-item {
   display: block;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1rem;
   color: var(--tui-text-primary);
   text-decoration: none;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
 
   &:hover {
     background-color: var(--tui-background-neutral);
+    color: var(--tui-primary);
   }
 }

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TuiLink } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../../features/seasons/services/season-store.service';
 import { SportStoreService } from '../../../features/sports/services/sport-store.service';
 
@@ -7,7 +8,7 @@ import { SportStoreService } from '../../../features/sports/services/sport-store
   selector: 'app-navbar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, TuiLink],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.less',
 })
