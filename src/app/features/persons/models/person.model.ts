@@ -17,5 +17,13 @@ export interface PersonUpdate {
   person_photo_url?: string | null;
 }
 
-export type SortBy = 'first_name' | 'second_name';
+export type PersonSortBy = 'first_name' | 'second_name' | 'id';
 export type SortOrder = 'asc' | 'desc';
+export type SortBy = PersonSortBy;
+
+export interface PersonsPaginatedResponse {
+  items: Person[];
+  total: number;
+  page: number;
+  items_per_page: number;
+}

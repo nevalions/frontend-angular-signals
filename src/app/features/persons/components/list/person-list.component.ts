@@ -1,13 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { TuiTable, TuiTablePagination, type TuiSortChange, type TuiSortDirection, type TuiTablePaginationEvent } from '@taiga-ui/addon-table';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { PersonStoreService } from '../../services/person-store.service';
-import { Person } from '../../models/person.model';
+import { PersonSortBy } from '../../models/person.model';
+import {
+  TuiCardMedium,
+} from '@taiga-ui/layout';
+import {
+  TuiAvatar,
+  TuiPagination,
+} from '@taiga-ui/kit';
+import {
+  TuiButton,
+  TuiIcon,
+  TuiLoader,
+  TuiTitle,
+} from '@taiga-ui/core';
 
 @Component({
   selector: 'app-person-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiTable, TuiTablePagination],
+  imports: [TuiCardMedium, TuiPagination, TuiAvatar, TuiTitle, TuiButton, TuiIcon, TuiLoader],
   templateUrl: './person-list.component.html',
   styleUrl: './person-list.component.less',
 })
@@ -17,52 +29,47 @@ export class PersonListComponent {
   persons = this.personStore.persons;
   loading = this.personStore.loading;
   error = this.personStore.error;
-
-  page = signal<number>(0);
-  size = signal<number>(10);
-  sortDirection = signal<TuiSortDirection>(1);
-  sortBy = signal<keyof Person | null>('second_name');
+  page = this.personStore.page;
+  itemsPerPage = this.personStore.itemsPerPage;
+  totalPages = this.personStore.totalPages;
+  totalCount = this.personStore.totalCount;
+  sortBy = this.personStore.sortBy;
+  sortOrder = this.personStore.sortOrder;
 
   readonly itemsPerPageOptions = [10, 20, 50];
-  readonly columns = ['first_name', 'second_name', 'person_photo_url'] as const;
 
-  sortedPersons = computed(() => {
-    const persons = this.persons();
-    const direction = this.sortDirection();
-    const key = this.sortBy();
-
-    if (!key) return persons;
-
-    return [...persons].sort((a, b) => {
-      const valA = a[key];
-      const valB = b[key];
-
-      if (typeof valA === 'string' && typeof valB === 'string') {
-        return valA.localeCompare(valB) * direction;
-      }
-
-      return 0;
-    });
-  });
-
-  paginatedPersons = computed(() => {
-    const persons = this.sortedPersons();
-    const currentPage = this.page();
-    const currentPageSize = this.size();
-
-    const start = currentPage * currentPageSize;
-    const end = start + currentPageSize;
-
-    return persons.slice(start, end);
-  });
-
-  onSortChange({ sortKey, sortDirection }: TuiSortChange<Person>): void {
-    this.sortBy.set(sortKey);
-    this.sortDirection.set(sortDirection);
+  getSortLabel(sortBy: PersonSortBy): string {
+    switch (sortBy) {
+      case 'first_name':
+        return 'First Name';
+      case 'second_name':
+        return 'Second Name';
+      default:
+        return 'ID';
+    }
   }
 
-  onPaginationChange({ page, size }: TuiTablePaginationEvent): void {
-    this.page.set(page);
-    this.size.set(size);
+  toggleSort(sortBy: PersonSortBy): void {
+    if (this.sortBy() === sortBy) {
+      this.personStore.setSort(sortBy, this.sortOrder() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.personStore.setSort(sortBy, 'asc');
+    }
+  }
+
+  getSortIcon(sortBy: PersonSortBy): string {
+    if (this.sortBy() !== sortBy) {
+      return '@tui.chevron-up-down';
+    }
+    return this.sortOrder() === 'asc' ? '@tui.chevron-up' : '@tui.chevron-down';
+  }
+
+  onPageChange(pageIndex: number): void {
+    this.personStore.setPage(pageIndex + 1);
+  }
+
+  onItemsPerPageChange(itemsPerPage: number): void {
+    this.personStore.setItemsPerPage(itemsPerPage);
+    this.personStore.setPage(1);
   }
 }
