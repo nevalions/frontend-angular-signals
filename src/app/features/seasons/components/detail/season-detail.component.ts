@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TuiConfirmService } from '@taiga-ui/kit';
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
+import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
 
 @Component({
   selector: 'app-season-detail',
@@ -16,7 +17,8 @@ export class SeasonDetailComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private seasonStore = inject(SeasonStoreService);
-  private readonly dialogs = inject(TuiConfirmService);
+  private readonly dialogs = inject(TuiDialogService);
+  private readonly alerts = inject(TuiAlertService);
 
   seasonId = toSignal(
     this.route.paramMap.pipe(map((params) => Number(params.get('id')))),
@@ -65,20 +67,16 @@ export class SeasonDetailComponent {
     const season = this.season();
     if (!season) return;
 
-    this.dialogs
-      .withConfirm({
-        data: {
-          content: `Are you sure you want to delete season ${season.year}?`,
-          yes: 'Delete',
-          no: 'Cancel',
-        },
-      })
-      .subscribe((confirmed) => {
-        if (confirmed) {
-          this.seasonStore.deleteSeason(season.id).subscribe(() => {
-            this.navigateBack();
-          });
-        }
-      });
+    withDeleteConfirm(
+      this.dialogs,
+      this.alerts,
+      {
+        label: `Delete season ${season.year}?`,
+        content: 'This action cannot be undone!',
+      },
+      () => this.seasonStore.deleteSeason(season.id),
+      () => this.navigateBack(),
+      'Season'
+    );
   }
 }
