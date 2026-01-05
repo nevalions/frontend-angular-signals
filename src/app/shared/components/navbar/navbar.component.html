@@ -5,11 +5,11 @@
     </div>
     <nav class="navbar-nav">
       <a tuiLink routerLink="/persons" routerLinkActive="active">Persons</a>
-      
+
       <div class="dropdown">
-        <button 
-          class="dropdown-toggle" 
-          (click)="toggleDropdown(0); $event.stopPropagation()" 
+        <button
+          class="dropdown-toggle"
+          (click)="toggleDropdown(0); $event.stopPropagation()"
           [class.open]="isDropdownOpen(0)"
           type="button"
         >
@@ -37,5 +37,8 @@
         }
       </div>
     </nav>
+    <div class="navbar-auth">
+      <app-login-icon />
+    </div>
   </div>
 </header>

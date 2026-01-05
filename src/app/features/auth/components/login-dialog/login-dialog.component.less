@@ -1,0 +1,70 @@
+.login-dialog {
+  min-width: 400px;
+  padding: 2rem;
+}
+
+.login-dialog__header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.login-dialog__title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.login-dialog__subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--tui-text-02);
+}
+
+.login-dialog__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.login-dialog__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.login-dialog__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--tui-text-01);
+}
+
+.login-dialog__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--tui-primary);
+  }
+
+  &--invalid {
+    border-color: var(--tui-negative);
+  }
+}
+
+.login-dialog__error {
+  font-size: 0.75rem;
+  color: var(--tui-negative);
+  margin-top: 0.25rem;
+}
+
+.login-dialog__actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
