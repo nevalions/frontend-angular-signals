@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TuiButton } from '@taiga-ui/core';
-import { TuiConfirmService } from '@taiga-ui/kit';
+import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
+import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
 
 @Component({
   selector: 'app-tournament-detail',
@@ -22,7 +22,8 @@ export class TournamentDetailComponent {
   private tournamentStore = inject(TournamentStoreService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
-  private readonly dialogs = inject(TuiConfirmService);
+  private readonly alerts = inject(TuiAlertService)
+  private readonly dialogs = inject(TuiDialogService);
 
   sportId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -87,22 +88,18 @@ export class TournamentDetailComponent {
   deleteTournament(): void {
     const id = this.tournamentId();
     const tournament = this.tournament();
-    if (!tournament) return;
+    if (!tournament || !id) return;
 
-    this.dialogs
-      .withConfirm({
-        data: {
-          content: `Are you sure you want to delete tournament ${tournament.title}?`,
-          yes: 'Delete',
-          no: 'Cancel',
-        },
-      })
-      .subscribe((confirmed: boolean) => {
-        if (confirmed && id) {
-          this.tournamentStore.deleteTournament(id).subscribe(() => {
-            this.navigateBack();
-          });
-        }
-      });
+    withDeleteConfirm(
+      this.dialogs,
+      this.alerts,
+      {
+        label: `Delete tournament "${tournament.title}"?`,
+        content: 'This action cannot be undone!',
+      },
+      () => this.tournamentStore.deleteTournament(id),
+      () => this.navigateBack(),
+      'Tournament'
+    );
   }
 }
