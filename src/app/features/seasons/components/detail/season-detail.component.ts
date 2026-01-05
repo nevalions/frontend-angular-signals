@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
-import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
+import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-season-detail',

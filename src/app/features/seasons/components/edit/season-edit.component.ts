@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, computed, effect, untracked
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiAlertService, TuiButton } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { SeasonUpdate } from '../../models/season.model';
+import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-season-edit',
@@ -19,6 +20,7 @@ export class SeasonEditComponent {
   private route = inject(ActivatedRoute);
   private seasonStore = inject(SeasonStoreService);
   private fb = inject(FormBuilder);
+  private alerts = inject(TuiAlertService);
 
   seasonForm = this.fb.group({
     year: ['', [Validators.min(1900), Validators.max(2999)]],
@@ -62,9 +64,12 @@ export class SeasonEditComponent {
         year: Number(this.seasonForm.value.year),
         description: this.seasonForm.value.description || null,
       };
-      this.seasonStore.updateSeason(id, seasonData).subscribe(() => {
-        this.navigateToDetail();
-      });
+      withUpdateAlert(
+        this.alerts,
+        () => this.seasonStore.updateSeason(id, seasonData),
+        () => this.navigateToDetail(),
+        'Season'
+      );
     }
   }
 }

@@ -3,6 +3,64 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { TUI_CONFIRM } from '@taiga-ui/kit';
 
+export function withCreateAlert<T>(
+  alerts: TuiAlertService,
+  createOperation: () => Observable<T>,
+  onSuccess: () => void,
+  entityType: string,
+): void {
+  createOperation()
+    .pipe(
+      tap(() => {
+        alerts.open(`${entityType} created successfully`, {
+          label: 'Success',
+          appearance: 'positive',
+          autoClose: 3000,
+        }).subscribe();
+      }),
+      catchError((err) => {
+        alerts.open(`Failed to create: ${err.message || 'Unknown error'}`, {
+          label: 'Error',
+          appearance: 'negative',
+          autoClose: 0,
+        }).subscribe();
+        return throwError(() => err);
+      })
+    )
+    .subscribe({
+      next: onSuccess,
+    });
+}
+
+export function withUpdateAlert<T>(
+  alerts: TuiAlertService,
+  updateOperation: () => Observable<T>,
+  onSuccess: () => void,
+  entityType: string,
+): void {
+  updateOperation()
+    .pipe(
+      tap(() => {
+        alerts.open(`${entityType} updated successfully`, {
+          label: 'Success',
+          appearance: 'positive',
+          autoClose: 3000,
+        }).subscribe();
+      }),
+      catchError((err) => {
+        alerts.open(`Failed to update: ${err.message || 'Unknown error'}`, {
+          label: 'Error',
+          appearance: 'negative',
+          autoClose: 0,
+        }).subscribe();
+        return throwError(() => err);
+      })
+    )
+    .subscribe({
+      next: onSuccess,
+    });
+}
+
 export function withDeleteConfirm<T>(
   dialogs: TuiDialogService,
   alerts: TuiAlertService,

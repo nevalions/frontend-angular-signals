@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiAlertService, TuiButton } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { TournamentCreate } from '../../models/tournament.model';
 import { ActivatedRoute } from '@angular/router';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+import { withCreateAlert } from '../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-tournament-create',
@@ -24,6 +25,7 @@ export class TournamentCreateComponent {
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
   private fb = inject(FormBuilder);
+  private alerts = inject(TuiAlertService);
 
   tournamentForm = this.fb.group({
     title: ['', [Validators.required]],
@@ -49,9 +51,12 @@ export class TournamentCreateComponent {
         sport_id: this.sportId,
         season_id: season.id,
       };
-      this.tournamentStore.createTournament(data).subscribe(() => {
-        this.cancel();
-      });
+      withCreateAlert(
+        this.alerts,
+        () => this.tournamentStore.createTournament(data),
+        () => this.cancel(),
+        'Tournament'
+      );
     }
   }
 

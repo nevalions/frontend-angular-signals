@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiAlertService, TuiButton } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { TournamentUpdate } from '../../models/tournament.model';
 import { ActivatedRoute } from '@angular/router';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-tournament-edit',
@@ -24,6 +25,7 @@ export class TournamentEditComponent implements OnInit {
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
   private fb = inject(FormBuilder);
+  private alerts = inject(TuiAlertService);
 
   tournamentForm = this.fb.group({
     title: ['', [Validators.required]],
@@ -63,9 +65,12 @@ export class TournamentEditComponent implements OnInit {
       }
 
       if (Object.keys(updateData).length > 0) {
-        this.tournamentStore.updateTournament(Number(this.tournamentId), updateData).subscribe(() => {
-          this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
-        });
+        withUpdateAlert(
+          this.alerts,
+          () => this.tournamentStore.updateTournament(Number(this.tournamentId), updateData),
+          () => this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId),
+          'Tournament'
+        );
       } else {
         this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
       }

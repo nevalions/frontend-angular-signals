@@ -6,7 +6,7 @@ import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
-import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
+import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-tournament-detail',
