@@ -15,7 +15,7 @@
     display: flex;
     gap: 0.5rem;
     align-items: center;
-    color: #666;
+    color: var(--tui-text-secondary);
     font-size: 0.875rem;
     margin-bottom: 1rem;
   }
@@ -30,7 +30,7 @@
   &__not-found {
     text-align: center;
     padding: 2rem;
-    color: #666;
+    color: var(--tui-text-secondary);
   }
 
   &__form {
@@ -53,18 +53,20 @@
   &__input,
   &__textarea {
     padding: 0.75rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--tui-border-normal);
     border-radius: 0.25rem;
     font-size: 1rem;
     font-family: inherit;
+    background-color: var(--tui-background-base);
+    color: var(--tui-text-primary);
 
     &:focus {
       outline: none;
-      border-color: #0066cc;
+      border-color: var(--tui-primary);
     }
 
     &--invalid {
-      border-color: #dc3545;
+      border-color: var(--tui-text-negative);
     }
   }
 
@@ -73,7 +75,7 @@
   }
 
   &__error {
-    color: #dc3545;
+    color: var(--tui-text-negative);
     font-size: 0.875rem;
   }
 }

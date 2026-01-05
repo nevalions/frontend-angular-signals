@@ -26,16 +26,16 @@
   &__loader {
     width: 48px;
     height: 48px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    border: 4px solid var(--tui-border-normal);
+    border-top: 4px solid var(--tui-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
 
   &__error {
     padding: 2rem;
-    background-color: #fee;
-    color: #c33;
+    background-color: var(--tui-background-negative-pale);
+    color: var(--tui-text-negative);
     border-radius: 8px;
     text-align: center;
   }
@@ -43,7 +43,7 @@
   &__empty {
     padding: 4rem 2rem;
     text-align: center;
-    color: #666;
+    color: var(--tui-text-secondary);
     font-size: 1.125rem;
   }
 
@@ -54,8 +54,8 @@
   }
 
   &__card {
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
+    background-color: var(--tui-background-base);
+    border: 1px solid var(--tui-border-normal);
     border-radius: 12px;
     padding: 1.5rem;
     cursor: pointer;
@@ -72,11 +72,11 @@
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: #333;
+    color: var(--tui-text-primary);
   }
 
   &__card-description {
-    color: #666;
+    color: var(--tui-text-secondary);
     font-size: 0.9375rem;
     line-height: 1.5;
   }

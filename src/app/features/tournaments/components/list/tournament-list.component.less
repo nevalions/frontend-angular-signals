@@ -14,7 +14,7 @@
     display: flex;
     gap: 0.5rem;
     align-items: center;
-    color: #666;
+    color: var(--tui-text-secondary);
     font-size: 0.875rem;
   }
 
@@ -27,7 +27,7 @@
   &__empty {
     text-align: center;
     padding: 2rem;
-    color: #666;
+    color: var(--tui-text-secondary);
   }
 
   &__items {
@@ -37,14 +37,14 @@
   }
 
   &__item {
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--tui-border-normal);
     border-radius: 0.5rem;
     padding: 1rem;
     cursor: pointer;
     transition: border-color 0.2s;
 
     &:hover {
-      border-color: #0066cc;
+      border-color: var(--tui-primary);
     }
 
     h3 {
@@ -53,7 +53,7 @@
 
     p {
       margin: 0;
-      color: #666;
+      color: var(--tui-text-secondary);
     }
   }
 

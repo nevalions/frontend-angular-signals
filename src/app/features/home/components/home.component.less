@@ -1,6 +1,6 @@
 .home {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--tui-primary) 0%, var(--tui-primary-active) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,7 +14,7 @@
   &__header {
     text-align: center;
     margin-bottom: 4rem;
-    color: #fff;
+    color: var(--tui-text-03);
   }
 
   &__title {
@@ -37,7 +37,7 @@
   }
 
   &__link-card {
-    background-color: #fff;
+    background-color: var(--tui-background-base);
     border-radius: 16px;
     padding: 3rem 2rem;
     text-align: center;
@@ -61,12 +61,12 @@
     font-size: 1.75rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
-    color: #333;
+    color: var(--tui-text-primary);
   }
 
   &__link-card-subtitle {
     font-size: 1rem;
-    color: #666;
+    color: var(--tui-text-secondary);
     line-height: 1.5;
   }
 }

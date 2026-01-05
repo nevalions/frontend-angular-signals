@@ -11,7 +11,7 @@
     font-size: 2rem;
     font-weight: 600;
     margin: 0 0 1.5rem 0;
-    color: #333;
+    color: var(--tui-text-primary);
   }
 
   &__actions {
@@ -20,7 +20,7 @@
   }
 
   &__form {
-    background-color: #fff;
+    background-color: var(--tui-background-base);
     border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -34,7 +34,7 @@
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #333;
+    color: var(--tui-text-primary);
     margin-bottom: 0.5rem;
   }
 
@@ -43,24 +43,26 @@
     width: 100%;
     padding: 0.75rem;
     font-size: 1rem;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--tui-border-normal);
     border-radius: 6px;
     font-family: inherit;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
+    background-color: var(--tui-background-base);
+    color: var(--tui-text-primary);
 
     &:focus {
       outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      border-color: var(--tui-primary);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
     }
 
     &--invalid {
-      border-color: #e74c3c;
+      border-color: var(--tui-text-negative);
 
       &:focus {
-        border-color: #e74c3c;
-        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        border-color: var(--tui-text-negative);
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
       }
     }
   }
@@ -71,7 +73,7 @@
   }
 
   &__error {
-    color: #e74c3c;
+    color: var(--tui-text-negative);
     font-size: 0.875rem;
     margin-top: 0.5rem;
   }
