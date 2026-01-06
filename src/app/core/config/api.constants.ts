@@ -21,3 +21,7 @@ export function buildApiUrl(endpoint: string): string {
 export function buildWsUrl(endpoint: string): string {
   return `${WS_BASE_URL}${endpoint}`;
 }
+
+export function buildStaticUrl(staticPath: string): string {
+  return `${API_BASE_URL}${staticPath}`;
+}

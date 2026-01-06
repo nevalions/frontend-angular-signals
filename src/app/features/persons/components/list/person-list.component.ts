@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { PersonStoreService } from '../../services/person-store.service';
 import { PersonSortBy } from '../../models/person.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+import { buildStaticUrl } from '../../../../core/config/api.constants';
+import type { Person } from '../../models/person.model';
 import {
   TuiCardMedium,
 } from '@taiga-ui/layout';
@@ -44,6 +46,10 @@ export class PersonListComponent {
   totalCount = this.personStore.totalCount;
   sortBy = this.personStore.sortBy;
   sortOrder = this.personStore.sortOrder;
+
+  photoUrl(person: Person): string | null {
+    return person.person_photo_url ? buildStaticUrl(person.person_photo_url) : null;
+  }
 
   searchControl = new FormControl('');
   search = this.personStore.search;

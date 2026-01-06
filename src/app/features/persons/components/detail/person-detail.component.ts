@@ -6,6 +6,7 @@ import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
 import { PersonStoreService } from '../../services/person-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+import { buildStaticUrl } from '../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-person-detail',
@@ -37,6 +38,11 @@ export class PersonDetailComponent {
   });
 
   loading = this.personStore.loading;
+
+  photoUrl = computed(() => {
+    const person = this.person();
+    return person?.person_photo_url ? buildStaticUrl(person.person_photo_url) : null;
+  });
 
   navigateBack(): void {
     this.navigationHelper.toPersonsList();

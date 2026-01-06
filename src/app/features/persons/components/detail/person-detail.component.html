@@ -25,7 +25,7 @@
           @if (person()!.person_photo_url) {
             <div class="person-detail__detail">
               <span class="person-detail__label">Photo:</span>
-              <img [src]="person()!.person_photo_url" alt="Person photo" class="person-detail__photo" />
+              <img [src]="photoUrl()" alt="Person photo" class="person-detail__photo" />
             </div>
           }
         </div>
