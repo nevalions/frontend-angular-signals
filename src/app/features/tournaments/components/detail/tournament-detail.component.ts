@@ -7,6 +7,7 @@ import { TournamentStoreService } from '../../services/tournament-store.service'
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 @Component({
   selector: 'app-tournament-detail',
@@ -20,6 +21,7 @@ export class TournamentDetailComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private tournamentStore = inject(TournamentStoreService);
+  private navigationHelper = inject(NavigationHelperService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
   private readonly alerts = inject(TuiAlertService)
@@ -71,8 +73,9 @@ export class TournamentDetailComponent {
 
   navigateBack(): void {
     const sportId = this.sportId();
-    if (sportId) {
-      this.router.navigate(['/sports', sportId]);
+    const year = this.year();
+    if (sportId && year) {
+      this.navigationHelper.toTournamentsList(sportId, year);
     }
   }
 
@@ -81,7 +84,7 @@ export class TournamentDetailComponent {
     const year = this.year();
     const id = this.tournamentId();
     if (sportId && year && id) {
-      this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', id, 'edit']);
+      this.navigationHelper.toTournamentDetail(sportId, year, id);
     }
   }
 
