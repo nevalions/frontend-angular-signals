@@ -94,7 +94,7 @@ export class PersonListComponent {
 
   getSortIcon(sortBy: PersonSortBy): string {
     if (this.sortBy() !== sortBy) {
-      return '@tui.chevron-up-down';
+      return '@tui.chevrons-up-down';
     }
     return this.sortOrder() === 'asc' ? '@tui.chevron-up' : '@tui.chevron-down';
   }
