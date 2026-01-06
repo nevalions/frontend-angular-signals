@@ -21,9 +21,16 @@ export type PersonSortBy = 'first_name' | 'second_name' | 'id';
 export type SortOrder = 'asc' | 'desc';
 export type SortBy = PersonSortBy;
 
-export interface PersonsPaginatedResponse {
-  items: Person[];
-  total: number;
+export interface PaginationMetadata {
   page: number;
   items_per_page: number;
+  total_items: number;
+  total_pages: number;
+  has_next: boolean;
+  has_previous: boolean;
+}
+
+export interface PersonsPaginatedResponse {
+  data: Person[];
+  metadata: PaginationMetadata;
 }

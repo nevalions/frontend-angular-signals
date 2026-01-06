@@ -1,15 +1,11 @@
-import { computed, inject, Injectable, signal, Injector, effect } from '@angular/core';
+import { computed, inject, Injectable, signal, Injector } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Person, PersonCreate, PersonUpdate, PersonSortBy, SortOrder } from '../models/person.model';
-
-interface CountResponse {
-  total: number;
-}
+import { Person, PersonCreate, PersonUpdate, PersonSortBy, SortOrder, PersonsPaginatedResponse } from '../models/person.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +20,7 @@ export class PersonStoreService {
   sortBy = signal<PersonSortBy>('second_name');
   sortByTwo = signal<PersonSortBy>('id');
   sortOrder = signal<SortOrder>('asc');
+  search = signal<string>('');
 
   personsResource = rxResource({
     params: computed(() => ({
@@ -32,43 +29,31 @@ export class PersonStoreService {
       sortBy: this.sortBy(),
       sortByTwo: this.sortByTwo(),
       sortOrder: this.sortOrder(),
+      search: this.search(),
     })),
     stream: ({ params }) => {
-      const httpParams = new HttpParams()
+      let httpParams = new HttpParams()
         .set('page', params.page.toString())
         .set('items_per_page', params.itemsPerPage.toString())
         .set('order_by', params.sortBy)
         .set('order_by_two', params.sortByTwo)
         .set('ascending', (params.sortOrder === 'asc').toString());
 
-      return this.http.get<Person[]>(buildApiUrl('/api/persons/paginated'), { params: httpParams });
+      if (params.search) {
+        httpParams = httpParams.set('search', params.search);
+      }
+
+      return this.http.get<PersonsPaginatedResponse>(buildApiUrl('/api/persons/paginated'), { params: httpParams });
     },
     injector: this.injector,
   });
 
-  persons = computed(() => this.personsResource.value() ?? []);
+  persons = computed(() => this.personsResource.value()?.data ?? []);
   loading = computed(() => this.personsResource.isLoading());
   error = computed(() => this.personsResource.error());
 
-  totalCount = signal<number>(0);
-  totalPages = computed(() => Math.ceil(this.totalCount() / this.itemsPerPage()));
-
-  constructor() {
-    effect(() => {
-      this.loadCount();
-    });
-  }
-
-  loadCount(): void {
-    this.http.get<CountResponse>(buildApiUrl('/api/persons/count')).subscribe({
-      next: (response) => {
-        this.totalCount.set(response.total);
-      },
-      error: (err) => {
-        console.error('Failed to load persons count', err);
-      },
-    });
-  }
+  totalCount = computed(() => this.personsResource.value()?.metadata.total_items ?? 0);
+  totalPages = computed(() => this.personsResource.value()?.metadata.total_pages ?? 0);
 
   setPage(page: number): void {
     this.page.set(page);
@@ -85,9 +70,13 @@ export class PersonStoreService {
     this.page.set(1);
   }
 
+  setSearch(query: string): void {
+    this.search.set(query);
+    this.page.set(1);
+  }
+
   reload(): void {
     this.personsResource.reload();
-    this.loadCount();
   }
 
   createPerson(personData: PersonCreate): Observable<Person> {

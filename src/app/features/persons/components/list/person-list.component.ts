@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, filter } from 'rxjs/operators';
 import { PersonStoreService } from '../../services/person-store.service';
 import { PersonSortBy } from '../../models/person.model';
 import {
@@ -13,18 +16,20 @@ import {
   TuiIcon,
   TuiLoader,
   TuiTitle,
+  TuiTextfield,
 } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-person-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiCardMedium, TuiPagination, TuiAvatar, TuiTitle, TuiButton, TuiIcon, TuiLoader],
+  imports: [TuiCardMedium, TuiPagination, TuiAvatar, TuiTitle, TuiButton, TuiIcon, TuiLoader, TuiTextfield, ReactiveFormsModule],
   templateUrl: './person-list.component.html',
   styleUrl: './person-list.component.less',
 })
 export class PersonListComponent {
   private personStore = inject(PersonStoreService);
+  private destroyRef = inject(DestroyRef);
 
   persons = this.personStore.persons;
   loading = this.personStore.loading;
@@ -35,6 +40,26 @@ export class PersonListComponent {
   totalCount = this.personStore.totalCount;
   sortBy = this.personStore.sortBy;
   sortOrder = this.personStore.sortOrder;
+
+  searchControl = new FormControl('');
+  search = this.personStore.search;
+
+  private shouldTriggerSearch(value: string | null): boolean {
+    if (value === null) return false;
+    return (value || '').length === 0 || value!.length >= 3;
+  }
+
+  constructor() {
+    this.searchControl.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        debounceTime(300),
+        filter(this.shouldTriggerSearch)
+      )
+      .subscribe((value) => {
+        this.personStore.setSearch(value || '');
+      });
+  }
 
   readonly itemsPerPageOptions = [10, 20, 50];
 
@@ -71,5 +96,9 @@ export class PersonListComponent {
   onItemsPerPageChange(itemsPerPage: number): void {
     this.personStore.setItemsPerPage(itemsPerPage);
     this.personStore.setPage(1);
+  }
+
+  clearSearch(): void {
+    this.searchControl.setValue('');
   }
 }
