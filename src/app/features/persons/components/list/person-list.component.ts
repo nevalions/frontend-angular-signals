@@ -9,7 +9,7 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import type { Person } from '../../models/person.model';
 import {
-  TuiCardMedium,
+  TuiCardLarge,
 } from '@taiga-ui/layout';
 import {
   TuiAvatar,
@@ -27,7 +27,7 @@ import {
   selector: 'app-person-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiCardMedium, TuiPagination, TuiAvatar, TuiTitle, TuiButton, TuiIcon, TuiLoader, TuiTextfield, ReactiveFormsModule],
+  imports: [TuiCardLarge, TuiPagination, TuiAvatar, TuiButton, TuiIcon, TuiLoader, TuiTextfield, ReactiveFormsModule],
   templateUrl: './person-list.component.html',
   styleUrl: './person-list.component.less',
 })
@@ -118,5 +118,10 @@ export class PersonListComponent {
 
   navigateToPersonDetail(id: number): void {
     this.navigationHelper.toPersonDetail(id);
+  }
+
+  capitalizeName(name: string): string {
+    if (!name) return '';
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
   }
 }
