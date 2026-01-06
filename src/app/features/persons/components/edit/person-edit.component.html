@@ -1,0 +1,50 @@
+<div class="person-edit">
+  <header class="person-edit__header">
+    <h1 class="person-edit__title">Edit Person</h1>
+    <div class="person-edit__actions">
+      <button tuiButton type="button" (click)="cancel()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="personForm.invalid">Save Changes</button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="person-edit__loading">Loading person...</div>
+  } @else {
+    <form class="person-edit__form" [formGroup]="personForm">
+      <div class="person-edit__field">
+        <label for="first_name" class="person-edit__label">First Name *</label>
+        <input
+          id="first_name"
+          type="text"
+          formControlName="first_name"
+          class="person-edit__input"
+          [class.person-edit__input--invalid]="personForm.get('first_name')?.touched && personForm.get('first_name')?.invalid"
+        />
+        @if (personForm.get('first_name')?.touched && personForm.get('first_name')?.errors?.['required']) {
+          <div class="person-edit__error">First name is required</div>
+        }
+      </div>
+
+      <div class="person-edit__field">
+        <label for="second_name" class="person-edit__label">Second Name</label>
+        <input
+          id="second_name"
+          type="text"
+          formControlName="second_name"
+          class="person-edit__input"
+        />
+      </div>
+
+      <div class="person-edit__field">
+        <label for="person_photo" class="person-edit__label">Photo</label>
+        <input
+          id="person_photo"
+          type="file"
+          formControlName="person_photo"
+          class="person-edit__file"
+          accept="image/*"
+        />
+      </div>
+    </form>
+  }
+</div>

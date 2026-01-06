@@ -7,6 +7,9 @@ import { TournamentCreateComponent } from './features/tournaments/components/cre
 import { TournamentEditComponent } from './features/tournaments/components/edit/tournament-edit.component';
 import { Error404Component } from './shared/components/error404/error404.component';
 import { PersonListComponent } from './features/persons/components/list/person-list.component';
+import { PersonDetailComponent } from './features/persons/components/detail/person-detail.component';
+import { PersonCreateComponent } from './features/persons/components/create/person-create.component';
+import { PersonEditComponent } from './features/persons/components/edit/person-edit.component';
 import { HomeComponent } from './features/home/components/home.component';
 
 export const routes: Routes = [
@@ -50,7 +53,24 @@ export const routes: Routes = [
   },
   {
     path: 'persons',
-    component: PersonListComponent,
+    children: [
+      {
+        path: '',
+        component: PersonListComponent,
+      },
+      {
+        path: 'new',
+        component: PersonCreateComponent,
+      },
+      {
+        path: ':id',
+        component: PersonDetailComponent,
+      },
+      {
+        path: ':id/edit',
+        component: PersonEditComponent,
+      },
+    ],
   },
   {
     path: 'error404',

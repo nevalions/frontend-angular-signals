@@ -1,0 +1,45 @@
+<div class="person-detail">
+  <header class="person-detail__header">
+    @if (person()) {
+      <h1 class="person-detail__title">{{ person()!.first_name }} {{ person()!.second_name }}</h1>
+    } @else {
+      <h1 class="person-detail__title">Person</h1>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="person-detail__loading">Loading person...</div>
+  } @else if (person()) {
+    <div class="person-detail__content">
+      <section class="person-detail__section">
+        <h2 class="person-detail__section-title">Details</h2>
+        <div class="person-detail__details">
+          <div class="person-detail__detail">
+            <span class="person-detail__label">First Name:</span>
+            <span>{{ person()!.first_name }}</span>
+          </div>
+          <div class="person-detail__detail">
+            <span class="person-detail__label">Second Name:</span>
+            <span>{{ person()!.second_name }}</span>
+          </div>
+          @if (person()!.person_photo_url) {
+            <div class="person-detail__detail">
+              <span class="person-detail__label">Photo:</span>
+              <img [src]="person()!.person_photo_url" alt="Person photo" class="person-detail__photo" />
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <footer class="person-detail__actions">
+      <button tuiButton type="button" (click)="navigateBack()">Back</button>
+      <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
+      <button tuiButton type="button" appearance="destructive" (click)="deletePerson()">
+        Delete
+      </button>
+    </footer>
+  } @else {
+    <div class="person-detail__not-found">Person not found</div>
+  }
+</div>

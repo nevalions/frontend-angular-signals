@@ -2,8 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, filter } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { PersonStoreService } from '../../services/person-store.service';
 import { PersonSortBy } from '../../models/person.model';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import {
   TuiCardMedium,
 } from '@taiga-ui/layout';
@@ -30,6 +32,8 @@ import {
 export class PersonListComponent {
   private personStore = inject(PersonStoreService);
   private destroyRef = inject(DestroyRef);
+  private navigationHelper = inject(NavigationHelperService);
+  private router = inject(Router);
 
   persons = this.personStore.persons;
   loading = this.personStore.loading;
@@ -100,5 +104,13 @@ export class PersonListComponent {
 
   clearSearch(): void {
     this.searchControl.setValue('');
+  }
+
+  navigateToCreate(): void {
+    this.navigationHelper.toPersonCreate();
+  }
+
+  navigateToPersonDetail(id: number): void {
+    this.navigationHelper.toPersonDetail(id);
   }
 }

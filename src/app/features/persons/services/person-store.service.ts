@@ -84,7 +84,7 @@ export class PersonStoreService {
   }
 
   updatePerson(id: number, personData: PersonUpdate): Observable<Person> {
-    return this.apiService.put<Person>('/api/persons/', id, personData).pipe(tap(() => this.reload()));
+    return this.apiService.put<Person>('/api/persons/', id, personData, true).pipe(tap(() => this.reload()));
   }
 
   deletePerson(id: number): Observable<void> {

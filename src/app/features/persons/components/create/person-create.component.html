@@ -1,0 +1,46 @@
+<div class="person-create">
+  <header class="person-create__header">
+    <h1 class="person-create__title">Create New Person</h1>
+    <div class="person-create__actions">
+      <button tuiButton type="button" (click)="cancel()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="personForm.invalid">Create Person</button>
+    </div>
+  </header>
+
+  <form class="person-create__form" [formGroup]="personForm">
+    <div class="person-create__field">
+      <label for="first_name" class="person-create__label">First Name *</label>
+      <input
+        id="first_name"
+        type="text"
+        formControlName="first_name"
+        class="person-create__input"
+        [class.person-create__input--invalid]="personForm.get('first_name')?.touched && personForm.get('first_name')?.invalid"
+      />
+      @if (personForm.get('first_name')?.touched && personForm.get('first_name')?.errors?.['required']) {
+        <div class="person-create__error">First name is required</div>
+      }
+    </div>
+
+    <div class="person-create__field">
+      <label for="second_name" class="person-create__label">Second Name</label>
+      <input
+        id="second_name"
+        type="text"
+        formControlName="second_name"
+        class="person-create__input"
+      />
+    </div>
+
+    <div class="person-create__field">
+      <label for="person_photo" class="person-create__label">Photo</label>
+      <input
+        id="person_photo"
+        type="file"
+        formControlName="person_photo"
+        class="person-create__file"
+        accept="image/*"
+      />
+    </div>
+  </form>
+</div>

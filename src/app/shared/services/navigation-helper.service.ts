@@ -24,4 +24,20 @@ export class NavigationHelperService {
   toSportDetail(sportId: number | string): void {
     this.router.navigate(['/sports', sportId]);
   }
+
+  toPersonsList(): void {
+    this.router.navigate(['/persons']);
+  }
+
+  toPersonDetail(id: number | string): void {
+    this.router.navigate(['/persons', id]);
+  }
+
+  toPersonEdit(id: number | string): void {
+    this.router.navigate(['/persons', id, 'edit']);
+  }
+
+  toPersonCreate(): void {
+    this.router.navigate(['/persons', 'new']);
+  }
 }

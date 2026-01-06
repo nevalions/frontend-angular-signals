@@ -30,11 +30,12 @@ export class ApiService {
     );
   }
 
-  put<T>(endpoint: string, id: number, data: unknown): Observable<T> {
+  put<T>(endpoint: string, id: number, data: unknown, usePathParam: boolean = false): Observable<T> {
     const url = buildApiUrl(endpoint);
-    console.log(`[API] PUT ${url}?item_id=${id}`, data);
-    return this.http.put<T>(`${url}?item_id=${id}`, data).pipe(
-      tap(() => console.log(`[API] PUT ${url}?item_id=${id} - Success`)),
+    const fullUrl = usePathParam ? `${url}${id}/` : `${url}?item_id=${id}`;
+    console.log(`[API] PUT ${fullUrl}`, data);
+    return this.http.put<T>(fullUrl, data).pipe(
+      tap(() => console.log(`[API] PUT ${fullUrl} - Success`)),
       catchError((error: HttpErrorResponse) => this.errorHandlingService.handleError(error))
     );
   }
