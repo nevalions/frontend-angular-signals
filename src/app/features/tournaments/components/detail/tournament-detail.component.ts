@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
@@ -19,7 +19,6 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 })
 export class TournamentDetailComponent {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private tournamentStore = inject(TournamentStoreService);
   private navigationHelper = inject(NavigationHelperService);
   private seasonStore = inject(SeasonStoreService);
