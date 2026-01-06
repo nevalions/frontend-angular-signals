@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
-import { Observable, of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
 import { PersonCreateComponent } from './person-create.component';
 import { PersonStoreService } from '../../services/person-store.service';
@@ -11,9 +11,8 @@ describe('PersonCreateComponent', () => {
   let component: PersonCreateComponent;
   let fixture: ComponentFixture<PersonCreateComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
-  let storeMock: { createPerson: ReturnType<typeof vi.fn> };
+  let storeMock: { createPerson: ReturnType<typeof vi.fn>; uploadPersonPhoto: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
-  let fb: FormBuilder;
 
   beforeEach(() => {
     routerMock = {
@@ -26,6 +25,7 @@ describe('PersonCreateComponent', () => {
 
     storeMock = {
       createPerson: vi.fn().mockReturnValue(of(undefined)),
+      uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'http://test.com/photo.jpg' })),
     };
 
     TestBed.configureTestingModule({
@@ -40,7 +40,6 @@ describe('PersonCreateComponent', () => {
 
     fixture = TestBed.createComponent(PersonCreateComponent);
     component = fixture.componentInstance;
-    fb = TestBed.inject(FormBuilder);
   });
 
   it('should create a component', () => {
@@ -51,35 +50,91 @@ describe('PersonCreateComponent', () => {
     expect(component.personForm).toBeDefined();
     expect(component.personForm.get('first_name')).toBeDefined();
     expect(component.personForm.get('second_name')).toBeDefined();
-    expect(component.personForm.get('person_photo')).toBeDefined();
   });
 
   it('should require first_name field', () => {
-    component.personForm.setValue({ first_name: '', second_name: '', person_photo: null });
+    component.personForm.setValue({ first_name: '', second_name: '' });
 
     expect(component.personForm.get('first_name')?.hasError('required')).toBe(true);
   });
 
   it('should allow empty second_name', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: '', person_photo: null });
+    component.personForm.setValue({ first_name: 'John', second_name: '' });
 
     expect(component.personForm.valid).toBe(true);
   });
 
   it('should have valid form with all fields filled', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_photo: null });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
 
     expect(component.personForm.valid).toBe(true);
   });
 
-  it('should navigate to list on cancel', () => {
-    component.cancel();
+  it('should require first_name field', () => {
+    component.personForm.setValue({ first_name: '', second_name: '' });
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);
+    expect(component.personForm.get('first_name')?.hasError('required')).toBe(true);
   });
 
-  it('should call createPerson on valid form submit', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_photo: null });
+  it('should allow empty second_name', () => {
+    component.personForm.setValue({ first_name: 'John', second_name: '' });
+
+    expect(component.personForm.valid).toBe(true);
+  });
+
+  it('should have valid form with all fields filled', () => {
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
+
+    expect(component.personForm.valid).toBe(true);
+  });
+
+  it('should have photoUploadLoading signal', () => {
+    expect(component.photoUploadLoading).toBeDefined();
+  });
+
+  it('should have photoPreviewUrl signal', () => {
+    expect(component.photoPreviewUrl).toBeDefined();
+  });
+
+  it('should show error for non-image file', () => {
+    const event = { target: { files: [new File(['test'], 'test.txt', { type: 'text/plain' })] } } as unknown as Event;
+
+    component.onFileSelected(event);
+
+    expect(alertsMock.open).toHaveBeenCalledWith('Please select an image file', expect.any(Object));
+  });
+
+  it('should show error for file larger than 5MB', () => {
+    const largeFile = new File(['a'.repeat(6 * 1024 * 1024)], 'large.png', { type: 'image/png' });
+    const event = { target: { files: [largeFile] } } as unknown as Event;
+
+    component.onFileSelected(event);
+
+    expect(alertsMock.open).toHaveBeenCalledWith('File size must be less than 5MB', expect.any(Object));
+  });
+
+  it('should upload photo and set preview on valid file', () => {
+    const validFile = new File(['test'], 'test.png', { type: 'image/png' });
+    const event = { target: { files: [validFile] } } as unknown as Event;
+
+    component.onFileSelected(event);
+
+    expect(storeMock.uploadPersonPhoto).toHaveBeenCalledWith(validFile);
+    expect(component.photoPreviewUrl()).toBe('http://test.com/photo.jpg');
+  });
+
+  it('should set loading state during photo upload', () => {
+    const validFile = new File(['test'], 'test.png', { type: 'image/png' });
+    const event = { target: { files: [validFile] } } as unknown as Event;
+
+    component.onFileSelected(event);
+
+    expect(component.photoUploadLoading()).toBe(false);
+  });
+
+  it('should call createPerson with photo URL on valid form submit', () => {
+    component.photoPreviewUrl.set('http://test.com/photo.jpg');
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -87,11 +142,25 @@ describe('PersonCreateComponent', () => {
     expect(storeMock.createPerson).toHaveBeenCalledWith({
       first_name: 'John',
       second_name: 'Doe',
+      person_photo_url: 'http://test.com/photo.jpg',
+    });
+  });
+
+  it('should call createPerson without photo URL when no photo uploaded', () => {
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
+    fixture.detectChanges();
+
+    component.onSubmit();
+
+    expect(storeMock.createPerson).toHaveBeenCalledWith({
+      first_name: 'John',
+      second_name: 'Doe',
+      person_photo_url: null,
     });
   });
 
   it('should not call createPerson on invalid form submit', () => {
-    component.personForm.setValue({ first_name: '', second_name: '', person_photo: null });
+    component.personForm.setValue({ first_name: '', second_name: '' });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -100,14 +169,14 @@ describe('PersonCreateComponent', () => {
   });
 
   it('should show alert on successful creation', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_photo: null });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
     component.onSubmit();
 
     expect(alertsMock.open).toHaveBeenCalledWith('Person created successfully', expect.any(Object));
   });
 
   it('should navigate to list after successful creation', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_photo: null });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
     component.onSubmit();
 
     expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);

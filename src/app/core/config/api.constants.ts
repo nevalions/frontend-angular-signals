@@ -23,5 +23,7 @@ export function buildWsUrl(endpoint: string): string {
 }
 
 export function buildStaticUrl(staticPath: string): string {
-  return `${API_BASE_URL}${staticPath}`;
+  const baseUrl = API_BASE_URL.replace(/\/+$/, '');
+  const path = staticPath.replace(/^\/+/, '');
+  return `${baseUrl}/${path}`;
 }

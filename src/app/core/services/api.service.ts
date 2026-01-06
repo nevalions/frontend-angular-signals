@@ -56,4 +56,15 @@ export class ApiService {
       catchError((error: HttpErrorResponse) => this.errorHandlingService.handleError(error))
     );
   }
+
+  uploadFile<T>(endpoint: string, file: File): Observable<T> {
+    const url = buildApiUrl(endpoint);
+    const formData = new FormData();
+    formData.append('file', file);
+    console.log(`[API] UPLOAD ${url}`, file.name);
+    return this.http.post<T>(url, formData).pipe(
+      tap(() => console.log(`[API] UPLOAD ${url} - Success`)),
+      catchError((error: HttpErrorResponse) => this.errorHandlingService.handleError(error))
+    );
+  }
 }

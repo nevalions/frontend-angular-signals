@@ -37,13 +37,21 @@
 
       <div class="person-edit__field">
         <label for="person_photo" class="person-edit__label">Photo</label>
+        @if (displayPhotoUrl()) {
+          <div class="person-edit__current-photo">
+            <img [src]="displayPhotoUrl()!" alt="Current photo" class="person-edit__photo-preview" />
+          </div>
+        }
         <input
           id="person_photo"
           type="file"
-          formControlName="person_photo"
+          (change)="onFileSelected($event)"
           class="person-edit__file"
           accept="image/*"
         />
+        @if (photoUploadLoading()) {
+          <div class="person-edit__loading">Uploading photo...</div>
+        }
       </div>
     </form>
   }

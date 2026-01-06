@@ -5,6 +5,12 @@ export interface Person {
   person_photo_url: string | null;
 }
 
+export interface PhotoUploadResponse {
+  original: string;
+  icon: string;
+  webview: string;
+}
+
 export interface PersonCreate {
   first_name: string;
   second_name: string;

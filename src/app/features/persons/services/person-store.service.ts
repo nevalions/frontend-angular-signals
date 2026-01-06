@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Person, PersonCreate, PersonUpdate, PersonSortBy, SortOrder, PersonsPaginatedResponse } from '../models/person.model';
+import { Person, PersonCreate, PersonUpdate, PersonSortBy, SortOrder, PersonsPaginatedResponse, PhotoUploadResponse } from '../models/person.model';
 
 @Injectable({
   providedIn: 'root',
@@ -77,6 +77,10 @@ export class PersonStoreService {
 
   reload(): void {
     this.personsResource.reload();
+  }
+
+  uploadPersonPhoto(file: File): Observable<PhotoUploadResponse> {
+    return this.apiService.uploadFile<PhotoUploadResponse>('/api/persons/upload_resize_photo', file);
   }
 
   createPerson(personData: PersonCreate): Observable<Person> {

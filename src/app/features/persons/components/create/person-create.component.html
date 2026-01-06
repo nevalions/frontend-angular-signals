@@ -37,10 +37,17 @@
       <input
         id="person_photo"
         type="file"
-        formControlName="person_photo"
+        (change)="onFileSelected($event)"
         class="person-create__file"
         accept="image/*"
       />
+      @if (photoUploadLoading()) {
+        <div class="person-create__loading">Uploading photo...</div>
+      } @else if (photoPreviewUrl()) {
+        <div class="person-create__preview">
+          <img [src]="photoPreviewUrl()!" alt="Photo preview" class="person-create__preview-image" />
+        </div>
+      }
     </div>
   </form>
 </div>
