@@ -30,7 +30,6 @@
   padding: 0.875rem 2rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   position: relative;
 }
 
@@ -78,7 +77,7 @@
 .navbar-brand {
   display: flex;
   align-items: center;
-  order: 1;
+  flex-shrink: 0;
 }
 
 .navbar-title {
@@ -109,6 +108,8 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  flex: 1;
+  justify-content: center;
 
   a {
     text-decoration: none;
@@ -153,6 +154,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-shrink: 0;
 }
 
 .navbar-auth {
@@ -354,11 +356,15 @@
 @media (max-width: 768px) {
   .navbar-container {
     padding: 0.875rem 1rem;
+    justify-content: space-between;
   }
 
   .hamburger-menu {
     display: flex;
-    order: 3;
+  }
+
+  .navbar-brand {
+    flex-shrink: 0;
   }
 
   .navbar-nav {
@@ -375,6 +381,8 @@
     display: none;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     z-index: 1001;
+    flex: none;
+    justify-content: flex-start;
 
     &.mobile-open {
       display: flex;
@@ -433,8 +441,7 @@
   }
 
   .navbar-actions {
-    margin-left: auto;
-    order: 2;
+    flex-shrink: 0;
   }
 
   .dark-mode-toggle {
