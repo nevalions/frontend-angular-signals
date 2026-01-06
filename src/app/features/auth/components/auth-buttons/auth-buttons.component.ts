@@ -22,6 +22,8 @@ import { RegisterDialogComponent } from '../register-dialog/register-dialog.comp
           size="m"
           class="auth-buttons__register"
           (click)="openRegisterDialog()"
+          aria-label="Sign Up"
+          title="Sign Up"
         >
           <tui-icon class="auth-buttons__icon" icon="@tui.user-plus"></tui-icon>
           <span class="auth-buttons__text">Sign Up</span>
@@ -34,6 +36,8 @@ import { RegisterDialogComponent } from '../register-dialog/register-dialog.comp
           size="s"
           class="auth-buttons__login"
           (click)="openLoginDialog()"
+          aria-label="Sign In"
+          title="Sign In"
         >
           <tui-icon class="auth-buttons__icon" icon="@tui.user"></tui-icon>
           <span class="auth-buttons__text">Sign In</span>
@@ -57,6 +61,8 @@ import { RegisterDialogComponent } from '../register-dialog/register-dialog.comp
           size="s"
           class="auth-buttons__logout"
           (click)="logout()"
+          aria-label="Sign Out"
+          title="Sign Out"
         >
           <tui-icon class="auth-buttons__icon" icon="@tui.log-out"></tui-icon>
           <span class="auth-buttons__text auth-buttons__text--hide-mobile">Sign Out</span>
