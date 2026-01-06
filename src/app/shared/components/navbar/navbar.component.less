@@ -78,6 +78,7 @@
 .navbar-brand {
   display: flex;
   align-items: center;
+  order: 1;
 }
 
 .navbar-title {
@@ -86,6 +87,22 @@
   font-weight: 700;
   color: var(--tui-text-primary);
   letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.navbar-title-link {
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    color: var(--tui-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tui-primary);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
 }
 
 .navbar-nav {
@@ -102,6 +119,7 @@
     border-radius: 0.5rem;
     position: relative;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
 
     &:hover,
     &:focus {
@@ -195,6 +213,7 @@
   gap: 0.5rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 0.9375rem;
+  text-transform: uppercase;
 
   &:hover,
   &:focus {
@@ -339,6 +358,7 @@
 
   .hamburger-menu {
     display: flex;
+    order: 3;
   }
 
   .navbar-nav {
@@ -414,6 +434,7 @@
 
   .navbar-actions {
     margin-left: auto;
+    order: 2;
   }
 
   .dark-mode-toggle {

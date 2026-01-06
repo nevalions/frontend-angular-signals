@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { EmptyPageComponent } from './shared/components/empty-page/empty-page.component';
 import { SportListComponent } from './features/sports/components/list/sport-list.component';
 import { SportDetailComponent } from './features/sports/components/detail/sport-detail.component';
 import { TournamentListComponent } from './features/tournaments/components/list/tournament-list.component';
@@ -8,12 +7,17 @@ import { TournamentCreateComponent } from './features/tournaments/components/cre
 import { TournamentEditComponent } from './features/tournaments/components/edit/tournament-edit.component';
 import { Error404Component } from './shared/components/error404/error404.component';
 import { PersonListComponent } from './features/persons/components/list/person-list.component';
+import { HomeComponent } from './features/home/components/home.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: EmptyPageComponent,
+    redirectTo: '/home',
     pathMatch: 'full',
+  },
+  {
+    path: 'home',
+    component: HomeComponent,
   },
   {
     path: 'sports',
