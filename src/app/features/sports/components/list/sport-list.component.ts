@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SportStoreService } from '../../services/sport-store.service';
+import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
+import { TuiLoader, TuiTitle } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-sport-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [TuiCardLarge, TuiCell, TuiLoader, TuiTitle],
   templateUrl: './sport-list.component.html',
   styleUrl: './sport-list.component.less',
 })
