@@ -8,14 +8,14 @@
           appearance="flat"
           (click)="navigateBack()">Back</button>
         <h1 class="sport-detail__title">{{ s.title | uppercase }}</h1>
-      </div>
-      <div class="sport-detail__header-right">
         <div class="sport-detail__menu-container" tuiActiveZone (tuiActiveZoneChange)="onMenuActiveZoneChange($event)">
           <button
             type="button"
             tuiIconButton
+            size="s"
+            appearance="flat"
             (click)="toggleMenu()">
-            <tui-icon icon="@tui.ellipsis" />
+            <tui-icon icon="@tui.settings" />
           </button>
           @if (menuOpen()) {
             <div class="sport-detail__menu-dropdown">

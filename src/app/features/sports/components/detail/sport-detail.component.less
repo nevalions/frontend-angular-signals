@@ -5,7 +5,6 @@
   &__header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 1rem;
     padding: 1.5rem 2rem;
     border-bottom: 1px solid var(--tui-border-normal);
@@ -15,13 +14,6 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    flex: 1;
-  }
-
-  &__header-right {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
   }
 
   &__menu-container {
@@ -31,13 +23,13 @@
 
   &__menu-dropdown {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 4px);
     right: 0;
-    min-width: 160px;
+    min-width: 120px;
     background: var(--tui-background-elevation-3);
     border: 1px solid var(--tui-border-normal);
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     z-index: 1000;
     overflow: hidden;
   }
@@ -45,16 +37,16 @@
   &__menu-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
     text-align: left;
     border: none;
     background: transparent;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--tui-text-primary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
 
     &:hover {
       background: var(--tui-background-hover);
@@ -64,13 +56,13 @@
       color: var(--tui-text-negative);
 
       &:hover {
-        background: rgba(255, 69, 58, 0.1);
+        background: rgba(255, 69, 58, 0.08);
       }
     }
   }
 
   &__menu-icon {
-    font-size: 1.25rem;
+    font-size: 1rem;
   }
 
   &__title {
@@ -654,18 +646,24 @@
 
   @media (max-width: 768px) {
     &__header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 0.75rem;
       padding: 1rem;
     }
 
     &__header-left {
-      width: 100%;
+      width: auto;
+      flex: 1;
+      min-width: 0;
     }
 
     &__title {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &__subnav {
