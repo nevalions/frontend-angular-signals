@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiAlertService, TuiDialogService, TuiTextfield } from '@taiga-ui/core';
-import { TuiPagination } from '@taiga-ui/kit';
+import { TuiAlertService, TuiButton, TuiDialogService, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButtonClose, TuiPagination } from '@taiga-ui/kit';
 import { PositionStoreService } from '../../../services/position-store.service';
 import { withDeleteConfirm } from '../../../../../core/utils/alert-helper.util';
 import { Position, PositionCreate, PositionUpdate } from '../../../models/position.model';
@@ -12,6 +12,9 @@ import { Position, PositionCreate, PositionUpdate } from '../../../models/positi
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    TuiButton,
+    TuiButtonClose,
+    TuiIcon,
     TuiTextfield,
     TuiPagination
   ],

@@ -23,12 +23,6 @@
   flex-shrink: 0;
 }
 
-.sport-positions-tab__add-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .sport-positions-tab__position-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -97,23 +91,7 @@
 }
 
 .sport-positions-tab__items-option {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--tui-border-normal);
-  background: var(--tui-background-base);
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: var(--tui-border-hover);
-    background: var(--tui-background-neutral-1);
-  }
-
-  &--active {
-    background: var(--tui-background-accent-1);
-    color: var(--tui-text-primary-on-accent-1);
-    border-color: var(--tui-background-accent-1);
-  }
+  min-width: 2.5rem;
 }
 
 .sport-positions-tab__pagination {

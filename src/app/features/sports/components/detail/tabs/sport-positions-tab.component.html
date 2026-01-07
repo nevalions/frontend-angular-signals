@@ -12,16 +12,18 @@
       @if (positionSearchQuery()) {
         <button
           type="button"
+          tuiButton
           appearance="flat"
-          iconStart="@tui.close"
           size="s"
           (click)="clearPositionSearch()"
           class="sport-positions-tab__search-clear">
+          <tui-icon icon="@tui.close" />
         </button>
       }
     </div>
     <button
       type="button"
+      tuiButton
       appearance="flat"
       iconStart="@tui.plus"
       (click)="openPositionForm()"
@@ -46,19 +48,21 @@
           <div class="sport-positions-tab__position-actions">
             <button
               type="button"
+              tuiButton
               appearance="flat"
-              icon="@tui.edit"
               size="s"
               (click)="openPositionForm(position)"
               class="sport-positions-tab__action-button">
+              <tui-icon icon="@tui.edit" />
             </button>
             <button
               type="button"
+              tuiButton
               appearance="flat"
-              icon="@tui.trash"
               size="s"
               (click)="deletePosition(position)"
               class="sport-positions-tab__action-button sport-positions-tab__action-button--danger">
+              <tui-icon icon="@tui.trash" />
             </button>
           </div>
         </div>
@@ -72,8 +76,10 @@
           @for (option of itemsPerPageOptions; track option) {
             <button
               type="button"
+              tuiButton
+              [appearance]="positionsItemsPerPage() === option ? 'primary' : 'outline'"
+              size="xs"
               class="sport-positions-tab__items-option"
-              [class.sport-positions-tab__items-option--active]="positionsItemsPerPage() === option"
               (click)="onPositionsItemsPerPageChange(option)">
               {{ option }}
             </button>
@@ -94,12 +100,13 @@
       <div class="sport-positions-tab__modal">
         <div class="sport-positions-tab__modal-header">
           <h2>{{ editingPosition() ? 'Edit Position' : 'Add Position' }}</h2>
-      <button
-        type="button"
-        appearance="ghost"
-        (click)="closePositionForm()">
-        Cancel
-      </button>
+          <button
+            type="button"
+            tuiButtonClose
+            tuiIconButton
+            appearance="flat"
+            (click)="closePositionForm()">
+          </button>
         </div>
         <div class="sport-positions-tab__modal-body">
           <tui-textfield>
@@ -114,12 +121,14 @@
         <div class="sport-positions-tab__modal-footer">
           <button
             type="button"
-            appearance="ghost"
+            tuiButton
+            appearance="flat"
             (click)="closePositionForm()">
             Cancel
           </button>
           <button
             type="button"
+            tuiButton
             appearance="primary"
             (click)="savePosition()">
             {{ editingPosition() ? 'Update' : 'Create' }}
