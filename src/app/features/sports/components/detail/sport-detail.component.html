@@ -9,9 +9,33 @@
           (click)="navigateBack()">Back</button>
         <h1 class="sport-detail__title">{{ s.title | uppercase }}</h1>
       </div>
-      <div class="sport-detail__header-actions">
-        <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
-        <button tuiButton type="button" appearance="destructive" (click)="deleteSport()">Delete</button>
+      <div class="sport-detail__header-right">
+        <div class="sport-detail__menu-container" tuiActiveZone (tuiActiveZoneChange)="onMenuActiveZoneChange($event)">
+          <button
+            type="button"
+            tuiIconButton
+            (click)="toggleMenu()">
+            <tui-icon icon="@tui.ellipsis" />
+          </button>
+          @if (menuOpen()) {
+            <div class="sport-detail__menu-dropdown">
+              <button
+                type="button"
+                class="sport-detail__menu-item"
+                (click)="navigateToEdit(); closeMenu()">
+                <tui-icon icon="@tui.edit" class="sport-detail__menu-icon" />
+                Edit
+              </button>
+              <button
+                type="button"
+                class="sport-detail__menu-item sport-detail__menu-item--danger"
+                (click)="deleteSport(); closeMenu()">
+                <tui-icon icon="@tui.trash" class="sport-detail__menu-icon" />
+                Delete
+              </button>
+            </div>
+          }
+        </div>
       </div>
     </div>
 
@@ -55,21 +79,78 @@
       <div class="sport-detail__tournaments">
         @if (!selectedSeasonYear()) {
           <p class="sport-detail__empty-message">Please select a season to view tournaments</p>
-        } @else if (tournaments().length === 0) {
-          <p class="sport-detail__empty-message">No tournaments found for this season</p>
         } @else {
-          <div class="sport-detail__tournament-list">
-            @for (tournament of tournaments(); track tournament.id) {
+          <div class="sport-detail__search-container">
+            <tui-textfield iconStart="@tui.search">
+              <label tuiLabel>Search tournaments</label>
+              <input
+                placeholder="Search by name or description..."
+                tuiTextfield
+                [value]="searchQuery()"
+                (input)="onSearchChange($any($event.target).value)" />
+            </tui-textfield>
+            @if (searchQuery()) {
               <button
-                class="sport-detail__tournament-card"
-                (click)="navigateToTournamentDetail(tournament.id)">
-                <div class="sport-detail__tournament-title">{{ tournament.title }}</div>
-                @if (tournament.description) {
-                  <div class="sport-detail__tournament-description">{{ tournament.description }}</div>
-                }
+                type="button"
+                tuiButton
+                appearance="flat"
+                icon="@tui.close"
+                size="s"
+                (click)="clearSearch()"
+                class="sport-detail__search-clear">
+                <tui-icon [icon]="'@tui.close'" />
               </button>
             }
           </div>
+
+          @if (tournaments().length === 0) {
+            <p class="sport-detail__empty-message">No tournaments found for this season</p>
+          } @else {
+            <div class="sport-detail__tournament-list">
+              @for (tournament of paginatedTournaments(); track tournament.id) {
+                <button
+                  class="sport-detail__tournament-card"
+                  tuiCardLarge
+                  tuiCell="l"
+                  (click)="navigateToTournamentDetail(tournament.id)">
+                  <div class="sport-detail__tournament-icon">
+                    <tui-avatar size="l" class="sport-detail__tournament-avatar">
+                      <tui-icon icon="@tui.trophy" />
+                    </tui-avatar>
+                  </div>
+                  <div class="sport-detail__tournament-content">
+                    <h3 class="sport-detail__tournament-title">{{ tournament.title }}</h3>
+                    @if (tournament.description) {
+                      <p class="sport-detail__tournament-description">{{ tournament.description }}</p>
+                    }
+                  </div>
+                </button>
+              }
+            </div>
+
+            @if (totalPages() > 1) {
+              <div class="sport-detail__pagination-wrapper">
+                <div class="sport-detail__items-per-page">
+                  <span>Items per page:</span>
+                  @for (option of itemsPerPageOptions; track option) {
+                    <button
+                      type="button"
+                      class="sport-detail__items-option"
+                      [class.sport-detail__items-option--active]="itemsPerPage() === option"
+                      (click)="onItemsPerPageChange(option)">
+                      {{ option }}
+                    </button>
+                  }
+                </div>
+                <div class="sport-detail__pagination">
+                  <tui-pagination
+                    [length]="totalPages()"
+                    [index]="currentPage() - 1"
+                    (indexChange)="onPageChange($event)" />
+                </div>
+              </div>
+            }
+          }
         }
       </div>
     } @else {

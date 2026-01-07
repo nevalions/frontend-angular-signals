@@ -49,6 +49,10 @@ export const routes: Routes = [
         path: ':id',
         component: SportDetailComponent,
       },
+      {
+        path: ':id/edit',
+        component: SportDetailComponent,
+      },
     ],
   },
   {
