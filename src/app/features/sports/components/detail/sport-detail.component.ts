@@ -14,9 +14,11 @@ import { SeasonStoreService } from '../../../seasons/services/season-store.servi
 import { SportStoreService } from '../../services/sport-store.service';
 import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
 import { TeamStoreService } from '../../../teams/services/team-store.service';
+import { PositionStoreService } from '../../services/position-store.service';
 import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { Team } from '../../../teams/models/team.model';
+import { Position, PositionCreate, PositionUpdate } from '../../models/position.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
@@ -50,6 +52,7 @@ export class SportDetailComponent {
   private seasonStore = inject(SeasonStoreService);
   private tournamentStore = inject(TournamentStoreService);
   private teamStore = inject(TeamStoreService);
+  private positionStore = inject(PositionStoreService);
   private navigationHelper = inject(NavigationHelperService);
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
@@ -129,6 +132,17 @@ export class SportDetailComponent {
   teamsItemsPerPage = signal(10);
   teamsTotalCount = signal(0);
   teamsTotalPages = signal(0);
+
+  positions = signal<Position[]>([]);
+  positionsLoading = signal(false);
+  positionsError = signal<string | null>(null);
+  positionSearchQuery = signal('');
+  positionsCurrentPage = signal(1);
+  positionsItemsPerPage = signal(10);
+  positionsTotalPages = signal(0);
+  positionFormOpen = signal(false);
+  editingPosition = signal<Position | null>(null);
+  positionTitle = signal('');
 
   navigateBack(): void {
     this.navigationHelper.toSportsList();
@@ -290,6 +304,131 @@ export class SportDetailComponent {
     }
   }
 
+  loadPositions(): void {
+    const sportId = this.sportId();
+    if (!sportId) return;
+
+    this.positionsLoading.set(true);
+    this.positionsError.set(null);
+
+    this.positionStore.getPositionsBySportId(sportId).subscribe({
+      next: (positions) => {
+        this.positions.set(positions);
+        this.positionsLoading.set(false);
+      },
+      error: () => {
+        this.positionsError.set('Failed to load positions');
+        this.positionsLoading.set(false);
+      }
+    });
+  }
+
+  filteredPositions = computed(() => {
+    const query = this.positionSearchQuery().toLowerCase();
+    if (!query) return this.positions();
+    return this.positions().filter(p =>
+      p.title.toLowerCase().includes(query)
+    );
+  });
+
+  paginatedPositions = computed(() => {
+    const start = (this.positionsCurrentPage() - 1) * this.positionsItemsPerPage();
+    const end = start + this.positionsItemsPerPage();
+    return this.filteredPositions().slice(start, end);
+  });
+
+  positionsTotalPagesComputed = computed(() =>
+    Math.ceil(this.filteredPositions().length / this.positionsItemsPerPage())
+  );
+
+  onPositionSearchChange(query: string): void {
+    this.positionSearchQuery.set(query);
+    this.positionsCurrentPage.set(1);
+  }
+
+  clearPositionSearch(): void {
+    this.positionSearchQuery.set('');
+    this.positionsCurrentPage.set(1);
+  }
+
+  onPositionsPageChange(pageIndex: number): void {
+    this.positionsCurrentPage.set(pageIndex + 1);
+  }
+
+  onPositionsItemsPerPageChange(itemsPerPage: number): void {
+    this.positionsItemsPerPage.set(itemsPerPage);
+    this.positionsCurrentPage.set(1);
+  }
+
+  openPositionForm(position: Position | null = null): void {
+    this.editingPosition.set(position);
+    this.positionTitle.set(position?.title || '');
+    this.positionFormOpen.set(true);
+  }
+
+  closePositionForm(): void {
+    this.positionFormOpen.set(false);
+    this.editingPosition.set(null);
+    this.positionTitle.set('');
+  }
+
+  savePosition(): void {
+    const sportId = this.sportId();
+    if (!sportId) return;
+
+    const title = this.positionTitle().trim();
+
+    if (!title) return;
+
+    const editing = this.editingPosition();
+
+    if (editing) {
+      const updateData: PositionUpdate = {
+        title,
+        sport_id: sportId,
+      };
+      this.positionStore.updatePosition(editing.id, updateData).subscribe({
+        next: () => {
+          this.loadPositions();
+          this.closePositionForm();
+          this.alerts.open('Position updated successfully', { label: 'Success', appearance: 'positive', autoClose: 3000 });
+        },
+        error: () => {
+          this.alerts.open('Failed to update position', { label: 'Error', appearance: 'negative' });
+        }
+      });
+    } else {
+      const createData: PositionCreate = {
+        title,
+        sport_id: sportId,
+      };
+      this.positionStore.createPosition(createData).subscribe({
+        next: () => {
+          this.loadPositions();
+          this.closePositionForm();
+          this.alerts.open('Position created successfully', { label: 'Success', appearance: 'positive', autoClose: 3000 });
+        },
+        error: () => {
+          this.alerts.open('Failed to create position', { label: 'Error', appearance: 'negative' });
+        }
+      });
+    }
+  }
+
+  deletePosition(position: Position): void {
+    withDeleteConfirm(
+      this.dialogs,
+      this.alerts,
+      {
+        label: `Delete position "${position.title}"?`,
+        content: 'This action cannot be undone!',
+      },
+      () => this.positionStore.deletePosition(position.id),
+      () => this.loadPositions(),
+      'Position'
+    );
+  }
+
   private setCurrentSeason = effect(() => {
     const seasons = this.seasons();
     const queryYear = this.queryYear();
@@ -308,6 +447,13 @@ export class SportDetailComponent {
     const sportId = this.sportId();
     if (sportId) {
       this.loadTeams();
+    }
+  });
+
+  private loadPositionsOnSportChange = effect(() => {
+    const sportId = this.sportId();
+    if (sportId) {
+      this.loadPositions();
     }
   });
 }
