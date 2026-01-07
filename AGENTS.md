@@ -1325,6 +1325,33 @@ import { urlWithProtocol } from '../../base/constants';
 
 Never hardcode API URLs. Use environment variables via `constants.ts`.
 
+**Static Assets (Images, Logos, etc.)**
+
+All static asset URLs (team logos, person photos, etc.) MUST use `buildStaticUrl()` function:
+
+```typescript
+import { buildStaticUrl } from '../../../core/config/api.constants';
+
+// In component
+teamLogoUrl(team: Team): string | null {
+  return team.team_logo_url ? buildStaticUrl(team.team_logo_url) : null;
+}
+```
+
+**Template Usage:**
+
+```html
+<!-- BAD - Direct URL binding -->
+<img [src]="team.team_logo_url" [alt]="team.title" />
+
+<!-- GOOD - Using buildStaticUrl -->
+@if (teamLogoUrl(team); as logoUrl) {
+  <img [src]="logoUrl" [alt]="team.title" />
+} @else {
+  <div class="placeholder">No logo</div>
+}
+```
+
 ## API Documentation
 
 Backend API documentation is available at:

@@ -153,6 +153,88 @@
           }
         }
       </div>
+    } @else if (activeTab === 'teams') {
+      <div class="sport-detail__teams">
+        <div class="sport-detail__search-container">
+          <tui-textfield iconStart="@tui.search">
+            <label tuiLabel>Search teams</label>
+            <input
+              placeholder="Search by name or city..."
+              tuiTextfield
+              [value]="teamSearchQuery()"
+              (input)="onTeamSearchChange($any($event.target).value)" />
+          </tui-textfield>
+          @if (teamSearchQuery()) {
+            <button
+              type="button"
+              tuiButton
+              appearance="flat"
+              icon="@tui.close"
+              size="s"
+              (click)="clearTeamSearch()"
+              class="sport-detail__search-clear">
+              <tui-icon [icon]="'@tui.close'" />
+            </button>
+          }
+        </div>
+
+        @if (teamsLoading()) {
+          <div class="sport-detail__loading">Loading teams...</div>
+        } @else if (teamsError()) {
+          <div class="sport-detail__error">{{ teamsError() }}</div>
+        } @else if (paginatedTeams().length === 0) {
+          <p class="sport-detail__empty-message">No teams found for this sport</p>
+        } @else {
+          <div class="sport-detail__team-list">
+            @for (team of paginatedTeams(); track team.id) {
+              <button
+                class="sport-detail__team-card"
+                tuiCardLarge
+                tuiCell="l"
+                (click)="navigateToTeamDetail(team.id)">
+                <div class="sport-detail__team-icon">
+                  @if (teamLogoUrl(team); as logoUrl) {
+                    <img [src]="logoUrl" [alt]="team.title" class="sport-detail__team-logo" />
+                  } @else {
+                    <tui-avatar size="l" class="sport-detail__team-avatar">
+                      <tui-icon icon="@tui.users" />
+                    </tui-avatar>
+                  }
+                </div>
+                <div class="sport-detail__team-content">
+                  <h3 class="sport-detail__team-title">{{ team.title }}</h3>
+                  @if (team.city) {
+                    <p class="sport-detail__team-city">{{ team.city }}</p>
+                  }
+                </div>
+              </button>
+            }
+          </div>
+
+          @if (teamsTotalPagesComputed() > 1) {
+            <div class="sport-detail__pagination-wrapper">
+              <div class="sport-detail__items-per-page">
+                <span>Items per page:</span>
+                @for (option of itemsPerPageOptions; track option) {
+                  <button
+                    type="button"
+                    class="sport-detail__items-option"
+                    [class.sport-detail__items-option--active]="teamsItemsPerPage() === option"
+                    (click)="onTeamsItemsPerPageChange(option)">
+                    {{ option }}
+                  </button>
+                }
+              </div>
+              <div class="sport-detail__pagination">
+                <tui-pagination
+                  [length]="teamsTotalPagesComputed()"
+                  [index]="teamsCurrentPage() - 1"
+                  (indexChange)="onTeamsPageChange($event)" />
+              </div>
+            </div>
+          }
+        }
+      </div>
     } @else {
       <div class="sport-detail__placeholder">
         <p>{{ activeTab }} section coming soon</p>

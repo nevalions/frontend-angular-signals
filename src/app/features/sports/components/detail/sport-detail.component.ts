@@ -13,10 +13,13 @@ import { environment } from '../../../../../environments/environment';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../services/sport-store.service';
 import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
+import { TeamStoreService } from '../../../teams/services/team-store.service';
 import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
+import { Team } from '../../../teams/models/team.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
+import { buildStaticUrl } from '../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-sport-detail',
@@ -46,6 +49,7 @@ export class SportDetailComponent {
   private sportStore = inject(SportStoreService);
   private seasonStore = inject(SeasonStoreService);
   private tournamentStore = inject(TournamentStoreService);
+  private teamStore = inject(TeamStoreService);
   private navigationHelper = inject(NavigationHelperService);
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
@@ -116,6 +120,15 @@ export class SportDetailComponent {
   readonly itemsPerPageOptions = [10, 20, 50];
 
   menuOpen = signal(false);
+
+  teams = signal<Team[]>([]);
+  teamsLoading = signal(false);
+  teamsError = signal<string | null>(null);
+  teamSearchQuery = signal('');
+  teamsCurrentPage = signal(1);
+  teamsItemsPerPage = signal(10);
+  teamsTotalCount = signal(0);
+  teamsTotalPages = signal(0);
 
   navigateBack(): void {
     this.navigationHelper.toSportsList();
@@ -202,10 +215,85 @@ export class SportDetailComponent {
     }
   }
 
+  teamLogoUrl(team: Team): string | null {
+    return team.team_logo_url ? buildStaticUrl(team.team_logo_url) : null;
+  }
+
+  filteredTeams = computed(() => {
+    const query = this.teamSearchQuery().toLowerCase();
+    if (!query) return this.teams();
+    return this.teams().filter(t =>
+      t.title.toLowerCase().includes(query) ||
+      (t.city && t.city.toLowerCase().includes(query))
+    );
+  });
+
+  paginatedTeams = computed(() => {
+    const start = (this.teamsCurrentPage() - 1) * this.teamsItemsPerPage();
+    const end = start + this.teamsItemsPerPage();
+    return this.filteredTeams().slice(start, end);
+  });
+
+  teamsTotalPagesComputed = computed(() =>
+    Math.ceil(this.filteredTeams().length / this.teamsItemsPerPage())
+  );
+
+  loadTeams(): void {
+    const sportId = this.sportId();
+    if (!sportId) return;
+
+    this.teamsLoading.set(true);
+    this.teamsError.set(null);
+
+    this.teamStore.getTeamsBySportIdPaginated(
+      sportId,
+      this.teamsCurrentPage(),
+      this.teamsItemsPerPage()
+    ).subscribe({
+      next: (response) => {
+        this.teams.set(response.data);
+        this.teamsTotalCount.set(response.metadata.total);
+        this.teamsTotalPages.set(response.metadata.total_pages);
+        this.teamsLoading.set(false);
+      },
+      error: () => {
+        this.teamsError.set('Failed to load teams');
+        this.teamsLoading.set(false);
+      }
+    });
+  }
+
+  onTeamSearchChange(query: string): void {
+    this.teamSearchQuery.set(query);
+    this.teamsCurrentPage.set(1);
+  }
+
+  clearTeamSearch(): void {
+    this.teamSearchQuery.set('');
+    this.teamsCurrentPage.set(1);
+  }
+
+  onTeamsPageChange(pageIndex: number): void {
+    this.teamsCurrentPage.set(pageIndex + 1);
+  }
+
+  onTeamsItemsPerPageChange(itemsPerPage: number): void {
+    this.teamsItemsPerPage.set(itemsPerPage);
+    this.teamsCurrentPage.set(1);
+  }
+
+  navigateToTeamDetail(teamId: number): void {
+    const sportId = this.sportId();
+    const year = this.selectedSeasonYear();
+    if (sportId) {
+      this.navigationHelper.toTeamDetail(sportId, teamId, year ?? undefined);
+    }
+  }
+
   private setCurrentSeason = effect(() => {
     const seasons = this.seasons();
     const queryYear = this.queryYear();
-    
+
     if (!this.selectedSeasonYear() && queryYear) {
       this.selectedSeasonYear.set(queryYear);
     } else if (!this.selectedSeasonYear()) {
@@ -213,6 +301,13 @@ export class SportDetailComponent {
       if (currentSeason) {
         this.selectedSeasonYear.set(currentSeason.year);
       }
+    }
+  });
+
+  private loadTeamsOnSportChange = effect(() => {
+    const sportId = this.sportId();
+    if (sportId) {
+      this.loadTeams();
     }
   });
 }

@@ -52,4 +52,17 @@ export class NavigationHelperService {
   toPersonCreate(): void {
     this.router.navigate(['/persons', 'new']);
   }
+
+  toTeamDetail(sportId: number | string, teamId: number | string, year?: number | string): void {
+    const params = year ? { queryParams: { year } } : {};
+    this.router.navigate(['/sports', sportId, 'teams', teamId], params);
+  }
+
+  toTeamEdit(sportId: number | string, teamId: number | string): void {
+    this.router.navigate(['/sports', sportId, 'teams', teamId, 'edit']);
+  }
+
+  toTeamCreate(sportId: number | string): void {
+    this.router.navigate(['/sports', sportId, 'teams', 'new']);
+  }
 }
