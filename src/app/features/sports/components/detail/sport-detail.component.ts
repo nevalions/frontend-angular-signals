@@ -72,6 +72,22 @@ export class SportDetailComponent {
     { initialValue: null }
   );
 
+  playersPage = toSignal(
+    this.route.queryParamMap.pipe(map((params) => {
+      const val = params.get('players_page');
+      return val ? Number(val) : 1;
+    })),
+    { initialValue: 1 }
+  );
+
+  playersPerPage = toSignal(
+    this.route.queryParamMap.pipe(map((params) => {
+      const val = params.get('players_per_page');
+      return val ? Number(val) : 10;
+    })),
+    { initialValue: 10 }
+  );
+
   sport = computed(() => {
     const id = this.sportId();
     if (!id) return null;
@@ -167,20 +183,21 @@ export class SportDetailComponent {
 
   onPlayersSearchChange(query: string): void {
     this.playerStore.setSearch(query);
-    this.playersCurrentPage.set(1);
   }
 
   clearPlayersSearch(): void {
     this.playerStore.setSearch('');
-    this.playersCurrentPage.set(1);
   }
 
   onPlayersPageChange(pageIndex: number): void {
+    this.playersCurrentPage.set(pageIndex + 1);
     this.playerStore.setPage(pageIndex + 1);
   }
 
   onPlayersItemsPerPageChange(itemsPerPage: number): void {
+    this.playersItemsPerPage.set(itemsPerPage);
     this.playerStore.setItemsPerPage(itemsPerPage);
+    this.playersCurrentPage.set(1);
   }
 
   togglePlayersSort(): void {
@@ -495,6 +512,31 @@ export class SportDetailComponent {
     if (sportId) {
       this.loadPositions();
     }
+  });
+
+  private initializePlayersPaginationFromUrl = effect(() => {
+    const urlPage = this.playersPage();
+    const urlPerPage = this.playersPerPage();
+    if (urlPage !== this.playersCurrentPage()) {
+      this.playersCurrentPage.set(urlPage);
+      this.playerStore.setPage(urlPage);
+    }
+    if (urlPerPage !== this.playersItemsPerPage()) {
+      this.playersItemsPerPage.set(urlPerPage);
+      this.playerStore.setItemsPerPage(urlPerPage);
+    }
+  });
+
+  private syncPlayersPaginationUrl = effect(() => {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        players_page: this.playersCurrentPage() === 1 ? undefined : this.playersCurrentPage() || undefined,
+        players_per_page: this.playersItemsPerPage() === 10 ? undefined : this.playersItemsPerPage() || undefined,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   });
 
 
