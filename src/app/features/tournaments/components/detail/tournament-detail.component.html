@@ -1,53 +1,89 @@
-<div class="tournament-detail">
-  <header class="tournament-detail__header">
-    @if (tournament()) {
-      <h1 class="tournament-detail__title">{{ tournament()!.title }}</h1>
-    } @else {
-      <h1 class="tournament-detail__title">Tournament</h1>
-    }
+@if (tournament(); as t) {
+  <div class="tournament-detail">
+    <div class="tournament-detail__header">
+      <div class="tournament-detail__header-left">
+        <button
+          tuiButton
+          iconStart="@tui.chevron-left"
+          appearance="flat"
+          (click)="navigateBack()">Back</button>
+        <h1 class="tournament-detail__title">{{ t.title | uppercase }}</h1>
+      </div>
+      <div class="tournament-detail__header-right">
+        <div class="tournament-detail__menu-container" tuiActiveZone (tuiActiveZoneChange)="onMenuActiveZoneChange($event)">
+          <button
+            type="button"
+            tuiIconButton
+            (click)="toggleMenu()">
+            <tui-icon icon="@tui.ellipsis" />
+          </button>
+          @if (menuOpen()) {
+            <div class="tournament-detail__menu-dropdown">
+              <button
+                type="button"
+                class="tournament-detail__menu-item"
+                (click)="navigateToEdit(); closeMenu()">
+                <tui-icon icon="@tui.edit" class="tournament-detail__menu-icon" />
+                Edit
+              </button>
+              <button
+                type="button"
+                class="tournament-detail__menu-item tournament-detail__menu-item--danger"
+                (click)="deleteTournament(); closeMenu()">
+                <tui-icon icon="@tui.trash" class="tournament-detail__menu-icon" />
+                Delete
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
     @if (sport() && season()) {
-      <div class="tournament-detail__context">
+      <div class="tournament-detail__breadcrumb">
         <span>{{ sport()!.title }}</span>
         <span>›</span>
         <span>{{ season()!.year }}</span>
       </div>
     }
-  </header>
 
-  @if (loading()) {
-    <div class="tournament-detail__loading">Loading tournament...</div>
-  } @else if (tournament()) {
-    <div class="tournament-detail__content">
-      @if (tournament()!.description) {
-        <section class="tournament-detail__section">
-          <h2 class="tournament-detail__section-title">Description</h2>
-          <p>{{ tournament()!.description }}</p>
-        </section>
-      }
-
-      <section class="tournament-detail__section">
-        <h2 class="tournament-detail__section-title">Details</h2>
-        <div class="tournament-detail__details">
-          <div class="tournament-detail__detail">
-            <span class="tournament-detail__label">Sport:</span>
-            <span>{{ sport()!.title }}</span>
-          </div>
-          <div class="tournament-detail__detail">
-            <span class="tournament-detail__label">Season:</span>
-            <span>{{ season()!.year }}</span>
-          </div>
-        </div>
-      </section>
+    <div class="tournament-detail__subnav">
+      <nav class="tournament-detail__tabs">
+        <button
+          class="tournament-detail__tab"
+          [class.tournament-detail__tab--active]="activeTab === 'matches'"
+          (click)="onTabChange('matches')">Matches</button>
+        <button
+          class="tournament-detail__tab"
+          [class.tournament-detail__tab--active]="activeTab === 'teams'"
+          (click)="onTabChange('teams')">Teams</button>
+        <button
+          class="tournament-detail__tab"
+          [class.tournament-detail__tab--active]="activeTab === 'players'"
+          (click)="onTabChange('players')">Players</button>
+      </nav>
     </div>
 
-    <footer class="tournament-detail__actions">
-      <button tuiButton type="button" (click)="navigateBack()">Back</button>
-      <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
-      <button tuiButton type="button" appearance="destructive" (click)="deleteTournament()">
-        Delete
-      </button>
-    </footer>
-  } @else {
-    <div class="tournament-detail__not-found">Tournament not found</div>
-  }
-</div>
+    @if (activeTab === 'matches') {
+      <div class="tournament-detail__matches">
+        <div class="tournament-detail__placeholder">
+          <p>Matches section coming soon</p>
+        </div>
+      </div>
+    } @else if (activeTab === 'teams') {
+      <div class="tournament-detail__teams">
+        <div class="tournament-detail__placeholder">
+          <p>Teams section coming soon</p>
+        </div>
+      </div>
+    } @else if (activeTab === 'players') {
+      <div class="tournament-detail__players">
+        <div class="tournament-detail__placeholder">
+          <p>Players section coming soon</p>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="tournament-detail__not-found">Tournament not found</div>
+}
