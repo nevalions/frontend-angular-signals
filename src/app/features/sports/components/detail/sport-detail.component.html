@@ -2,19 +2,16 @@
   <div class="sport-detail">
     <div class="sport-detail__header">
       <div class="sport-detail__header-left">
-        <button
-          tuiButton
-          iconStart="@tui.chevron-left"
-          appearance="flat"
-          (click)="navigateBack()">Back</button>
+        <button tuiButton iconStart="@tui.chevron-left" appearance="flat" (click)="navigateBack()">
+          Back
+        </button>
         <h1 class="sport-detail__title">{{ s.title | uppercase }}</h1>
-        <div class="sport-detail__menu-container" tuiActiveZone (tuiActiveZoneChange)="onMenuActiveZoneChange($event)">
-          <button
-            type="button"
-            tuiIconButton
-            size="s"
-            appearance="flat"
-            (click)="toggleMenu()">
+        <div
+          class="sport-detail__menu-container"
+          tuiActiveZone
+          (tuiActiveZoneChange)="onMenuActiveZoneChange($event)"
+        >
+          <button type="button" tuiIconButton size="m" appearance="flat" (click)="toggleMenu()">
             <tui-icon icon="@tui.settings" />
           </button>
           @if (menuOpen()) {
@@ -22,14 +19,16 @@
               <button
                 type="button"
                 class="sport-detail__menu-item"
-                (click)="navigateToEdit(); closeMenu()">
+                (click)="navigateToEdit(); closeMenu()"
+              >
                 <tui-icon icon="@tui.edit" class="sport-detail__menu-icon" />
                 Edit
               </button>
               <button
                 type="button"
                 class="sport-detail__menu-item sport-detail__menu-item--danger"
-                (click)="deleteSport(); closeMenu()">
+                (click)="deleteSport(); closeMenu()"
+              >
                 <tui-icon icon="@tui.trash" class="sport-detail__menu-icon" />
                 Delete
               </button>
@@ -44,30 +43,47 @@
         <button
           class="sport-detail__tab"
           [class.sport-detail__tab--active]="activeTab === 'tournaments'"
-          (click)="onTabChange('tournaments')">Tournaments</button>
+          (click)="onTabChange('tournaments')"
+        >
+          Tournaments
+        </button>
         <button
           class="sport-detail__tab"
           [class.sport-detail__tab--active]="activeTab === 'teams'"
-          (click)="onTabChange('teams')">Teams</button>
+          (click)="onTabChange('teams')"
+        >
+          Teams
+        </button>
         <button
           class="sport-detail__tab"
           [class.sport-detail__tab--active]="activeTab === 'players'"
-          (click)="onTabChange('players')">Players</button>
+          (click)="onTabChange('players')"
+        >
+          Players
+        </button>
         <button
           class="sport-detail__tab"
           [class.sport-detail__tab--active]="activeTab === 'positions'"
-          (click)="onTabChange('positions')">Positions</button>
+          (click)="onTabChange('positions')"
+        >
+          Positions
+        </button>
       </nav>
 
       <div class="sport-detail__season-selector">
         <tui-textfield tuiChevron tuiTextfieldSize="s">
-          <input
-            placeholder="Select Season"
-            tuiSelect
-            [(ngModel)]="selectedSeasonYear" />
+          <input placeholder="Select Season" tuiSelect [(ngModel)]="selectedSeasonYear" />
           <tui-data-list *tuiTextfieldDropdown size="l">
             @for (year of seasonYears(); track year) {
-              <button new tuiOption type="button" [value]="year" class="sport-detail__season-option">{{ year }}</button>
+              <button
+                new
+                tuiOption
+                type="button"
+                [value]="year"
+                class="sport-detail__season-option"
+              >
+                {{ year }}
+              </button>
             }
           </tui-data-list>
         </tui-textfield>
@@ -75,7 +91,10 @@
     </div>
 
     @if (activeTab === 'tournaments') {
-      <app-sport-tournaments-tab [sportId]="sportId()!" [selectedSeasonYear]="selectedSeasonYear()" />
+      <app-sport-tournaments-tab
+        [sportId]="sportId()!"
+        [selectedSeasonYear]="selectedSeasonYear()"
+      />
     } @else if (activeTab === 'teams') {
       <app-sport-teams-tab [sportId]="sportId()!" [selectedSeasonYear]="selectedSeasonYear()" />
     } @else if (activeTab === 'players') {
