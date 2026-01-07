@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { TuiTextfield } from '@taiga-ui/core';
+import { TuiTextfield, TuiButton } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
 import { TuiIcon } from '@taiga-ui/core';
@@ -14,6 +14,7 @@ import { Tournament } from '../../../../tournaments/models/tournament.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TuiTextfield,
+    TuiButton,
     TuiCardLarge,
     TuiCell,
     TuiAvatar,
@@ -90,6 +91,14 @@ export class SportTournamentsTabComponent {
     const year = this.selectedSeasonYear();
     if (sportId && year) {
       this.navigationHelper.toTournamentDetail(sportId, year, tournamentId);
+    }
+  }
+
+  navigateToAddTournament(): void {
+    const sportId = this.sportId();
+    const year = this.selectedSeasonYear();
+    if (sportId && year) {
+      this.navigationHelper.toTournamentCreate(sportId, year);
     }
   }
 }

@@ -1,23 +1,35 @@
 <div class="sport-teams-tab">
-  <div class="sport-teams-tab__search-container">
-    <tui-textfield iconStart="@tui.search">
-      <label tuiLabel>Search teams</label>
-      <input
-        placeholder="Search by name or city..."
-        tuiTextfield
-        [value]="teamSearchQuery()"
-        (input)="onTeamSearchChange($any($event.target).value)" />
-    </tui-textfield>
-    @if (teamSearchQuery()) {
-      <button
-        type="button"
-        appearance="flat"
-        iconStart="@tui.close"
-        size="s"
-        (click)="clearTeamSearch()"
-        class="sport-teams-tab__search-clear">
-      </button>
-    }
+  <div class="sport-teams-tab__header-with-actions">
+    <div class="sport-teams-tab__search-container">
+      <tui-textfield iconStart="@tui.search">
+        <label tuiLabel>Search teams</label>
+        <input
+          placeholder="Search by name or city..."
+          tuiTextfield
+          [value]="teamSearchQuery()"
+          (input)="onTeamSearchChange($any($event.target).value)" />
+      </tui-textfield>
+      @if (teamSearchQuery()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          iconStart="@tui.close"
+          size="s"
+          (click)="clearTeamSearch()"
+          class="sport-teams-tab__search-clear">
+        </button>
+      }
+    </div>
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      iconStart="@tui.plus"
+      (click)="navigateToAddTeam()"
+      class="sport-teams-tab__add-button">
+      Add Team
+    </button>
   </div>
 
   @if (teamsLoading()) {
@@ -60,6 +72,7 @@
           @for (option of itemsPerPageOptions; track option) {
             <button
               type="button"
+              tuiButton
               class="sport-teams-tab__items-option"
               [class.sport-teams-tab__items-option--active]="teamsItemsPerPage() === option"
               (click)="onTeamsItemsPerPageChange(option)">

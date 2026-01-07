@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { TuiTextfield } from '@taiga-ui/core';
+import { TuiTextfield, TuiButton } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
+import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 
 @Component({
   selector: 'app-sport-players-tab',
@@ -10,6 +11,7 @@ import { PlayerStoreService } from '../../../../players/services/player-store.se
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TuiTextfield,
+    TuiButton,
     TuiCardLarge,
     TuiCell,
     TuiAvatar,
@@ -20,6 +22,7 @@ import { PlayerStoreService } from '../../../../players/services/player-store.se
 })
 export class SportPlayersTabComponent {
   private playerStore = inject(PlayerStoreService);
+  private navigationHelper = inject(NavigationHelperService);
 
   sportId = input.required<number>();
 
@@ -64,5 +67,9 @@ export class SportPlayersTabComponent {
   capitalizeName(name: string | null): string {
     if (!name) return '';
     return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  }
+
+  navigateToAddPlayer(): void {
+    this.navigationHelper.toPersonCreate();
   }
 }

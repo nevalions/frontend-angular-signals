@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
-import { TuiTextfield } from '@taiga-ui/core';
-import { TuiIcon } from '@taiga-ui/core';
+import { TuiTextfield, TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
 import { TeamStoreService } from '../../../../teams/services/team-store.service';
@@ -14,6 +13,7 @@ import { Team } from '../../../../teams/models/team.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TuiTextfield,
+    TuiButton,
     TuiIcon,
     TuiCardLarge,
     TuiCell,
@@ -120,6 +120,13 @@ export class SportTeamsTabComponent {
     const year = this.selectedSeasonYear();
     if (sportId) {
       this.navigationHelper.toTeamDetail(sportId, teamId, year ?? undefined);
+    }
+  }
+
+  navigateToAddTeam(): void {
+    const sportId = this.sportId();
+    if (sportId) {
+      this.navigationHelper.toTeamCreate(sportId);
     }
   }
 }

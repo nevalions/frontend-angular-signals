@@ -1,24 +1,36 @@
 @if (selectedSeasonYear()) {
   <div class="sport-tournaments-tab">
-    <div class="sport-tournaments-tab__search-container">
-      <tui-textfield iconStart="@tui.search">
-        <label tuiLabel>Search tournaments</label>
-        <input
-          placeholder="Search by name or description..."
-          tuiTextfield
-          [value]="searchQuery()"
-          (input)="onSearchChange($any($event.target).value)" />
-      </tui-textfield>
-      @if (searchQuery()) {
-        <button
-          type="button"
-          appearance="flat"
-          iconStart="@tui.close"
-          size="s"
-          (click)="clearSearch()"
-          class="sport-tournaments-tab__search-clear">
-        </button>
-      }
+    <div class="sport-tournaments-tab__header-with-actions">
+      <div class="sport-tournaments-tab__search-container">
+        <tui-textfield iconStart="@tui.search">
+          <label tuiLabel>Search tournaments</label>
+          <input
+            placeholder="Search by name or description..."
+            tuiTextfield
+            [value]="searchQuery()"
+            (input)="onSearchChange($any($event.target).value)" />
+        </tui-textfield>
+        @if (searchQuery()) {
+          <button
+            type="button"
+            tuiButton
+            appearance="flat"
+            iconStart="@tui.close"
+            size="s"
+            (click)="clearSearch()"
+            class="sport-tournaments-tab__search-clear">
+          </button>
+        }
+      </div>
+      <button
+        type="button"
+        tuiButton
+        appearance="flat"
+        iconStart="@tui.plus"
+        (click)="navigateToAddTournament()"
+        class="sport-tournaments-tab__add-button">
+        Add Tournament
+      </button>
     </div>
 
     @if (tournaments().length === 0) {
@@ -50,15 +62,16 @@
         <div class="sport-tournaments-tab__pagination-wrapper">
           <div class="sport-tournaments-tab__items-per-page">
             <span>Items per page:</span>
-            @for (option of itemsPerPageOptions; track option) {
-              <button
-                type="button"
-                class="sport-tournaments-tab__items-option"
-                [class.sport-tournaments-tab__items-option--active]="itemsPerPage() === option"
-                (click)="onItemsPerPageChange(option)">
-                {{ option }}
-              </button>
-            }
+          @for (option of itemsPerPageOptions; track option) {
+            <button
+              type="button"
+              tuiButton
+              class="sport-tournaments-tab__items-option"
+              [class.sport-tournaments-tab__items-option--active]="itemsPerPage() === option"
+              (click)="onItemsPerPageChange(option)">
+              {{ option }}
+            </button>
+          }
           </div>
           <div class="sport-tournaments-tab__pagination">
             <tui-pagination
