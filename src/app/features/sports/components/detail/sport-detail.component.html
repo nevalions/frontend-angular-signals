@@ -36,15 +36,15 @@
       </nav>
 
       <div class="sport-detail__season-selector">
-        <tui-textfield tuiChevron>
+        <tui-textfield tuiChevron tuiTextfieldSize="s">
           <input
             placeholder="Select Season"
             tuiSelect
             [(ngModel)]="selectedSeasonYear"
             (ngModelChange)="onSeasonChange($event)" />
-          <tui-data-list *tuiTextfieldDropdown>
+          <tui-data-list *tuiTextfieldDropdown size="l">
             @for (year of seasonYears(); track year) {
-              <button new tuiOption type="button" [value]="year">{{ year }}</button>
+              <button new tuiOption type="button" [value]="year" class="sport-detail__season-option">{{ year }}</button>
             }
           </tui-data-list>
         </tui-textfield>

@@ -73,9 +73,38 @@
   }
 
   &__season-selector {
-    min-width: 200px;
+    min-width: 140px;
     z-index: 100;
     position: relative;
+
+    tui-textfield {
+      font-size: 1rem;
+    }
+  }
+
+  // Make select season trigger smaller/more compact
+  :host ::ng-deep .sport-detail__season-selector tui-select {
+    height: 36px !important;
+
+    .t-wrapper {
+      min-height: 36px !important;
+      padding: 0.25rem 0.5rem !important;
+    }
+
+    tui-textfield {
+      font-size: 1rem !important;
+    }
+  }
+
+  // Target Taiga UI options inside dropdown
+  :host ::ng-deep .sport-detail__season-option {
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    text-align: left !important;
+    transition: all 0.15s ease;
+    min-height: 44px !important;
+    line-height: 1.4 !important;
   }
 
   &__tournaments {
