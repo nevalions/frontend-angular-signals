@@ -74,7 +74,7 @@ export class TournamentDetailComponent {
     const sportId = this.sportId();
     const year = this.year();
     if (sportId && year) {
-      this.navigationHelper.toTournamentsList(sportId, year);
+      this.navigationHelper.toSportDetail(sportId, year);
     }
   }
 

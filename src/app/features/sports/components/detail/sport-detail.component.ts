@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { TuiDataList, TuiTextfield } from '@taiga-ui/core';
+import { environment } from '../../../../../environments/environment';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../services/sport-store.service';
 import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
@@ -38,6 +39,14 @@ export class SportDetailComponent {
     { initialValue: null }
   );
 
+  queryYear = toSignal(
+    this.route.queryParamMap.pipe(map((params) => {
+      const val = params.get('year');
+      return val ? Number(val) : null;
+    })),
+    { initialValue: null }
+  );
+
   sport = computed(() => {
     const id = this.sportId();
     if (!id) return null;
@@ -57,7 +66,10 @@ export class SportDetailComponent {
     const year = this.selectedSeasonYear();
     if (!sportId || !year) return [];
 
-    const key = `${sportId}-${year}`;
+    const season = this.seasonStore.seasonByYear().get(year);
+    if (!season) return [];
+
+    const key = `${sportId}-${season.id}`;
     return this.tournamentStore.tournamentsBySportAndSeason().get(key) || [];
   });
 
@@ -112,4 +124,18 @@ export class SportDetailComponent {
       this.navigationHelper.toTournamentDetail(sportId, year, tournamentId);
     }
   }
+
+  private setCurrentSeason = effect(() => {
+    const seasons = this.seasons();
+    const queryYear = this.queryYear();
+    
+    if (!this.selectedSeasonYear() && queryYear) {
+      this.selectedSeasonYear.set(queryYear);
+    } else if (!this.selectedSeasonYear()) {
+      const currentSeason = seasons.find(s => s.id === environment.currentSeasonId);
+      if (currentSeason) {
+        this.selectedSeasonYear.set(currentSeason.year);
+      }
+    }
+  });
 }

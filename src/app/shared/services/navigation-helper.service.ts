@@ -21,8 +21,12 @@ export class NavigationHelperService {
     this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', 'new']);
   }
 
-  toSportDetail(sportId: number | string): void {
-    this.router.navigate(['/sports', sportId]);
+  toSportDetail(sportId: number | string, year?: number | string): void {
+    if (year) {
+      this.router.navigate(['/sports', sportId], { queryParams: { year } });
+    } else {
+      this.router.navigate(['/sports', sportId]);
+    }
   }
 
   toSportEdit(sportId: number | string): void {

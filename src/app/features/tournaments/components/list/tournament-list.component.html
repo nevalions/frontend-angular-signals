@@ -1,13 +1,22 @@
 <div class="tournament-list">
   <header class="tournament-list__header">
-    <h1>Tournaments</h1>
-    <div class="tournament-list__context">
-      @if (sport()) {
-        <span class="tournament-list__sport">{{ sport()!.title }}</span>
-      }
-      @if (season()) {
-        <span class="tournament-list__season">{{ season()!.year }}</span>
-      }
+    <div class="tournament-list__header-left">
+      <button tuiButton type="button" (click)="navigateBack()">Back</button>
+      <h1>Tournaments</h1>
+    </div>
+    <div class="tournament-list__season-selector">
+      <tui-textfield tuiChevron tuiTextfieldSize="s">
+        <input
+          placeholder="Select Season"
+          tuiSelect
+          [(ngModel)]="selectedSeasonYear"
+          (ngModelChange)="onSeasonChange($event)" />
+        <tui-data-list *tuiTextfieldDropdown size="l">
+          @for (year of seasonYears(); track year) {
+            <button new tuiOption type="button" [value]="year" class="tournament-list__season-option">{{ year }}</button>
+          }
+        </tui-data-list>
+      </tui-textfield>
     </div>
   </header>
 
@@ -15,7 +24,7 @@
     <div class="tournament-list__loading">Loading tournaments...</div>
   } @else {
     @if (tournaments().length === 0) {
-      <div class="tournament-list__empty">No tournaments found</div>
+      <div class="tournament-list__empty">No tournaments found for this season</div>
     } @else {
       <div class="tournament-list__items">
         @for (tournament of tournaments(); track tournament.id) {
@@ -31,7 +40,6 @@
   }
 
   <footer class="tournament-list__actions">
-    <button tuiButton type="button" (click)="navigateBack()">Back</button>
     <button tuiButton type="button" appearance="primary" (click)="navigateToCreate()">Create Tournament</button>
   </footer>
 </div>

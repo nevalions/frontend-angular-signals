@@ -1,19 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { TuiButton } from '@taiga-ui/core';
+import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
+import { TuiDataList, TuiTextfield } from '@taiga-ui/core';
+import { environment } from '../../../../../environments/environment';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+import { Season } from '../../../seasons/models/season.model';
 
 
 @Component({
   selector: 'app-tournament-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiButton],
+  imports: [FormsModule, TuiButton, TuiTextfield, TuiChevron, TuiSelect, TuiDataList],
   templateUrl: './tournament-list.component.html',
   styleUrl: './tournament-list.component.less',
 })
@@ -33,13 +38,19 @@ export class TournamentListComponent {
     { initialValue: null }
   );
 
-  year = toSignal(
+  initialYear = toSignal(
     this.route.paramMap.pipe(map((params) => {
       const val = params.get('year');
       return val ? Number(val) : null;
     })),
     { initialValue: null }
   );
+
+  seasons = this.seasonStore.seasons;
+
+  seasonYears = computed(() => this.seasons().map((season: Season) => season.year));
+
+  selectedSeasonYear = signal<number | null>(null);
 
   sport = computed(() => {
     const id = this.sportId();
@@ -48,14 +59,14 @@ export class TournamentListComponent {
   });
 
   season = computed(() => {
-    const y = this.year();
-    if (!y) return null;
-    return this.seasonStore.seasonByYear().get(y) || null;
+    const year = this.selectedSeasonYear();
+    if (!year) return null;
+    return this.seasonStore.seasonByYear().get(year) || null;
   });
 
   tournaments = computed(() => {
     const sportId = this.sportId();
-    const year = this.year();
+    const year = this.selectedSeasonYear();
     if (!sportId || !year) return [];
     const season = this.seasonStore.seasonByYear().get(year);
     if (!season) return [];
@@ -68,16 +79,28 @@ export class TournamentListComponent {
 
   loading = this.tournamentStore.loading;
 
-  navigateBack(): void {
+  onSeasonChange(year: number): void {
     const sportId = this.sportId();
     if (sportId) {
+      this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments']);
+    }
+  }
+
+  navigateBack(): void {
+    const sportId = this.sportId();
+    const year = this.selectedSeasonYear();
+    if (sportId && year) {
+      this.router.navigate(['/sports', sportId], {
+        queryParams: { year }
+      });
+    } else if (sportId) {
       this.router.navigate(['/sports', sportId]);
     }
   }
 
   navigateToCreate(): void {
     const sportId = this.sportId();
-    const year = this.year();
+    const year = this.selectedSeasonYear();
     if (sportId && year) {
       this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', 'new']);
     }
@@ -85,9 +108,23 @@ export class TournamentListComponent {
 
   navigateToDetail(id: number): void {
     const sportId = this.sportId();
-    const year = this.year();
+    const year = this.selectedSeasonYear();
     if (sportId && year) {
       this.navigationHelper.toTournamentDetail(sportId, year, id);
     }
   }
+
+  private setCurrentSeason = effect(() => {
+    const seasons = this.seasons();
+    const initialYear = this.initialYear();
+    
+    if (!this.selectedSeasonYear() && initialYear) {
+      this.selectedSeasonYear.set(initialYear);
+    } else if (!this.selectedSeasonYear()) {
+      const currentSeason = seasons.find(s => s.id === environment.currentSeasonId);
+      if (currentSeason) {
+        this.selectedSeasonYear.set(currentSeason.year);
+      }
+    }
+  });
 }
