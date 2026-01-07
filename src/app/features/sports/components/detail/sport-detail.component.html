@@ -235,6 +235,104 @@
           }
         }
       </div>
+    } @else if (activeTab === 'players') {
+      <div class="sport-detail__players">
+        <div class="sport-detail__search-container">
+          <tui-textfield iconStart="@tui.search">
+            <label tuiLabel>Search players</label>
+            <input
+              placeholder="Search by name..."
+              tuiTextfield
+              [value]="playersSearch()"
+              (input)="onPlayersSearchChange($any($event.target).value)" />
+          </tui-textfield>
+          @if (playersSearch()) {
+            <button
+              type="button"
+              tuiButton
+              appearance="flat"
+              icon="@tui.close"
+              size="s"
+              (click)="clearPlayersSearch()"
+              class="sport-detail__search-clear">
+              <tui-icon [icon]="'@tui.close'" />
+            </button>
+          }
+        </div>
+
+        <div class="sport-detail__sort-controls">
+          @for (sortBy of playersSortByList; track sortBy) {
+            <button
+              type="button"
+              appearance="flat"
+              size="s"
+              tuiButton
+              class="sort-button"
+              (click)="togglePlayersSort(sortBy)">
+              {{ getPlayersSortLabel(sortBy) }}
+              <tui-icon
+                class="sort-icon"
+                [icon]="getPlayersSortIcon(sortBy)"
+                [class.active]="playersSortBy() === sortBy" />
+            </button>
+          }
+        </div>
+
+        @if (playersLoading()) {
+          <div class="sport-detail__loading">Loading players...</div>
+        } @else if (playersError()) {
+          <div class="sport-detail__error">{{ playersError() }}</div>
+        } @else if (players().length === 0) {
+          <p class="sport-detail__empty-message">No players found for this sport</p>
+        } @else {
+          <div class="sport-detail__player-list">
+            @for (player of players(); track player.id) {
+              <button
+                class="sport-detail__player-card"
+                tuiCardLarge
+                tuiCell="l">
+                <tui-avatar size="l" [round]="true">
+                  @if (player.first_name && player.second_name) {
+                    {{ capitalizeName(player.first_name)[0].toUpperCase() }}{{ capitalizeName(player.second_name)[0].toUpperCase() }}
+                  }
+                </tui-avatar>
+                <div class="sport-detail__player-content">
+                  <h3 class="sport-detail__player-name">
+                    <span class="second-name">{{ capitalizeName(player.second_name || '') }}</span>
+                    <span class="first-name">{{ capitalizeName(player.first_name || '') }}</span>
+                  </h3>
+                  @if (player.player_eesl_id) {
+                    <p class="sport-detail__player-eesl-id">EESL ID: {{ player.player_eesl_id }}</p>
+                  }
+                </div>
+              </button>
+            }
+          </div>
+
+            @if (playersTotalPages() > 1) {
+            <div class="sport-detail__pagination-wrapper">
+              <div class="sport-detail__items-per-page">
+                <span>Items per page:</span>
+                @for (option of itemsPerPageOptions; track option) {
+                  <button
+                    type="button"
+                    class="sport-detail__items-option"
+                    [class.sport-detail__items-option--active]="playersItemsPerPage() === option"
+                    (click)="onPlayersItemsPerPageChange(option)">
+                    {{ option }}
+                  </button>
+                }
+              </div>
+              <div class="sport-detail__pagination">
+                <tui-pagination
+                  [length]="playersTotalPages()"
+                  [index]="playersCurrentPage() - 1"
+                  (indexChange)="onPlayersPageChange($event)" />
+              </div>
+            </div>
+          }
+        }
+      </div>
     } @else if (activeTab === 'positions') {
       <div class="sport-detail__positions">
         <div class="sport-detail__header-with-actions">

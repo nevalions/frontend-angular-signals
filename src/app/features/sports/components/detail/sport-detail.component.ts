@@ -15,10 +15,12 @@ import { SportStoreService } from '../../services/sport-store.service';
 import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
 import { TeamStoreService } from '../../../teams/services/team-store.service';
 import { PositionStoreService } from '../../services/position-store.service';
+import { PlayerStoreService } from '../../../players/services/player-store.service';
 import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { Team } from '../../../teams/models/team.model';
 import { Position, PositionCreate, PositionUpdate } from '../../models/position.model';
+import { PlayerSortBy } from '../../../players/models/player.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
@@ -53,6 +55,7 @@ export class SportDetailComponent {
   private tournamentStore = inject(TournamentStoreService);
   private teamStore = inject(TeamStoreService);
   private positionStore = inject(PositionStoreService);
+  private playerStore = inject(PlayerStoreService);
   private navigationHelper = inject(NavigationHelperService);
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
@@ -144,8 +147,74 @@ export class SportDetailComponent {
   editingPosition = signal<Position | null>(null);
   positionTitle = signal('');
 
-  navigateBack(): void {
-    this.navigationHelper.toSportsList();
+  playersLoading = computed(() => this.playerStore.loading());
+  playersError = computed(() => this.playerStore.error());
+  playersCurrentPage = signal(1);
+  playersItemsPerPage = signal(10);
+  playersTotalCount = computed(() => this.playerStore.totalCount());
+  playersTotalPages = computed(() => this.playerStore.totalPages());
+
+  private initializePlayers = effect(() => {
+    const sportId = this.sportId();
+    if (sportId) {
+      this.playerStore.setSportId(sportId);
+    }
+  });
+
+  players = computed(() => this.playerStore.players());
+  playersSearch = computed(() => this.playerStore.search());
+
+  playersSortBy = signal<PlayerSortBy>('second_name');
+  playersSortOrder = signal<'asc' | 'desc'>('asc');
+
+  onPlayersSearchChange(query: string): void {
+    this.playerStore.setSearch(query);
+    this.playersCurrentPage.set(1);
+  }
+
+  clearPlayersSearch(): void {
+    this.playerStore.setSearch('');
+    this.playersCurrentPage.set(1);
+  }
+
+  onPlayersPageChange(pageIndex: number): void {
+    this.playerStore.setPage(pageIndex + 1);
+  }
+
+  onPlayersItemsPerPageChange(itemsPerPage: number): void {
+    this.playerStore.setItemsPerPage(itemsPerPage);
+  }
+
+  playersSortByList: PlayerSortBy[] = ['first_name', 'second_name', 'id', 'player_eesl_id'];
+
+  getPlayersSortLabel(sortBy: PlayerSortBy): string {
+    switch (sortBy) {
+      case 'first_name':
+        return 'First Name';
+      case 'second_name':
+        return 'Second Name';
+      case 'player_eesl_id':
+        return 'EESL ID';
+      default:
+        return 'ID';
+    }
+  }
+
+  togglePlayersSort(sortBy: PlayerSortBy): void {
+    if (this.playersSortBy() === sortBy) {
+      this.playersSortOrder.set(this.playersSortOrder() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.playersSortBy.set(sortBy);
+      this.playersSortOrder.set('asc');
+    }
+    this.playerStore.setSort(this.playersSortBy(), this.playersSortOrder());
+  }
+
+  getPlayersSortIcon(sortBy: PlayerSortBy): string {
+    if (this.playersSortBy() !== sortBy) {
+      return '@tui.chevrons-up-down';
+    }
+    return this.playersSortOrder() === 'asc' ? '@tui.chevron-up' : '@tui.chevron-down';
   }
 
   navigateToEdit(): void {
@@ -456,4 +525,14 @@ export class SportDetailComponent {
       this.loadPositions();
     }
   });
+
+
+  navigateBack(): void {
+    this.navigationHelper.toSportsList();
+  }
+
+  capitalizeName(name: string | null): string {
+    if (!name) return '';
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  }
 }
