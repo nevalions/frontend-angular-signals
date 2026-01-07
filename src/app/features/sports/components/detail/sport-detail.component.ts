@@ -1,15 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { UpperCasePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { SportStoreService } from '../../services/sport-store.service';
+import { FormsModule } from '@angular/forms';
+import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
+import { TuiDataList, TuiTextfield } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
+import { SportStoreService } from '../../services/sport-store.service';
 import { Sport } from '../../models/sport.model';
+import { Season } from '../../../seasons/models/season.model';
 
 @Component({
   selector: 'app-sport-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule, UpperCasePipe, TuiTextfield, TuiChevron, TuiSelect, TuiDataList],
   templateUrl: './sport-detail.component.html',
   styleUrl: './sport-detail.component.less',
 })
@@ -32,6 +38,12 @@ export class SportDetailComponent {
 
   seasons = this.seasonStore.seasons;
 
+  seasonYears = computed(() => this.seasons().map((season: Season) => season.year));
+
+  activeTab = signal('tournaments');
+
+  selectedSeasonYear = signal<number | null>(null);
+
   navigateBack(): void {
     this.router.navigate(['/sports']);
   }
@@ -41,5 +53,13 @@ export class SportDetailComponent {
     if (id) {
       this.router.navigate(['/sports', id, 'seasons', seasonYear, 'tournaments']);
     }
+  }
+
+  onSeasonChange(year: number): void {
+    this.navigateToTournaments(year);
+  }
+
+  onTabChange(tab: string): void {
+    this.activeTab.set(tab);
   }
 }

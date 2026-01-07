@@ -1,43 +1,62 @@
 @if (sport(); as s) {
-  <div tuiCardLarge>
-    <div tui-header>
+  <div class="sport-detail">
+    <div class="sport-detail__header">
       <button
+        class="sport-detail__back-button"
         tuiButton
         iconStart="@tui.chevron-left"
-        (click)="navigateBack()"
-        >Back</button>
-      <h1>{{ s.title }}</h1>
+        appearance="flat"
+        (click)="navigateBack()">Back</button>
+      <h1 class="sport-detail__caps-title">{{ s.title | uppercase }}</h1>
     </div>
-    <div>
-      <div tuiBlock>
-        <div tui-info-label>Title</div>
-        <div class="tui-info-value">{{ s.title }}</div>
-      </div>
 
-      @if (s.description) {
-        <div tuiBlock>
-          <div tui-info-label>Description</div>
-          <div class="tui-info-value">{{ s.description }}</div>
-        </div>
-      }
+    <div class="sport-detail__secondary-nav">
+      <nav class="sport-detail__tabs">
+        <button
+          class="sport-detail__tab"
+          [class.sport-detail__tab--active]="activeTab() === 'tournaments'"
+          (click)="onTabChange('tournaments')">Tournaments</button>
+        <button
+          class="sport-detail__tab"
+          [class.sport-detail__tab--active]="activeTab() === 'teams'"
+          (click)="onTabChange('teams')">Teams</button>
+        <button
+          class="sport-detail__tab"
+          [class.sport-detail__tab--active]="activeTab() === 'players'"
+          (click)="onTabChange('players')">Players</button>
+        <button
+          class="sport-detail__tab"
+          [class.sport-detail__tab--active]="activeTab() === 'positions'"
+          (click)="onTabChange('positions')">Positions</button>
+      </nav>
 
-      <div class="sport-detail__seasons">
-        <h2 class="sport-detail__seasons-title">Seasons</h2>
-        @if (seasons().length === 0) {
-          <div class="sport-detail__seasons-empty">No seasons available</div>
-        } @else {
-          <div class="sport-detail__seasons-list">
-            @for (season of seasons(); track season.id) {
-              <div
-                tuiCard
-                class="sport-detail__season-item"
-                (click)="navigateToTournaments(season.year)">
-                <div class="sport-detail__season-item-title">Season {{ season.year }}</div>
-                @if (season.description) {
-                  <div class="sport-detail__season-item-subtitle">{{ season.description }}</div>
-                }
-              </div>
+      <div class="sport-detail__season-selector">
+        <tui-textfield tuiChevron>
+          <input
+            placeholder="Select Season"
+            tuiSelect
+            [(ngModel)]="selectedSeasonYear"
+            (ngModelChange)="onSeasonChange($event)" />
+          <tui-data-list *tuiTextfieldDropdown>
+            @for (year of seasonYears(); track year) {
+              <button new tuiOption type="button" [value]="year">{{ year }}</button>
             }
+          </tui-data-list>
+        </tui-textfield>
+      </div>
+    </div>
+
+    <div tuiCardLarge>
+      <div>
+        <div tuiBlock>
+          <div tui-info-label>Title</div>
+          <div class="tui-info-value">{{ s.title }}</div>
+        </div>
+
+        @if (s.description) {
+          <div tuiBlock>
+            <div tui-info-label>Description</div>
+            <div class="tui-info-value">{{ s.description }}</div>
           </div>
         }
       </div>

@@ -1,42 +1,72 @@
 .sport-detail {
-  &__seasons {
-    margin-top: 2rem;
-  }
+  padding: 0;
+  max-width: 100%;
 
-  &__seasons-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: var(--tui-text-primary);
-  }
-
-  &__seasons-empty {
-    padding: 2rem;
-    text-align: center;
-    color: var(--tui-text-secondary);
-    font-size: 1rem;
-  }
-
-  &__seasons-list {
+  &__header {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--tui-border-normal);
   }
 
-  &__season-item {
-    cursor: pointer;
+  &__back-button {
+    flex-shrink: 0;
   }
 
-  &__season-item-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
+  &__caps-title {
+    flex: 1;
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--tui-text-primary);
   }
 
-  &__season-item-subtitle {
-    font-size: 0.875rem;
+  &__secondary-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 2rem;
+    border-bottom: 1px solid var(--tui-border-normal);
+    background: var(--tui-background-elevation-2);
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  &__tab {
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--tui-text-secondary);
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--tui-background-hover);
+      color: var(--tui-text-primary);
+    }
+
+    &--active {
+      background: var(--tui-background-elevation-3);
+      color: var(--tui-text-primary);
+      font-weight: 600;
+    }
+  }
+
+  &__season-selector {
+    min-width: 200px;
+    z-index: 100;
+    position: relative;
   }
 
   &__not-found {
@@ -44,5 +74,45 @@
     padding: 4rem 2rem;
     color: var(--tui-text-secondary);
     font-size: 1.125rem;
+  }
+
+  @media (max-width: 768px) {
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 1rem;
+    }
+
+    &__caps-title {
+      font-size: 1.75rem;
+    }
+
+    &__secondary-nav {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    &__tabs {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    &__tab {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      flex: 1;
+      min-width: 80px;
+    }
+
+    &__season-selector {
+      width: 100%;
+      min-width: 100%;
+      margin-top: 0.5rem;
+    }
   }
 }
