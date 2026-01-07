@@ -6,6 +6,8 @@ import { Observable, of } from 'rxjs';
 import { SportDetailComponent } from './sport-detail.component';
 import { SportStoreService } from '../../services/sport-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
+import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { Sport } from '../../models/sport.model';
 
 describe('SportDetailComponent', () => {
@@ -13,8 +15,10 @@ describe('SportDetailComponent', () => {
   let fixture: ComponentFixture<SportDetailComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }> };
-  let sportStoreMock: { sports: ReturnType<typeof vi.fn>; getTournamentsBySport: ReturnType<typeof vi.fn> };
+  let sportStoreMock: { sports: ReturnType<typeof vi.fn>; deleteSport: ReturnType<typeof vi.fn> };
   let seasonStoreMock: { seasons: ReturnType<typeof vi.fn> };
+  let tournamentStoreMock: { tournamentsBySportAndSeason: ReturnType<typeof vi.fn> };
+  let navHelperMock: { toSportsList: ReturnType<typeof vi.fn>; toSportEdit: ReturnType<typeof vi.fn>; toTournamentDetail: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerMock = {
@@ -30,7 +34,7 @@ describe('SportDetailComponent', () => {
         { id: 1, title: 'Football', description: 'Soccer sport' } as Sport,
         { id: 2, title: 'Basketball', description: 'Basketball sport' } as Sport,
       ]),
-      getTournamentsBySport: vi.fn().mockReturnValue(of(undefined)),
+      deleteSport: vi.fn().mockReturnValue(of(void 0)),
     };
 
     seasonStoreMock = {
@@ -40,12 +44,24 @@ describe('SportDetailComponent', () => {
       ]),
     };
 
+    tournamentStoreMock = {
+      tournamentsBySportAndSeason: vi.fn().mockReturnValue(new Map()),
+    };
+
+    navHelperMock = {
+      toSportsList: vi.fn(),
+      toSportEdit: vi.fn(),
+      toTournamentDetail: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SportStoreService, useValue: sportStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
+        { provide: TournamentStoreService, useValue: tournamentStoreMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
       ],
     });
 
@@ -60,13 +76,19 @@ describe('SportDetailComponent', () => {
   it('should navigate back on button click', () => {
     component.navigateBack();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports']);
+    expect(navHelperMock.toSportsList).toHaveBeenCalled();
   });
 
   it('should navigate to tournaments on season item click', () => {
     component.navigateToTournaments(2024);
 
     expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1, 'seasons', 2024, 'tournaments']);
+  });
+
+  it('should navigate to edit', () => {
+    component.navigateToEdit();
+
+    expect(navHelperMock.toSportEdit).toHaveBeenCalledWith(1);
   });
 
   it('should find sport by id from store', () => {
@@ -96,6 +118,8 @@ describe('SportDetailComponent', () => {
         { provide: ActivatedRoute, useValue: nullRouteMock },
         { provide: SportStoreService, useValue: sportStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
+        { provide: TournamentStoreService, useValue: tournamentStoreMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
       ],
     });
 
@@ -118,6 +142,8 @@ describe('SportDetailComponent', () => {
         { provide: ActivatedRoute, useValue: id99RouteMock },
         { provide: SportStoreService, useValue: sportStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
+        { provide: TournamentStoreService, useValue: tournamentStoreMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
       ],
     });
 
