@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { TuiTextfield } from '@taiga-ui/core';
-import { TuiIcon } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
@@ -11,7 +10,6 @@ import { PlayerStoreService } from '../../../../players/services/player-store.se
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TuiTextfield,
-    TuiIcon,
     TuiCardLarge,
     TuiCell,
     TuiAvatar,
