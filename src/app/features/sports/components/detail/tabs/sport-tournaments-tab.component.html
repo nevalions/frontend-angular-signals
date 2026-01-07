@@ -1,0 +1,76 @@
+@if (selectedSeasonYear()) {
+  <div class="sport-tournaments-tab">
+    <div class="sport-tournaments-tab__search-container">
+      <tui-textfield iconStart="@tui.search">
+        <label tuiLabel>Search tournaments</label>
+        <input
+          placeholder="Search by name or description..."
+          tuiTextfield
+          [value]="searchQuery()"
+          (input)="onSearchChange($any($event.target).value)" />
+      </tui-textfield>
+      @if (searchQuery()) {
+        <button
+          type="button"
+          appearance="flat"
+          icon="@tui.close"
+          size="s"
+          (click)="clearSearch()"
+          class="sport-tournaments-tab__search-clear">
+          <tui-icon [icon]="'@tui.close'" />
+        </button>
+      }
+    </div>
+
+    @if (tournaments().length === 0) {
+      <p class="sport-tournaments-tab__empty-message">No tournaments found for this season</p>
+    } @else {
+      <div class="sport-tournaments-tab__tournament-list">
+        @for (tournament of paginatedTournaments(); track tournament.id) {
+          <button
+            class="sport-tournaments-tab__tournament-card"
+            tuiCardLarge
+            tuiCell="l"
+            (click)="navigateToTournamentDetail(tournament.id)">
+            <div class="sport-tournaments-tab__tournament-icon">
+              <tui-avatar size="l" class="sport-tournaments-tab__tournament-avatar">
+                <tui-icon icon="@tui.trophy" />
+              </tui-avatar>
+            </div>
+            <div class="sport-tournaments-tab__tournament-content">
+              <h3 class="sport-tournaments-tab__tournament-title">{{ tournament.title }}</h3>
+              @if (tournament.description) {
+                <p class="sport-tournaments-tab__tournament-description">{{ tournament.description }}</p>
+              }
+            </div>
+          </button>
+        }
+      </div>
+
+      @if (totalPages() > 1) {
+        <div class="sport-tournaments-tab__pagination-wrapper">
+          <div class="sport-tournaments-tab__items-per-page">
+            <span>Items per page:</span>
+            @for (option of itemsPerPageOptions; track option) {
+              <button
+                type="button"
+                class="sport-tournaments-tab__items-option"
+                [class.sport-tournaments-tab__items-option--active]="itemsPerPage() === option"
+                (click)="onItemsPerPageChange(option)">
+                {{ option }}
+              </button>
+            }
+          </div>
+          <div class="sport-tournaments-tab__pagination">
+            <tui-pagination
+              [length]="totalPages()"
+              [index]="currentPage() - 1"
+              (indexChange)="onPageChange($event)" />
+          </div>
+        </div>
+      }
+    }
+  </div>
+} @else {
+  <p class="sport-tournaments-tab__empty-message">Please select a season to view tournaments</p>
+}

@@ -1,0 +1,134 @@
+<div class="sport-positions-tab">
+  <div class="sport-positions-tab__header-with-actions">
+    <div class="sport-positions-tab__search-container">
+      <tui-textfield iconStart="@tui.search">
+        <label tuiLabel>Search positions</label>
+        <input
+          placeholder="Search by title..."
+          tuiTextfield
+          [value]="positionSearchQuery()"
+          (input)="onPositionSearchChange($any($event.target).value)" />
+      </tui-textfield>
+      @if (positionSearchQuery()) {
+        <button
+          type="button"
+          appearance="flat"
+          icon="@tui.close"
+          size="s"
+          (click)="clearPositionSearch()"
+          class="sport-positions-tab__search-clear">
+          <tui-icon [icon]="'@tui.close'" />
+        </button>
+      }
+    </div>
+    <button
+      type="button"
+      (click)="openPositionForm()"
+      class="sport-positions-tab__add-button">
+      <tui-icon icon="@tui.plus" />
+      Add Position
+    </button>
+  </div>
+
+  @if (positionsLoading()) {
+    <div class="sport-positions-tab__loading">Loading positions...</div>
+  } @else if (positionsError()) {
+    <div class="sport-positions-tab__error">{{ positionsError() }}</div>
+  } @else if (paginatedPositions().length === 0) {
+    <p class="sport-positions-tab__empty-message">No positions found for this sport</p>
+  } @else {
+    <div class="sport-positions-tab__position-list">
+      @for (position of paginatedPositions(); track position.id) {
+        <div class="sport-positions-tab__position-card">
+          <div class="sport-positions-tab__position-content">
+            <h3 class="sport-positions-tab__position-title">{{ position.title }}</h3>
+          </div>
+          <div class="sport-positions-tab__position-actions">
+            <button
+              type="button"
+              appearance="flat"
+              icon="@tui.edit"
+              size="s"
+              (click)="openPositionForm(position)"
+              class="sport-positions-tab__action-button">
+              <tui-icon icon="@tui.edit" />
+            </button>
+            <button
+              type="button"
+              appearance="flat"
+              icon="@tui.trash"
+              size="s"
+              (click)="deletePosition(position)"
+              class="sport-positions-tab__action-button sport-positions-tab__action-button--danger">
+              <tui-icon icon="@tui.trash" />
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (positionsTotalPagesComputed() > 1) {
+      <div class="sport-positions-tab__pagination-wrapper">
+        <div class="sport-positions-tab__items-per-page">
+          <span>Items per page:</span>
+          @for (option of itemsPerPageOptions; track option) {
+            <button
+              type="button"
+              class="sport-positions-tab__items-option"
+              [class.sport-positions-tab__items-option--active]="positionsItemsPerPage() === option"
+              (click)="onPositionsItemsPerPageChange(option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+        <div class="sport-positions-tab__pagination">
+          <tui-pagination
+            [length]="positionsTotalPagesComputed()"
+            [index]="positionsCurrentPage() - 1"
+            (indexChange)="onPositionsPageChange($any($event))" />
+        </div>
+      </div>
+    }
+  }
+
+  @if (positionFormOpen()) {
+    <div class="sport-positions-tab__modal-overlay">
+      <div class="sport-positions-tab__modal">
+        <div class="sport-positions-tab__modal-header">
+          <h2>{{ editingPosition() ? 'Edit Position' : 'Add Position' }}</h2>
+          <button
+            type="button"
+            appearance="flat"
+            icon="@tui.close"
+            (click)="closePositionForm()">
+            <tui-icon icon="@tui.close" />
+          </button>
+        </div>
+        <div class="sport-positions-tab__modal-body">
+          <tui-textfield>
+            <label tuiLabel>Title</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="positionTitle"
+              placeholder="Position title" />
+          </tui-textfield>
+        </div>
+        <div class="sport-positions-tab__modal-footer">
+          <button
+            type="button"
+            appearance="ghost"
+            (click)="closePositionForm()">
+            Cancel
+          </button>
+          <button
+            type="button"
+            appearance="primary"
+            (click)="savePosition()">
+            {{ editingPosition() ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

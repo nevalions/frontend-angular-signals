@@ -1,0 +1,173 @@
+.sport-positions-tab__header-with-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.sport-positions-tab__search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.sport-positions-tab__search-clear {
+  flex-shrink: 0;
+}
+
+.sport-positions-tab__add-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sport-positions-tab__position-list {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sport-positions-tab__position-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 0.5rem;
+  background: var(--tui-background-base);
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: var(--tui-border-hover);
+  }
+}
+
+.sport-positions-tab__position-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sport-positions-tab__position-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--tui-text-primary);
+}
+
+.sport-positions-tab__position-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.sport-positions-tab__action-button {
+  padding: 0.5rem;
+
+  &--danger:hover {
+    color: var(--tui-text-negative);
+  }
+}
+
+.sport-positions-tab__pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sport-positions-tab__items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--tui-text-secondary);
+}
+
+.sport-positions-tab__items-option {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--tui-border-normal);
+  background: var(--tui-background-base);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--tui-border-hover);
+    background: var(--tui-background-neutral-1);
+  }
+
+  &--active {
+    background: var(--tui-background-accent-1);
+    color: var(--tui-text-primary-on-accent-1);
+    border-color: var(--tui-background-accent-1);
+  }
+}
+
+.sport-positions-tab__pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.sport-positions-tab__loading,
+.sport-positions-tab__error,
+.sport-positions-tab__empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--tui-text-secondary);
+  font-style: italic;
+}
+
+.sport-positions-tab__error {
+  color: var(--tui-text-negative);
+}
+
+.sport-positions-tab__modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.sport-positions-tab__modal {
+  background: var(--tui-background-base);
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.sport-positions-tab__modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--tui-border-normal);
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+.sport-positions-tab__modal-body {
+  padding: 1.5rem;
+}
+
+.sport-positions-tab__modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--tui-border-normal);
+}

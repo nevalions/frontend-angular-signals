@@ -1,0 +1,100 @@
+.sport-tournaments-tab__search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sport-tournaments-tab__search-clear {
+  flex-shrink: 0;
+}
+
+.sport-tournaments-tab__tournament-list {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sport-tournaments-tab__tournament-card {
+  width: 100%;
+  text-align: left;
+}
+
+.sport-tournaments-tab__tournament-icon {
+  flex-shrink: 0;
+}
+
+.sport-tournaments-tab__tournament-avatar {
+  background: var(--tui-background-accent-1);
+}
+
+.sport-tournaments-tab__tournament-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.sport-tournaments-tab__tournament-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--tui-text-primary);
+}
+
+.sport-tournaments-tab__tournament-description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--tui-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sport-tournaments-tab__pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sport-tournaments-tab__items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--tui-text-secondary);
+}
+
+.sport-tournaments-tab__items-option {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--tui-border-normal);
+  background: var(--tui-background-base);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--tui-border-hover);
+    background: var(--tui-background-neutral-1);
+  }
+
+  &--active {
+    background: var(--tui-background-accent-1);
+    color: var(--tui-text-primary-on-accent-1);
+    border-color: var(--tui-background-accent-1);
+  }
+}
+
+.sport-tournaments-tab__pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.sport-tournaments-tab__empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--tui-text-secondary);
+  font-style: italic;
+}

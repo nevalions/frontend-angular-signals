@@ -7,7 +7,7 @@ import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { SportDetailComponent } from './sport-detail.component';
 import { SportStoreService } from '../../services/sport-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
-import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
+import { PlayerStoreService } from '../../../players/services/player-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { Sport } from '../../models/sport.model';
 
@@ -18,8 +18,8 @@ describe('SportDetailComponent', () => {
   let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }> };
   let sportStoreMock: { sports: ReturnType<typeof vi.fn>; deleteSport: ReturnType<typeof vi.fn> };
   let seasonStoreMock: { seasons: ReturnType<typeof vi.fn>; seasonByYear: ReturnType<typeof vi.fn> };
-  let tournamentStoreMock: { tournamentsBySportAndSeason: ReturnType<typeof vi.fn> };
-  let navHelperMock: { toSportsList: ReturnType<typeof vi.fn>; toSportEdit: ReturnType<typeof vi.fn>; toTournamentDetail: ReturnType<typeof vi.fn> };
+  let playerStoreMock: { setSportId: ReturnType<typeof vi.fn> };
+  let navHelperMock: { toSportsList: ReturnType<typeof vi.fn>; toSportEdit: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
   let dialogsMock: { open: ReturnType<typeof vi.fn> };
 
@@ -64,22 +64,13 @@ describe('SportDetailComponent', () => {
       seasonByYear: vi.fn().mockReturnValue(seasonMap),
     };
 
-    const tournamentMap = new Map<string, any[]>([
-      ['1-1', [
-        { id: 1, title: 'Premier League', description: 'Top division league', sport_id: 1, season_id: 1 },
-        { id: 2, title: 'FA Cup', description: 'Domestic cup competition', sport_id: 1, season_id: 1 },
-        { id: 3, title: 'Champions League', description: 'European club competition', sport_id: 1, season_id: 1 },
-      ]],
-    ]);
-
-    tournamentStoreMock = {
-      tournamentsBySportAndSeason: vi.fn().mockReturnValue(tournamentMap),
+    playerStoreMock = {
+      setSportId: vi.fn(),
     };
 
     navHelperMock = {
       toSportsList: vi.fn(),
       toSportEdit: vi.fn(),
-      toTournamentDetail: vi.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -88,7 +79,7 @@ describe('SportDetailComponent', () => {
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SportStoreService, useValue: sportStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
-        { provide: TournamentStoreService, useValue: tournamentStoreMock },
+        { provide: PlayerStoreService, useValue: playerStoreMock },
         { provide: NavigationHelperService, useValue: navHelperMock },
         { provide: TuiAlertService, useValue: alertsMock },
         { provide: TuiDialogService, useValue: dialogsMock },
@@ -107,12 +98,6 @@ describe('SportDetailComponent', () => {
     component.navigateBack();
 
     expect(navHelperMock.toSportsList).toHaveBeenCalled();
-  });
-
-  it('should navigate to tournaments on season item click', () => {
-    component.navigateToTournaments(2024);
-
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1, 'seasons', 2024, 'tournaments']);
   });
 
   it('should navigate to edit', () => {
@@ -136,58 +121,10 @@ describe('SportDetailComponent', () => {
     ]);
   });
 
-  it('should filter tournaments by search query', () => {
-    component.selectedSeasonYear.set(2024);
-    component.onSearchChange('premier');
+  it('should map seasons to years', () => {
+    const years = component.seasonYears();
 
-    const tournaments = component.tournaments();
-    expect(tournaments).toHaveLength(1);
-    expect(tournaments[0].title).toContain('Premier');
-  });
-
-  it('should clear search', () => {
-    component.searchQuery.set('test');
-    component.currentPage.set(2);
-    component.clearSearch();
-
-    expect(component.searchQuery()).toBe('');
-    expect(component.currentPage()).toBe(1);
-  });
-
-  it('should paginate tournaments', () => {
-    component.selectedSeasonYear.set(2024);
-    component.currentPage.set(1);
-    component.itemsPerPage.set(10);
-
-    const paginated = component.paginatedTournaments();
-    expect(paginated).toHaveLength(3);
-  });
-
-  it('should change page', () => {
-    component.onPageChange(1);
-
-    expect(component.currentPage()).toBe(2);
-  });
-
-  it('should change items per page and reset to page 1', () => {
-    component.currentPage.set(3);
-    component.onItemsPerPageChange(20);
-
-    expect(component.itemsPerPage()).toBe(20);
-    expect(component.currentPage()).toBe(1);
-  });
-
-  it('should calculate total pages correctly', () => {
-    component.selectedSeasonYear.set(2024);
-    component.itemsPerPage.set(2);
-
-    expect(component.totalPages()).toBe(2);
-  });
-
-  it('should calculate total count correctly', () => {
-    component.selectedSeasonYear.set(2024);
-
-    expect(component.totalCount()).toBe(3);
+    expect(years).toEqual([2024, 2025]);
   });
 
   it('should toggle menu', () => {
@@ -205,6 +142,23 @@ describe('SportDetailComponent', () => {
     expect(component.menuOpen()).toBe(false);
   });
 
+  it('should call setSportId on PlayerStore when sportId changes', () => {
+    expect(playerStoreMock.setSportId).toHaveBeenCalledWith(1);
+  });
+
+  it('should change tab', () => {
+    component.activeTab = 'tournaments';
+    component.onTabChange('players');
+
+    expect(component.activeTab).toBe('players');
+  });
+
+  it('should delete sport with confirmation', () => {
+    component.deleteSport();
+
+    expect(dialogsMock.open).toHaveBeenCalled();
+  });
+
   it('should return 0 when sportId is null (Number() conversion)', () => {
     const nullRouteMock = {
       paramMap: of({ get: (_key: string) => null }),
@@ -217,7 +171,7 @@ describe('SportDetailComponent', () => {
         { provide: ActivatedRoute, useValue: nullRouteMock },
         { provide: SportStoreService, useValue: sportStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
-        { provide: TournamentStoreService, useValue: tournamentStoreMock },
+        { provide: PlayerStoreService, useValue: playerStoreMock },
         { provide: NavigationHelperService, useValue: navHelperMock },
         { provide: TuiAlertService, useValue: alertsMock },
         { provide: TuiDialogService, useValue: dialogsMock },
@@ -243,7 +197,7 @@ describe('SportDetailComponent', () => {
         { provide: ActivatedRoute, useValue: id99RouteMock },
         { provide: SportStoreService, useValue: sportStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
-        { provide: TournamentStoreService, useValue: tournamentStoreMock },
+        { provide: PlayerStoreService, useValue: playerStoreMock },
         { provide: NavigationHelperService, useValue: navHelperMock },
         { provide: TuiAlertService, useValue: alertsMock },
         { provide: TuiDialogService, useValue: dialogsMock },

@@ -1,0 +1,118 @@
+.sport-players-tab__search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sport-players-tab__search-clear {
+  flex-shrink: 0;
+}
+
+.sport-players-tab__sort-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sort-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-icon {
+  font-size: 1rem;
+}
+
+.sport-players-tab__player-list {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sport-players-tab__player-card {
+  width: 100%;
+  text-align: left;
+}
+
+.sport-players-tab__player-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.sport-players-tab__player-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--tui-text-primary);
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+
+  .first-name {
+    font-weight: 400;
+  }
+}
+
+.sport-players-tab__player-eesl-id {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--tui-text-secondary);
+}
+
+.sport-players-tab__pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sport-players-tab__items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--tui-text-secondary);
+}
+
+.sport-players-tab__items-option {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--tui-border-normal);
+  background: var(--tui-background-base);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--tui-border-hover);
+    background: var(--tui-background-neutral-1);
+  }
+
+  &--active {
+    background: var(--tui-background-accent-1);
+    color: var(--tui-text-primary-on-accent-1);
+    border-color: var(--tui-background-accent-1);
+  }
+}
+
+.sport-players-tab__pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.sport-players-tab__loading,
+.sport-players-tab__error,
+.sport-players-tab__empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--tui-text-secondary);
+  font-style: italic;
+}
+
+.sport-players-tab__error {
+  color: var(--tui-text-negative);
+}
