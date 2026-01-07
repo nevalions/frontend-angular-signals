@@ -8,9 +8,7 @@
       <div class="sport-list__loader"></div>
     </div>
   } @else if (error()) {
-    <div class="sport-list__error">
-      Error loading sports: {{ error()?.message }}
-    </div>
+    <div class="sport-list__error">Error loading sports: {{ error()?.message }}</div>
   } @else if (sports().length === 0) {
     <div class="sport-list__empty">No sports found</div>
   } @else {

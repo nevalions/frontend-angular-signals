@@ -80,9 +80,9 @@
               {{ person.first_name[0].toUpperCase() }}{{ person.second_name[0].toUpperCase() }}
             }
           </tui-avatar>
-          <div tuiTitle>
-            {{ capitalizeName(person.second_name) }}
-            <div tuiSubtitle>{{ capitalizeName(person.first_name) }}</div>
+          <div class="person-name-container">
+            <strong class="second-name">{{ capitalizeName(person.second_name) }}</strong>
+            <span class="first-name">{{ capitalizeName(person.first_name) }}</span>
           </div>
         </div>
       }
