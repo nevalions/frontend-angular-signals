@@ -26,11 +26,10 @@
       appearance="flat"
       size="s"
       class="sort-button"
+      appearance="flat"
+      iconEnd="playersSortOrder() === 'asc' ? '@tui.chevron-up' : '@tui.chevron-down'"
       (click)="togglePlayersSort()">
       Sort by Name
-      <tui-icon
-        class="sort-icon"
-        [icon]="playersSortOrder() === 'asc' ? '@tui.chevron-up' : '@tui.chevron-down'" />
     </button>
   </div>
 
