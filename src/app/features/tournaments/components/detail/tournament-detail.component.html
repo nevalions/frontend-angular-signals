@@ -2,19 +2,18 @@
   <div class="tournament-detail">
     <div class="tournament-detail__header">
       <div class="tournament-detail__header-left">
-        <button
-          tuiButton
-          iconStart="@tui.chevron-left"
-          appearance="flat"
-          (click)="navigateBack()">Back</button>
+        <button tuiButton iconStart="@tui.chevron-left" appearance="flat" (click)="navigateBack()">
+          Back
+        </button>
         <h1 class="tournament-detail__title">{{ t.title | uppercase }}</h1>
       </div>
       <div class="tournament-detail__header-right">
-        <div class="tournament-detail__menu-container" tuiActiveZone (tuiActiveZoneChange)="onMenuActiveZoneChange($event)">
-          <button
-            type="button"
-            tuiIconButton
-            (click)="toggleMenu()">
+        <div
+          class="tournament-detail__menu-container"
+          tuiActiveZone
+          (tuiActiveZoneChange)="onMenuActiveZoneChange($event)"
+        >
+          <button type="button" tuiIconButton (click)="toggleMenu()">
             <tui-icon icon="@tui.ellipsis" />
           </button>
           @if (menuOpen()) {
@@ -22,14 +21,16 @@
               <button
                 type="button"
                 class="tournament-detail__menu-item"
-                (click)="navigateToEdit(); closeMenu()">
+                (click)="navigateToEdit(); closeMenu()"
+              >
                 <tui-icon icon="@tui.edit" class="tournament-detail__menu-icon" />
                 Edit
               </button>
               <button
                 type="button"
                 class="tournament-detail__menu-item tournament-detail__menu-item--danger"
-                (click)="deleteTournament(); closeMenu()">
+                (click)="deleteTournament(); closeMenu()"
+              >
                 <tui-icon icon="@tui.trash" class="tournament-detail__menu-icon" />
                 Delete
               </button>
@@ -39,28 +40,29 @@
       </div>
     </div>
 
-    @if (sport() && season()) {
-      <div class="tournament-detail__breadcrumb">
-        <span>{{ sport()!.title }}</span>
-        <span>›</span>
-        <span>{{ season()!.year }}</span>
-      </div>
-    }
-
     <div class="tournament-detail__subnav">
       <nav class="tournament-detail__tabs">
         <button
           class="tournament-detail__tab"
           [class.tournament-detail__tab--active]="activeTab === 'matches'"
-          (click)="onTabChange('matches')">Matches</button>
+          (click)="onTabChange('matches')"
+        >
+          Matches
+        </button>
         <button
           class="tournament-detail__tab"
           [class.tournament-detail__tab--active]="activeTab === 'teams'"
-          (click)="onTabChange('teams')">Teams</button>
+          (click)="onTabChange('teams')"
+        >
+          Teams
+        </button>
         <button
           class="tournament-detail__tab"
           [class.tournament-detail__tab--active]="activeTab === 'players'"
-          (click)="onTabChange('players')">Players</button>
+          (click)="onTabChange('players')"
+        >
+          Players
+        </button>
       </nav>
     </div>
 
