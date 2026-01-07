@@ -23,9 +23,10 @@
     </div>
     <button
       type="button"
+      appearance="flat"
+      iconStart="@tui.plus"
       (click)="openPositionForm()"
       class="sport-positions-tab__add-button">
-      <tui-icon icon="@tui.plus" />
       Add Position
     </button>
   </div>
@@ -51,7 +52,6 @@
               size="s"
               (click)="openPositionForm(position)"
               class="sport-positions-tab__action-button">
-              <tui-icon icon="@tui.edit" />
             </button>
             <button
               type="button"
@@ -60,7 +60,6 @@
               size="s"
               (click)="deletePosition(position)"
               class="sport-positions-tab__action-button sport-positions-tab__action-button--danger">
-              <tui-icon icon="@tui.trash" />
             </button>
           </div>
         </div>
@@ -96,13 +95,12 @@
       <div class="sport-positions-tab__modal">
         <div class="sport-positions-tab__modal-header">
           <h2>{{ editingPosition() ? 'Edit Position' : 'Add Position' }}</h2>
-          <button
-            type="button"
-            appearance="flat"
-            icon="@tui.close"
-            (click)="closePositionForm()">
-            <tui-icon icon="@tui.close" />
-          </button>
+      <button
+        type="button"
+        appearance="ghost"
+        (click)="closePositionForm()">
+        Cancel
+      </button>
         </div>
         <div class="sport-positions-tab__modal-body">
           <tui-textfield>

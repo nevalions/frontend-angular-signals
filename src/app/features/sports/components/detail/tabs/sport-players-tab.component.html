@@ -11,13 +11,12 @@
     @if (playersSearch()) {
       <button
         type="button"
-        appearance="flat"
-        icon="@tui.close"
-        size="s"
-        (click)="clearPlayersSearch()"
-        class="sport-players-tab__search-clear">
-        <tui-icon [icon]="'@tui.close'" />
-      </button>
+      appearance="flat"
+      iconStart="@tui.close"
+      size="s"
+      (click)="clearPlayersSearch()"
+      class="sport-players-tab__search-clear">
+    </button>
     }
   </div>
 
