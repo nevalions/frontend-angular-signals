@@ -4,15 +4,13 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayerSortBy, PlayersPaginatedResponse, SortOrder } from '../models/player.model';
+import { Player, PlayersPaginatedResponse, SortOrder } from '../models/player.model';
 
 interface PlayersResourceParams {
   sportId: number | null;
   teamId: number | null;
   page: number;
   itemsPerPage: number;
-  sortBy: PlayerSortBy;
-  sortByTwo: PlayerSortBy;
   sortOrder: SortOrder;
   search: string;
 }
@@ -29,8 +27,6 @@ export class PlayerStoreService {
   teamId = signal<number | null>(null);
   page = signal<number>(1);
   itemsPerPage = signal<number>(10);
-  sortBy = signal<PlayerSortBy>('id');
-  sortByTwo = signal<PlayerSortBy>('id');
   sortOrder = signal<SortOrder>('asc');
   search = signal<string>('');
 
@@ -40,8 +36,6 @@ export class PlayerStoreService {
       teamId: this.teamId(),
       page: this.page(),
       itemsPerPage: this.itemsPerPage(),
-      sortBy: this.sortBy(),
-      sortByTwo: this.sortByTwo(),
       sortOrder: this.sortOrder(),
       search: this.search(),
     })),
@@ -57,8 +51,6 @@ export class PlayerStoreService {
         .set('sport_id', params.sportId.toString())
         .set('page', params.page.toString())
         .set('items_per_page', params.itemsPerPage.toString())
-        .set('order_by', params.sortBy)
-        .set('order_by_two', params.sortByTwo)
         .set('ascending', (params.sortOrder === 'asc').toString());
 
       if (params.teamId) {
@@ -100,8 +92,7 @@ export class PlayerStoreService {
     this.page.set(1);
   }
 
-  setSort(sortBy: PlayerSortBy, sortOrder: SortOrder): void {
-    this.sortBy.set(sortBy);
+  setSort(sortOrder: SortOrder): void {
     this.sortOrder.set(sortOrder);
     this.page.set(1);
   }

@@ -20,7 +20,6 @@ import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { Team } from '../../../teams/models/team.model';
 import { Position, PositionCreate, PositionUpdate } from '../../models/position.model';
-import { PlayerSortBy } from '../../../players/models/player.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
@@ -164,7 +163,6 @@ export class SportDetailComponent {
   players = computed(() => this.playerStore.players());
   playersSearch = computed(() => this.playerStore.search());
 
-  playersSortBy = signal<PlayerSortBy>('second_name');
   playersSortOrder = signal<'asc' | 'desc'>('asc');
 
   onPlayersSearchChange(query: string): void {
@@ -185,36 +183,9 @@ export class SportDetailComponent {
     this.playerStore.setItemsPerPage(itemsPerPage);
   }
 
-  playersSortByList: PlayerSortBy[] = ['first_name', 'second_name', 'id', 'player_eesl_id'];
-
-  getPlayersSortLabel(sortBy: PlayerSortBy): string {
-    switch (sortBy) {
-      case 'first_name':
-        return 'First Name';
-      case 'second_name':
-        return 'Second Name';
-      case 'player_eesl_id':
-        return 'EESL ID';
-      default:
-        return 'ID';
-    }
-  }
-
-  togglePlayersSort(sortBy: PlayerSortBy): void {
-    if (this.playersSortBy() === sortBy) {
-      this.playersSortOrder.set(this.playersSortOrder() === 'asc' ? 'desc' : 'asc');
-    } else {
-      this.playersSortBy.set(sortBy);
-      this.playersSortOrder.set('asc');
-    }
-    this.playerStore.setSort(this.playersSortBy(), this.playersSortOrder());
-  }
-
-  getPlayersSortIcon(sortBy: PlayerSortBy): string {
-    if (this.playersSortBy() !== sortBy) {
-      return '@tui.chevrons-up-down';
-    }
-    return this.playersSortOrder() === 'asc' ? '@tui.chevron-up' : '@tui.chevron-down';
+  togglePlayersSort(): void {
+    this.playersSortOrder.set(this.playersSortOrder() === 'asc' ? 'desc' : 'asc');
+    this.playerStore.setSort(this.playersSortOrder());
   }
 
   navigateToEdit(): void {
