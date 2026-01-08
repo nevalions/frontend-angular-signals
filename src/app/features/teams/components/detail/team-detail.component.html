@@ -1,0 +1,105 @@
+<div class="team-detail">
+  @if (team(); as team) {
+    <header class="team-detail__header">
+      <h1 class="team-detail__title">{{ team.title }}</h1>
+      <div class="team-detail__actions">
+        <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
+        <button tuiButton type="button" (click)="deleteTeam()">Delete</button>
+      </div>
+    </header>
+
+    <div class="team-detail__content">
+      <div class="team-detail__card">
+        <div class="team-detail__info">
+          @if (teamLogoUrl(team.id); as logoUrl) {
+            <img [src]="logoUrl" [alt]="team.title" class="team-detail__logo" />
+          }
+
+          @if (team.city) {
+            <div class="team-detail__cell">
+              <span class="team-detail__label">City:</span>
+              <span class="team-detail__value">{{ team.city }}</span>
+            </div>
+          }
+
+          @if (team.team_color) {
+            <div class="team-detail__cell">
+              <span class="team-detail__label">Team Color:</span>
+              <span class="team-detail__value">
+                <span class="team-detail__color-swatch" [style.background-color]="team.team_color"></span>
+                {{ team.team_color }}
+              </span>
+            </div>
+          }
+
+          @if (team.team_eesl_id) {
+            <div class="team-detail__cell">
+              <span class="team-detail__label">EESL ID:</span>
+              <span class="team-detail__value">{{ team.team_eesl_id }}</span>
+            </div>
+          }
+
+          @if (team.sponsor_line_id) {
+            <div class="team-detail__cell">
+              <span class="team-detail__label">Sponsor Line ID:</span>
+              <span class="team-detail__value">{{ team.sponsor_line_id }}</span>
+            </div>
+          }
+
+          @if (team.main_sponsor_id) {
+            <div class="team-detail__cell">
+              <span class="team-detail__label">Main Sponsor ID:</span>
+              <span class="team-detail__value">{{ team.main_sponsor_id }}</span>
+            </div>
+          }
+
+          @if (team.description) {
+            <div class="team-detail__description">
+              <h3 class="team-detail__section-title">Description</h3>
+              <p class="team-detail__description-text">{{ team.description }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="team-detail__urls">
+        <div class="team-detail__card">
+          <h3 class="team-detail__section-title">URLs</h3>
+
+          @if (team.team_logo_url) {
+            <div class="team-detail__cell">
+              <span class="team-detail__label">Logo URL:</span>
+              <a [href]="team.team_logo_url" target="_blank" rel="noopener" class="team-detail__link">
+                {{ team.team_logo_url }}
+              </a>
+            </div>
+          }
+
+          @if (team.team_logo_icon_url) {
+            <div class="team-detail__cell">
+              <span class="team-detail__label">Logo Icon URL:</span>
+              <a [href]="team.team_logo_icon_url" target="_blank" rel="noopener" class="team-detail__link">
+                {{ team.team_logo_icon_url }}
+              </a>
+            </div>
+          }
+
+          @if (team.team_logo_web_url) {
+            <div class="team-detail__cell">
+              <span class="team-detail__label">Logo Web URL:</span>
+              <a [href]="team.team_logo_web_url" target="_blank" rel="noopener" class="team-detail__link">
+                {{ team.team_logo_web_url }}
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="team-detail__not-found">Team not found</div>
+  }
+
+  <div class="team-detail__back">
+    <button tuiButton type="button" (click)="navigateToSportDetail()">Back to Sport</button>
+  </div>
+</div>

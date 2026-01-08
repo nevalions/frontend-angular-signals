@@ -1,0 +1,98 @@
+.team-edit {
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+
+  &__header {
+    margin-bottom: 2rem;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    color: var(--tui-text-primary);
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  &__form {
+    background-color: var(--tui-background-base);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  &__field {
+    margin-bottom: 1.5rem;
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--tui-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  &__input,
+  &__textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid var(--tui-border-normal);
+    border-radius: 6px;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+    background-color: var(--tui-background-base);
+    color: var(--tui-text-primary);
+
+    &:focus {
+      outline: none;
+      border-color: var(--tui-primary);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    &--invalid {
+      border-color: var(--tui-text-negative);
+
+      &:focus {
+        border-color: var(--tui-text-negative);
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    &--color-text {
+      margin-left: 0.5rem;
+    }
+  }
+
+  &__color-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  &__color-input {
+    width: 50px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--tui-border-normal);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  &__error {
+    color: var(--tui-text-negative);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+}

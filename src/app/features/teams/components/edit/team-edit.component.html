@@ -1,0 +1,139 @@
+<div class="team-edit">
+  <header class="team-edit__header">
+    <h1 class="team-edit__title">Edit Team</h1>
+    <div class="team-edit__actions">
+      <button tuiButton type="button" (click)="navigateToDetail()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="teamForm.invalid">Update Team</button>
+    </div>
+  </header>
+
+  <form class="team-edit__form" [formGroup]="teamForm">
+    <div class="team-edit__field">
+      <label for="title" class="team-edit__label">Title *</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        class="team-edit__input"
+        [class.team-edit__input--invalid]="teamForm.get('title')?.invalid && teamForm.get('title')?.touched"
+      />
+      @if (teamForm.get('title')?.invalid && teamForm.get('title')?.touched) {
+        @if (teamForm.get('title')?.errors?.['required']) {
+          <div class="team-edit__error">Title is required</div>
+        }
+      }
+    </div>
+
+    <div class="team-edit__field">
+      <label for="city" class="team-edit__label">City</label>
+      <input
+        id="city"
+        type="text"
+        formControlName="city"
+        class="team-edit__input"
+        placeholder="Enter city (optional)"
+      />
+    </div>
+
+    <div class="team-edit__field">
+      <label for="team_color" class="team-edit__label">Team Color *</label>
+      <div class="team-edit__color-wrapper">
+        <input
+          id="team_color"
+          type="color"
+          formControlName="team_color"
+          class="team-edit__color-input"
+        />
+        <input
+          type="text"
+          [value]="teamForm.get('team_color')?.value"
+          (input)="teamForm.get('team_color')?.setValue($any($event.target).value)"
+          class="team-edit__input team-edit__input--color-text"
+          placeholder="#000000"
+        />
+      </div>
+      @if (teamForm.get('team_color')?.invalid && teamForm.get('team_color')?.touched) {
+        @if (teamForm.get('team_color')?.errors?.['required']) {
+          <div class="team-edit__error">Team color is required</div>
+        }
+      }
+    </div>
+
+    <div class="team-edit__field">
+      <label for="description" class="team-edit__label">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="team-edit__textarea"
+        rows="4"
+        placeholder="Enter a description for the team (optional)"
+      ></textarea>
+    </div>
+
+    <div class="team-edit__field">
+      <label for="team_eesl_id" class="team-edit__label">EESL ID</label>
+      <input
+        id="team_eesl_id"
+        type="text"
+        formControlName="team_eesl_id"
+        class="team-edit__input"
+        placeholder="Enter EESL ID (optional)"
+      />
+    </div>
+
+    <div class="team-edit__field">
+      <label for="team_logo_url" class="team-edit__label">Team Logo URL</label>
+      <input
+        id="team_logo_url"
+        type="text"
+        formControlName="team_logo_url"
+        class="team-edit__input"
+        placeholder="Enter team logo URL (optional)"
+      />
+    </div>
+
+    <div class="team-edit__field">
+      <label for="team_logo_icon_url" class="team-edit__label">Team Logo Icon URL</label>
+      <input
+        id="team_logo_icon_url"
+        type="text"
+        formControlName="team_logo_icon_url"
+        class="team-edit__input"
+        placeholder="Enter team logo icon URL (optional)"
+      />
+    </div>
+
+    <div class="team-edit__field">
+      <label for="team_logo_web_url" class="team-edit__label">Team Logo Web URL</label>
+      <input
+        id="team_logo_web_url"
+        type="text"
+        formControlName="team_logo_web_url"
+        class="team-edit__input"
+        placeholder="Enter team logo web URL (optional)"
+      />
+    </div>
+
+    <div class="team-edit__field">
+      <label for="sponsor_line_id" class="team-edit__label">Sponsor Line ID</label>
+      <input
+        id="sponsor_line_id"
+        type="text"
+        formControlName="sponsor_line_id"
+        class="team-edit__input"
+        placeholder="Enter sponsor line ID (optional)"
+      />
+    </div>
+
+    <div class="team-edit__field">
+      <label for="main_sponsor_id" class="team-edit__label">Main Sponsor ID</label>
+      <input
+        id="main_sponsor_id"
+        type="text"
+        formControlName="main_sponsor_id"
+        class="team-edit__input"
+        placeholder="Enter main sponsor ID (optional)"
+      />
+    </div>
+  </form>
+</div>
