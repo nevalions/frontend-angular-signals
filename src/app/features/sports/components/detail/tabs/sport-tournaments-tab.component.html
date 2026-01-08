@@ -49,7 +49,7 @@
               </tui-avatar>
             </div>
             <div class="sport-tournaments-tab__tournament-content">
-              <h3 class="sport-tournaments-tab__tournament-title">{{ tournament.title }}</h3>
+              <h3 class="sport-tournaments-tab__tournament-title">{{ tournament.title | uppercase }}</h3>
               @if (tournament.description) {
                 <p class="sport-tournaments-tab__tournament-description">{{ tournament.description }}</p>
               }

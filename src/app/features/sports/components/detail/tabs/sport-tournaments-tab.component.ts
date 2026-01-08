@@ -7,12 +7,14 @@ import { SeasonStoreService } from '../../../../seasons/services/season-store.se
 import { TournamentStoreService } from '../../../../tournaments/services/tournament-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 import { Tournament } from '../../../../tournaments/models/tournament.model';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-sport-tournaments-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    UpperCasePipe,
     TuiTextfield,
     TuiButton,
     TuiCardLarge,
@@ -48,10 +50,10 @@ export class SportTournamentsTabComponent {
 
     const key = `${sportId}-${season.id}`;
     const allTournaments = this.tournamentStore.tournamentsBySportAndSeason().get(key) || [];
-    
+
     const query = this.searchQuery().toLowerCase();
     if (!query) return allTournaments;
-    
+
     return allTournaments.filter((t: Tournament) =>
       t.title.toLowerCase().includes(query) ||
       (t.description && t.description.toLowerCase().includes(query))
@@ -60,7 +62,7 @@ export class SportTournamentsTabComponent {
 
   totalCount = computed(() => this.tournaments().length);
   totalPages = computed(() => Math.ceil(this.totalCount() / this.itemsPerPage()));
-  
+
   paginatedTournaments = computed(() => {
     const start = (this.currentPage() - 1) * this.itemsPerPage();
     const end = start + this.itemsPerPage();
