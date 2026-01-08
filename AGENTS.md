@@ -1306,7 +1306,12 @@ export type PaginationState = {
 
 ## Adding New Features
 
-1. Create component directory: `src/app/components/feature-name/`
+1. **Check for existing shared components** before creating new ones:
+   - Review `src/app/shared/components/` for reusable UI patterns
+   - Shared components include: `EntityHeader`, `Navbar`, `EmptyPage`, `Error404`
+   - Example: Use `EntityHeaderComponent` for detail pages instead of duplicating header code
+   - See `src/app/shared/components/README.md` for usage documentation
+2. Create component directory: `src/app/components/feature-name/`
 2. Create component files: `*.component.ts`, `*.html`, `*.less`
 3. Create type definition: `src/app/type/feature.type.ts`
 4. Create service extending `BaseApiService`: `feature.service.ts`
