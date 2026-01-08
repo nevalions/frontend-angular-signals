@@ -44,6 +44,55 @@
           placeholder="Enter a description for tournament (optional)"
         ></textarea>
       </div>
+
+      <div class="tournament-edit__field">
+        <label for="tournament_eesl_id" class="tournament-edit__label">EESL ID</label>
+        <input
+          id="tournament_eesl_id"
+          type="number"
+          formControlName="tournament_eesl_id"
+          class="tournament-edit__input"
+        />
+      </div>
+
+      <div class="tournament-edit__field">
+        <label for="main_sponsor_id" class="tournament-edit__label">Main Sponsor ID</label>
+        <input
+          id="main_sponsor_id"
+          type="number"
+          formControlName="main_sponsor_id"
+          class="tournament-edit__input"
+        />
+      </div>
+
+      <div class="tournament-edit__field">
+        <label for="sponsor_line_id" class="tournament-edit__label">Sponsor Line ID</label>
+        <input
+          id="sponsor_line_id"
+          type="number"
+          formControlName="sponsor_line_id"
+          class="tournament-edit__input"
+        />
+      </div>
+
+      <div class="tournament-edit__field">
+        <label for="tournament_logo" class="tournament-edit__label">Logo</label>
+        @if (displayLogoUrl()) {
+          <div class="tournament-edit__current-logo">
+            <img [src]="displayLogoUrl()!" alt="Current logo" class="tournament-edit__logo-preview" />
+          </div>
+        }
+        <input
+          id="tournament_logo"
+          type="file"
+          (change)="onFileSelected($event)"
+          class="tournament-edit__file"
+          accept="image/*"
+        />
+        @if (logoUploadLoading()) {
+          <div class="tournament-edit__loading">Uploading logo...</div>
+        }
+      </div>
     </form>
   } @else {
     <div class="tournament-edit__not-found">Tournament not found</div>

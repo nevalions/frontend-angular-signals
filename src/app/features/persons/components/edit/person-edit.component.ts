@@ -29,6 +29,8 @@ export class PersonEditComponent {
   personForm = this.fb.group({
     first_name: ['', [Validators.required]],
     second_name: [''],
+    person_eesl_id: [null as number | null],
+    person_dob: [''],
   });
 
   personId = toSignal(
@@ -63,6 +65,8 @@ export class PersonEditComponent {
       this.personForm.patchValue({
         first_name: person.first_name,
         second_name: person.second_name || '',
+        person_eesl_id: person.person_eesl_id || null,
+        person_dob: person.person_dob || '',
       });
     }
   });
@@ -108,6 +112,18 @@ export class PersonEditComponent {
         first_name: formData.first_name as string,
         second_name: (formData.second_name as string) || undefined,
       };
+
+      if (formData.person_eesl_id) {
+        data.person_eesl_id = Number(formData.person_eesl_id);
+      }
+
+      if (formData.person_dob) {
+        data.person_dob = formData.person_dob;
+      }
+
+      if (newPhotoUrl) {
+        data.person_photo_url = newPhotoUrl.replace(`${API_BASE_URL}/`, '');
+      }
 
       if (newPhotoUrl) {
         data.person_photo_url = newPhotoUrl.replace(`${API_BASE_URL}/`, '');

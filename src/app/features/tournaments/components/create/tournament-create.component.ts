@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TuiAlertService, TuiButton } from '@taiga-ui/core';
@@ -9,6 +9,7 @@ import { TournamentCreate } from '../../models/tournament.model';
 import { ActivatedRoute } from '@angular/router';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withCreateAlert } from '../../../../core/utils/alert-helper.util';
+import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-tournament-create',
@@ -30,13 +31,48 @@ export class TournamentCreateComponent {
   tournamentForm = this.fb.group({
     title: ['', [Validators.required]],
     description: [''],
+    tournament_eesl_id: [null as number | null],
+    main_sponsor_id: [null as number | null],
+    sponsor_line_id: [null as number | null],
   });
+
+  logoUploadLoading = signal(false);
+  logoPreviewUrl = signal<string | null>(null);
 
   sportId = Number(this.route.snapshot.paramMap.get('sportId')) || 0;
   year = Number(this.route.snapshot.paramMap.get('year')) || 0;
 
   sport = this.sportStore.sports().find((s) => s.id === this.sportId) || null;
   season = this.seasonStore.seasonByYear().get(this.year) || null;
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+
+      if (!file.type.startsWith('image/')) {
+        this.alerts.open('Please select an image file', { label: 'Error', appearance: 'negative' }).subscribe();
+        return;
+      }
+
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        this.alerts.open('File size must be less than 5MB', { label: 'Error', appearance: 'negative' }).subscribe();
+        return;
+      }
+
+      this.logoUploadLoading.set(true);
+      this.tournamentStore.uploadTournamentLogo(file).subscribe({
+        next: (response) => {
+          this.logoPreviewUrl.set(buildStaticUrl(response.webview));
+          this.logoUploadLoading.set(false);
+        },
+        error: () => {
+          this.logoUploadLoading.set(false);
+        },
+      });
+    }
+  }
 
   onSubmit(): void {
     if (this.tournamentForm.valid) {
@@ -50,6 +86,12 @@ export class TournamentCreateComponent {
         description: (formData.description as string) || null,
         sport_id: this.sportId,
         season_id: season.id,
+        tournament_eesl_id: formData.tournament_eesl_id || null,
+        tournament_logo_url: this.logoPreviewUrl() ? this.logoPreviewUrl()!.replace(`${API_BASE_URL}/`, '') : null,
+        tournament_logo_icon_url: null,
+        tournament_logo_web_url: null,
+        main_sponsor_id: formData.main_sponsor_id || null,
+        sponsor_line_id: formData.sponsor_line_id || null,
       };
       withCreateAlert(
         this.alerts,

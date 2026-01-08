@@ -28,7 +28,7 @@ export interface PersonCreate {
 }
 
 export interface PersonUpdate {
-  person_eesl_id?: number | null;
+  person_eesl_id?: number;
   first_name?: string;
   second_name?: string;
   person_photo_url?: string | null;

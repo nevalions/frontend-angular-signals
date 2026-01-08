@@ -25,6 +25,8 @@ export class PersonCreateComponent {
   personForm = this.fb.group({
     first_name: ['', [Validators.required]],
     second_name: [''],
+    person_eesl_id: [null as number | null],
+    person_dob: [''],
   });
 
   photoUploadLoading = signal(false);
@@ -68,6 +70,8 @@ export class PersonCreateComponent {
         first_name: formData.first_name as string,
         second_name: (formData.second_name as string) || '',
         person_photo_url: photoUrl ? photoUrl.replace(`${API_BASE_URL}/`, '') : null,
+        person_eesl_id: formData.person_eesl_id ? Number(formData.person_eesl_id) : null,
+        person_dob: formData.person_dob || null,
       };
 
       withCreateAlert(

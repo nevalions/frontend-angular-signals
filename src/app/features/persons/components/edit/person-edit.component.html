@@ -36,6 +36,26 @@
       </div>
 
       <div class="person-edit__field">
+        <label for="person_eesl_id" class="person-edit__label">EESL ID</label>
+        <input
+          id="person_eesl_id"
+          type="number"
+          formControlName="person_eesl_id"
+          class="person-edit__input"
+        />
+      </div>
+
+      <div class="person-edit__field">
+        <label for="person_dob" class="person-edit__label">Date of Birth</label>
+        <input
+          id="person_dob"
+          type="date"
+          formControlName="person_dob"
+          class="person-edit__input"
+        />
+      </div>
+
+      <div class="person-edit__field">
         <label for="person_photo" class="person-edit__label">Photo</label>
         @if (displayPhotoUrl()) {
           <div class="person-edit__current-photo">

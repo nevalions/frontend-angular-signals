@@ -76,4 +76,8 @@ export class TournamentStoreService {
       buildApiUrl(`/api/seasons/year/${year}/sports/id/${sportId}/tournaments`)
     );
   }
+
+  uploadTournamentLogo(file: File): Observable<{ original: string; icon: string; webview: string }> {
+    return this.apiService.uploadFile<{ original: string; icon: string; webview: string }>('/api/tournaments/upload_resize_logo', file);
+  }
 }

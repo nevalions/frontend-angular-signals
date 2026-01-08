@@ -39,5 +39,53 @@
         placeholder="Enter a description for tournament (optional)"
       ></textarea>
     </div>
+
+    <div class="tournament-create__field">
+      <label for="tournament_eesl_id" class="tournament-create__label">EESL ID</label>
+      <input
+        id="tournament_eesl_id"
+        type="number"
+        formControlName="tournament_eesl_id"
+        class="tournament-create__input"
+      />
+    </div>
+
+    <div class="tournament-create__field">
+      <label for="main_sponsor_id" class="tournament-create__label">Main Sponsor ID</label>
+      <input
+        id="main_sponsor_id"
+        type="number"
+        formControlName="main_sponsor_id"
+        class="tournament-create__input"
+      />
+    </div>
+
+    <div class="tournament-create__field">
+      <label for="sponsor_line_id" class="tournament-create__label">Sponsor Line ID</label>
+      <input
+        id="sponsor_line_id"
+        type="number"
+        formControlName="sponsor_line_id"
+        class="tournament-create__input"
+      />
+    </div>
+
+    <div class="tournament-create__field">
+      <label for="tournament_logo" class="tournament-create__label">Logo</label>
+      <input
+        id="tournament_logo"
+        type="file"
+        (change)="onFileSelected($event)"
+        class="tournament-create__file"
+        accept="image/*"
+      />
+      @if (logoUploadLoading()) {
+        <div class="tournament-create__loading">Uploading logo...</div>
+      } @else if (logoPreviewUrl()) {
+        <div class="tournament-create__preview">
+          <img [src]="logoPreviewUrl()!" alt="Logo preview" class="tournament-create__preview-image" />
+        </div>
+      }
+    </div>
   </form>
 </div>
