@@ -1,50 +1,50 @@
 <div class="entity-header">
-  <div class="entity-header__left">
+  <div class="entity-header__content">
     <button tuiButton iconStart="@tui.chevron-left" appearance="flat" (click)="navigateBack()">
       Back
     </button>
     <h1 class="entity-header__title">{{ title() | uppercase }}</h1>
-  </div>
-  <div
-    class="entity-header__menu-container"
-    tuiActiveZone
-    (tuiActiveZoneChange)="onMenuActiveZoneChange($event)"
-  >
-    <button type="button" tuiIconButton size="m" appearance="flat" (click)="toggleMenu()">
-      <tui-icon icon="@tui.settings" />
-    </button>
-    @if (menuOpen()) {
-      <div class="entity-header__menu-dropdown">
-        @if (showEdit()) {
-          <button type="button" class="entity-header__menu-item" (click)="onEdit()">
-            <tui-icon icon="@tui.edit" class="entity-header__menu-icon" />
-            Edit
-          </button>
-        }
-        @if (showDelete()) {
-          <button
-            type="button"
-            class="entity-header__menu-item entity-header__menu-item--danger"
-            (click)="onDelete()"
-          >
-            <tui-icon icon="@tui.trash" class="entity-header__menu-icon" />
-            Delete
-          </button>
-        }
-        @for (item of customMenuItems(); track item.id) {
-          <button
-            type="button"
-            [class.entity-header__menu-item--danger]="item.type === 'danger'"
-            class="entity-header__menu-item"
-            (click)="onCustomItemClick(item.id)"
-          >
-            @if (item.icon) {
-              <tui-icon [icon]="item.icon" class="entity-header__menu-icon" />
-            }
-            {{ item.label }}
-          </button>
-        }
-      </div>
-    }
+    <div
+      class="entity-header__menu-container"
+      tuiActiveZone
+      (tuiActiveZoneChange)="onMenuActiveZoneChange($event)"
+    >
+      <button type="button" tuiIconButton size="m" appearance="flat" (click)="toggleMenu()">
+        <tui-icon icon="@tui.settings" />
+      </button>
+      @if (menuOpen()) {
+        <div class="entity-header__menu-dropdown">
+          @if (showEdit()) {
+            <button type="button" class="entity-header__menu-item" (click)="onEdit()">
+              <tui-icon icon="@tui.edit" class="entity-header__menu-icon" />
+              Edit
+            </button>
+          }
+          @if (showDelete()) {
+            <button
+              type="button"
+              class="entity-header__menu-item entity-header__menu-item--danger"
+              (click)="onDelete()"
+            >
+              <tui-icon icon="@tui.trash" class="entity-header__menu-icon" />
+              Delete
+            </button>
+          }
+          @for (item of customMenuItems(); track item.id) {
+            <button
+              type="button"
+              [class.entity-header__menu-item--danger]="item.type === 'danger'"
+              class="entity-header__menu-item"
+              (click)="onCustomItemClick(item.id)"
+            >
+              @if (item.icon) {
+                <tui-icon [icon]="item.icon" class="entity-header__menu-icon" />
+              }
+              {{ item.label }}
+            </button>
+          }
+        </div>
+      }
+    </div>
   </div>
 </div>
