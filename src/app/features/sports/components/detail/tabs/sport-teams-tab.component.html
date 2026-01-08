@@ -70,30 +70,30 @@
       }
     </div>
 
-    @if (teamsTotalPagesComputed() > 1) {
-      <div class="sport-teams-tab__pagination-wrapper">
-        <div class="sport-teams-tab__items-per-page">
-          <span>Items per page:</span>
-          @for (option of itemsPerPageOptions; track option) {
-            <button
-              type="button"
-              tuiButton
-              class="sport-teams-tab__items-option"
-              [class.sport-teams-tab__items-option--active]="teamsItemsPerPage() === option"
-              (click)="onTeamsItemsPerPageChange(option)"
-            >
-              {{ option }}
-            </button>
-          }
+      @if (apiTotalPages > 1) {
+        <div class="sport-teams-tab__pagination-wrapper">
+          <div class="sport-teams-tab__items-per-page">
+            <span>Items per page:</span>
+            @for (option of itemsPerPageOptions; track option) {
+              <button
+                type="button"
+                tuiButton
+                class="sport-teams-tab__items-option"
+                [class.sport-teams-tab__items-option--active]="teamsItemsPerPage() === option"
+                (click)="onTeamsItemsPerPageChange(option)"
+              >
+                {{ option }}
+              </button>
+            }
+          </div>
+          <div class="sport-teams-tab__pagination">
+            <tui-pagination
+              [length]="apiTotalPages"
+              [index]="teamsCurrentPage() - 1"
+              (indexChange)="onTeamsPageChange($event)"
+            />
+          </div>
         </div>
-        <div class="sport-teams-tab__pagination">
-          <tui-pagination
-            [length]="teamsTotalPagesComputed()"
-            [index]="teamsCurrentPage() - 1"
-            (indexChange)="onTeamsPageChange($event)"
-          />
-        </div>
-      </div>
-    }
+      }
   }
 </div>

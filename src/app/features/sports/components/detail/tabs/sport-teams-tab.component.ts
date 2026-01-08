@@ -68,6 +68,10 @@ export class SportTeamsTabComponent {
     Math.ceil(this.filteredTeams().length / this.teamsItemsPerPage())
   );
 
+  get apiTotalPages(): number {
+    return this.teamsTotalPages();
+  }
+
   teamLogoUrl(team: Team): string | null {
     return team.team_logo_url ? buildStaticUrl(team.team_logo_url) : null;
   }
