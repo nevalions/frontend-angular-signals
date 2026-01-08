@@ -49,6 +49,20 @@ export class SportTeamsTabComponent {
     }
   });
 
+  private loadTeamsOnPageChange = effect(() => {
+    const currentPage = this.teamsCurrentPage();
+    if (currentPage >= 1) {
+      this.loadTeams();
+    }
+  });
+
+  private loadTeamsOnItemsPerPageChange = effect(() => {
+    const itemsPerPage = this.teamsItemsPerPage();
+    if (itemsPerPage > 0) {
+      this.loadTeams();
+    }
+  });
+
   filteredTeams = computed(() => {
     const query = this.teamSearchQuery().toLowerCase();
     if (!query) return this.teams();
@@ -57,16 +71,6 @@ export class SportTeamsTabComponent {
       (t.city && t.city.toLowerCase().includes(query))
     );
   });
-
-  paginatedTeams = computed(() => {
-    const start = (this.teamsCurrentPage() - 1) * this.teamsItemsPerPage();
-    const end = start + this.teamsItemsPerPage();
-    return this.filteredTeams().slice(start, end);
-  });
-
-  teamsTotalPagesComputed = computed(() =>
-    Math.ceil(this.filteredTeams().length / this.teamsItemsPerPage())
-  );
 
   get apiTotalPages(): number {
     return this.teamsTotalPages();
