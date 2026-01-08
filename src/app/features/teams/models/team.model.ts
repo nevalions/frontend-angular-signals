@@ -41,6 +41,12 @@ export interface TeamUpdate {
   sport_id?: number;
 }
 
+export interface LogoUploadResponse {
+  original: string;
+  icon: string;
+  webview: string;
+}
+
 import { PaginatedResponse } from '../../../core/models';
 
 export type TeamsPaginatedResponse = PaginatedResponse<Team>;

@@ -4,10 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { TeamEditComponent } from './team-edit.component';
 import { TeamStoreService } from '../../services/team-store.service';
-import { Team } from '../../models/team.model';
+import { Team, LogoUploadResponse } from '../../models/team.model';
 
 describe('TeamEditComponent', () => {
   let component: TeamEditComponent;
@@ -16,7 +16,8 @@ describe('TeamEditComponent', () => {
   let routeMock: {
     snapshot: { paramMap: { get: (_key: string) => string | null }; queryParamMap: { get: (_key: string) => string | null } };
   };
-  let storeMock: { teams: ReturnType<typeof vi.fn>; updateTeam: ReturnType<typeof vi.fn> };
+  let storeMock: { teams: ReturnType<typeof vi.fn>; updateTeam: ReturnType<typeof vi.fn>; uploadTeamLogo: ReturnType<typeof vi.fn> };
+  let alertsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerMock = {
@@ -30,11 +31,16 @@ describe('TeamEditComponent', () => {
       },
     };
 
+    alertsMock = {
+      open: vi.fn().mockReturnValue(of({})),
+    };
+
     storeMock = {
       teams: vi.fn().mockReturnValue([
         { id: 1, title: 'Test Team', team_color: '#FF0000', sport_id: 1 } as Team,
       ]),
       updateTeam: vi.fn().mockReturnValue(of(undefined)),
+      uploadTeamLogo: vi.fn().mockReturnValue(of({})),
     };
 
     TestBed.configureTestingModule({
@@ -43,6 +49,7 @@ describe('TeamEditComponent', () => {
         { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: TeamStoreService, useValue: storeMock },
+        { provide: 'TuiAlertService', useValue: alertsMock },
       ],
       imports: [ReactiveFormsModule],
     });
@@ -80,9 +87,6 @@ describe('TeamEditComponent', () => {
       description: 'Updated description',
       team_color: '#00FF00',
       team_eesl_id: '123',
-      team_logo_url: 'http://example.com/logo.png',
-      team_logo_icon_url: 'http://example.com/icon.png',
-      team_logo_web_url: 'http://example.com/web.png',
       sponsor_line_id: '456',
       main_sponsor_id: '789',
     });
@@ -95,9 +99,6 @@ describe('TeamEditComponent', () => {
       description: 'Updated description',
       team_color: '#00FF00',
       team_eesl_id: 123,
-      team_logo_url: 'http://example.com/logo.png',
-      team_logo_icon_url: 'http://example.com/icon.png',
-      team_logo_web_url: 'http://example.com/web.png',
       sponsor_line_id: 456,
       main_sponsor_id: 789,
     });
@@ -107,11 +108,9 @@ describe('TeamEditComponent', () => {
     component.teamForm.setValue({
       title: '',
       city: 'City',
+      description: '',
       team_color: '#00FF00',
       team_eesl_id: '',
-      team_logo_url: '',
-      team_logo_icon_url: '',
-      team_logo_web_url: '',
       sponsor_line_id: '',
       main_sponsor_id: '',
     });
@@ -147,9 +146,6 @@ describe('TeamEditComponent', () => {
       description: 'Valid Description',
       team_color: '#FFFFFF',
       team_eesl_id: '',
-      team_logo_url: '',
-      team_logo_icon_url: '',
-      team_logo_web_url: '',
       sponsor_line_id: '',
       main_sponsor_id: '',
     });
@@ -164,13 +160,80 @@ describe('TeamEditComponent', () => {
       description: '',
       team_color: '#FF0000',
       team_eesl_id: '',
-      team_logo_url: '',
-      team_logo_icon_url: '',
-      team_logo_web_url: '',
       sponsor_line_id: '',
       main_sponsor_id: '',
     });
 
     expect(component.teamForm.valid).toBe(true);
+  });
+
+  describe('Logo Upload', () => {
+    it('should call uploadTeamLogo when file is selected', () => {
+      const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+      const mockEvent = {
+        target: { files: [mockFile] } as unknown as HTMLInputElement,
+      } as unknown as Event;
+
+      const uploadResponse: LogoUploadResponse = {
+        original: '/uploads/logos/test.png',
+        icon: '/uploads/icons/test-icon.png',
+        webview: '/uploads/web/test-web.png',
+      };
+
+      vi.spyOn(storeMock, 'uploadTeamLogo').mockReturnValue(of(uploadResponse));
+
+      component.onFileSelected(mockEvent);
+
+      expect(storeMock.uploadTeamLogo).toHaveBeenCalledWith(mockFile);
+      expect(component.logoPreviewUrls()).toEqual({
+        original: 'http://localhost:8000/uploads/logos/test.png',
+        icon: 'http://localhost:8000/uploads/icons/test-icon.png',
+        webview: 'http://localhost:8000/uploads/web/test-web.png',
+      });
+      expect(component.logoUploadLoading()).toBe(false);
+    });
+
+    it('should show error for non-image files', () => {
+      const mockFile = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+      const mockEvent = {
+        target: { files: [mockFile] } as unknown as HTMLInputElement,
+      } as unknown as Event;
+
+      component.onFileSelected(mockEvent);
+
+      expect(storeMock.uploadTeamLogo).not.toHaveBeenCalled();
+      expect(alertsMock.open).toHaveBeenCalledWith(
+        'Please select an image file',
+        { label: 'Error', appearance: 'negative' }
+      );
+    });
+
+    it('should show error for files larger than 5MB', () => {
+      const largeFile = new File(['a'.repeat(6 * 1024 * 1024)], 'large.png', { type: 'image/png' });
+      const mockEvent = {
+        target: { files: [largeFile] } as unknown as HTMLInputElement,
+      } as unknown as Event;
+
+      component.onFileSelected(mockEvent);
+
+      expect(storeMock.uploadTeamLogo).not.toHaveBeenCalled();
+      expect(alertsMock.open).toHaveBeenCalledWith(
+        'File size must be less than 5MB',
+        { label: 'Error', appearance: 'negative' }
+      );
+    });
+
+    it('should set logoUploadLoading to false on upload error', () => {
+      const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+      const mockEvent = {
+        target: { files: [mockFile] } as unknown as HTMLInputElement,
+      } as unknown as Event;
+
+      vi.spyOn(storeMock, 'uploadTeamLogo').mockReturnValue(throwError(() => new Error('Upload failed')));
+
+      component.onFileSelected(mockEvent);
+
+      expect(component.logoUploadLoading()).toBe(false);
+    });
   });
 });

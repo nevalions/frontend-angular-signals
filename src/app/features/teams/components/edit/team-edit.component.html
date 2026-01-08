@@ -81,37 +81,40 @@
       />
     </div>
 
-    <div class="team-edit__field">
-      <label for="team_logo_url" class="team-edit__label">Team Logo URL</label>
+    <div class="team-edit__field team-edit__field--logo">
+      <label for="team_logo" class="team-edit__label">Team Logo</label>
+      @if (displayLogoUrls()) {
+        <div class="team-edit__current-logos">
+          @if (displayLogoUrls()?.original) {
+            <div class="team-edit__logo-preview">
+              <img [src]="displayLogoUrls()!.original" alt="Current logo" />
+              <span>Original</span>
+            </div>
+          }
+          @if (displayLogoUrls()?.icon) {
+            <div class="team-edit__logo-preview">
+              <img [src]="displayLogoUrls()!.icon" alt="Current icon" />
+              <span>Icon</span>
+            </div>
+          }
+          @if (displayLogoUrls()?.webview) {
+            <div class="team-edit__logo-preview">
+              <img [src]="displayLogoUrls()!.webview" alt="Current web view" />
+              <span>Web View</span>
+            </div>
+          }
+        </div>
+      }
       <input
-        id="team_logo_url"
-        type="text"
-        formControlName="team_logo_url"
-        class="team-edit__input"
-        placeholder="Enter team logo URL (optional)"
+        id="team_logo"
+        type="file"
+        (change)="onFileSelected($event)"
+        class="team-edit__file"
+        accept="image/*"
       />
-    </div>
-
-    <div class="team-edit__field">
-      <label for="team_logo_icon_url" class="team-edit__label">Team Logo Icon URL</label>
-      <input
-        id="team_logo_icon_url"
-        type="text"
-        formControlName="team_logo_icon_url"
-        class="team-edit__input"
-        placeholder="Enter team logo icon URL (optional)"
-      />
-    </div>
-
-    <div class="team-edit__field">
-      <label for="team_logo_web_url" class="team-edit__label">Team Logo Web URL</label>
-      <input
-        id="team_logo_web_url"
-        type="text"
-        formControlName="team_logo_web_url"
-        class="team-edit__input"
-        placeholder="Enter team logo web URL (optional)"
-      />
+      @if (logoUploadLoading()) {
+        <div class="team-edit__loading">Uploading logo...</div>
+      }
     </div>
 
     <div class="team-edit__field">
