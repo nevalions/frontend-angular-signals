@@ -86,7 +86,7 @@ export class SportTeamsTabComponent {
     ).subscribe({
       next: (response) => {
         this.teams.set(response.data);
-        this.teamsTotalCount.set(response.metadata.total);
+        this.teamsTotalCount.set(response.metadata.total_items);
         this.teamsTotalPages.set(response.metadata.total_pages);
         this.teamsLoading.set(false);
       },

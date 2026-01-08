@@ -114,16 +114,18 @@ describe('TeamStoreService', () => {
         { id: 1, title: 'Team 1', team_color: '#c01c28', sport_id: 1 },
       ],
       metadata: {
-        total: 1,
+        total_items: 1,
         page: 1,
-        per_page: 10,
+        items_per_page: 10,
         total_pages: 1,
+        has_next: false,
+        has_previous: false,
       },
     };
 
     service.getTeamsBySportIdPaginated(1, 1, 10).subscribe();
 
-    const req = httpMock.expectOne(buildApiUrl('/api/sports/id/1/teams/paginated?page=1&per_page=10'));
+    const req = httpMock.expectOne(buildApiUrl('/api/sports/id/1/teams/paginated?page=1&items_per_page=10'));
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
   });

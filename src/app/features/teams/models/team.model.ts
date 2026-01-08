@@ -41,12 +41,6 @@ export interface TeamUpdate {
   sport_id?: number;
 }
 
-export interface TeamsPaginatedResponse {
-  data: Team[];
-  metadata: {
-    total: number;
-    page: number;
-    per_page: number;
-    total_pages: number;
-  };
-}
+import { PaginatedResponse } from '../../../core/models';
+
+export type TeamsPaginatedResponse = PaginatedResponse<Team>;

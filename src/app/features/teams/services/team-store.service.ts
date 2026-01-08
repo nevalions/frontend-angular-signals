@@ -37,10 +37,10 @@ export class TeamStoreService {
     return this.apiService.delete('/api/teams', id).pipe(tap(() => this.reload()));
   }
 
-  getTeamsBySportIdPaginated(sportId: number, page: number, perPage: number): Observable<TeamsPaginatedResponse> {
+  getTeamsBySportIdPaginated(sportId: number, page: number, itemsPerPage: number): Observable<TeamsPaginatedResponse> {
     const params = new HttpParams()
       .set('page', page.toString())
-      .set('per_page', perPage.toString());
+      .set('items_per_page', itemsPerPage.toString());
 
     return this.http.get<TeamsPaginatedResponse>(
       buildApiUrl(`/api/sports/id/${sportId}/teams/paginated`),

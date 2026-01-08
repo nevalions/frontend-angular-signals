@@ -82,16 +82,20 @@ describe('TeamsPaginatedResponse interface', () => {
         { id: 2, title: 'Team 2', team_color: '#DA291C', sport_id: 1 },
       ],
       metadata: {
-        total: 2,
+        total_items: 2,
         page: 1,
-        per_page: 10,
+        items_per_page: 10,
         total_pages: 1,
+        has_next: false,
+        has_previous: false,
       },
     };
     expect(response.data.length).toBe(2);
-    expect(response.metadata.total).toBe(2);
+    expect(response.metadata.total_items).toBe(2);
     expect(response.metadata.page).toBe(1);
-    expect(response.metadata.per_page).toBe(10);
+    expect(response.metadata.items_per_page).toBe(10);
     expect(response.metadata.total_pages).toBe(1);
+    expect(response.metadata.has_next).toBe(false);
+    expect(response.metadata.has_previous).toBe(false);
   });
 });
