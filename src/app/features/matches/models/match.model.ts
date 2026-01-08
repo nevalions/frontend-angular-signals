@@ -1,3 +1,5 @@
+import { PaginatedResponse } from '../../../core/models';
+
 export interface Match {
   id: number;
   match_date?: string | null;
@@ -32,16 +34,4 @@ export interface MatchUpdate {
   sponsor_line_id?: number | null;
 }
 
-export interface PaginationMetadata {
-  page: number;
-  items_per_page: number;
-  total_items: number;
-  total_pages: number;
-  has_next: boolean;
-  has_previous: boolean;
-}
-
-export interface MatchesPaginatedResponse {
-  data: Match[];
-  metadata: PaginationMetadata;
-}
+export type MatchesPaginatedResponse = PaginatedResponse<Match>;

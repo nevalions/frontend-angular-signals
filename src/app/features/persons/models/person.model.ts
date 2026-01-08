@@ -1,3 +1,5 @@
+import { PaginatedResponse, SortOrder } from '../../../core/models';
+
 export interface Person {
   id: number;
   person_eesl_id?: number | null;
@@ -36,19 +38,4 @@ export interface PersonUpdate {
 }
 
 export type PersonSortBy = 'first_name' | 'second_name' | 'id';
-export type SortOrder = 'asc' | 'desc';
-export type SortBy = PersonSortBy;
-
-export interface PaginationMetadata {
-  page: number;
-  items_per_page: number;
-  total_items: number;
-  total_pages: number;
-  has_next: boolean;
-  has_previous: boolean;
-}
-
-export interface PersonsPaginatedResponse {
-  data: Person[];
-  metadata: PaginationMetadata;
-}
+export type PersonsPaginatedResponse = PaginatedResponse<Person>;

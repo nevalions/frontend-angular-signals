@@ -1,3 +1,5 @@
+import { PaginatedResponse } from '../../../core/models';
+
 export interface Sponsor {
   id: number;
   title: string;
@@ -16,3 +18,5 @@ export interface SponsorUpdate {
   logo_url?: string | null;
   scale_logo?: number | null;
 }
+
+export type SponsorsPaginatedResponse = PaginatedResponse<Sponsor>;

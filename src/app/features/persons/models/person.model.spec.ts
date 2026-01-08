@@ -1,14 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { Person, PersonCreate, PersonUpdate, SortBy, SortOrder } from './person.model';
+import { Person, PersonCreate, PersonUpdate, PersonSortBy } from './person.model';
+import { SortOrder } from '../../../core/models';
 
 describe('Person model interfaces', () => {
   describe('Person interface', () => {
     it('should accept valid Person object', () => {
       const person: Person = {
         id: 1,
+        person_eesl_id: null,
         first_name: 'John',
         second_name: 'Doe',
         person_photo_url: null,
+        person_photo_icon_url: null,
+        person_photo_web_url: null,
       };
 
       expect(person.id).toBe(1);
@@ -20,9 +24,12 @@ describe('Person model interfaces', () => {
     it('should accept Person with photo URL', () => {
       const person: Person = {
         id: 2,
+        person_eesl_id: null,
         first_name: 'Jane',
         second_name: 'Smith',
         person_photo_url: 'http://example.com/photo.jpg',
+        person_photo_icon_url: null,
+        person_photo_web_url: null,
       };
 
       expect(person.person_photo_url).toBe('http://example.com/photo.jpg');
@@ -31,9 +38,12 @@ describe('Person model interfaces', () => {
     it('should handle id as number', () => {
       const person: Person = {
         id: 999,
+        person_eesl_id: null,
         first_name: 'Test',
         second_name: 'User',
         person_photo_url: null,
+        person_photo_icon_url: null,
+        person_photo_web_url: null,
       };
 
       expect(typeof person.id).toBe('number');
@@ -42,9 +52,12 @@ describe('Person model interfaces', () => {
     it('should require all Person fields', () => {
       const person: Person = {
         id: 1,
+        person_eesl_id: null,
         first_name: 'Required',
         second_name: 'Required',
         person_photo_url: null,
+        person_photo_icon_url: null,
+        person_photo_web_url: null,
       };
 
       expect(person.first_name).toBeDefined();
@@ -135,12 +148,14 @@ describe('Person model interfaces', () => {
   });
 
   describe('Type definitions', () => {
-    it('should accept valid SortBy values', () => {
-      const sortBy1: SortBy = 'first_name';
-      const sortBy2: SortBy = 'second_name';
+    it('should accept valid PersonSortBy values', () => {
+      const sortBy1: PersonSortBy = 'first_name';
+      const sortBy2: PersonSortBy = 'second_name';
+      const sortBy3: PersonSortBy = 'id';
 
       expect(sortBy1).toBe('first_name');
       expect(sortBy2).toBe('second_name');
+      expect(sortBy3).toBe('id');
     });
 
     it('should accept valid SortOrder values', () => {

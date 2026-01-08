@@ -4,7 +4,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayersPaginatedResponse, SortOrder } from '../models/player.model';
+import { Player, PlayersPaginatedResponse } from '../models/player.model';
+import { SortOrder } from '../../../core/models';
 
 interface PlayersResourceParams {
   sportId: number | null;

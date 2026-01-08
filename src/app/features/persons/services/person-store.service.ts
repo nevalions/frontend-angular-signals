@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Person, PersonCreate, PersonUpdate, PersonSortBy, SortOrder, PersonsPaginatedResponse, PhotoUploadResponse } from '../models/person.model';
+import { Person, PersonCreate, PersonUpdate, PersonSortBy, PersonsPaginatedResponse, PhotoUploadResponse } from '../models/person.model';
+import { SortOrder } from '../../../core/models';
 
 @Injectable({
   providedIn: 'root',
