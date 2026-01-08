@@ -85,7 +85,7 @@ describe('SportStoreService', () => {
 
       service.updateSport(2, sportData).subscribe();
 
-      const req = httpMock.expectOne(buildApiUrl('/api/sports/') + '?item_id=2');
+      const req = httpMock.expectOne(buildApiUrl('/api/sports/2/'));
       req.flush({ id: 2, title: 'Basketball', description: 'Basketball sport' } as Sport);
 
       expect(req.request.method).toBe('PUT');
@@ -103,7 +103,7 @@ describe('SportStoreService', () => {
         error: (err) => expect(err).toBeTruthy(),
       });
 
-      const req = httpMock.expectOne(buildApiUrl('/api/sports/') + '?item_id=2');
+      const req = httpMock.expectOne(buildApiUrl('/api/sports/2/'));
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('PUT');

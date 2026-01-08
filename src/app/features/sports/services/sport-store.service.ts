@@ -35,7 +35,7 @@ export class SportStoreService {
   }
 
   updateSport(id: number, sportData: SportUpdate): Observable<Sport> {
-    return this.apiService.put<Sport>('/api/sports/', id, sportData).pipe(tap(() => this.reload()));
+    return this.apiService.put<Sport>('/api/sports/', id, sportData, true).pipe(tap(() => this.reload()));
   }
 
   deleteSport(id: number): Observable<void> {

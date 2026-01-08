@@ -39,7 +39,7 @@ export class SeasonStoreService {
   }
 
   updateSeason(id: number, seasonData: SeasonUpdate): Observable<Season> {
-    return this.apiService.put<Season>('/api/seasons/', id, seasonData).pipe(tap(() => this.reload()));
+    return this.apiService.put<Season>('/api/seasons/', id, seasonData, true).pipe(tap(() => this.reload()));
   }
 
   deleteSeason(id: number): Observable<void> {

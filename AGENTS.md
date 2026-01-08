@@ -1368,38 +1368,32 @@ Backend API documentation is available at:
 
 ### PUT Endpoint Patterns
 
-Backend PUT endpoints use different parameter patterns depending on the resource. Always check the backend documentation before making PUT requests.
-
-**Path Parameters (use `usePathParam: true`):**
+**All PUT endpoints now use path parameters (`/{item_id}/`).**
 
 ```typescript
-// Teams endpoint uses path parameter
+// Teams endpoint
 updateTeam(id: number, teamData: TeamUpdate): Observable<Team> {
   return this.apiService.put<Team>('/api/teams/', id, teamData, true).pipe(tap(() => this.reload()));
 }
 
-// Persons endpoint uses path parameter
+// Persons endpoint
 updatePerson(id: number, personData: PersonUpdate): Observable<Person> {
   return this.apiService.put<Person>('/api/persons/', id, personData, true).pipe(tap(() => this.reload()));
 }
 
-// Tournaments endpoint uses path parameter
+// Tournaments endpoint (uses direct HttpClient)
 updateTournament(id: number, data: TournamentUpdate): Observable<Tournament> {
   return this.http.put<Tournament>(buildApiUrl(`/api/tournaments/${id}`), data).pipe(tap(() => this.reload()));
 }
-```
 
-**Query Parameters (default `usePathParam: false`):**
-
-```typescript
-// Seasons endpoint uses query parameter
+// Seasons endpoint
 updateSeason(id: number, seasonData: SeasonUpdate): Observable<Season> {
-  return this.apiService.put<Season>('/api/seasons/', id, seasonData).pipe(tap(() => this.reload()));
+  return this.apiService.put<Season>('/api/seasons/', id, seasonData, true).pipe(tap(() => this.reload()));
 }
 
-// Sports endpoint uses query parameter
+// Sports endpoint
 updateSport(id: number, sportData: SportUpdate): Observable<Sport> {
-  return this.apiService.put<Sport>('/api/sports/', id, sportData).pipe(tap(() => this.reload()));
+  return this.apiService.put<Sport>('/api/sports/', id, sportData, true).pipe(tap(() => this.reload()));
 }
 ```
 
@@ -1410,20 +1404,19 @@ updateSport(id: number, sportData: SportUpdate): Observable<Sport> {
 | Teams     | `PUT /api/teams/{id}/`       | `true`                       | `src/teams/views.py:103`   |
 | Persons   | `PUT /api/persons/{id}/`     | `true`                       | `src/person/views.py`        |
 | Tournaments| `PUT /api/tournaments/{id}/` | Path param in URL             | `src/tournaments/views.py`    |
-| Seasons   | `PUT /api/seasons/?item_id={id}` | `false` (default) | `src/seasons/views.py:54` |
-| Sports    | `PUT /api/sports/?item_id={id}`  | `false` (default) | `src/sports/views.py:41`  |
+| Seasons   | `PUT /api/seasons/{id}/`      | `true`                       | `src/seasons/views.py:54`   |
+| Sports    | `PUT /api/sports/{id}/`       | `true`                       | `src/sports/views.py:41`    |
 
 **When Adding New PUT Endpoints:**
 
-1. Check the backend view definition for the pattern:
+1. Always assume path parameters (`/{item_id}/`) pattern
+2. Check backend view to verify:
    ```bash
    grep -A 5 "@router.put" ../statsboards-backend/src/<resource>/views.py
    ```
 
-2. If endpoint is defined as `@router.put("/{item_id}/", ...)` → use `usePathParam: true`
-3. If endpoint is defined as `@router.put("/", ...)` with `item_id: int` param → use `usePathParam: false` (default)
-
-4. Always verify with backend API docs at http://localhost:9000/docs
+3. Use `usePathParam: true` in `apiService.put()` calls
+4. Verify with backend API docs at http://localhost:9000/docs
 
 ## Console Logging
 

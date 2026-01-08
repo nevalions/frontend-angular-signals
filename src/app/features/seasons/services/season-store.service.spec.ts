@@ -85,7 +85,7 @@ describe('SeasonStoreService', () => {
 
       service.updateSeason(2, seasonData).subscribe();
 
-      const req = httpMock.expectOne(buildApiUrl('/api/seasons/') + '?item_id=2');
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/2/'));
       req.flush({ id: 2, year: 2025, description: 'Updated description' } as Season);
 
       expect(req.request.method).toBe('PUT');
@@ -103,7 +103,7 @@ describe('SeasonStoreService', () => {
         error: (err) => expect(err).toBeTruthy(),
       });
 
-      const req = httpMock.expectOne(buildApiUrl('/api/seasons/') + '?item_id=2');
+      const req = httpMock.expectOne(buildApiUrl('/api/seasons/2/'));
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('PUT');
