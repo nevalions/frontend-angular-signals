@@ -8,6 +8,7 @@ import { TournamentStoreService } from '../../../../tournaments/services/tournam
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 import { Tournament } from '../../../../tournaments/models/tournament.model';
 import { UpperCasePipe } from '@angular/common';
+import { buildStaticUrl } from '../../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-sport-tournaments-tab',
@@ -59,6 +60,10 @@ export class SportTournamentsTabComponent {
       (t.description && t.description.toLowerCase().includes(query))
     );
   });
+
+  sportLogoUrl(tournament: Tournament): string | null {
+    return tournament.title ? buildStaticUrl(tournament.title) : null;
+  }
 
   totalCount = computed(() => this.tournaments().length);
   totalPages = computed(() => Math.ceil(this.totalCount() / this.itemsPerPage()));

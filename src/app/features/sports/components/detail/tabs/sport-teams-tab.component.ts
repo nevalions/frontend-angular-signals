@@ -1,20 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
-import { TuiTextfield, TuiButton, TuiIcon } from '@taiga-ui/core';
+import { TuiTextfield, TuiButton } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
 import { TeamStoreService } from '../../../../teams/services/team-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
 import { Team } from '../../../../teams/models/team.model';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-sport-teams-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    UpperCasePipe,
     TuiTextfield,
     TuiButton,
-    TuiIcon,
     TuiCardLarge,
     TuiCell,
     TuiAvatar,

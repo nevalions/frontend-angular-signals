@@ -7,7 +7,8 @@
           placeholder="Search by name or city..."
           tuiTextfield
           [value]="teamSearchQuery()"
-          (input)="onTeamSearchChange($any($event.target).value)" />
+          (input)="onTeamSearchChange($any($event.target).value)"
+        />
       </tui-textfield>
       @if (teamSearchQuery()) {
         <button
@@ -17,8 +18,8 @@
           iconStart="@tui.close"
           size="s"
           (click)="clearTeamSearch()"
-          class="sport-teams-tab__search-clear">
-        </button>
+          class="sport-teams-tab__search-clear"
+        ></button>
       }
     </div>
     <button
@@ -27,7 +28,8 @@
       appearance="flat"
       iconStart="@tui.plus"
       (click)="navigateToAddTeam()"
-      class="sport-teams-tab__add-button">
+      class="sport-teams-tab__add-button"
+    >
       Add Team
     </button>
   </div>
@@ -45,20 +47,23 @@
           class="sport-teams-tab__team-card"
           tuiCardLarge
           tuiCell="l"
-          (click)="navigateToTeamDetail(team.id)">
+          (click)="navigateToTeamDetail(team.id)"
+        >
           <div class="sport-teams-tab__team-icon">
             @if (teamLogoUrl(team); as logoUrl) {
               <img [src]="logoUrl" [alt]="team.title" class="sport-teams-tab__team-logo" />
             } @else {
-              <tui-avatar size="l" class="sport-teams-tab__team-avatar">
-                <tui-icon icon="@tui.users" />
+              <tui-avatar size="l" [round]="true" class="sport-teams-tab__team-avatar">
+                @if (team.title) {
+                  {{ team.title | uppercase }}
+                }
               </tui-avatar>
             }
           </div>
           <div class="sport-teams-tab__team-content">
-            <h3 class="sport-teams-tab__team-title">{{ team.title }}</h3>
+            <h3 class="sport-teams-tab__team-title">{{ team.title | uppercase }}</h3>
             @if (team.city) {
-              <p class="sport-teams-tab__team-city">{{ team.city }}</p>
+              <p class="sport-teams-tab__team-city">{{ team.city | uppercase }}</p>
             }
           </div>
         </button>
@@ -75,7 +80,8 @@
               tuiButton
               class="sport-teams-tab__items-option"
               [class.sport-teams-tab__items-option--active]="teamsItemsPerPage() === option"
-              (click)="onTeamsItemsPerPageChange(option)">
+              (click)="onTeamsItemsPerPageChange(option)"
+            >
               {{ option }}
             </button>
           }
@@ -84,7 +90,8 @@
           <tui-pagination
             [length]="teamsTotalPagesComputed()"
             [index]="teamsCurrentPage() - 1"
-            (indexChange)="onTeamsPageChange($event)" />
+            (indexChange)="onTeamsPageChange($event)"
+          />
         </div>
       </div>
     }
