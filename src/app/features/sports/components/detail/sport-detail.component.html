@@ -1,42 +1,11 @@
 @if (sport(); as s) {
   <div class="sport-detail">
-    <div class="sport-detail__header">
-      <div class="sport-detail__header-left">
-        <button tuiButton iconStart="@tui.chevron-left" appearance="flat" (click)="navigateBack()">
-          Back
-        </button>
-        <h1 class="sport-detail__title">{{ s.title | uppercase }}</h1>
-        <div
-          class="sport-detail__menu-container"
-          tuiActiveZone
-          (tuiActiveZoneChange)="onMenuActiveZoneChange($event)"
-        >
-          <button type="button" tuiIconButton size="m" appearance="flat" (click)="toggleMenu()">
-            <tui-icon icon="@tui.settings" />
-          </button>
-          @if (menuOpen()) {
-            <div class="sport-detail__menu-dropdown">
-              <button
-                type="button"
-                class="sport-detail__menu-item"
-                (click)="navigateToEdit(); closeMenu()"
-              >
-                <tui-icon icon="@tui.edit" class="sport-detail__menu-icon" />
-                Edit
-              </button>
-              <button
-                type="button"
-                class="sport-detail__menu-item sport-detail__menu-item--danger"
-                (click)="deleteSport(); closeMenu()"
-              >
-                <tui-icon icon="@tui.trash" class="sport-detail__menu-icon" />
-                Delete
-              </button>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
+    <app-entity-header
+      [title]="s.title"
+      [navigateBack]="navigateBack"
+      (edit)="navigateToEdit()"
+      (delete)="deleteSport()"
+    />
 
     <div class="sport-detail__subnav">
       <nav class="sport-detail__tabs">

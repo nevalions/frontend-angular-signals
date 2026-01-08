@@ -2,17 +2,18 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { PersonStoreService } from '../../services/person-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
+import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 
 @Component({
   selector: 'app-person-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiButton],
+  imports: [EntityHeaderComponent],
   templateUrl: './person-detail.component.html',
   styleUrl: './person-detail.component.less',
 })
@@ -38,6 +39,11 @@ export class PersonDetailComponent {
   });
 
   loading = this.personStore.loading;
+
+  personName = computed(() => {
+    const person = this.person();
+    return person ? `${person.first_name} ${person.second_name}` : '';
+  });
 
   photoUrl = computed(() => {
     const person = this.person();

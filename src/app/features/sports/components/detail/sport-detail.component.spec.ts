@@ -127,21 +127,6 @@ describe('SportDetailComponent', () => {
     expect(years).toEqual([2024, 2025]);
   });
 
-  it('should toggle menu', () => {
-    component.menuOpen.set(false);
-    component.toggleMenu();
-    expect(component.menuOpen()).toBe(true);
-
-    component.toggleMenu();
-    expect(component.menuOpen()).toBe(false);
-  });
-
-  it('should close menu', () => {
-    component.menuOpen.set(true);
-    component.closeMenu();
-    expect(component.menuOpen()).toBe(false);
-  });
-
   it('should call setSportId on PlayerStore when sportId changes', () => {
     expect(playerStoreMock.setSportId).toHaveBeenCalledWith(1);
   });

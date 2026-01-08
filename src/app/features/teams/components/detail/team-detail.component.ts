@@ -1,22 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { TeamStoreService } from '../../services/team-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
+import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 
 @Component({
   selector: 'app-team-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TuiButton],
+  imports: [CommonModule, EntityHeaderComponent],
   templateUrl: './team-detail.component.html',
   styleUrl: './team-detail.component.less',
 })
 export class TeamDetailComponent {
-  private router = inject(Router);
   private route = inject(ActivatedRoute);
   private teamStore = inject(TeamStoreService);
   private navigationHelper = inject(NavigationHelperService);

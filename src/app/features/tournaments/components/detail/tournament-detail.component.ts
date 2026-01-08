@@ -1,21 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { UpperCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TuiAlertService, TuiButton, TuiDialogService, TuiIcon } from '@taiga-ui/core';
-import { TuiActiveZone } from '@taiga-ui/cdk/directives/active-zone';
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 
 @Component({
   selector: 'app-tournament-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UpperCasePipe, TuiButton, TuiIcon, TuiActiveZone],
+  imports: [EntityHeaderComponent],
   templateUrl: './tournament-detail.component.html',
   styleUrl: './tournament-detail.component.less',
 })
@@ -73,7 +72,6 @@ export class TournamentDetailComponent {
   loading = this.tournamentStore.loading;
 
   activeTab = 'matches';
-  menuOpen = signal(false);
 
   navigateBack(): void {
     const sportId = this.sportId();
@@ -112,19 +110,5 @@ export class TournamentDetailComponent {
 
   onTabChange(tab: string): void {
     this.activeTab = tab;
-  }
-
-  toggleMenu(): void {
-    this.menuOpen.update(open => !open);
-  }
-
-  closeMenu(): void {
-    this.menuOpen.set(false);
-  }
-
-  onMenuActiveZoneChange(active: boolean): void {
-    if (!active) {
-      this.menuOpen.set(false);
-    }
   }
 }

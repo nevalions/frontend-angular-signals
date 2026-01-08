@@ -1,44 +1,11 @@
 @if (tournament(); as t) {
   <div class="tournament-detail">
-    <div class="tournament-detail__header">
-      <div class="tournament-detail__header-left">
-        <button tuiButton iconStart="@tui.chevron-left" appearance="flat" (click)="navigateBack()">
-          Back
-        </button>
-        <h1 class="tournament-detail__title">{{ t.title | uppercase }}</h1>
-      </div>
-      <div class="tournament-detail__header-right">
-        <div
-          class="tournament-detail__menu-container"
-          tuiActiveZone
-          (tuiActiveZoneChange)="onMenuActiveZoneChange($event)"
-        >
-          <button type="button" tuiIconButton (click)="toggleMenu()">
-            <tui-icon icon="@tui.ellipsis" />
-          </button>
-          @if (menuOpen()) {
-            <div class="tournament-detail__menu-dropdown">
-              <button
-                type="button"
-                class="tournament-detail__menu-item"
-                (click)="navigateToEdit(); closeMenu()"
-              >
-                <tui-icon icon="@tui.edit" class="tournament-detail__menu-icon" />
-                Edit
-              </button>
-              <button
-                type="button"
-                class="tournament-detail__menu-item tournament-detail__menu-item--danger"
-                (click)="deleteTournament(); closeMenu()"
-              >
-                <tui-icon icon="@tui.trash" class="tournament-detail__menu-icon" />
-                Delete
-              </button>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
+    <app-entity-header
+      [title]="t.title"
+      [navigateBack]="navigateBack"
+      (edit)="navigateToEdit()"
+      (delete)="deleteTournament()"
+    />
 
     <div class="tournament-detail__subnav">
       <nav class="tournament-detail__tabs">

@@ -1,15 +1,14 @@
 <div class="person-detail">
-  <header class="person-detail__header">
-    @if (person()) {
-      <h1 class="person-detail__title">{{ person()!.first_name }} {{ person()!.second_name }}</h1>
-    } @else {
-      <h1 class="person-detail__title">Person</h1>
-    }
-  </header>
-
   @if (loading()) {
     <div class="person-detail__loading">Loading person...</div>
   } @else if (person()) {
+    <app-entity-header
+      [title]="personName()"
+      [navigateBack]="navigateBack"
+      (edit)="navigateToEdit()"
+      (delete)="deletePerson()"
+    />
+
     <div class="person-detail__content">
       <section class="person-detail__section">
         <h2 class="person-detail__section-title">Details</h2>
@@ -31,14 +30,6 @@
         </div>
       </section>
     </div>
-
-    <footer class="person-detail__actions">
-      <button tuiButton type="button" (click)="navigateBack()">Back</button>
-      <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
-      <button tuiButton type="button" appearance="destructive" (click)="deletePerson()">
-        Delete
-      </button>
-    </footer>
   } @else {
     <div class="person-detail__not-found">Person not found</div>
   }

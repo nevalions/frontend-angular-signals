@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { UpperCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { TuiAlertService, TuiButton, TuiDialogService, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiAlertService, TuiDialogService, TuiTextfield } from '@taiga-ui/core';
 import { TuiSelect } from '@taiga-ui/kit';
 import { TuiDataList } from '@taiga-ui/core';
-import { TuiActiveZone } from '@taiga-ui/cdk/directives/active-zone';
 import { environment } from '../../../../../environments/environment';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../services/sport-store.service';
@@ -16,6 +14,7 @@ import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
+import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 import { SportTournamentsTabComponent } from './tabs/sport-tournaments-tab.component';
 import { SportTeamsTabComponent } from './tabs/sport-teams-tab.component';
 import { SportPlayersTabComponent } from './tabs/sport-players-tab.component';
@@ -27,13 +26,10 @@ import { SportPositionsTabComponent } from './tabs/sport-positions-tab.component
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    UpperCasePipe,
     TuiTextfield,
     TuiSelect,
     TuiDataList,
-    TuiButton,
-    TuiIcon,
-    TuiActiveZone,
+    EntityHeaderComponent,
     SportTournamentsTabComponent,
     SportTeamsTabComponent,
     SportPlayersTabComponent,
@@ -94,8 +90,6 @@ export class SportDetailComponent {
 
   selectedSeasonYear = signal<number | null>(null);
 
-  menuOpen = signal(false);
-
   private initializePlayers = effect(() => {
     const sportId = this.sportId();
     if (sportId) {
@@ -130,20 +124,6 @@ export class SportDetailComponent {
 
   onTabChange(tab: string): void {
     this.activeTab = tab;
-  }
-
-  toggleMenu(): void {
-    this.menuOpen.update(open => !open);
-  }
-
-  closeMenu(): void {
-    this.menuOpen.set(false);
-  }
-
-  onMenuActiveZoneChange(active: boolean): void {
-    if (!active) {
-      this.menuOpen.set(false);
-    }
   }
 
   private setCurrentSeason = effect(() => {

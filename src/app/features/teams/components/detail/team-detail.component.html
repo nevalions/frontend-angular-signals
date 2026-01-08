@@ -1,12 +1,11 @@
 <div class="team-detail">
   @if (team(); as team) {
-    <header class="team-detail__header">
-      <h1 class="team-detail__title">{{ team.title }}</h1>
-      <div class="team-detail__actions">
-        <button tuiButton type="button" (click)="navigateToEdit()">Edit</button>
-        <button tuiButton type="button" (click)="deleteTeam()">Delete</button>
-      </div>
-    </header>
+    <app-entity-header
+      [title]="team.title"
+      [navigateBack]="navigateToSportDetail"
+      (edit)="navigateToEdit()"
+      (delete)="deleteTeam()"
+    />
 
     <div class="team-detail__content">
       <div class="team-detail__card">
@@ -98,8 +97,4 @@
   } @else {
     <div class="team-detail__not-found">Team not found</div>
   }
-
-  <div class="team-detail__back">
-    <button tuiButton type="button" (click)="navigateToSportDetail()">Back to Sport</button>
-  </div>
 </div>

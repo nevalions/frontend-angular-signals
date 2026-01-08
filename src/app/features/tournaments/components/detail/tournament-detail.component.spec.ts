@@ -84,39 +84,12 @@ describe('TournamentDetailComponent', () => {
     expect(component.activeTab).toBe('matches');
   });
 
-  it('should toggle menu', () => {
-    component.menuOpen.set(false);
-    component.toggleMenu();
-    expect(component.menuOpen()).toBe(true);
-
-    component.toggleMenu();
-    expect(component.menuOpen()).toBe(false);
-  });
-
-  it('should close menu', () => {
-    component.menuOpen.set(true);
-    component.closeMenu();
-    expect(component.menuOpen()).toBe(false);
-  });
-
   it('should change tab', () => {
     component.onTabChange('teams');
     expect(component.activeTab).toBe('teams');
 
     component.onTabChange('players');
     expect(component.activeTab).toBe('players');
-  });
-
-  it('should close menu when active zone becomes inactive', () => {
-    component.menuOpen.set(true);
-    component.onMenuActiveZoneChange(false);
-    expect(component.menuOpen()).toBe(false);
-  });
-
-  it('should not close menu when active zone is still active', () => {
-    component.menuOpen.set(true);
-    component.onMenuActiveZoneChange(true);
-    expect(component.menuOpen()).toBe(true);
   });
 
   it('should navigate back on button click', () => {
