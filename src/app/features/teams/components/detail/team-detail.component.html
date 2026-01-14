@@ -2,7 +2,7 @@
   @if (team(); as team) {
     <app-entity-header
       [title]="team.title"
-      [navigateBack]="navigateToSportDetail"
+      [navigateBack]="navigateToSportDetail.bind(this)"
       (edit)="navigateToEdit()"
       (delete)="deleteTeam()"
     />

@@ -2,7 +2,7 @@
   <div class="sport-detail">
     <app-entity-header
       [title]="s.title"
-      [navigateBack]="navigateBack"
+      [navigateBack]="navigateBack.bind(this)"
       (edit)="navigateToEdit()"
       (delete)="deleteSport()"
     />

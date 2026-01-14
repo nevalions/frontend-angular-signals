@@ -4,7 +4,7 @@
   } @else if (person()) {
     <app-entity-header
       [title]="personName()"
-      [navigateBack]="navigateBack"
+      [navigateBack]="navigateBack.bind(this)"
       (edit)="navigateToEdit()"
       (delete)="deletePerson()"
     />
