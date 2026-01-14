@@ -1,6 +1,6 @@
 <div class="entity-header">
   <div class="entity-header__content">
-    <button tuiButton iconStart="@tui.chevron-left" appearance="flat" (click)="navigateBack()()">
+    <button tuiButton iconStart="@tui.chevron-left" appearance="flat" (click)="navigateBack.emit()">
       Back
     </button>
     <h1 class="entity-header__title">{{ title() | uppercase }}</h1>

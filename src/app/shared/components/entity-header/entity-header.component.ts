@@ -22,9 +22,9 @@ export class EntityHeaderComponent {
   title = input.required<string>();
   showEdit = input(true);
   showDelete = input(true);
-  navigateBack = input.required<() => void>();
   customMenuItems = input<CustomMenuItem[]>([]);
 
+  navigateBack = output<void>();
   edit = output<void>();
   delete = output<void>();
   customItemClick = output<string>();

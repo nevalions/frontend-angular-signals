@@ -2,7 +2,7 @@
   <div class="tournament-detail">
     <app-entity-header
       [title]="t.title"
-      [navigateBack]="navigateBack.bind(this)"
+      (navigateBack)="navigateBack()"
       (edit)="navigateToEdit()"
       (delete)="deleteTournament()"
     />
