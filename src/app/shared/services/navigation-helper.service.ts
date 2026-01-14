@@ -21,12 +21,11 @@ export class NavigationHelperService {
     this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', 'new']);
   }
 
-  toSportDetail(sportId: number | string, year?: number | string): void {
-    if (year) {
-      this.router.navigate(['/sports', sportId], { queryParams: { year } });
-    } else {
-      this.router.navigate(['/sports', sportId]);
-    }
+  toSportDetail(sportId: number | string, year?: number | string, tab?: string): void {
+    const queryParams: { year?: number | string; tab?: string } = {};
+    if (year) queryParams.year = year;
+    if (tab) queryParams.tab = tab;
+    this.router.navigate(['/sports', sportId], { queryParams });
   }
 
   toSportEdit(sportId: number | string): void {

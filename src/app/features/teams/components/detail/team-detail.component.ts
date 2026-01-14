@@ -74,7 +74,7 @@ export class TeamDetailComponent {
     const sportId = this.sportId();
     const year = this.route.snapshot.queryParamMap.get('year');
     if (sportId) {
-      this.navigationHelper.toSportDetail(sportId, year ? Number(year) : undefined);
+      this.navigationHelper.toSportDetail(sportId, year ? Number(year) : undefined, 'teams');
     }
   }
 }

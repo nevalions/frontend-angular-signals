@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -40,6 +40,7 @@ import { SportPositionsTabComponent } from './tabs/sport-positions-tab.component
 })
 export class SportDetailComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private sportStore = inject(SportStoreService);
   private seasonStore = inject(SeasonStoreService);
   private playerStore = inject(PlayerStoreService);
@@ -86,7 +87,10 @@ export class SportDetailComponent {
 
   seasonYears = computed(() => this.seasons().map((season: Season) => season.year));
 
-  activeTab = 'tournaments';
+  activeTab = toSignal(
+    this.route.queryParamMap.pipe(map((params) => params.get('tab') || 'tournaments')),
+    { initialValue: 'tournaments' }
+  );
 
   selectedSeasonYear = signal<number | null>(null);
 
@@ -123,7 +127,12 @@ export class SportDetailComponent {
   }
 
   onTabChange(tab: string): void {
-    this.activeTab = tab;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   private setCurrentSeason = effect(() => {
