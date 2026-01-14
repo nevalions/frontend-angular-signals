@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { TuiIcon, TuiDialogService } from '@taiga-ui/core';
 import { TuiAvatar } from '@taiga-ui/kit';
 import { tuiDialog } from '@taiga-ui/core';
 import { AuthService } from '../../services/auth.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 @Component({
   selector: 'app-auth-buttons',
@@ -74,7 +74,7 @@ import { RegisterDialogComponent } from '../register-dialog/register-dialog.comp
 })
 export class AuthButtonsComponent {
   protected readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
+  private readonly navigationHelper = inject(NavigationHelperService);
   private readonly dialogs = inject(TuiDialogService);
 
   private readonly loginDialog = tuiDialog(LoginDialogComponent, {
@@ -104,6 +104,6 @@ export class AuthButtonsComponent {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/']);
+    this.navigationHelper.toHome();
   }
 }

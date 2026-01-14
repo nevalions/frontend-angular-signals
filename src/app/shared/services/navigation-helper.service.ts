@@ -36,6 +36,14 @@ export class NavigationHelperService {
     this.router.navigate(['/sports']);
   }
 
+  toHome(): void {
+    this.router.navigate(['/home']);
+  }
+
+  toError404(): void {
+    this.router.navigate(['/error404']);
+  }
+
   toPersonsList(): void {
     this.router.navigate(['/persons']);
   }

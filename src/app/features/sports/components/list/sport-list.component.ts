@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { SportStoreService } from '../../services/sport-store.service';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiLoader, TuiTitle } from '@taiga-ui/core';
 
@@ -14,13 +14,13 @@ import { TuiLoader, TuiTitle } from '@taiga-ui/core';
 })
 export class SportListComponent {
   private sportStore = inject(SportStoreService);
-  private router = inject(Router);
+  private navigationHelper = inject(NavigationHelperService);
 
   sports = this.sportStore.sports;
   loading = this.sportStore.loading;
   error = this.sportStore.error;
 
   navigateToDetail(id: number): void {
-    this.router.navigate(['/sports', id]);
+    this.navigationHelper.toSportDetail(id);
   }
 }

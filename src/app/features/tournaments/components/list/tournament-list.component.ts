@@ -82,19 +82,15 @@ export class TournamentListComponent {
   onSeasonChange(year: number): void {
     const sportId = this.sportId();
     if (sportId) {
-      this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments']);
+      this.navigationHelper.toTournamentsList(sportId, year);
     }
   }
 
   navigateBack(): void {
     const sportId = this.sportId();
     const year = this.selectedSeasonYear();
-    if (sportId && year) {
-      this.router.navigate(['/sports', sportId], {
-        queryParams: { year }
-      });
-    } else if (sportId) {
-      this.router.navigate(['/sports', sportId]);
+    if (sportId) {
+      this.navigationHelper.toSportDetail(sportId, year ?? undefined);
     }
   }
 
@@ -102,7 +98,7 @@ export class TournamentListComponent {
     const sportId = this.sportId();
     const year = this.selectedSeasonYear();
     if (sportId && year) {
-      this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', 'new']);
+      this.navigationHelper.toTournamentCreate(sportId, year);
     }
   }
 

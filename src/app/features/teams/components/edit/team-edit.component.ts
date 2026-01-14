@@ -88,11 +88,7 @@ export class TeamEditComponent {
     const teamId = this.teamId();
     const year = this.route.snapshot.queryParamMap.get('year');
     if (sportId && teamId) {
-      if (year) {
-        this.router.navigate(['/sports', sportId, 'teams', teamId], { queryParams: { year } });
-      } else {
-        this.router.navigate(['/sports', sportId, 'teams', teamId]);
-      }
+      this.navigationHelper.toTeamDetail(sportId, teamId, year ? Number(year) : undefined);
     }
   }
 
