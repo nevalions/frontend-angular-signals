@@ -667,21 +667,32 @@ createItem(item: Item): Observable<Item> {
    Available methods:
 
    ```typescript
-   // Navigate to tournaments list
+   // Tournaments
    toTournamentsList(sportId: number | string, year: number | string)
-
-   // Navigate to tournament detail
    toTournamentDetail(sportId: number | string, year: number | string, tournamentId: number | string)
-
-   // Navigate to tournament edit
    toTournamentEdit(sportId: number | string, year: number | string, tournamentId: number | string)
-
-   // Navigate to tournament create
    toTournamentCreate(sportId: number | string, year: number | string)
 
-    // Navigate to sport detail
-    toSportDetail(sportId: number | string)
-    ```
+   // Sports
+   toSportDetail(sportId: number | string, year?: number | string, tab?: string)
+   toSportEdit(sportId: number | string)
+   toSportsList()
+
+   // Teams
+   toTeamDetail(sportId: number | string, teamId: number | string, year?: number | string)
+   toTeamEdit(sportId: number | string, teamId: number | string)
+   toTeamCreate(sportId: number | string)
+
+   // Persons
+   toPersonsList()
+   toPersonDetail(id: number | string)
+   toPersonEdit(id: number | string)
+   toPersonCreate()
+
+   // System
+   toHome()
+   toError404()
+   ```
 
 5. **Delete Confirmation Pattern**
 
