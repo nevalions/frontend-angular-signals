@@ -8,60 +8,80 @@
     />
 
     <div class="player-detail__content">
-      <section class="player-detail__section">
-        <h2 class="player-detail__section-title">Details</h2>
-        <div class="player-detail__details">
-          <div class="player-detail__detail">
-            <span class="player-detail__label">Player ID:</span>
-            <span>{{ player()!.id }}</span>
-          </div>
-          <div class="player-detail__detail">
-            <span class="player-detail__label">First Name:</span>
-            <span>{{ player()!.first_name || '-' }}</span>
-          </div>
-          <div class="player-detail__detail">
-            <span class="player-detail__label">Second Name:</span>
-            <span>{{ player()!.second_name || '-' }}</span>
-          </div>
-          <div class="player-detail__detail">
-            <span class="player-detail__label">EESL ID:</span>
-            <span>{{ player()!.player_eesl_id || '-' }}</span>
-          </div>
-          @if (player()!.player_team_tournaments && player()!.player_team_tournaments.length > 0) {
-            <div class="player-detail__detail player-detail__detail--full-width">
-              <span class="player-detail__label">Team & Tournament History:</span>
-              <div class="player-detail__team-history">
-                @for (ptt of player()!.player_team_tournaments; track ptt.id) {
-                  <div class="player-detail__team-history-item">
-                    <div>
-                      <strong>Team:</strong> {{ ptt.team_title || 'N/A' }}
+      @if (careerByTeam().length > 0 || careerByTournament().length > 0) {
+        <div class="player-detail__sections">
+          <section class="player-detail__section">
+            <h2 class="player-detail__section-title">Career by Team</h2>
+            @if (careerByTeam().length > 0) {
+              <div class="player-detail__career-list">
+                @for (team of careerByTeam(); track team.teamTitle) {
+                  <div class="player-detail__career-card">
+                    <h3 class="player-detail__career-title">{{ team.teamTitle }}</h3>
+                    <div class="player-detail__career-details">
+                      @for (assignment of team.assignments; track assignment.id) {
+                        <div class="player-detail__career-item">
+                          @if (assignment.position_title) {
+                            <span class="player-detail__position">{{ assignment.position_title }}</span>
+                          }
+                          @if (assignment.player_number) {
+                            <span class="player-detail__number">#{{ assignment.player_number }}</span>
+                          }
+                        </div>
+                      }
                     </div>
-                    @if (ptt.position_title) {
-                      <div>
-                        <strong>Position:</strong> {{ ptt.position_title }}
-                      </div>
-                    }
-                    @if (ptt.player_number) {
-                      <div>
-                        <strong>Number:</strong> {{ ptt.player_number }}
-                      </div>
-                    }
                   </div>
                 }
               </div>
-            </div>
-          } @else {
-            <div class="player-detail__detail">
-              <span class="player-detail__label">Team History:</span>
-              <span>No team assignments yet</span>
-            </div>
-          }
+            } @else {
+              <p class="player-detail__empty">No team assignments yet</p>
+            }
+          </section>
+
+          <section class="player-detail__section">
+            <h2 class="player-detail__section-title">Career by Tournament</h2>
+            @if (careerByTournament().length > 0) {
+              <div class="player-detail__career-list">
+                @for (tournament of careerByTournament(); track tournament.tournamentId) {
+                  <div class="player-detail__career-card">
+                    <h3 class="player-detail__career-title">
+                      Tournament ID: {{ tournament.tournamentId || 'N/A' }}
+                    </h3>
+                    <div class="player-detail__career-details">
+                      @for (assignment of tournament.assignments; track assignment.id) {
+                        <div class="player-detail__tournament-item">
+                          <div>
+                            <strong>Team:</strong> {{ assignment.team_title || 'N/A' }}
+                          </div>
+                          @if (assignment.position_title) {
+                            <div>
+                              <strong>Position:</strong> {{ assignment.position_title }}
+                            </div>
+                          }
+                          @if (assignment.player_number) {
+                            <div>
+                              <strong>Number:</strong> {{ assignment.player_number }}
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="player-detail__empty">No tournament assignments yet</p>
+            }
+          </section>
         </div>
-      </section>
+      } @else {
+        <div class="player-detail__empty-state">
+          <p>This player has no team or tournament assignments yet.</p>
+        </div>
+      }
     </div>
   } @else if (error()) {
     <div class="player-detail__error">
-      <p>Error loading player: {{ error() | json }}</p>
+      <p>Error loading player</p>
     </div>
   } @else {
     <div class="player-detail__not-found">Player not found</div>

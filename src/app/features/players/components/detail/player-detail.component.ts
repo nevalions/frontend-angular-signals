@@ -3,30 +3,22 @@ import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
-import { JsonPipe } from '@angular/common';
-import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
-import { PlayerStoreService } from '../../services/player-store.service';
-import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
-import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
-import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 import { buildApiUrl } from '../../../../core/config/api.constants';
 import { Player } from '../../models/player.model';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 @Component({
   selector: 'app-player-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EntityHeaderComponent, JsonPipe],
+  imports: [EntityHeaderComponent],
   templateUrl: './player-detail.component.html',
   styleUrl: './player-detail.component.less',
 })
 export class PlayerDetailComponent {
   private route = inject(ActivatedRoute);
-  private playerStore = inject(PlayerStoreService);
   private navigationHelper = inject(NavigationHelperService);
-  private readonly alerts = inject(TuiAlertService);
-  private readonly dialogs = inject(TuiDialogService);
 
   playerId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -60,9 +52,44 @@ export class PlayerDetailComponent {
     return player ? `${player.first_name || ''} ${player.second_name || ''}`.trim() : '';
   });
 
-  photoUrl = computed(() => {
+  careerByTeam = computed(() => {
     const player = this.player();
-    return null;
+    if (!player?.player_team_tournaments) return [];
+
+    const teamMap = new Map<number | null, { teamTitle: string; assignments: any[] }>();
+
+    player.player_team_tournaments.forEach(ptt => {
+      const teamId = ptt.team_id;
+      if (!teamMap.has(teamId)) {
+        teamMap.set(teamId, {
+          teamTitle: ptt.team_title || 'Unknown Team',
+          assignments: []
+        });
+      }
+      teamMap.get(teamId)!.assignments.push(ptt);
+    });
+
+    return Array.from(teamMap.values());
+  });
+
+  careerByTournament = computed(() => {
+    const player = this.player();
+    if (!player?.player_team_tournaments) return [];
+
+    const tournamentMap = new Map<number | null, { tournamentId: number | null; assignments: any[] }>();
+
+    player.player_team_tournaments.forEach(ptt => {
+      const tournamentId = ptt.tournament_id;
+      if (!tournamentMap.has(tournamentId)) {
+        tournamentMap.set(tournamentId, {
+          tournamentId: tournamentId,
+          assignments: []
+        });
+      }
+      tournamentMap.get(tournamentId)!.assignments.push(ptt);
+    });
+
+    return Array.from(tournamentMap.values());
   });
 
   navigateBack(): void {
