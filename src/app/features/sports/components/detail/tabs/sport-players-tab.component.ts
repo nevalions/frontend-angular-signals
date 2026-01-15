@@ -9,6 +9,7 @@ import { PlayerStoreService } from '../../../../players/services/player-store.se
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 import { Person } from '../../../../persons/models/person.model';
 import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
+import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-sport-players-tab',
@@ -125,30 +126,22 @@ export class SportPlayersTabComponent {
     const person = this.selectedPerson();
     if (!sportId || !person) return;
 
-    this.playerStore.createPlayer({
-      sport_id: sportId,
-      person_id: person.id,
-      player_eesl_id: null
-    }).pipe(
-      tap(() => {
-        this.playerStore.reload();
-        this.showAddPlayerForm.set(false);
-        this.selectedPerson.set(null);
-        this.alerts.open('Player added successfully', {
-          label: 'Success',
-          appearance: 'positive',
-          autoClose: 3000
-        }).subscribe();
+    withCreateAlert(
+      this.alerts,
+      () => this.playerStore.createPlayer({
+        sport_id: sportId,
+        person_id: person.id,
+        player_eesl_id: null
       }),
-      catchError((_err) => {
-        this.alerts.open('Failed to add player', {
-          label: 'Error',
-          appearance: 'negative',
-          autoClose: 0
-        }).subscribe();
-        return EMPTY;
-      })
-    ).subscribe();
+      () => this.onAddPlayerSuccess(),
+      'Player'
+    );
+  }
+
+  onAddPlayerSuccess(): void {
+    this.playerStore.reload();
+    this.showAddPlayerForm.set(false);
+    this.selectedPerson.set(null);
   }
 
   cancelAddPlayer(): void {

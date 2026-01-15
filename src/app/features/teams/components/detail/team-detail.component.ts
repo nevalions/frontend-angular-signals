@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { TeamStoreService } from '../../services/team-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
-import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
+import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 

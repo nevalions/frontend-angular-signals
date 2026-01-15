@@ -694,12 +694,62 @@ createItem(item: Item): Observable<Item> {
    toError404()
    ```
 
-5. **Delete Confirmation Pattern**
+ 5. **Alert Helper Patterns**
 
-   Use `withDeleteConfirm()` utility from `src/app/core/utils/delete-helper.util.ts` for consistent delete operations:
+   All CRUD operations use utility functions from `src/app/core/utils/alert-helper.util.ts` for consistent UX:
+
+   **Create Pattern (withCreateAlert):**
 
    ```typescript
-   import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
+   import { withCreateAlert } from '../../../../core/utils/alert-helper.util';
+
+   @Component({ ... })
+   export class ExampleComponent {
+     private alerts = inject(TuiAlertService);
+
+     createEntity(data: EntityCreate): void {
+       withCreateAlert(
+         this.alerts,
+         () => this.store.createEntity(data),
+         () => this.onCreateSuccess(),
+         'Entity'
+       );
+     }
+
+     onCreateSuccess(): void {
+       // Reset form, navigate, etc.
+     }
+   }
+   ```
+
+   **Update Pattern (withUpdateAlert):**
+
+   ```typescript
+   import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
+
+   @Component({ ... })
+   export class ExampleComponent {
+     private alerts = inject(TuiAlertService);
+
+     updateEntity(id: number, data: EntityUpdate): void {
+       withUpdateAlert(
+         this.alerts,
+         () => this.store.updateEntity(id, data),
+         () => this.onUpdateSuccess(),
+         'Entity'
+       );
+     }
+
+     onUpdateSuccess(): void {
+       // Reset form, navigate, etc.
+     }
+   }
+   ```
+
+   **Delete Confirmation Pattern (withDeleteConfirm):**
+
+   ```typescript
+   import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 
    @Component({ ... })
    export class ExampleComponent {
@@ -727,23 +777,31 @@ createItem(item: Item): Observable<Item> {
    ```
 
    **Benefits:**
-   - ✅ Consistent UX across all delete operations
+   - ✅ Consistent UX across all CRUD operations
    - ✅ Automatic success/error alerts
-   - ✅ Confirmation dialog with destructive appearance
    - ✅ Reusable and maintainable
    - ✅ Type-safe with generics
+   - ✅ Single source of truth for alert handling
 
    **Behavior:**
+
+   **Create/Update:**
+   - Executes operation immediately
+   - On success: Shows positive alert with 3s auto-close
+   - On error: Shows negative alert (stays open until user closes)
+   - Calls `onSuccess()` callback after successful operation
+
+   **Delete:**
    - Shows Taiga UI confirm dialog with `appearance: 'error'`
    - On confirmation: executes delete operation
-   - On success: Shows positive alert with 3s auto-close, then navigates
-   - On error: Shows negative alert (stays open until user closes), stays on page
+   - On success: Shows positive alert with 3s auto-close, then calls `onSuccess()`
+   - On error: Shows negative alert (stays open until user closes)
    - On cancel: Closes dialog, no action taken
 
    **Import Requirements:**
    ```typescript
    import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
-   import { withDeleteConfirm } from '../../../../core/utils/delete-helper.util';
+   import { withCreateAlert, withUpdateAlert, withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
    ```
 
 ### Template Requirements
@@ -1329,7 +1387,10 @@ export type PaginationState = {
 5. Create facade service in component directory
 6. Add route to `src/app/app.routes.ts` with state injection
 7. Update `src/app/store/appstate.ts` with feature state interface
-8. For delete operations, use `withDeleteConfirm()` utility from `src/app/core/utils/delete-helper.util.ts` for consistent UX
+ 8. For CRUD operations, use alert helpers from `src/app/core/utils/alert-helper.util.ts` for consistent UX:
+     - `withCreateAlert()` for create operations
+     - `withUpdateAlert()` for update operations
+     - `withDeleteConfirm()` for delete operations
 
 ## API Configuration
 
