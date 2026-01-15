@@ -57,6 +57,11 @@ export class TournamentPlayersTabComponent {
   availablePlayers = signal<Player[]>([]);
   availablePlayersLoading = signal(false);
   availablePlayersError = signal<string | null>(null);
+  
+  playersWithoutTeam = signal<Player[]>([]);
+  playersWithoutTeamLoading = signal(false);
+  playersWithoutTeamError = signal<string | null>(null);
+  
   showAddPlayerForm = signal(false);
   selectedPlayer = signal<Player | null>(null);
 
@@ -76,7 +81,7 @@ export class TournamentPlayersTabComponent {
     this.playersLoading.set(true);
     this.playersError.set(null);
 
-    this.playerStore.getTournamentPlayersPaginated(
+    this.playerStore.getTournamentPlayersPaginatedV2(
       tournamentId,
       this.playersCurrentPage(),
       this.playersItemsPerPage(),
@@ -84,7 +89,23 @@ export class TournamentPlayersTabComponent {
       this.playersSearch()
     ).subscribe({
       next: (response) => {
-        this.players.set(response.data || []);
+        const playersWithTeamInfo: PlayerTeamTournamentWithDetails[] = (response.data || []).map(player => {
+          const teamTournament = player.player_team_tournaments?.find(ptt => ptt.tournament_id === tournamentId);
+          return {
+            id: player.id,
+            player_team_tournament_eesl_id: teamTournament?.player_team_tournament_eesl_id || null,
+            player_id: player.id,
+            player_number: teamTournament?.player_number || null,
+            team_id: teamTournament?.team_id || null,
+            team_title: teamTournament?.team_title || null,
+            position_id: teamTournament?.position_id || null,
+            position_title: teamTournament?.position_title || null,
+            tournament_id: tournamentId,
+            first_name: player.first_name,
+            second_name: player.second_name
+          };
+        });
+        this.players.set(playersWithTeamInfo);
         this.playersTotalCount.set(response.metadata?.total_items || 0);
         this.playersTotalPages.set(response.metadata?.total_pages || 0);
         this.playersLoading.set(false);
@@ -162,6 +183,34 @@ export class TournamentPlayersTabComponent {
         this.availablePlayersError.set('Failed to load available players');
         this.availablePlayersLoading.set(false);
         this.availablePlayers.set([]);
+        return EMPTY;
+      })
+    ).subscribe();
+  }
+
+  loadPlayersWithoutTeam(): void {
+    const tournamentId = this.tournamentId();
+    if (!tournamentId) return;
+
+    this.playersWithoutTeamLoading.set(true);
+    this.playersWithoutTeamError.set(null);
+
+    this.playerStore.getTournamentPlayersWithoutTeam(tournamentId).pipe(
+      tap((players: Player[]) => {
+        const sortedPlayers = Array.isArray(players)
+          ? [...players].sort((a, b) => {
+              const nameA = `${a.second_name || ''} ${a.first_name || ''}`.toLowerCase();
+              const nameB = `${b.second_name || ''} ${b.first_name || ''}`.toLowerCase();
+              return nameA.localeCompare(nameB);
+            })
+          : [];
+        this.playersWithoutTeam.set(sortedPlayers);
+        this.playersWithoutTeamLoading.set(false);
+      }),
+      catchError((_err) => {
+        this.playersWithoutTeamError.set('Failed to load players without team');
+        this.playersWithoutTeamLoading.set(false);
+        this.playersWithoutTeam.set([]);
         return EMPTY;
       })
     ).subscribe();

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse } from '../models/player.model';
+import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse } from '../models/player.model';
 import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
@@ -154,6 +154,36 @@ export class PlayerStoreService {
 
   getAvailablePlayersForTournament(tournamentId: number): Observable<Player[]> {
     return this.http.get<Player[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/available`));
+  }
+
+  getTournamentPlayersPaginatedV2(
+    tournamentId: number,
+    page: number,
+    itemsPerPage: number,
+    ascending: boolean = true,
+    search: string = '',
+    orderBy: string = 'second_name',
+    orderByTwo: string = 'id'
+  ): Observable<PaginatedPlayerWithDetailsResponse> {
+    let httpParams = new HttpParams()
+      .set('page', page.toString())
+      .set('items_per_page', itemsPerPage.toString())
+      .set('ascending', ascending.toString())
+      .set('order_by', orderBy)
+      .set('order_by_two', orderByTwo);
+
+    if (search) {
+      httpParams = httpParams.set('search', search);
+    }
+
+    return this.http.get<PaginatedPlayerWithDetailsResponse>(
+      buildApiUrl(`/api/tournaments/id/${tournamentId}/players/paginated`),
+      { params: httpParams }
+    );
+  }
+
+  getTournamentPlayersWithoutTeam(tournamentId: number): Observable<Player[]> {
+    return this.http.get<Player[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/without-team/all`));
   }
 
   addPlayerToTournament(tournamentId: number, playerId: number): Observable<PlayerTeamTournament> {

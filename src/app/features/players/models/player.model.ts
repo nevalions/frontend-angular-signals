@@ -37,6 +37,7 @@ export interface Player {
 
 export type PlayersPaginatedResponse = PaginatedResponse<Player>;
 export type PlayerTeamTournamentWithDetailsPaginatedResponse = PaginatedResponse<PlayerTeamTournamentWithDetails>;
+export type PaginatedPlayerWithDetailsResponse = PaginatedResponse<Player>;
 
 export type PlayerSortBy = 'id' | 'first_name' | 'second_name' | 'player_eesl_id';
 
