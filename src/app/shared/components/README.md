@@ -4,6 +4,67 @@ Reusable UI components used across the application.
 
 ## Components
 
+### NavbarComponent
+
+**Location:** `src/app/shared/components/navbar/`
+
+Main application navigation bar with dropdown menus, mobile responsiveness, and theme toggle.
+
+**Features:**
+- Sticky navbar with backdrop blur effect
+- Dropdown menus with click-outside detection
+- Mobile hamburger menu with slide-in animation
+- Dark/light theme toggle
+- Sports dropdown with dynamic sport list
+- Responsive design
+- Signal-based state management
+- Accessibility support (ARIA labels, keyboard navigation)
+
+**Click-Outside Dropdown Behavior:**
+- Dropdowns automatically close when clicking outside the navbar
+- Uses `@HostListener` to detect document clicks
+- Checks if click target is outside `app-navbar` element
+- Closes all open dropdowns when clicking elsewhere on the page
+
+**Usage Example:**
+
+```html
+<app-navbar />
+```
+
+**Component API:**
+
+**Signals:**
+| Name | Type | Description |
+|------|------|-------------|
+| `sports` | `Signal<Sport[]>` | List of sports for dropdown |
+| `seasons` | `Signal<Season[]>` | List of seasons |
+| `openDropdowns` | `Signal<Set<number>>` | Set of open dropdown IDs |
+| `mobileMenuOpen` | `Signal<boolean>` | Mobile menu open state |
+| `currentTheme` | `Signal<'light' | 'dark'>` | Current theme |
+
+**Methods:**
+
+| Name | Parameters | Description |
+|------|-----------|-------------|
+| `toggleDropdown` | `sportId: number` | Toggle dropdown open/close |
+| `isDropdownOpen` | `sportId: number` | Check if dropdown is open |
+| `closeAllDropdowns` | - | Close all open dropdowns |
+| `toggleMobileMenu` | - | Toggle mobile menu visibility |
+| `closeMobileMenu` | - | Close mobile menu |
+| `toggleTheme` | - | Switch between light/dark theme |
+| `getThemeIcon` | - | Get current theme icon name |
+
+**Responsive Behavior:**
+- Desktop (768px+): Horizontal navigation bar
+- Mobile (< 768px): Hamburger menu with vertical slide-in
+- Dropdowns: Absolute positioned on desktop, static on mobile
+
+**Theme Toggle:**
+- Sun icon when dark mode active (click to switch to light)
+- Moon icon when light mode active (click to switch to dark)
+- Theme state managed by `ThemeService`
+
 ### EntityHeaderComponent
 
 **Location:** `src/app/shared/components/entity-header/`
