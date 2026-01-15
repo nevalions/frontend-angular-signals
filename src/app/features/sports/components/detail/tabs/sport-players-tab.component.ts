@@ -6,9 +6,9 @@ import { TuiAvatar, TuiPagination, TuiChevron, TuiComboBox, TuiFilterByInputPipe
 import { EMPTY } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
-import { PersonStoreService } from '../../../../persons/services/person-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 import { Person, PersonsPaginatedResponse } from '../../../../persons/models/person.model';
+import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
 
 @Component({
   selector: 'app-sport-players-tab',
@@ -32,7 +32,6 @@ import { Person, PersonsPaginatedResponse } from '../../../../persons/models/per
 })
 export class SportPlayersTabComponent {
   private playerStore = inject(PlayerStoreService);
-  private personStore = inject(PersonStoreService);
   private navigationHelper = inject(NavigationHelperService);
   private alerts = inject(TuiAlertService);
 
@@ -56,12 +55,12 @@ export class SportPlayersTabComponent {
   showAddPlayerForm = signal(false);
   selectedPerson = signal<Person | null>(null);
 
+  capitalizeName(name: string | null): string {
+    return capitalizeNameUtil(name);
+  }
+
   stringifyPerson(person: Person): string {
-    const capitalize = (name: string | null): string => {
-      if (!name) return '';
-      return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-    };
-    return `${capitalize(person.second_name)} ${capitalize(person.first_name)}`;
+    return `${capitalizeNameUtil(person.second_name)} ${capitalizeNameUtil(person.first_name)}`;
   }
 
   readonly itemsPerPageOptions = [10, 20, 50];
@@ -90,11 +89,6 @@ export class SportPlayersTabComponent {
     this.playerStore.setSort(this.playersSortOrder());
   }
 
-  capitalizeName(name: string | null): string {
-    if (!name) return '';
-    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-  }
-
   toggleAddPlayerForm(): void {
     if (!this.showAddPlayerForm()) {
       this.loadAvailablePersons();
@@ -109,7 +103,7 @@ export class SportPlayersTabComponent {
     this.availablePersonsLoading.set(true);
     this.availablePersonsError.set(null);
 
-    this.personStore.getPersonsNotInSport(sportId, 1, 100, '').pipe(
+    this.playerStore.getAvailablePersonsForSport(sportId, 1, 100, '').pipe(
       tap((response: PersonsPaginatedResponse) => {
         this.availablePersons.set(response.data ?? []);
         this.availablePersonsLoading.set(false);
