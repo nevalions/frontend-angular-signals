@@ -57,7 +57,11 @@ export class SportPlayersTabComponent {
   selectedPerson = signal<Person | null>(null);
 
   stringifyPerson(person: Person): string {
-    return `${this.capitalizeName(person.second_name)} ${this.capitalizeName(person.first_name)}`;
+    const capitalize = (name: string | null): string => {
+      if (!name) return '';
+      return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    };
+    return `${capitalize(person.second_name)} ${capitalize(person.first_name)}`;
   }
 
   readonly itemsPerPageOptions = [10, 20, 50];
