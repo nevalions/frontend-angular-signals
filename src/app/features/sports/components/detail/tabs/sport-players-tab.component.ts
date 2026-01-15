@@ -7,7 +7,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
-import { Person, PersonsPaginatedResponse } from '../../../../persons/models/person.model';
+import { Person } from '../../../../persons/models/person.model';
 import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
 
 @Component({
@@ -103,9 +103,12 @@ export class SportPlayersTabComponent {
     this.availablePersonsLoading.set(true);
     this.availablePersonsError.set(null);
 
-    this.playerStore.getAvailablePersonsForSport(sportId, 1, 100, '').pipe(
-      tap((response: PersonsPaginatedResponse) => {
-        this.availablePersons.set(response.data ?? []);
+    this.playerStore.getAvailablePersonsForSport(sportId).pipe(
+      tap((persons: Person[]) => {
+        const sortedPersons = Array.isArray(persons)
+          ? [...persons].sort((a, b) => a.second_name.localeCompare(b.second_name))
+          : [];
+        this.availablePersons.set(sortedPersons);
         this.availablePersonsLoading.set(false);
       }),
       catchError((_err) => {

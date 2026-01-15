@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Player, PlayersPaginatedResponse } from '../models/player.model';
-import { PersonsPaginatedResponse } from '../../persons/models/person.model';
+import { Person, PersonsPaginatedResponse } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
 interface PlayersResourceParams {
@@ -116,27 +116,7 @@ export class PlayerStoreService {
     return this.apiService.post<Player>('/api/players/', playerData);
   }
 
-  getAvailablePersonsForSport(
-    sportId: number,
-    page: number = 1,
-    itemsPerPage: number = 100,
-    search: string = ''
-  ): Observable<PersonsPaginatedResponse> {
-    let httpParams = new HttpParams()
-      .set('sport_id', sportId.toString())
-      .set('page', page.toString())
-      .set('items_per_page', itemsPerPage.toString())
-      .set('order_by', 'second_name')
-      .set('order_by_two', 'id')
-      .set('ascending', 'true');
-
-    if (search) {
-      httpParams = httpParams.set('search', search);
-    }
-
-    return this.http.get<PersonsPaginatedResponse>(
-      buildApiUrl(`/api/persons/not-in-sport/${sportId}`),
-      { params: httpParams }
-    );
+  getAvailablePersonsForSport(sportId: number): Observable<Person[]> {
+    return this.http.get<Person[]>(buildApiUrl(`/api/persons/not-in-sport/${sportId}/all`));
   }
 }
