@@ -4,8 +4,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayersPaginatedResponse } from '../models/player.model';
-import { Person, PersonsPaginatedResponse } from '../../persons/models/person.model';
+import { Player, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse } from '../models/player.model';
+import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
 interface PlayersResourceParams {
@@ -122,5 +122,43 @@ export class PlayerStoreService {
 
   getAvailablePersonsForSport(sportId: number): Observable<Person[]> {
     return this.http.get<Person[]>(buildApiUrl(`/api/persons/not-in-sport/${sportId}/all`));
+  }
+
+  getPlayersByTournamentId(tournamentId: number): Observable<PlayerTeamTournamentWithDetails[]> {
+    return this.http.get<PlayerTeamTournamentWithDetails[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/`));
+  }
+
+  getTournamentPlayersPaginated(
+    tournamentId: number,
+    page: number,
+    itemsPerPage: number,
+    ascending: boolean = true,
+    search: string = ''
+  ): Observable<PlayerTeamTournamentWithDetailsPaginatedResponse> {
+    let httpParams = new HttpParams()
+      .set('tournament_id', tournamentId.toString())
+      .set('page', page.toString())
+      .set('items_per_page', itemsPerPage.toString())
+      .set('ascending', ascending.toString());
+
+    if (search) {
+      httpParams = httpParams.set('search', search);
+    }
+
+    return this.http.get<PlayerTeamTournamentWithDetailsPaginatedResponse>(
+      buildApiUrl(`/api/players_team_tournament/tournament/${tournamentId}/players/paginated/details`),
+      { params: httpParams }
+    );
+  }
+
+  getAvailablePlayersForTournament(tournamentId: number): Observable<Player[]> {
+    return this.http.get<Player[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/available`));
+  }
+
+  addPlayerToTournament(tournamentId: number, playerId: number): Observable<PlayerTeamTournament> {
+    return this.apiService.post<PlayerTeamTournament>('/api/players_team_tournament/', {
+      player_id: playerId,
+      tournament_id: tournamentId
+    });
   }
 }

@@ -78,7 +78,19 @@ export class NavigationHelperService {
     this.router.navigate(['/sports', sportId, 'teams', 'new']);
   }
 
-  toPlayerDetail(sportId: number | string, playerId: number | string): void {
-    this.router.navigate(['/sports', sportId, 'players', playerId]);
+  toPlayerDetail(sportId: number | string, playerId: number | string, fromSport?: boolean, tournamentId?: number | string, year?: number | string): void {
+    const queryParams: { fromSport?: string; tournamentId?: string; year?: string } = {};
+    if (fromSport !== undefined) queryParams.fromSport = fromSport.toString();
+    if (tournamentId) queryParams.tournamentId = tournamentId.toString();
+    if (year) queryParams.year = year.toString();
+    this.router.navigate(['/sports', sportId, 'players', playerId], { queryParams });
+  }
+
+  toPlayerDetailFromTournament(sportId: number | string, year: number | string, tournamentId: number | string, playerId: number | string): void {
+    this.toPlayerDetail(sportId, playerId, false, tournamentId, year);
+  }
+
+  toPlayerDetailFromSport(sportId: number | string, playerId: number | string): void {
+    this.toPlayerDetail(sportId, playerId, true);
   }
 }

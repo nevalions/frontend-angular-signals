@@ -150,6 +150,6 @@ export class SportPlayersTabComponent {
   }
 
   navigateToPlayerDetail(playerId: number): void {
-    this.navigationHelper.toPlayerDetail(this.sportId(), playerId);
+    this.navigationHelper.toPlayerDetailFromSport(this.sportId(), playerId);
   }
 }

@@ -46,11 +46,11 @@
         [selectedSeasonYear]="year()"
       />
     } @else if (activeTab() === 'players') {
-      <div class="tournament-detail__players">
-        <div class="tournament-detail__placeholder">
-          <p>Players section coming soon</p>
-        </div>
-      </div>
+      <app-tournament-players-tab
+        [tournamentId]="tournamentId()!"
+        [sportId]="sportId()!"
+        [year]="year()"
+      />
     }
   </div>
 } @else {

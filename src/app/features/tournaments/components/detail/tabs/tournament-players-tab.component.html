@@ -1,0 +1,174 @@
+<div class="tournament-players-tab">
+  <div class="tournament-players-tab__header-with-actions">
+    <div class="tournament-players-tab__search-container">
+      <tui-textfield iconStart="@tui.search">
+        <label tuiLabel>Search players</label>
+        <input
+          placeholder="Search by name..."
+          tuiTextfield
+          [value]="playersSearch()"
+          (input)="onPlayersSearchChange($any($event.target).value)"
+        />
+      </tui-textfield>
+      @if (playersSearch()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          iconStart="@tui.close"
+          size="s"
+          (click)="clearPlayersSearch()"
+          class="tournament-players-tab__search-clear">
+        </button>
+      }
+    </div>
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      iconStart="@tui.plus"
+      (click)="toggleAddPlayerForm()"
+      class="tournament-players-tab__add-button">
+      @if (showAddPlayerForm()) {
+        Cancel
+      } @else {
+        Add Player
+      }
+    </button>
+  </div>
+
+  @if (showAddPlayerForm()) {
+    <div class="tournament-players-tab__add-player-form">
+      <div class="tournament-players-tab__form-row">
+        <tui-textfield
+          tuiChevron
+          iconStart="@tui.search"
+          [stringify]="stringifyPlayer"
+          tuiTextfieldSize="m">
+          <label tuiLabel>Select Player</label>
+          <input
+            placeholder="Search and select player to add..."
+            tuiComboBox
+            [(ngModel)]="selectedPlayer"
+            [disabled]="availablePlayersLoading()" />
+          <tui-data-list *tuiTextfieldDropdown size="l" class="tournament-players-tab__dropdown-list">
+            @if (availablePlayersLoading()) {
+              <div class="tournament-players-tab__dropdown-loading">Loading players...</div>
+            } @else if (availablePlayersError()) {
+              <div class="tournament-players-tab__dropdown-error">{{ availablePlayersError() }}</div>
+            } @else if (availablePlayers().length === 0) {
+              <div class="tournament-players-tab__dropdown-empty">No available players</div>
+            } @else {
+              @for (player of availablePlayers() | tuiFilterByInput; track player.id) {
+                <button
+                  new
+                  tuiOption
+                  type="button"
+                  [value]="player"
+                  class="tournament-players-tab__player-option">
+                  {{ capitalizeName(player.second_name) }} {{ capitalizeName(player.first_name) }}
+                </button>
+              }
+            }
+          </tui-data-list>
+        </tui-textfield>
+      </div>
+      <div class="tournament-players-tab__form-actions">
+        <button
+          type="button"
+          tuiButton
+          appearance="primary"
+          (click)="addPlayer()"
+          [disabled]="!selectedPlayer()">
+          Add Player
+        </button>
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          (click)="cancelAddPlayer()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
+
+  <div class="tournament-players-tab__sort-controls">
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      size="s"
+      class="sort-button"
+      iconEnd="playersSortOrder() === 'asc' ? '@tui.chevron-up' : '@tui.chevron-down'"
+      (click)="togglePlayersSort()">
+      Sort by Name
+    </button>
+  </div>
+
+  @if (playersLoading()) {
+    <div class="tournament-players-tab__loading">Loading players...</div>
+  } @else if (playersError()) {
+    <div class="tournament-players-tab__error">{{ playersError() }}</div>
+  } @else if (players().length === 0) {
+    <p class="tournament-players-tab__empty-message">No players found for this tournament</p>
+  } @else {
+    <div class="tournament-players-tab__player-list">
+      @for (player of players(); track player.id) {
+        <button
+          class="tournament-players-tab__player-card"
+          tuiCardLarge
+          tuiCell="l"
+          (click)="navigateToPlayerDetail(player.player_id)">
+          <tui-avatar size="l" [round]="true" class="tournament-players-tab__player-avatar">
+            @if (player.first_name && player.second_name) {
+              {{ capitalizeName(player.first_name)[0].toUpperCase() }}{{ capitalizeName(player.second_name)[0].toUpperCase() }}
+            }
+          </tui-avatar>
+          <div class="tournament-players-tab__player-content">
+            <h3 class="tournament-players-tab__player-name">
+              <span class="second-name">{{ capitalizeName(player.second_name || '') }}</span>
+              <span class="first-name">{{ capitalizeName(player.first_name || '') }}</span>
+            </h3>
+            @if (player.player_team_tournament_eesl_id) {
+              <p class="tournament-players-tab__player-eesl-id">EESL ID: {{ player.player_team_tournament_eesl_id }}</p>
+            }
+            @if (player.team_title) {
+              <p class="tournament-players-tab__player-team">{{ player.team_title | uppercase }}</p>
+            }
+            @if (player.position_title) {
+              <p class="tournament-players-tab__player-position">{{ player.position_title }}</p>
+            }
+            @if (player.player_number) {
+              <p class="tournament-players-tab__player-number">#{{ player.player_number }}</p>
+            }
+          </div>
+        </button>
+      }
+    </div>
+
+    @if (playersTotalPages() > 1) {
+      <div class="tournament-players-tab__pagination-wrapper">
+        <div class="tournament-players-tab__items-per-page">
+          <span>Items per page:</span>
+          @for (option of itemsPerPageOptions; track option) {
+            <button
+              type="button"
+              tuiButton
+              class="tournament-players-tab__items-option"
+              [class.tournament-players-tab__items-option--active]="playersItemsPerPage() === option"
+              (click)="onPlayersItemsPerPageChange(option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+        <div class="tournament-players-tab__pagination">
+          <tui-pagination
+            [length]="playersTotalPages()"
+            [index]="playersCurrentPage() - 1"
+            (indexChange)="onPlayersPageChange($event)" />
+        </div>
+      </div>
+    }
+  }
+</div>

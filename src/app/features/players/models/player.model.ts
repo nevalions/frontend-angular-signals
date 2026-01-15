@@ -1,4 +1,4 @@
-import { PaginatedResponse, SortOrder } from '../../../core/models';
+import { PaginatedResponse } from '../../../core/models';
 
 export interface PlayerTeamTournament {
   id: number;
@@ -9,6 +9,20 @@ export interface PlayerTeamTournament {
   position_id: number | null;
   position_title: string | null;
   tournament_id: number | null;
+}
+
+export interface PlayerTeamTournamentWithDetails {
+  id: number;
+  player_team_tournament_eesl_id: number | null;
+  player_id: number;
+  player_number: string | null;
+  team_id: number | null;
+  team_title: string | null;
+  position_id: number | null;
+  position_title: string | null;
+  tournament_id: number | null;
+  first_name: string | null;
+  second_name: string | null;
 }
 
 export interface Player {
@@ -22,5 +36,6 @@ export interface Player {
 }
 
 export type PlayersPaginatedResponse = PaginatedResponse<Player>;
+export type PlayerTeamTournamentWithDetailsPaginatedResponse = PaginatedResponse<PlayerTeamTournamentWithDetails>;
 
 export type PlayerSortBy = 'id' | 'first_name' | 'second_name' | 'player_eesl_id';

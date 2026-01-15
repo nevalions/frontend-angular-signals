@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 import { buildApiUrl } from '../../../../core/config/api.constants';
 import { Player } from '../../models/player.model';
@@ -19,6 +20,7 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 export class PlayerDetailComponent {
   private route = inject(ActivatedRoute);
   private navigationHelper = inject(NavigationHelperService);
+  private router = inject(Router);
 
   playerId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -31,6 +33,30 @@ export class PlayerDetailComponent {
   sportId = toSignal(
     this.route.paramMap.pipe(map((params) => {
       const val = params.get('sportId');
+      return val ? Number(val) : null;
+    })),
+    { initialValue: null }
+  );
+
+  fromSport = toSignal(
+    this.route.queryParamMap.pipe(map((params) => {
+      const val = params.get('fromSport');
+      return val ? val === 'true' : null;
+    })),
+    { initialValue: null }
+  );
+
+  fromTournamentId = toSignal(
+    this.route.queryParamMap.pipe(map((params) => {
+      const val = params.get('tournamentId');
+      return val ? Number(val) : null;
+    })),
+    { initialValue: null }
+  );
+
+  fromYear = toSignal(
+    this.route.queryParamMap.pipe(map((params) => {
+      const val = params.get('year');
       return val ? Number(val) : null;
     })),
     { initialValue: null }
@@ -94,7 +120,15 @@ export class PlayerDetailComponent {
 
   navigateBack(): void {
     const sportId = this.sportId();
-    if (sportId) {
+    const fromSport = this.fromSport();
+    const fromTournamentId = this.fromTournamentId();
+    const fromYear = this.fromYear();
+
+    if (!sportId) return;
+
+    if (!fromSport && fromTournamentId && fromYear) {
+      this.navigationHelper.toTournamentDetail(sportId, fromYear, fromTournamentId, 'players');
+    } else {
       this.navigationHelper.toSportDetail(sportId, undefined, 'players');
     }
   }
