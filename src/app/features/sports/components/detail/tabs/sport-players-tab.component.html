@@ -50,7 +50,7 @@
             tuiComboBox
             [(ngModel)]="selectedPerson"
             [disabled]="availablePersonsLoading()" />
-          <tui-data-list *tuiTextfieldDropdown size="l">
+          <tui-data-list *tuiTextfieldDropdown size="l" class="sport-players-tab__dropdown-list">
             @if (availablePersonsLoading()) {
               <div class="sport-players-tab__dropdown-loading">Loading persons...</div>
             } @else if (availablePersonsError()) {
