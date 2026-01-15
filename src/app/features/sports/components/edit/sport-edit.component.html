@@ -1,0 +1,39 @@
+<div class="sport-edit">
+  <header class="sport-edit__header">
+    <h1 class="sport-edit__title">Edit Sport</h1>
+    <div class="sport-edit__actions">
+      <button tuiButton type="button" (click)="cancel()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="sportForm.invalid">Save Changes</button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="sport-edit__loading">Loading sport...</div>
+  } @else {
+    <form class="sport-edit__form" [formGroup]="sportForm">
+      <div class="sport-edit__field">
+        <label for="title" class="sport-edit__label">Title *</label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          class="sport-edit__input"
+          [class.sport-edit__input--invalid]="sportForm.get('title')?.touched && sportForm.get('title')?.invalid"
+        />
+        @if (sportForm.get('title')?.touched && sportForm.get('title')?.errors?.['required']) {
+          <div class="sport-edit__error">Title is required</div>
+        }
+      </div>
+
+      <div class="sport-edit__field">
+        <label for="description" class="sport-edit__label">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="sport-edit__textarea"
+          rows="4"
+        ></textarea>
+      </div>
+    </form>
+  }
+</div>
