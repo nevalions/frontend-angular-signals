@@ -54,7 +54,7 @@ export class SportPlayersTabComponent {
   availablePersonsLoading = signal(false);
   availablePersonsError = signal<string | null>(null);
   showAddPlayerForm = signal(false);
-  selectedPersonId = signal<number | null>(null);
+  selectedPerson = signal<Person | null>(null);
 
   stringifyPerson(person: Person): string {
     return `${person.second_name}, ${person.first_name}`;
@@ -121,18 +121,18 @@ export class SportPlayersTabComponent {
 
   addPlayer(): void {
     const sportId = this.sportId();
-    const personId = this.selectedPersonId();
-    if (!sportId || !personId) return;
+    const person = this.selectedPerson();
+    if (!sportId || !person) return;
 
     this.playerStore.createPlayer({
       sport_id: sportId,
-      person_id: personId,
+      person_id: person.id,
       player_eesl_id: null
     }).pipe(
       tap(() => {
         this.playerStore.reload();
         this.showAddPlayerForm.set(false);
-        this.selectedPersonId.set(null);
+        this.selectedPerson.set(null);
         this.alerts.open('Player added successfully', {
           label: 'Success',
           appearance: 'positive',
@@ -152,6 +152,6 @@ export class SportPlayersTabComponent {
 
   cancelAddPlayer(): void {
     this.showAddPlayerForm.set(false);
-    this.selectedPersonId.set(null);
+    this.selectedPerson.set(null);
   }
 }
