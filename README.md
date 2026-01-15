@@ -8,6 +8,17 @@ Implemented features are documented in `FEATURES_*.md` files:
 
 - [Positions Feature](FEATURES_POSITIONS.md) - Player positions within sports
 
+## Development Documentation
+
+For detailed development guidelines, patterns, and best practices, see the [`docs/`](./docs/) folder:
+
+- **[Angular Signals Best Practices](./docs/angular-signals-best-practices.md)** - Signal-based development patterns
+- **[Component Patterns](./docs/component-patterns.md)** - Component structure and patterns
+- **[Service Patterns](./docs/service-patterns.md)** - Service patterns and patterns
+- **[Testing Patterns](./docs/testing-patterns.md)** - Testing patterns for components, services, and models
+
+For the complete documentation index, see **[docs/index.md](./docs/index.md)** or the **[Development Guidelines](./AGENTS.md)** file.
+
 ## Development server
 
 To start a local development server, run:
