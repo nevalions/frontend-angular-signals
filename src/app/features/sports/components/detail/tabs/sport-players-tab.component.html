@@ -39,46 +39,38 @@
   @if (showAddPlayerForm()) {
     <div class="sport-players-tab__add-player-form">
       <div class="sport-players-tab__form-row">
-        <div class="sport-players-tab__form-field">
-          <tui-textfield iconStart="@tui.search" tuiTextfieldSize="m">
-            <label tuiLabel>Search persons</label>
-            <input
-              placeholder="Search by name..."
-              tuiTextfield
-              [value]="personSearch()"
-              (input)="onPersonSearchChange($any($event.target).value)" />
-          </tui-textfield>
-        </div>
-        <div class="sport-players-tab__form-field sport-players-tab__form-field--wide">
-          <tui-textfield tuiChevron tuiTextfieldSize="m">
-            <label tuiLabel>Select Person</label>
-            <input
-              placeholder="Select person to add"
-              tuiSelect
-              [(ngModel)]="selectedPersonId"
-              [disabled]="availablePersonsLoading()" />
-            <tui-data-list *tuiTextfieldDropdown size="l">
-              @if (availablePersonsLoading()) {
-                <div class="sport-players-tab__dropdown-loading">Loading persons...</div>
-              } @else if (availablePersonsError()) {
-                <div class="sport-players-tab__dropdown-error">{{ availablePersonsError() }}</div>
-              } @else if (availablePersons().length === 0) {
-                <div class="sport-players-tab__dropdown-empty">No available persons</div>
-              } @else {
-                @for (person of availablePersons(); track person.id) {
-                  <button
-                    new
-                    tuiOption
-                    type="button"
-                    [value]="person.id"
-                    class="sport-players-tab__person-option">
-                    {{ capitalizeName(person.second_name) }}, {{ capitalizeName(person.first_name) }}
-                  </button>
-                }
+        <tui-textfield
+          tuiChevron
+          iconStart="@tui.search"
+          [stringify]="stringifyPerson"
+          tuiTextfieldSize="m">
+          <label tuiLabel>Select Person</label>
+          <input
+            placeholder="Search and select person to add..."
+            tuiComboBox
+            [(ngModel)]="selectedPersonId"
+            [disabled]="availablePersonsLoading()" />
+          <tui-data-list *tuiTextfieldDropdown size="l">
+            @if (availablePersonsLoading()) {
+              <div class="sport-players-tab__dropdown-loading">Loading persons...</div>
+            } @else if (availablePersonsError()) {
+              <div class="sport-players-tab__dropdown-error">{{ availablePersonsError() }}</div>
+            } @else if (availablePersons().length === 0) {
+              <div class="sport-players-tab__dropdown-empty">No available persons</div>
+            } @else {
+              @for (person of availablePersons() | tuiFilterByInput; track person.id) {
+                <button
+                  new
+                  tuiOption
+                  type="button"
+                  [value]="person.id"
+                  class="sport-players-tab__person-option">
+                  {{ capitalizeName(person.second_name) }}, {{ capitalizeName(person.first_name) }}
+                </button>
               }
-            </tui-data-list>
-          </tui-textfield>
-        </div>
+            }
+          </tui-data-list>
+        </tui-textfield>
       </div>
       <div class="sport-players-tab__form-actions">
         <button

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { FormsModule } from '@angular/forms';
 import { TuiTextfield, TuiButton, TuiAlertService, TuiDataList } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
-import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
+import { TuiAvatar, TuiPagination, TuiChevron, TuiComboBox, TuiFilterByInputPipe } from '@taiga-ui/kit';
 import { EMPTY } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
@@ -19,6 +19,9 @@ import { Person, PersonsPaginatedResponse } from '../../../../persons/models/per
     TuiTextfield,
     TuiButton,
     TuiDataList,
+    TuiChevron,
+    TuiComboBox,
+    TuiFilterByInputPipe,
     TuiCardLarge,
     TuiCell,
     TuiAvatar,
@@ -52,7 +55,10 @@ export class SportPlayersTabComponent {
   availablePersonsError = signal<string | null>(null);
   showAddPlayerForm = signal(false);
   selectedPersonId = signal<number | null>(null);
-  personSearch = signal('');
+
+  stringifyPerson(person: Person): string {
+    return `${person.second_name}, ${person.first_name}`;
+  }
 
   readonly itemsPerPageOptions = [10, 20, 50];
 
@@ -99,23 +105,18 @@ export class SportPlayersTabComponent {
     this.availablePersonsLoading.set(true);
     this.availablePersonsError.set(null);
 
-    this.personStore.getPersonsNotInSport(sportId, 1, 100, this.personSearch()).pipe(
+    this.personStore.getPersonsNotInSport(sportId, 1, 100, '').pipe(
       tap((response: PersonsPaginatedResponse) => {
         this.availablePersons.set(response.data ?? []);
         this.availablePersonsLoading.set(false);
       }),
-      catchError((err) => {
+      catchError((_err) => {
         this.availablePersonsError.set('Failed to load available persons');
         this.availablePersonsLoading.set(false);
         this.availablePersons.set([]);
         return EMPTY;
       })
     ).subscribe();
-  }
-
-  onPersonSearchChange(query: string): void {
-    this.personSearch.set(query);
-    this.loadAvailablePersons();
   }
 
   addPlayer(): void {
@@ -132,7 +133,6 @@ export class SportPlayersTabComponent {
         this.playerStore.reload();
         this.showAddPlayerForm.set(false);
         this.selectedPersonId.set(null);
-        this.personSearch.set('');
         this.alerts.open('Player added successfully', {
           label: 'Success',
           appearance: 'positive',
@@ -153,6 +153,5 @@ export class SportPlayersTabComponent {
   cancelAddPlayer(): void {
     this.showAddPlayerForm.set(false);
     this.selectedPersonId.set(null);
-    this.personSearch.set('');
   }
 }
