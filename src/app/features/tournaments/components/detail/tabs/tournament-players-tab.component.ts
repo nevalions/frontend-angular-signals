@@ -155,7 +155,7 @@ export class TournamentPlayersTabComponent {
 
   toggleAddPlayerForm(): void {
     if (!this.showAddPlayerForm()) {
-      this.loadAvailablePlayers();
+      this.loadPlayersWithoutTeam();
     }
     this.showAddPlayerForm.update(v => !v);
   }
@@ -245,6 +245,13 @@ export class TournamentPlayersTabComponent {
   }
 
   stringifyPlayer(player: Player): string {
-    return `${capitalizeNameUtil(player.second_name)} ${capitalizeNameUtil(player.first_name)}`;
+    const firstName = capitalizeNameUtil(player.first_name);
+    const secondName = capitalizeNameUtil(player.second_name);
+    
+    if (firstName || secondName) {
+      return `${secondName} ${firstName}`.trim();
+    }
+    
+    return `Player #${player.id}`;
   }
 }

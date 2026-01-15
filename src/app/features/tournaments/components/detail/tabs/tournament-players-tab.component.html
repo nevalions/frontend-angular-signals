@@ -46,20 +46,20 @@
           [stringify]="stringifyPlayer"
           tuiTextfieldSize="m">
           <label tuiLabel>Select Player</label>
-          <input
-            placeholder="Search and select player to add..."
-            tuiComboBox
-            [(ngModel)]="selectedPlayer"
-            [disabled]="availablePlayersLoading()" />
+            <input
+              placeholder="Search and select player to add..."
+              tuiComboBox
+              [(ngModel)]="selectedPlayer"
+              [disabled]="playersWithoutTeamLoading()" />
           <tui-data-list *tuiTextfieldDropdown size="l" class="tournament-players-tab__dropdown-list">
-            @if (availablePlayersLoading()) {
+            @if (playersWithoutTeamLoading()) {
               <div class="tournament-players-tab__dropdown-loading">Loading players...</div>
-            } @else if (availablePlayersError()) {
-              <div class="tournament-players-tab__dropdown-error">{{ availablePlayersError() }}</div>
-            } @else if (availablePlayers().length === 0) {
-              <div class="tournament-players-tab__dropdown-empty">No available players</div>
+            } @else if (playersWithoutTeamError()) {
+              <div class="tournament-players-tab__dropdown-error">{{ playersWithoutTeamError() }}</div>
+            } @else if (playersWithoutTeam().length === 0) {
+              <div class="tournament-players-tab__dropdown-empty">No available players without team</div>
             } @else {
-              @for (player of availablePlayers() | tuiFilterByInput; track player.id) {
+              @for (player of playersWithoutTeam() | tuiFilterByInput; track player.id) {
                 <button
                   new
                   tuiOption
