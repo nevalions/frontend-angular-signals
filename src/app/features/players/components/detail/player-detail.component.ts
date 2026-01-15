@@ -152,7 +152,7 @@ export class PlayerDetailComponent {
     if (itemId === 'remove-from-sport') {
       const player = this.player();
       const sportId = this.sportId();
-      const personId = player?.person_id;
+      const personId = player?.id;
       if (!player || !sportId || !personId) return;
 
       withDeleteConfirm(

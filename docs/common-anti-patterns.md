@@ -109,6 +109,34 @@ season = computed(() => this.store.seasons().find((s) => s.id === this.seasonId(
 }
 ```
 
+## API Integration Anti-Patterns
+
+### ❌ Don't assume API response matches component type
+
+**BAD - Type mismatch causes runtime errors:**
+
+```typescript
+playerResource = httpResource<Player>(() => {
+  return buildApiUrl(`/api/players/id/${playerId}/person`);
+});
+
+// Bug: API returns Person object (has `id`), not Player (has `person_id`)
+const personId = player?.person_id; // undefined - dialog never opens
+```
+
+**✅ GOOD - Match type to actual API response:**
+
+```typescript
+playerResource = httpResource<Person>(() => {
+  return buildApiUrl(`/api/players/id/${playerId}/person`);
+});
+
+// Correct: Person object has `id` property
+const personId = player?.id;
+```
+
+**Key takeaway:** Always verify the actual structure of your API response and type your `httpResource` accordingly. Don't assume the endpoint name or route parameter determines the response type.
+
 ## State Management Anti-Patterns
 
 ### ❌ DO NOT use imperative state for reactive data
