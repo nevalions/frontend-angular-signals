@@ -116,6 +116,36 @@ Example:
 - `user-profile-settings.less`
 - `user-profile-subscription.less`
 
+## Context-Based Component Patterns
+
+### Multi-Context Entity Detail
+
+When entities can be viewed from multiple contexts (e.g., team in sport vs team in tournament), use computed signals to provide context-specific behavior:
+
+```typescript
+// Detect context
+isInTournamentContext = computed(() => this.tournamentId() !== null);
+
+// Context-specific menu items
+customMenuItems = computed<CustomMenuItem[]>(() => {
+  if (this.isInTournamentContext()) {
+    return [{ id: 'remove-from-tournament', label: 'Remove from tournament', type: 'danger' }];
+  }
+  return [];
+});
+
+// Conditional navigation
+navigateBack(): void {
+  if (this.isInTournamentContext()) {
+    this.navigationHelper.toTournamentDetail(...);
+  } else {
+    this.navigationHelper.toSportDetail(...);
+  }
+}
+```
+
+See [EntityHeader README](../shared/components/entity-header/README.md) for complete pattern documentation.
+
 ## Related Documentation
 
 - [Angular Signals Best Practices](./angular-signals-best-practices.md) - Signal-based patterns

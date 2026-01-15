@@ -64,4 +64,8 @@ export class TeamStoreService {
   addTeamToTournament(tournamentId: number, teamId: number): Observable<TeamTournament> {
     return this.apiService.post<TeamTournament>(`/api/team_in_tournament/${teamId}in${tournamentId}`, {});
   }
+
+  removeTeamFromTournament(tournamentId: number, teamId: number): Observable<void> {
+    return this.http.delete<void>(buildApiUrl(`/api/team_in_tournament/${teamId}in${tournamentId}`)).pipe(tap(() => this.reload()));
+  }
 }

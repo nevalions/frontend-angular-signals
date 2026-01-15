@@ -6,7 +6,7 @@ import { TeamStoreService } from '../../services/team-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
-import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
 
 @Component({
   selector: 'app-team-detail',
@@ -44,6 +44,13 @@ export class TeamDetailComponent {
   });
 
   isInTournamentContext = computed(() => this.tournamentId() !== null);
+
+  customMenuItems = computed<CustomMenuItem[]>(() => {
+    if (this.isInTournamentContext()) {
+      return [{ id: 'remove-from-tournament', label: 'Remove from tournament', type: 'danger', icon: '@tui.trash' }];
+    }
+    return [];
+  });
 
   team = computed(() => {
     const id = this.teamId();
@@ -92,6 +99,27 @@ export class TeamDetailComponent {
       this.navigationHelper.toTournamentDetail(sportId, tournamentYear, tournamentId, 'teams');
     } else if (sportId) {
       this.navigationHelper.toSportDetail(sportId, year ? Number(year) : undefined, 'teams');
+    }
+  }
+
+  onCustomItemClick(itemId: string): void {
+    if (itemId === 'remove-from-tournament') {
+      const team = this.team();
+      const tournamentId = this.tournamentId();
+      const teamId = this.teamId();
+      if (!team || !tournamentId || !teamId) return;
+
+      withDeleteConfirm(
+        this.dialogs,
+        this.alerts,
+        {
+          label: `Remove team "${team.title}" from tournament?`,
+          content: 'This action cannot be undone!',
+        },
+        () => this.teamStore.removeTeamFromTournament(tournamentId, teamId),
+        () => this.navigateToSportDetail(),
+        'Team'
+      );
     }
   }
 }

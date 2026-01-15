@@ -2,9 +2,12 @@
   @if (team(); as team) {
     <app-entity-header
       [title]="team.title"
+      [showDelete]="!isInTournamentContext()"
+      [customMenuItems]="customMenuItems()"
       (navigateBack)="navigateToSportDetail()"
       (edit)="navigateToEdit()"
       (delete)="deleteTeam()"
+      (customItemClick)="onCustomItemClick($event)"
     />
 
     <div class="team-detail__content">
