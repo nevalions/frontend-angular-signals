@@ -72,4 +72,8 @@ export class NavigationHelperService {
   toTeamCreate(sportId: number | string): void {
     this.router.navigate(['/sports', sportId, 'teams', 'new']);
   }
+
+  toPlayerDetail(sportId: number | string, playerId: number | string): void {
+    this.router.navigate(['/sports', sportId, 'players', playerId]);
+  }
 }

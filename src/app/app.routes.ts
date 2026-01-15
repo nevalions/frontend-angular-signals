@@ -13,6 +13,7 @@ import { PersonListComponent } from './features/persons/components/list/person-l
 import { PersonDetailComponent } from './features/persons/components/detail/person-detail.component';
 import { PersonCreateComponent } from './features/persons/components/create/person-create.component';
 import { PersonEditComponent } from './features/persons/components/edit/person-edit.component';
+import { PlayerDetailComponent } from './features/players/components/detail/player-detail.component';
 import { HomeComponent } from './features/home/components/home.component';
 
 export const routes: Routes = [
@@ -59,6 +60,10 @@ export const routes: Routes = [
       {
         path: ':sportId/teams/:teamId',
         component: TeamDetailComponent,
+      },
+      {
+        path: ':sportId/players/:playerId',
+        component: PlayerDetailComponent,
       },
       {
         path: ':id',

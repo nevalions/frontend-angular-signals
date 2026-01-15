@@ -148,4 +148,8 @@ export class SportPlayersTabComponent {
     this.showAddPlayerForm.set(false);
     this.selectedPerson.set(null);
   }
+
+  navigateToPlayerDetail(playerId: number): void {
+    this.navigationHelper.toPlayerDetail(this.sportId(), playerId);
+  }
 }

@@ -1,0 +1,69 @@
+<div class="player-detail">
+  @if (loading()) {
+    <div class="player-detail__loading">Loading player...</div>
+  } @else if (player()) {
+    <app-entity-header
+      [title]="playerName()"
+      (navigateBack)="navigateBack()"
+    />
+
+    <div class="player-detail__content">
+      <section class="player-detail__section">
+        <h2 class="player-detail__section-title">Details</h2>
+        <div class="player-detail__details">
+          <div class="player-detail__detail">
+            <span class="player-detail__label">Player ID:</span>
+            <span>{{ player()!.id }}</span>
+          </div>
+          <div class="player-detail__detail">
+            <span class="player-detail__label">First Name:</span>
+            <span>{{ player()!.first_name || '-' }}</span>
+          </div>
+          <div class="player-detail__detail">
+            <span class="player-detail__label">Second Name:</span>
+            <span>{{ player()!.second_name || '-' }}</span>
+          </div>
+          <div class="player-detail__detail">
+            <span class="player-detail__label">EESL ID:</span>
+            <span>{{ player()!.player_eesl_id || '-' }}</span>
+          </div>
+          @if (player()!.player_team_tournaments && player()!.player_team_tournaments.length > 0) {
+            <div class="player-detail__detail player-detail__detail--full-width">
+              <span class="player-detail__label">Team & Tournament History:</span>
+              <div class="player-detail__team-history">
+                @for (ptt of player()!.player_team_tournaments; track ptt.id) {
+                  <div class="player-detail__team-history-item">
+                    <div>
+                      <strong>Team:</strong> {{ ptt.team_title || 'N/A' }}
+                    </div>
+                    @if (ptt.position_title) {
+                      <div>
+                        <strong>Position:</strong> {{ ptt.position_title }}
+                      </div>
+                    }
+                    @if (ptt.player_number) {
+                      <div>
+                        <strong>Number:</strong> {{ ptt.player_number }}
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="player-detail__detail">
+              <span class="player-detail__label">Team History:</span>
+              <span>No team assignments yet</span>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  } @else if (error()) {
+    <div class="player-detail__error">
+      <p>Error loading player: {{ error() | json }}</p>
+    </div>
+  } @else {
+    <div class="player-detail__not-found">Player not found</div>
+  }
+</div>
