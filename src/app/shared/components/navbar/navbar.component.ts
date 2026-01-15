@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TuiLink } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../../features/seasons/services/season-store.service';
@@ -26,6 +26,19 @@ export class NavbarComponent {
   readonly openDropdowns = signal<Set<number>>(new Set<number>());
   readonly mobileMenuOpen = signal(false);
   readonly currentTheme = this.themeService.currentTheme;
+
+  @HostListener('document:click', ['$event.target'])
+  onClickOutside(target: EventTarget | null): void {
+    if (!this.openDropdowns().size || !target) {
+      return;
+    }
+
+    const targetElement = target as HTMLElement;
+    const navbarElement = document.querySelector('app-navbar');
+    if (navbarElement && !navbarElement.contains(targetElement)) {
+      this.closeAllDropdowns();
+    }
+  }
 
   toggleDropdown(sportId: number): void {
     const current = new Set(this.openDropdowns());
