@@ -1,21 +1,30 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
-import { TuiTextfield, TuiButton } from '@taiga-ui/core';
+import { FormsModule } from '@angular/forms';
+import { TuiTextfield, TuiButton, TuiAlertService, TuiDataList } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
-import { TuiAvatar } from '@taiga-ui/kit';
+import { TuiAvatar, TuiChevron, TuiComboBox, TuiFilterByInputPipe } from '@taiga-ui/kit';
+import { EMPTY } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { TeamStoreService } from '../../../../teams/services/team-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
 import { Team } from '../../../../teams/models/team.model';
 import { UpperCasePipe } from '@angular/common';
+import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-tournament-teams-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormsModule,
     UpperCasePipe,
     TuiTextfield,
     TuiButton,
+    TuiDataList,
+    TuiChevron,
+    TuiComboBox,
+    TuiFilterByInputPipe,
     TuiCardLarge,
     TuiCell,
     TuiAvatar
@@ -26,6 +35,7 @@ import { UpperCasePipe } from '@angular/common';
 export class TournamentTeamsTabComponent {
   private teamStore = inject(TeamStoreService);
   private navigationHelper = inject(NavigationHelperService);
+  private alerts = inject(TuiAlertService);
 
   tournamentId = input.required<number>();
   sportId = input.required<number>();
@@ -35,6 +45,12 @@ export class TournamentTeamsTabComponent {
   teamsLoading = signal(false);
   teamsError = signal<string | null>(null);
   teamSearchQuery = signal('');
+
+  availableTeams = signal<Team[]>([]);
+  availableTeamsLoading = signal(false);
+  availableTeamsError = signal<string | null>(null);
+  showAddTeamForm = signal(false);
+  selectedTeam = signal<Team | null>(null);
 
   filteredTeams = computed(() => {
     const query = this.teamSearchQuery().toLowerCase();
@@ -90,5 +106,64 @@ export class TournamentTeamsTabComponent {
     if (sportId && year && tournamentId) {
       this.navigationHelper.toTeamInTournamentDetail(sportId, year, tournamentId, teamId);
     }
+  }
+
+  toggleAddTeamForm(): void {
+    if (!this.showAddTeamForm()) {
+      this.loadAvailableTeams();
+    }
+    this.showAddTeamForm.update(v => !v);
+  }
+
+  loadAvailableTeams(): void {
+    const tournamentId = this.tournamentId();
+    if (!tournamentId) return;
+
+    this.availableTeamsLoading.set(true);
+    this.availableTeamsError.set(null);
+
+    this.teamStore.getAvailableTeamsForTournament(tournamentId).pipe(
+      tap((teams: Team[]) => {
+        const sortedTeams = Array.isArray(teams)
+          ? [...teams].sort((a, b) => a.title.localeCompare(b.title))
+          : [];
+        this.availableTeams.set(sortedTeams);
+        this.availableTeamsLoading.set(false);
+      }),
+      catchError((_err) => {
+        this.availableTeamsError.set('Failed to load available teams');
+        this.availableTeamsLoading.set(false);
+        this.availableTeams.set([]);
+        return EMPTY;
+      })
+    ).subscribe();
+  }
+
+  addTeam(): void {
+    const tournamentId = this.tournamentId();
+    const team = this.selectedTeam();
+    if (!tournamentId || !team) return;
+
+    withCreateAlert(
+      this.alerts,
+      () => this.teamStore.addTeamToTournament(tournamentId, team.id),
+      () => this.onAddTeamSuccess(),
+      'Team'
+    );
+  }
+
+  onAddTeamSuccess(): void {
+    this.loadTeams();
+    this.showAddTeamForm.set(false);
+    this.selectedTeam.set(null);
+  }
+
+  cancelAddTeam(): void {
+    this.showAddTeamForm.set(false);
+    this.selectedTeam.set(null);
+  }
+
+  stringifyTeam(team: Team): string {
+    return team.title;
   }
 }

@@ -22,7 +22,79 @@
         ></button>
       }
     </div>
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      iconStart="@tui.plus"
+      (click)="toggleAddTeamForm()"
+      class="tournament-teams-tab__add-button">
+      @if (showAddTeamForm()) {
+        Cancel
+      } @else {
+        Add Team
+      }
+    </button>
   </div>
+
+  @if (showAddTeamForm()) {
+    <div class="tournament-teams-tab__add-team-form">
+      <div class="tournament-teams-tab__form-row">
+        <tui-textfield
+          tuiChevron
+          iconStart="@tui.search"
+          [stringify]="stringifyTeam"
+          tuiTextfieldSize="m">
+          <label tuiLabel>Select Team</label>
+          <input
+            placeholder="Search and select team to add..."
+            tuiComboBox
+            [(ngModel)]="selectedTeam"
+            [disabled]="availableTeamsLoading()" />
+          <tui-data-list *tuiTextfieldDropdown size="l" class="tournament-teams-tab__dropdown-list">
+            @if (availableTeamsLoading()) {
+              <div class="tournament-teams-tab__dropdown-loading">Loading teams...</div>
+            } @else if (availableTeamsError()) {
+              <div class="tournament-teams-tab__dropdown-error">{{ availableTeamsError() }}</div>
+            } @else if (availableTeams().length === 0) {
+              <div class="tournament-teams-tab__dropdown-empty">No available teams</div>
+            } @else {
+              @for (team of availableTeams() | tuiFilterByInput; track team.id) {
+                <button
+                  new
+                  tuiOption
+                  type="button"
+                  [value]="team"
+                  class="tournament-teams-tab__team-option">
+                  {{ team.title | uppercase }}
+                  @if (team.city) {
+                    <span class="tournament-teams-tab__team-option-city">({{ team.city | uppercase }})</span>
+                  }
+                </button>
+              }
+            }
+          </tui-data-list>
+        </tui-textfield>
+      </div>
+      <div class="tournament-teams-tab__form-actions">
+        <button
+          type="button"
+          tuiButton
+          appearance="primary"
+          (click)="addTeam()"
+          [disabled]="!selectedTeam()">
+          Add Team
+        </button>
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          (click)="cancelAddTeam()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
 
   @if (teamsLoading()) {
     <div class="tournament-teams-tab__loading">Loading teams...</div>

@@ -99,6 +99,44 @@ updateSport(id: number, sportData: SportUpdate): Observable<Sport> {
 | Seasons   | `PUT /api/seasons/{id}/`      | `true`                       | `src/seasons/views.py:54`   |
 | Sports    | `PUT /api/sports/{id}/`       | `true`                       | `src/sports/views.py:41`    |
 
+## Team-Tournament Relation Endpoints
+
+### Available Teams for Tournament
+
+Get teams in tournament's sport that are not yet added to the tournament.
+
+```typescript
+getAvailableTeamsForTournament(tournamentId: number): Observable<Team[]> {
+  return this.http.get<Team[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/teams/available`));
+}
+```
+
+**Backend Reference:** `src/tournaments/views.py` - `get_available_teams_for_tournament_endpoint`
+
+### Add Team to Tournament
+
+Create team-tournament relation using the special `{team_id}in{tournament_id}` pattern.
+
+```typescript
+addTeamToTournament(tournamentId: number, teamId: number): Observable<TeamTournament> {
+  return this.apiService.post<TeamTournament>(`/api/team_in_tournament/${team_id}in${tournament_id}`, {});
+}
+```
+
+**Backend Reference:** `src/team_tournament/views.py` - `create_team_tournament_relation_endpoint`
+
+### Teams in Tournament
+
+Get teams already added to a tournament.
+
+```typescript
+getTeamsByTournamentId(tournamentId: number): Observable<Team[]> {
+  return this.http.get<Team[]>(buildApiUrl(`/api/team_in_tournament/tournament/id/${tournamentId}/teams`));
+}
+```
+
+**Backend Reference:** `src/team_tournament/views.py` - `get_teams_in_tournament_endpoint`
+
 ## When Adding New PUT Endpoints
 
 1. Always assume path parameters (`/{item_id}/`) pattern

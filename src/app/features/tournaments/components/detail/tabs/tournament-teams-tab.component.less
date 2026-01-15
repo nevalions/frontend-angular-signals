@@ -27,6 +27,64 @@
   flex-shrink: 0;
 }
 
+.tournament-teams-tab__add-button {
+  flex-shrink: 0;
+}
+
+.tournament-teams-tab__add-team-form {
+  background: var(--tui-background-base);
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-l);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tournament-teams-tab__form-row {
+  margin-bottom: 1rem;
+
+  tui-textfield {
+    width: 100%;
+  }
+}
+
+.tournament-teams-tab__dropdown-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tournament-teams-tab__dropdown-loading,
+.tournament-teams-tab__dropdown-error,
+.tournament-teams-tab__dropdown-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--tui-text-secondary);
+}
+
+.tournament-teams-tab__dropdown-error {
+  color: var(--tui-text-negative);
+}
+
+.tournament-teams-tab__team-option {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tournament-teams-tab__team-option-city {
+  font-size: 0.875rem;
+  color: var(--tui-text-secondary);
+  margin-left: 0.5rem;
+}
+
+.tournament-teams-tab__form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
 .tournament-teams-tab__team-list {
   display: grid;
   gap: 1rem;
