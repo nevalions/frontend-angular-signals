@@ -2,9 +2,10 @@ import { computed, inject, Injectable, Injector, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse } from '../models/player.model';
+import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse } from '../models/player.model';
 import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
@@ -160,5 +161,19 @@ export class PlayerStoreService {
       player_id: playerId,
       tournament_id: tournamentId
     });
+  }
+
+  addPersonToSport(data: PlayerAddToSport): Observable<Player> {
+    return this.http.post<Player>(buildApiUrl('/api/players/add-person-to-sport'), data).pipe(
+      tap(() => this.playersResource.reload())
+    );
+  }
+
+  removePersonFromSport(personId: number, sportId: number): Observable<RemovePersonFromSportResponse> {
+    return this.http.delete<RemovePersonFromSportResponse>(
+      buildApiUrl(`/api/players/remove-person-from-sport/personid/${personId}/sportid/${sportId}`)
+    ).pipe(
+      tap(() => this.playersResource.reload())
+    );
   }
 }

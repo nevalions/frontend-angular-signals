@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Sport, SportCreate, SportUpdate } from '../models/sport.model';
+import { Player } from '../../players/models/player.model';
 
 @Injectable({
   providedIn: 'root',
@@ -44,5 +45,9 @@ export class SportStoreService {
 
   getTournamentsBySport(sportId: number): Observable<unknown> {
     return this.apiService.customGet(buildApiUrl(`/api/sports/id/${sportId}/tournaments`));
+  }
+
+  getPlayersBySport(sportId: number): Observable<Player[]> {
+    return this.apiService.customGet<Player[]>(buildApiUrl(`/api/sports/id/${sportId}/players`));
   }
 }

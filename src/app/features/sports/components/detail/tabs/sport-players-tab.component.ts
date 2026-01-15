@@ -128,10 +128,11 @@ export class SportPlayersTabComponent {
 
     withCreateAlert(
       this.alerts,
-      () => this.playerStore.createPlayer({
-        sport_id: sportId,
+      () => this.playerStore.addPersonToSport({
         person_id: person.id,
-        player_eesl_id: null
+        sport_id: sportId,
+        isprivate: null,
+        user_id: null
       }),
       () => this.onAddPlayerSuccess(),
       'Player'

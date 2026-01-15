@@ -39,3 +39,15 @@ export type PlayersPaginatedResponse = PaginatedResponse<Player>;
 export type PlayerTeamTournamentWithDetailsPaginatedResponse = PaginatedResponse<PlayerTeamTournamentWithDetails>;
 
 export type PlayerSortBy = 'id' | 'first_name' | 'second_name' | 'player_eesl_id';
+
+export interface PlayerAddToSport {
+  person_id: number;
+  sport_id: number;
+  isprivate?: boolean | null;
+  user_id?: number | null;
+}
+
+export interface RemovePersonFromSportResponse {
+  success: boolean;
+  message: string;
+}

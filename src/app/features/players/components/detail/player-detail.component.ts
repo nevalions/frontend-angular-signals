@@ -4,10 +4,13 @@ import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
+import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
 import { buildApiUrl } from '../../../../core/config/api.constants';
 import { Player } from '../../models/player.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+import { PlayerStoreService } from '../../services/player-store.service';
+import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-player-detail',
@@ -21,6 +24,9 @@ export class PlayerDetailComponent {
   private route = inject(ActivatedRoute);
   private navigationHelper = inject(NavigationHelperService);
   private router = inject(Router);
+  private playerStore = inject(PlayerStoreService);
+  private readonly alerts = inject(TuiAlertService);
+  private readonly dialogs = inject(TuiDialogService);
 
   playerId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -41,9 +47,9 @@ export class PlayerDetailComponent {
   fromSport = toSignal(
     this.route.queryParamMap.pipe(map((params) => {
       const val = params.get('fromSport');
-      return val ? val === 'true' : null;
+      return val === 'true';
     })),
-    { initialValue: null }
+    { initialValue: false }
   );
 
   fromTournamentId = toSignal(
@@ -61,6 +67,15 @@ export class PlayerDetailComponent {
     })),
     { initialValue: null }
   );
+
+  isInSportContext = computed(() => this.fromSport() === true);
+
+  customMenuItems = computed<CustomMenuItem[]>(() => {
+    if (this.isInSportContext()) {
+      return [{ id: 'remove-from-sport', label: 'Remove from sport', type: 'danger', icon: '@tui.trash' }];
+    }
+    return [];
+  });
 
   playerResource = httpResource<Player>(() => {
     const playerId = this.playerId();
@@ -130,6 +145,27 @@ export class PlayerDetailComponent {
       this.navigationHelper.toTournamentDetail(sportId, fromYear, fromTournamentId, 'players');
     } else {
       this.navigationHelper.toSportDetail(sportId, undefined, 'players');
+    }
+  }
+
+  onCustomItemClick(itemId: string): void {
+    if (itemId === 'remove-from-sport') {
+      const player = this.player();
+      const sportId = this.sportId();
+      const personId = player?.person_id;
+      if (!player || !sportId || !personId) return;
+
+      withDeleteConfirm(
+        this.dialogs,
+        this.alerts,
+        {
+          label: `Remove player "${this.playerName()}" from this sport?`,
+          content: 'This action cannot be undone!',
+        },
+        () => this.playerStore.removePersonFromSport(personId, sportId),
+        () => this.navigateBack(),
+        'Player'
+      );
     }
   }
 }
