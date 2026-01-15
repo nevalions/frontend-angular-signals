@@ -1,0 +1,63 @@
+<div class="tournament-teams-tab">
+  <div class="tournament-teams-tab__header-with-actions">
+    <div class="tournament-teams-tab__search-container">
+      <tui-textfield iconStart="@tui.search">
+        <label tuiLabel>Search teams</label>
+        <input
+          placeholder="Search by name or city..."
+          tuiTextfield
+          [value]="teamSearchQuery()"
+          (input)="onTeamSearchChange($any($event.target).value)"
+        />
+      </tui-textfield>
+      @if (teamSearchQuery()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          iconStart="@tui.close"
+          size="s"
+          (click)="clearTeamSearch()"
+          class="tournament-teams-tab__search-clear"
+        ></button>
+      }
+    </div>
+  </div>
+
+  @if (teamsLoading()) {
+    <div class="tournament-teams-tab__loading">Loading teams...</div>
+  } @else if (teamsError()) {
+    <div class="tournament-teams-tab__error">{{ teamsError() }}</div>
+  } @else if (teams().length === 0) {
+    <p class="tournament-teams-tab__empty-message">No teams found for this tournament</p>
+  } @else {
+    <div class="tournament-teams-tab__team-list">
+      @for (team of filteredTeams(); track team.id) {
+        <button
+          class="tournament-teams-tab__team-card"
+          tuiCardLarge
+          tuiCell="l"
+          (click)="navigateToTeamDetail(team.id)"
+        >
+          <div class="tournament-teams-tab__team-icon">
+            @if (teamLogoUrl(team); as logoUrl) {
+              <img [src]="logoUrl" [alt]="team.title" class="tournament-teams-tab__team-logo" />
+            } @else {
+              <tui-avatar size="l" [round]="true" class="tournament-teams-tab__team-avatar">
+                @if (team.title) {
+                  {{ team.title | uppercase }}
+                }
+              </tui-avatar>
+            }
+          </div>
+          <div class="tournament-teams-tab__team-content">
+            <h3 class="tournament-teams-tab__team-title">{{ team.title | uppercase }}</h3>
+            @if (team.city) {
+              <p class="tournament-teams-tab__team-city">{{ team.city | uppercase }}</p>
+            }
+          </div>
+        </button>
+      }
+    </div>
+  }
+</div>

@@ -11,21 +11,21 @@
       <nav class="tournament-detail__tabs">
         <button
           class="tournament-detail__tab"
-          [class.tournament-detail__tab--active]="activeTab === 'matches'"
+          [class.tournament-detail__tab--active]="activeTab() === 'matches'"
           (click)="onTabChange('matches')"
         >
           Matches
         </button>
         <button
           class="tournament-detail__tab"
-          [class.tournament-detail__tab--active]="activeTab === 'teams'"
+          [class.tournament-detail__tab--active]="activeTab() === 'teams'"
           (click)="onTabChange('teams')"
         >
           Teams
         </button>
         <button
           class="tournament-detail__tab"
-          [class.tournament-detail__tab--active]="activeTab === 'players'"
+          [class.tournament-detail__tab--active]="activeTab() === 'players'"
           (click)="onTabChange('players')"
         >
           Players
@@ -33,19 +33,19 @@
       </nav>
     </div>
 
-    @if (activeTab === 'matches') {
+    @if (activeTab() === 'matches') {
       <div class="tournament-detail__matches">
         <div class="tournament-detail__placeholder">
           <p>Matches section coming soon</p>
         </div>
       </div>
-    } @else if (activeTab === 'teams') {
-      <div class="tournament-detail__teams">
-        <div class="tournament-detail__placeholder">
-          <p>Teams section coming soon</p>
-        </div>
-      </div>
-    } @else if (activeTab === 'players') {
+    } @else if (activeTab() === 'teams') {
+      <app-tournament-teams-tab
+        [tournamentId]="tournamentId()!"
+        [sportId]="sportId()!"
+        [selectedSeasonYear]="year()"
+      />
+    } @else if (activeTab() === 'players') {
       <div class="tournament-detail__players">
         <div class="tournament-detail__placeholder">
           <p>Players section coming soon</p>

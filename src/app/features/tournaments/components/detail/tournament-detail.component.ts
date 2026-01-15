@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
@@ -9,17 +9,19 @@ import { SportStoreService } from '../../../sports/services/sport-store.service'
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+import { TournamentTeamsTabComponent } from './tabs/tournament-teams-tab.component';
 
 @Component({
   selector: 'app-tournament-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EntityHeaderComponent],
+  imports: [EntityHeaderComponent, TournamentTeamsTabComponent],
   templateUrl: './tournament-detail.component.html',
   styleUrl: './tournament-detail.component.less',
 })
 export class TournamentDetailComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private tournamentStore = inject(TournamentStoreService);
   private navigationHelper = inject(NavigationHelperService);
   private seasonStore = inject(SeasonStoreService);
@@ -71,7 +73,10 @@ export class TournamentDetailComponent {
 
   loading = this.tournamentStore.loading;
 
-  activeTab = 'matches';
+  activeTab = toSignal(
+    this.route.queryParamMap.pipe(map((params) => params.get('tab') || 'matches')),
+    { initialValue: 'matches' }
+  );
 
   navigateBack(): void {
     const sportId = this.sportId();
@@ -109,6 +114,11 @@ export class TournamentDetailComponent {
   }
 
   onTabChange(tab: string): void {
-    this.activeTab = tab;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 }

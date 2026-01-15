@@ -51,6 +51,10 @@ export const routes: Routes = [
         component: TournamentDetailComponent,
       },
       {
+        path: ':sportId/seasons/:year/tournaments/:id/teams/:teamId',
+        component: TeamDetailComponent,
+      },
+      {
         path: ':sportId/teams/new',
         component: TeamCreateComponent,
       },

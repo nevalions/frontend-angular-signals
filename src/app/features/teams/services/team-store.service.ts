@@ -51,4 +51,8 @@ export class TeamStoreService {
       { params }
     );
   }
+
+  getTeamsByTournamentId(tournamentId: number): Observable<Team[]> {
+    return this.http.get<Team[]>(buildApiUrl(`/api/team_in_tournament/tournament/id/${tournamentId}/teams`));
+  }
 }

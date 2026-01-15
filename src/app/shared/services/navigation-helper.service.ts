@@ -9,8 +9,9 @@ export class NavigationHelperService {
     this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments']);
   }
 
-  toTournamentDetail(sportId: number | string, year: number | string, tournamentId: number | string): void {
-    this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', tournamentId]);
+  toTournamentDetail(sportId: number | string, year: number | string, tournamentId: number | string, tab?: string): void {
+    const params = tab ? { queryParams: { tab } } : {};
+    this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', tournamentId], params);
   }
 
   toTournamentEdit(sportId: number | string, year: number | string, tournamentId: number | string): void {
@@ -63,6 +64,10 @@ export class NavigationHelperService {
   toTeamDetail(sportId: number | string, teamId: number | string, year?: number | string): void {
     const params = year ? { queryParams: { year } } : {};
     this.router.navigate(['/sports', sportId, 'teams', teamId], params);
+  }
+
+  toTeamInTournamentDetail(sportId: number | string, year: number | string, tournamentId: number | string, teamId: number | string): void {
+    this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', tournamentId, 'teams', teamId]);
   }
 
   toTeamEdit(sportId: number | string, teamId: number | string): void {

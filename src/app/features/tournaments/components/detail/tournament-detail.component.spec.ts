@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { TournamentDetailComponent } from './tournament-detail.component';
 import { TournamentStoreService } from '../../services/tournament-store.service';
@@ -81,15 +81,15 @@ describe('TournamentDetailComponent', () => {
   });
 
   it('should have default activeTab as matches', () => {
-    expect(component.activeTab).toBe('matches');
+    expect(component.activeTab()).toBe('matches');
   });
 
   it('should change tab', () => {
     component.onTabChange('teams');
-    expect(component.activeTab).toBe('teams');
+    expect(component.activeTab()).toBe('teams');
 
     component.onTabChange('players');
-    expect(component.activeTab).toBe('players');
+    expect(component.activeTab()).toBe('players');
   });
 
   it('should navigate back on button click', () => {

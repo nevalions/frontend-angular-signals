@@ -33,6 +33,18 @@ export class TeamDetailComponent {
     return id ? Number(id) : null;
   });
 
+  year = computed(() => {
+    const year = this.route.snapshot.paramMap.get('year');
+    return year ? Number(year) : null;
+  });
+
+  tournamentId = computed(() => {
+    const id = this.route.snapshot.paramMap.get('id');
+    return id ? Number(id) : null;
+  });
+
+  isInTournamentContext = computed(() => this.tournamentId() !== null);
+
   team = computed(() => {
     const id = this.teamId();
     if (!id) return null;
@@ -73,7 +85,12 @@ export class TeamDetailComponent {
   navigateToSportDetail(): void {
     const sportId = this.sportId();
     const year = this.route.snapshot.queryParamMap.get('year');
-    if (sportId) {
+    const tournamentId = this.tournamentId();
+    const tournamentYear = this.year();
+
+    if (this.isInTournamentContext() && sportId && tournamentYear && tournamentId) {
+      this.navigationHelper.toTournamentDetail(sportId, tournamentYear, tournamentId, 'teams');
+    } else if (sportId) {
       this.navigationHelper.toSportDetail(sportId, year ? Number(year) : undefined, 'teams');
     }
   }

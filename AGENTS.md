@@ -195,9 +195,133 @@ All components MUST follow these signal patterns:
    - What `signals: true` would do if available
    - Current status in Angular 21.x
    - Comparison with available function-based APIs
-   - Re-evaluation criteria and timeline
+    - Re-evaluation criteria and timeline
 
-### Service Patterns
+10. **Tab Navigation with Query Parameters**
+
+   **Canonical Pattern for Tab State Management:**
+
+   When implementing tabs in detail pages (sports, tournaments, etc.), tab state MUST be managed via URL query parameters to enable:
+   - Deep linking to specific tabs
+   - Browser history navigation (back/forward)
+   - State persistence across page refreshes
+   - Shareable URLs with pre-selected tabs
+
+   ```typescript
+   // ✅ GOOD - Query parameter-based tab state
+   import { ActivatedRoute, Router } from '@angular/router';
+   import { map } from 'rxjs';
+   import { toSignal } from '@angular/core/rxjs-interop';
+
+   export class DetailComponent {
+     private route = inject(ActivatedRoute);
+     private router = inject(Router);
+
+     // Reactive tab state from query params
+     activeTab = toSignal(
+       this.route.queryParamMap.pipe(map(params => params.get('tab') || 'defaultTab')),
+       { initialValue: 'defaultTab' }
+     );
+
+     // Tab change handler updates URL
+     onTabChange(tab: string): void {
+       this.router.navigate([], {
+         relativeTo: this.route,
+         queryParams: { tab },
+         queryParamsHandling: 'merge',
+         replaceUrl: true,
+       });
+     }
+   }
+   ```
+
+   **Template Usage:**
+
+   ```html
+   <nav class="detail__tabs">
+     <button
+       class="detail__tab"
+       [class.detail__tab--active]="activeTab() === 'tab1'"
+       (click)="onTabChange('tab1')"
+     >
+       Tab 1
+     </button>
+     <button
+       class="detail__tab"
+       [class.detail__tab--active]="activeTab() === 'tab2'"
+       (click)="onTabChange('tab2')"
+     >
+       Tab 2
+     </button>
+   </nav>
+
+   @if (activeTab() === 'tab1') {
+     <app-tab1-content [inputs]="..." />
+   } @else if (activeTab() === 'tab2') {
+     <app-tab2-content [inputs]="..." />
+   }
+   ```
+
+   **Navigation Helper Integration:**
+
+   When navigating to detail pages from child pages (e.g., from team detail back to tournament detail with specific tab), navigation helpers should support optional tab parameter:
+
+   ```typescript
+   // In NavigationHelperService
+   toDetail(sportId: number | string, year: number | string, id: number | string, tab?: string): void {
+     const params = tab ? { queryParams: { tab } } : {};
+     this.router.navigate(['/path', sportId, year, id], params);
+   }
+   ```
+
+   **Usage in Child Components:**
+
+   ```typescript
+   // In team detail component when going back to tournament
+   navigateBackToTournament(): void {
+     const sportId = this.sportId();
+     const year = this.year();
+     const tournamentId = this.tournamentId();
+
+     if (sportId && year && tournamentId) {
+       // Navigate back to tournament with teams tab active
+       this.navigationHelper.toDetail(sportId, year, tournamentId, 'teams');
+     }
+   }
+   ```
+
+   **Anti-Patterns:**
+
+   ```typescript
+   // ❌ BAD - Imperative tab state (no deep linking, no history)
+   activeTab = 'matches';
+
+   onTabChange(tab: string): void {
+     this.activeTab = tab;
+   }
+
+   // ❌ BAD - Local signal without URL sync
+   activeTab = signal('matches');
+
+   onTabChange(tab: string): void {
+     this.activeTab.set(tab);
+   }
+   ```
+
+   **Benefits of Query Parameter Tabs:**
+
+   - ✅ Deep linking: User can share URL like `/tournaments/123?tab=teams`
+   - ✅ Browser history: Back/forward works between tabs
+   - ✅ Refresh persistence: Selected tab survives page reload
+   - ✅ Child navigation: Can navigate back to parent with specific tab
+   - ✅ URL shareability: Easy to share with pre-selected tab
+
+   **Examples in Codebase:**
+
+   - `SportDetailComponent` - Tabs: tournaments, teams, players, positions
+   - `TournamentDetailComponent` - Tabs: matches, teams, players
+
+ ### Service Patterns
 
 #### httpResource vs rxResource Decision Matrix
 

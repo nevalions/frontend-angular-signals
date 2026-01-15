@@ -6,6 +6,7 @@ import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Tournament, TournamentCreate, TournamentUpdate } from '../models/tournament.model';
+import { Team } from '../../teams/models/team.model';
 
 @Injectable({
   providedIn: 'root',
@@ -79,5 +80,9 @@ export class TournamentStoreService {
 
   uploadTournamentLogo(file: File): Observable<{ original: string; icon: string; webview: string }> {
     return this.apiService.uploadFile<{ original: string; icon: string; webview: string }>('/api/tournaments/upload_resize_logo', file);
+  }
+
+  getTeamsByTournamentId(tournamentId: number): Observable<Team[]> {
+    return this.http.get<Team[]>(buildApiUrl(`/api/team_in_tournament/tournament/id/${tournamentId}/teams`));
   }
 }
