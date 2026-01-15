@@ -27,6 +27,56 @@
   flex-shrink: 0;
 }
 
+.sport-players-tab__add-player-form {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  background: var(--tui-background-neutral-1);
+  border-radius: 0.5rem;
+  border: 1px solid var(--tui-border-normal);
+}
+
+.sport-players-tab__form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.sport-players-tab__form-field {
+  flex: 1;
+  min-width: 250px;
+
+  &--wide {
+    flex: 2;
+    min-width: 300px;
+  }
+}
+
+.sport-players-tab__form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.sport-players-tab__person-option {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+}
+
+.sport-players-tab__dropdown-loading,
+.sport-players-tab__dropdown-error,
+.sport-players-tab__dropdown-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--tui-text-secondary);
+  font-style: italic;
+}
+
+.sport-players-tab__dropdown-error {
+  color: var(--tui-text-negative);
+}
+
 .sport-players-tab__sort-controls {
   display: flex;
   gap: 0.5rem;

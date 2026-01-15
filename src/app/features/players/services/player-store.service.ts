@@ -110,4 +110,8 @@ export class PlayerStoreService {
   getPlayerByPersonId(personId: number): Observable<Player> {
     return this.apiService.get<Player>(`/api/players/person/id/${personId}`);
   }
+
+  createPlayer(playerData: { sport_id: number | null; person_id: number | null; player_eesl_id: number | null }): Observable<Player> {
+    return this.apiService.post<Player>('/api/players/', playerData);
+  }
 }

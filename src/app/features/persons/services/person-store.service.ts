@@ -95,4 +95,28 @@ export class PersonStoreService {
   deletePerson(id: number): Observable<void> {
     return this.apiService.delete('/api/persons', id).pipe(tap(() => this.reload()));
   }
+
+  getPersonsNotInSport(
+    sportId: number,
+    page: number = 1,
+    itemsPerPage: number = 100,
+    search: string = ''
+  ): Observable<PersonsPaginatedResponse> {
+    let httpParams = new HttpParams()
+      .set('sport_id', sportId.toString())
+      .set('page', page.toString())
+      .set('items_per_page', itemsPerPage.toString())
+      .set('order_by', 'second_name')
+      .set('order_by_two', 'id')
+      .set('ascending', 'true');
+
+    if (search) {
+      httpParams = httpParams.set('search', search);
+    }
+
+    return this.http.get<PersonsPaginatedResponse>(
+      buildApiUrl(`/api/persons/not-in-sport/${sportId}`),
+      { params: httpParams }
+    );
+  }
 }

@@ -26,11 +26,79 @@
       tuiButton
       appearance="flat"
       iconStart="@tui.plus"
-      (click)="navigateToAddPlayer()"
+      (click)="toggleAddPlayerForm()"
       class="sport-players-tab__add-button">
-      Add Player
+      @if (showAddPlayerForm()) {
+        Cancel
+      } @else {
+        Add Player
+      }
     </button>
   </div>
+
+  @if (showAddPlayerForm()) {
+    <div class="sport-players-tab__add-player-form">
+      <div class="sport-players-tab__form-row">
+        <div class="sport-players-tab__form-field">
+          <tui-textfield iconStart="@tui.search" tuiTextfieldSize="m">
+            <label tuiLabel>Search persons</label>
+            <input
+              placeholder="Search by name..."
+              tuiTextfield
+              [value]="personSearch()"
+              (input)="onPersonSearchChange($any($event.target).value)" />
+          </tui-textfield>
+        </div>
+        <div class="sport-players-tab__form-field sport-players-tab__form-field--wide">
+          <tui-textfield tuiChevron tuiTextfieldSize="m">
+            <label tuiLabel>Select Person</label>
+            <input
+              placeholder="Select person to add"
+              tuiSelect
+              [(ngModel)]="selectedPersonId"
+              [disabled]="availablePersonsLoading()" />
+            <tui-data-list *tuiTextfieldDropdown size="l">
+              @if (availablePersonsLoading()) {
+                <div class="sport-players-tab__dropdown-loading">Loading persons...</div>
+              } @else if (availablePersonsError()) {
+                <div class="sport-players-tab__dropdown-error">{{ availablePersonsError() }}</div>
+              } @else if (availablePersons().length === 0) {
+                <div class="sport-players-tab__dropdown-empty">No available persons</div>
+              } @else {
+                @for (person of availablePersons(); track person.id) {
+                  <button
+                    new
+                    tuiOption
+                    type="button"
+                    [value]="person.id"
+                    class="sport-players-tab__person-option">
+                    {{ capitalizeName(person.second_name) }}, {{ capitalizeName(person.first_name) }}
+                  </button>
+                }
+              }
+            </tui-data-list>
+          </tui-textfield>
+        </div>
+      </div>
+      <div class="sport-players-tab__form-actions">
+        <button
+          type="button"
+          tuiButton
+          appearance="primary"
+          (click)="addPlayer()"
+          [disabled]="!selectedPersonId()">
+          Add Player
+        </button>
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          (click)="cancelAddPlayer()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
 
   <div class="sport-players-tab__sort-controls">
     <button

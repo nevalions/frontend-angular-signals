@@ -1,17 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { TuiTextfield, TuiButton } from '@taiga-ui/core';
+import { FormsModule } from '@angular/forms';
+import { TuiTextfield, TuiButton, TuiAlertService, TuiDataList } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
+import { EMPTY } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
+import { PersonStoreService } from '../../../../persons/services/person-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
+import { Person, PersonsPaginatedResponse } from '../../../../persons/models/person.model';
 
 @Component({
   selector: 'app-sport-players-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormsModule,
     TuiTextfield,
     TuiButton,
+    TuiDataList,
     TuiCardLarge,
     TuiCell,
     TuiAvatar,
@@ -22,7 +29,9 @@ import { NavigationHelperService } from '../../../../../shared/services/navigati
 })
 export class SportPlayersTabComponent {
   private playerStore = inject(PlayerStoreService);
+  private personStore = inject(PersonStoreService);
   private navigationHelper = inject(NavigationHelperService);
+  private alerts = inject(TuiAlertService);
 
   sportId = input.required<number>();
 
@@ -37,6 +46,13 @@ export class SportPlayersTabComponent {
   playersSearch = computed(() => this.playerStore.search());
 
   playersSortOrder = signal<'asc' | 'desc'>('asc');
+
+  availablePersons = signal<Person[]>([]);
+  availablePersonsLoading = signal(false);
+  availablePersonsError = signal<string | null>(null);
+  showAddPlayerForm = signal(false);
+  selectedPersonId = signal<number | null>(null);
+  personSearch = signal('');
 
   readonly itemsPerPageOptions = [10, 20, 50];
 
@@ -69,7 +85,74 @@ export class SportPlayersTabComponent {
     return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
   }
 
-  navigateToAddPlayer(): void {
-    this.navigationHelper.toPersonCreate();
+  toggleAddPlayerForm(): void {
+    if (!this.showAddPlayerForm()) {
+      this.loadAvailablePersons();
+    }
+    this.showAddPlayerForm.update(v => !v);
+  }
+
+  loadAvailablePersons(): void {
+    const sportId = this.sportId();
+    if (!sportId) return;
+
+    this.availablePersonsLoading.set(true);
+    this.availablePersonsError.set(null);
+
+    this.personStore.getPersonsNotInSport(sportId, 1, 100, this.personSearch()).pipe(
+      tap((response: PersonsPaginatedResponse) => {
+        this.availablePersons.set(response.data ?? []);
+        this.availablePersonsLoading.set(false);
+      }),
+      catchError((err) => {
+        this.availablePersonsError.set('Failed to load available persons');
+        this.availablePersonsLoading.set(false);
+        this.availablePersons.set([]);
+        return EMPTY;
+      })
+    ).subscribe();
+  }
+
+  onPersonSearchChange(query: string): void {
+    this.personSearch.set(query);
+    this.loadAvailablePersons();
+  }
+
+  addPlayer(): void {
+    const sportId = this.sportId();
+    const personId = this.selectedPersonId();
+    if (!sportId || !personId) return;
+
+    this.playerStore.createPlayer({
+      sport_id: sportId,
+      person_id: personId,
+      player_eesl_id: null
+    }).pipe(
+      tap(() => {
+        this.playerStore.reload();
+        this.showAddPlayerForm.set(false);
+        this.selectedPersonId.set(null);
+        this.personSearch.set('');
+        this.alerts.open('Player added successfully', {
+          label: 'Success',
+          appearance: 'positive',
+          autoClose: 3000
+        }).subscribe();
+      }),
+      catchError((_err) => {
+        this.alerts.open('Failed to add player', {
+          label: 'Error',
+          appearance: 'negative',
+          autoClose: 0
+        }).subscribe();
+        return EMPTY;
+      })
+    ).subscribe();
+  }
+
+  cancelAddPlayer(): void {
+    this.showAddPlayerForm.set(false);
+    this.selectedPersonId.set(null);
+    this.personSearch.set('');
   }
 }
