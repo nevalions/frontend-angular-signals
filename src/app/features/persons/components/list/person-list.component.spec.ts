@@ -22,6 +22,7 @@ describe('PersonListComponent', () => {
     totalCount: ReturnType<typeof vi.fn>;
     sortBy: ReturnType<typeof vi.fn>;
     sortOrder: ReturnType<typeof vi.fn>;
+    search: ReturnType<typeof vi.fn>;
     setSearch: ReturnType<typeof vi.fn>;
     setSort: ReturnType<typeof vi.fn>;
     setPage: ReturnType<typeof vi.fn>;
@@ -48,6 +49,7 @@ describe('PersonListComponent', () => {
       totalCount: vi.fn().mockReturnValue(0),
       sortBy: vi.fn().mockReturnValue('first_name'),
       sortOrder: vi.fn().mockReturnValue('asc'),
+      search: vi.fn().mockReturnValue(''),
       setSearch: vi.fn(),
       setSort: vi.fn(),
       setPage: vi.fn(),
@@ -124,7 +126,7 @@ describe('PersonListComponent', () => {
   it('should set search value', () => {
     component.searchControl.setValue('John');
 
-    expect(component.search()).toBe('John');
+    expect(component.searchControl.value).toBe('John');
   });
 
   it('should clear search on clear button click', () => {

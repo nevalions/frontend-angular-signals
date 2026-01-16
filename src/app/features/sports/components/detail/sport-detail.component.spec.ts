@@ -76,7 +76,7 @@ describe('SportDetailComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([]),
+        { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SportStoreService, useValue: sportStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },

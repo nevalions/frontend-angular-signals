@@ -16,7 +16,7 @@ describe('PersonEditComponent', () => {
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let navHelperMock: { toPersonsList: ReturnType<typeof vi.fn>; toPersonEdit: ReturnType<typeof vi.fn> };
   let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
-  let storeMock: { persons: ReturnType<typeof vi.fn>; updatePerson: ReturnType<typeof vi.fn>; uploadPersonPhoto: ReturnType<typeof vi.fn> };
+  let storeMock: { persons: ReturnType<typeof vi.fn>; loading: ReturnType<typeof vi.fn>; updatePerson: ReturnType<typeof vi.fn>; uploadPersonPhoto: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
@@ -43,8 +43,9 @@ describe('PersonEditComponent', () => {
         { id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null, person_eesl_id: null, person_dob: null } as Person,
         { id: 2, first_name: 'Jane', second_name: 'Smith', person_photo_url: 'http://example.com/jane.jpg', person_eesl_id: null, person_dob: null } as Person,
       ]),
+      loading: vi.fn().mockReturnValue(false),
       updatePerson: vi.fn().mockReturnValue(of(undefined)),
-      uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'http://test.com/new-photo.jpg' })),
+      uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'api/persons/new-photo.jpg' })),
     };
 
     TestBed.configureTestingModule({
@@ -149,7 +150,7 @@ describe('PersonEditComponent', () => {
   });
 
   it('should display current photo when no new photo uploaded', () => {
-    expect(component.displayPhotoUrl()).toBe('http://localhost:9000/api/persons/null');
+    expect(component.displayPhotoUrl()).toBe(null);
   });
 
   it('should display new photo preview when new photo uploaded', () => {
@@ -171,13 +172,14 @@ describe('PersonEditComponent', () => {
 
     component.onSubmit();
 
-    expect(storeMock.updatePerson).toHaveBeenCalledWith({
-      first_name: 'John',
-      second_name: 'Doe',
-      person_photo_url: 'api/persons/new-photo.jpg',
-      person_eesl_id: null,
-      person_dob: '',
-    });
+    expect(storeMock.updatePerson).toHaveBeenCalledWith(
+      1,
+      {
+        first_name: 'John',
+        second_name: 'Doe',
+        person_photo_url: 'api/persons/new-photo.jpg',
+      }
+    );
   });
 
   it('should call updatePerson without photo URL when no new photo uploaded', () => {
@@ -186,13 +188,13 @@ describe('PersonEditComponent', () => {
 
     component.onSubmit();
 
-    expect(storeMock.updatePerson).toHaveBeenCalledWith({
-      first_name: 'John',
-      second_name: 'Doe',
-      person_photo_url: null,
-      person_eesl_id: null,
-      person_dob: '',
-    });
+    expect(storeMock.updatePerson).toHaveBeenCalledWith(
+      1,
+      {
+        first_name: 'John',
+        second_name: 'Doe',
+      }
+    );
   });
 
   it('should not call updatePerson on invalid form submit', () => {

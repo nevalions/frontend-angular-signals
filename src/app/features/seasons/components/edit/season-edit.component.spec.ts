@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
@@ -51,7 +51,7 @@ describe('SeasonEditComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         FormBuilder,
-        provideRouter([]),
+        { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SeasonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
@@ -100,6 +100,7 @@ describe('SeasonEditComponent', () => {
       description: 'Invalid year',
     });
 
+    expect(component.seasonForm.valid).toBe(false);
     component.onSubmit();
 
     expect(storeMock.updateSeason).not.toHaveBeenCalled();
@@ -110,6 +111,7 @@ describe('SeasonEditComponent', () => {
       year: '2025',
       description: 'Updated season',
     });
+    fixture.detectChanges();
 
     component.onSubmit();
 
@@ -168,8 +170,9 @@ describe('SeasonEditComponent', () => {
   });
 
   it('should not navigate when form is invalid', () => {
-    component.seasonForm.setValue({ year: '', description: '' });
+    component.seasonForm.setValue({ year: '1800', description: '' });
 
+    expect(component.seasonForm.valid).toBe(false);
     component.onSubmit();
 
     expect(routerMock.navigate).not.toHaveBeenCalled();

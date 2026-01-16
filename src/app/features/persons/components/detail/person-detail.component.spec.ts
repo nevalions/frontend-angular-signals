@@ -13,6 +13,7 @@ describe('PersonDetailComponent', () => {
   let component: PersonDetailComponent;
   let fixture: ComponentFixture<PersonDetailComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let navHelperMock: { toPersonsList: ReturnType<typeof vi.fn>; toPersonEdit: ReturnType<typeof vi.fn> };
   let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
   let storeMock: { persons: ReturnType<typeof vi.fn>; deletePerson: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
@@ -21,6 +22,11 @@ describe('PersonDetailComponent', () => {
   beforeEach(() => {
     routerMock = {
       navigate: vi.fn(),
+    };
+
+    navHelperMock = {
+      toPersonsList: vi.fn(),
+      toPersonEdit: vi.fn(),
     };
 
     routeMock = {
@@ -47,6 +53,7 @@ describe('PersonDetailComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
+        { provide: NavigationHelperService, useValue: navHelperMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
@@ -65,15 +72,13 @@ describe('PersonDetailComponent', () => {
   it('should navigate back on button click', () => {
     component.navigateBack();
 
-    const navHelper = TestBed.inject(NavigationHelperService);
-    expect(navHelper.toPersonsList).toHaveBeenCalled();
+    expect(navHelperMock.toPersonsList).toHaveBeenCalled();
   });
 
   it('should navigate to edit on button click', () => {
     component.navigateToEdit();
 
-    const navHelper = TestBed.inject(NavigationHelperService);
-    expect(navHelper.toPersonEdit).toHaveBeenCalledWith(1);
+    expect(navHelperMock.toPersonEdit).toHaveBeenCalledWith(1);
   });
 
   it('should find person by id from store', () => {

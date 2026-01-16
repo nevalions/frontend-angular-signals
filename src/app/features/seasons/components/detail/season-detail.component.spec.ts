@@ -1,22 +1,28 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { SeasonDetailComponent } from './season-detail.component';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 
 describe('SeasonDetailComponent', () => {
   let component: SeasonDetailComponent;
   let fixture: ComponentFixture<SeasonDetailComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let dialogsMock: { open: ReturnType<typeof vi.fn> };
   let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
   let storeMock: { seasons: ReturnType<typeof vi.fn>; deleteSeason: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerMock = {
       navigate: vi.fn(),
+    };
+
+    dialogsMock = {
+      open: vi.fn().mockReturnValue(of(true)),
     };
 
     routeMock = {
@@ -34,9 +40,11 @@ describe('SeasonDetailComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([]),
+        { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SeasonStoreService, useValue: storeMock },
+        { provide: TuiDialogService, useValue: dialogsMock },
+        { provide: TuiAlertService, useValue: { open: vi.fn() } },
       ],
     });
 
@@ -51,49 +59,46 @@ describe('SeasonDetailComponent', () => {
   it('should navigate back on button click', () => {
     component.navigateBack();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons'], expect.any(Object));
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
   });
 
   it('should navigate to edit on button click', () => {
     component.navigateToEdit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 1, 'edit'], expect.any(Object));
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 1, 'edit']);
   });
 
   it('should navigate to tournaments on link click', () => {
     component.navigateToTournaments();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'tournaments'], expect.any(Object));
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'tournaments']);
   });
 
   it('should navigate to teams on link click', () => {
     component.navigateToTeams();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'teams'], expect.any(Object));
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'teams']);
   });
 
   it('should navigate to matches on link click', () => {
     component.navigateToMatches();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'matches'], expect.any(Object));
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'matches']);
   });
 
   it('should delete season on button click with confirmation', () => {
-    window.confirm = vi.fn(() => true);
-
     component.deleteSeason();
 
-    expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this season?');
+    expect(dialogsMock.open).toHaveBeenCalled();
     expect(storeMock.deleteSeason).toHaveBeenCalledWith(1);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons'], expect.any(Object));
   });
 
   it('should not delete season when confirmation is cancelled', () => {
-    window.confirm = vi.fn(() => false);
+    dialogsMock.open.mockReturnValueOnce(of(false));
 
     component.deleteSeason();
 
-    expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this season?');
+    expect(dialogsMock.open).toHaveBeenCalled();
     expect(storeMock.deleteSeason).not.toHaveBeenCalled();
   });
 

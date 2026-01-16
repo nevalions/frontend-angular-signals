@@ -36,6 +36,33 @@ it('should call createSport with correct data', () => {
 
 ## Component Tests
 
+### ❌ Wrong: Missing Store Signals in Mock
+
+**Problem:** Mocking store service but missing computed signals that components depend on.
+
+```typescript
+// WRONG - Component uses loading() signal
+storeMock = {
+  persons: vi.fn().mockReturnValue([]),
+  updatePerson: vi.fn().mockReturnValue(of(undefined)),
+  // Missing loading!
+};
+```
+
+**Why it's wrong:** Components with `loading = this.store.loading` will fail with "loading is not a function" error.
+
+**✅ Correct:**
+```typescript
+storeMock = {
+  persons: vi.fn().mockReturnValue([]),
+  loading: vi.fn().mockReturnValue(false),  // Add this
+  search: vi.fn().mockReturnValue(''),    // Add if component uses search()
+  updatePerson: vi.fn().mockReturnValue(of(undefined)),
+};
+```
+
+---
+
 ### ❌ Wrong: Wrong Route Mock Structure for `paramMap`
 
 **Problem:** Using Observable-based route mock when component accesses `route.snapshot.paramMap`.
@@ -133,6 +160,50 @@ expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1, 2024);
 
 ---
 
+### ❌ Wrong: Not Checking Form Validity Before Submit
+
+**Problem:** Calling `onSubmit()` without verifying form is actually invalid.
+
+```typescript
+// WRONG - Form might be valid or invalid, not verified
+it('should not update when form is invalid', () => {
+  component.seasonForm.setValue({ year: '', description: '' });
+  component.onSubmit();
+  expect(storeMock.updateSeason).not.toHaveBeenCalled();
+});
+```
+
+**Why it's wrong:** If validators don't work as expected, the test might pass for wrong reasons.
+
+**✅ Correct:**
+```typescript
+it('should not update when form is invalid', () => {
+  component.seasonForm.setValue({ year: '1800', description: '' });
+  expect(component.seasonForm.valid).toBe(false);  // Verify first
+  component.onSubmit();
+  expect(storeMock.updateSeason).not.toHaveBeenCalled();
+});
+```
+
+**Problem:** Trying to mock signals that are set by effects, but effects run after component creation.
+
+```typescript
+// WRONG - Component has effect that sets selectedSeasonYear
+const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
+newComponent.navigateToBack();
+// selectedSeasonYear is still null here because effect hasn't run yet
+```
+
+**✅ Correct:**
+```typescript
+const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
+(newComponent as any).selectedSeasonYear.set(2024); // Set directly for test
+newComponent.navigateToBack();
+expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1, 2024);
+```
+
+---
+
 ### ❌ Wrong: Missing `provideRouter()` Provider
 
 **Problem:** Components using Router fail with "No provider found for Router" or route-based navigation tests fail.
@@ -159,6 +230,40 @@ TestBed.configureTestingModule({
     { provide: ActivatedRoute, useValue: routeMock },
     { provide: NavigationHelperService, useValue: navHelperMock },
   ],
+});
+```
+
+---
+
+### ❌ Wrong: Using window.confirm() for Delete Confirmation
+
+**Problem:** Testing delete operations with `window.confirm` mock.
+
+```typescript
+// WRONG - Components use withDeleteConfirm() which uses TuiDialogService
+it('should delete on confirmation', () => {
+  window.confirm = vi.fn(() => true);
+  component.deleteSeason();
+  expect(window.confirm).toHaveBeenCalledWith('Are you sure?');
+});
+```
+
+**Why it's wrong:** Components use `withDeleteConfirm()` helper which uses `TuiDialogService.open()`, not `window.confirm()`.
+
+**✅ Correct:**
+```typescript
+it('should delete on confirmation', () => {
+  component.deleteSeason();
+  expect(dialogsMock.open).toHaveBeenCalled();
+  expect(storeMock.deleteSeason).toHaveBeenCalledWith(1);
+  // Note: Navigation happens in the helper's success callback
+});
+
+it('should not delete when cancelled', () => {
+  dialogsMock.open.mockReturnValueOnce(of(false));
+  component.deleteSeason();
+  expect(dialogsMock.open).toHaveBeenCalled();
+  expect(storeMock.deleteSeason).not.toHaveBeenCalled();
 });
 ```
 
@@ -260,6 +365,30 @@ it('should navigate to sport detail with year', () => {
 
 ---
 
+### ❌ Wrong: Adding `expect.any(Object)` to Router.navigate() Expectation
+
+**Problem:** Adding `expect.any(Object)` when Router doesn't pass additional parameters.
+
+```typescript
+// WRONG - Router.navigate() doesn't pass extra object by default
+it('should navigate back', () => {
+  component.navigateBack();
+  expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons'], expect.any(Object));
+});
+```
+
+**Why it's wrong:** `router.navigate()` only passes the path array by default. Navigation extras (queryParams, etc.) must be explicitly passed.
+
+**✅ Correct:**
+```typescript
+it('should navigate back', () => {
+  component.navigateBack();
+  expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
+});
+```
+
+---
+
 ### ❌ Wrong: Testing Tab Changes with Wrong Expectation
 
 **Problem:** Component's `onTabChange()` calls `router.navigate()` but test expects tab signal to change.
@@ -290,6 +419,61 @@ it('should change tab', () => {
 ---
 
 ## HTTP/API Tests
+
+### ❌ Wrong: Using Full URLs in Photo Upload Mocks
+
+**Problem:** Mocking photo upload with full URLs instead of relative paths.
+
+```typescript
+// WRONG - uploadPersonPhoto returns full URL
+uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'http://test.com/photo.jpg' })),
+```
+
+**Why it's wrong:** Components use `buildStaticUrl()` which prepends `API_BASE_URL`. Expecting full URLs causes assertion failures.
+
+**✅ Correct:**
+```typescript
+// Returns relative path that buildStaticUrl will combine with API_BASE_URL
+uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'api/persons/photo.jpg' })),
+
+// Test expectation:
+expect(component.photoPreviewUrl()).toBe('http://localhost:9000/api/persons/photo.jpg');
+```
+
+---
+
+### ❌ Wrong: Service Method Signature for Update Operations
+
+**Problem:** Expecting `id` as part of data object when it's a separate parameter.
+
+```typescript
+// WRONG - updatePerson doesn't take id in data object
+it('should call updatePerson', () => {
+  component.onSubmit();
+  expect(storeMock.updatePerson).toHaveBeenCalledWith({
+    first_name: 'John',
+    id: 1,  // Wrong!
+  });
+});
+```
+
+**Why it's wrong:** `PersonStoreService.updatePerson()` takes `id` as the first parameter, not in the data object.
+
+**✅ Correct:**
+```typescript
+it('should call updatePerson', () => {
+  component.onSubmit();
+  expect(storeMock.updatePerson).toHaveBeenCalledWith(
+    1,  // id as first parameter
+    {
+      first_name: 'John',
+      second_name: 'Doe',
+    }
+  );
+});
+```
+
+---
 
 ### ❌ Wrong: Wrong URL Pattern for CRUD Operations
 
@@ -356,12 +540,15 @@ beforeEach(() => {
 ### ✅ Always
 
 1. **Import `buildApiUrl`** when testing services that use it
-2. **Mock all providers** that components inject (ActivatedRoute, Router, Services)
-3. **Clear mocks** between tests: `vi.clearAllMocks()`
-4. **Match the actual implementation** - read the service/component code before writing tests
-5. **Check URL patterns** - use console.log or read the service to see actual URLs
-6. **Always provide Router** using `provideRouter([])` when testing components that use navigation
-7. **Include `queryParamMap`** in route mocks when components use query params
+2. **Mock all store signals** that components depend on (persons, loading, search, etc.)
+3. **Mock all providers** that components inject (ActivatedRoute, Router, Services)
+4. **Clear mocks** between tests: `vi.clearAllMocks()`
+5. **Match the actual implementation** - read the service/component code before writing tests
+6. **Check URL patterns** - use console.log or read the service to see actual URLs
+7. **Always provide Router** using `provideRouter([])` when testing components that use navigation
+8. **Include `queryParamMap`** in route mocks when components use query params
+9. **Check form validity** before calling submit methods in validation tests
+10. **Use relative paths** for photo upload mocks (e.g., `api/persons/photo.jpg`)
 
 ### ❌ Never
 
@@ -371,6 +558,9 @@ beforeEach(() => {
 4. **Don't expect services to call alerts directly** when they use helper utilities
 5. **Don't forget to flush HTTP requests** before service instantiation (if service makes requests in constructor)
 6. **Don't skip provideRouter** in test configuration
+7. **Don't add `expect.any(Object)`** to router.navigate() expectations unless passing navigation extras
+8. **Don't use `window.confirm()`** for delete tests - use TuiDialogService mock
+9. **Don't put `id` in update data object** - it's passed as a separate parameter
 
 ---
 

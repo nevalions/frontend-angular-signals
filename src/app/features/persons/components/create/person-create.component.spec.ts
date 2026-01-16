@@ -6,11 +6,13 @@ import { of } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
 import { PersonCreateComponent } from './person-create.component';
 import { PersonStoreService } from '../../services/person-store.service';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 describe('PersonCreateComponent', () => {
   let component: PersonCreateComponent;
   let fixture: ComponentFixture<PersonCreateComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let navHelperMock: { toPersonsList: ReturnType<typeof vi.fn> };
   let storeMock: { createPerson: ReturnType<typeof vi.fn>; uploadPersonPhoto: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
@@ -19,13 +21,17 @@ describe('PersonCreateComponent', () => {
       navigate: vi.fn(),
     };
 
+    navHelperMock = {
+      toPersonsList: vi.fn(),
+    };
+
     alertsMock = {
       open: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
     };
 
     storeMock = {
       createPerson: vi.fn().mockReturnValue(of(undefined)),
-      uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'http://test.com/photo.jpg' })),
+      uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'api/persons/photo.jpg' })),
     };
 
     TestBed.configureTestingModule({
@@ -33,6 +39,7 @@ describe('PersonCreateComponent', () => {
         provideRouter([]),
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
         FormBuilder,
       ],
       imports: [],
@@ -128,7 +135,7 @@ describe('PersonCreateComponent', () => {
       second_name: 'Doe',
       person_photo_url: 'api/persons/photo.jpg',
       person_eesl_id: null,
-      person_dob: '',
+      person_dob: null,
     });
   });
 
@@ -143,7 +150,7 @@ describe('PersonCreateComponent', () => {
       second_name: 'Doe',
       person_photo_url: null,
       person_eesl_id: null,
-      person_dob: '',
+      person_dob: null,
     });
   });
 
@@ -167,6 +174,6 @@ describe('PersonCreateComponent', () => {
     component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     component.onSubmit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/persons'], expect.any(Object));
+    expect(navHelperMock.toPersonsList).toHaveBeenCalled();
   });
 });
