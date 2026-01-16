@@ -2,6 +2,8 @@
 
 This document covers testing patterns for components, services, and models.
 
+**Important:** See [Testing Common Mistakes](./testing-common-mistakes.md) for a catalog of common testing errors to avoid.
+
 ## Component Testing Patterns
 
 ### Test Setup

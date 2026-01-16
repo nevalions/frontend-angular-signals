@@ -30,6 +30,7 @@ This project uses a modular documentation structure. See the [`docs/`](./docs/) 
 ## Testing
 
 - **[Testing Patterns](./docs/testing-patterns.md)** - Testing components, services, and models
+- **[Testing Common Mistakes](./docs/testing-common-mistakes.md)** - Catalog of common testing mistakes to avoid
 
 ## Configuration
 
