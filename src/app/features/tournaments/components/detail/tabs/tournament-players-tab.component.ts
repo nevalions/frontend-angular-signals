@@ -8,7 +8,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
-import { PlayerTeamTournamentWithDetails, Player } from '../../../../players/models/player.model';
+import { PlayerTeamTournamentWithDetails, PlayerWithPerson } from '../../../../players/models/player.model';
 import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
 import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
 
@@ -54,16 +54,16 @@ export class TournamentPlayersTabComponent {
 
   playersSortOrder = signal<'asc' | 'desc'>('asc');
 
-  availablePlayers = signal<Player[]>([]);
+  availablePlayers = signal<PlayerWithPerson[]>([]);
   availablePlayersLoading = signal(false);
   availablePlayersError = signal<string | null>(null);
-  
-  playersWithoutTeam = signal<Player[]>([]);
+
+  playersWithoutTeam = signal<PlayerWithPerson[]>([]);
   playersWithoutTeamLoading = signal(false);
   playersWithoutTeamError = signal<string | null>(null);
-  
+
   showAddPlayerForm = signal(false);
-  selectedPlayer = signal<Player | null>(null);
+  selectedPlayer = signal<PlayerWithPerson | null>(null);
 
   readonly itemsPerPageOptions = [10, 20, 50];
 
@@ -168,11 +168,11 @@ export class TournamentPlayersTabComponent {
     this.availablePlayersError.set(null);
 
     this.playerStore.getAvailablePlayersForTournament(tournamentId).pipe(
-      tap((players: Player[]) => {
+      tap((players: PlayerWithPerson[]) => {
         const sortedPlayers = Array.isArray(players)
           ? [...players].sort((a, b) => {
-              const nameA = `${a.second_name || ''} ${a.first_name || ''}`.toLowerCase();
-              const nameB = `${b.second_name || ''} ${b.first_name || ''}`.toLowerCase();
+              const nameA = `${a.person?.second_name || ''} ${a.person?.first_name || ''}`.toLowerCase();
+              const nameB = `${b.person?.second_name || ''} ${b.person?.first_name || ''}`.toLowerCase();
               return nameA.localeCompare(nameB);
             })
           : [];
@@ -195,12 +195,12 @@ export class TournamentPlayersTabComponent {
     this.playersWithoutTeamLoading.set(true);
     this.playersWithoutTeamError.set(null);
 
-    this.playerStore.getTournamentPlayersWithoutTeam(tournamentId).pipe(
-      tap((players: Player[]) => {
+    this.playerStore.getAvailablePlayersForTournament(tournamentId).pipe(
+      tap((players: PlayerWithPerson[]) => {
         const sortedPlayers = Array.isArray(players)
           ? [...players].sort((a, b) => {
-              const nameA = `${a.second_name || ''} ${a.first_name || ''}`.toLowerCase();
-              const nameB = `${b.second_name || ''} ${b.first_name || ''}`.toLowerCase();
+              const nameA = `${a.person?.second_name || ''} ${a.person?.first_name || ''}`.toLowerCase();
+              const nameB = `${b.person?.second_name || ''} ${b.person?.first_name || ''}`.toLowerCase();
               return nameA.localeCompare(nameB);
             })
           : [];
@@ -208,7 +208,7 @@ export class TournamentPlayersTabComponent {
         this.playersWithoutTeamLoading.set(false);
       }),
       catchError((_err) => {
-        this.playersWithoutTeamError.set('Failed to load players without team');
+        this.playersWithoutTeamError.set('Failed to load available players');
         this.playersWithoutTeamLoading.set(false);
         this.playersWithoutTeam.set([]);
         return EMPTY;
@@ -244,14 +244,15 @@ export class TournamentPlayersTabComponent {
     return capitalizeNameUtil(name);
   }
 
-  stringifyPlayer(player: Player): string {
-    const firstName = capitalizeNameUtil(player.first_name);
-    const secondName = capitalizeNameUtil(player.second_name);
-    
+  stringifyPlayer(player: PlayerWithPerson): string {
+    const firstName = capitalizeNameUtil(player.person?.first_name)?.trim() || '';
+    const secondName = capitalizeNameUtil(player.person?.second_name)?.trim() || '';
+
     if (firstName || secondName) {
-      return `${secondName} ${firstName}`.trim();
+      const name = `${secondName} ${firstName}`.trim();
+      return name || `Player #${player.id}`;
     }
-    
+
     return `Player #${player.id}`;
   }
 }

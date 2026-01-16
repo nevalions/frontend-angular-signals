@@ -57,7 +57,7 @@
             } @else if (playersWithoutTeamError()) {
               <div class="tournament-players-tab__dropdown-error">{{ playersWithoutTeamError() }}</div>
             } @else if (playersWithoutTeam().length === 0) {
-              <div class="tournament-players-tab__dropdown-empty">No available players without team</div>
+              <div class="tournament-players-tab__dropdown-empty">No available players</div>
             } @else {
               @for (player of playersWithoutTeam() | tuiFilterByInput; track player.id) {
                 <button
@@ -66,7 +66,7 @@
                   type="button"
                   [value]="player"
                   class="tournament-players-tab__player-option">
-                  {{ capitalizeName(player.second_name) }} {{ capitalizeName(player.first_name) }}
+                  {{ stringifyPlayer(player) }}
                 </button>
               }
             }

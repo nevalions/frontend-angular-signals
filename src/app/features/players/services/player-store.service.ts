@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse } from '../models/player.model';
+import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse, PlayerWithPerson } from '../models/player.model';
 import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
@@ -152,8 +152,8 @@ export class PlayerStoreService {
     );
   }
 
-  getAvailablePlayersForTournament(tournamentId: number): Observable<Player[]> {
-    return this.http.get<Player[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/available`));
+  getAvailablePlayersForTournament(tournamentId: number): Observable<PlayerWithPerson[]> {
+    return this.http.get<PlayerWithPerson[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/available`));
   }
 
   getTournamentPlayersPaginatedV2(
