@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { of } from 'rxjs';
+
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { PersonListComponent } from './person-list.component';
 import { PersonStoreService } from '../../services/person-store.service';

@@ -14,7 +14,7 @@ describe('SportEditComponent', () => {
   let component: SportEditComponent;
   let fixture: ComponentFixture<SportEditComponent>;
   let navHelperMock: { toSportDetail: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: { get: (key: string) => string | null }; queryParamMap: { get: () => string | null } };
+  let routeMock: ActivatedRoute;
   let storeMock: { sports: ReturnType<typeof vi.fn>; updateSport: ReturnType<typeof vi.fn>; loading: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
@@ -24,9 +24,9 @@ describe('SportEditComponent', () => {
     };
 
     routeMock = {
-      paramMap: { get: (_key: string) => '1' },
-      queryParamMap: { get: () => null },
-    };
+      paramMap: of({ get: (_key: string) => '1' }),
+      queryParamMap: of({ get: () => null }),
+    } as unknown as ActivatedRoute;
 
     alertsMock = {
       open: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
@@ -139,9 +139,9 @@ describe('SportEditComponent', () => {
 
   it('should return null when sportId is null', () => {
     const nullRouteMock = {
-      paramMap: { get: (_key: string) => null },
-      queryParamMap: { get: () => null },
-    };
+      paramMap: of({ get: (_key: string) => null }),
+      queryParamMap: of({ get: () => null }),
+    } as unknown as ActivatedRoute;
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -152,7 +152,6 @@ describe('SportEditComponent', () => {
         { provide: TuiAlertService, useValue: alertsMock },
         FormBuilder,
       ],
-      imports: [],
     });
 
     const newFixture = TestBed.createComponent(SportEditComponent);
@@ -164,9 +163,9 @@ describe('SportEditComponent', () => {
 
   it('should return null when sport is not found', () => {
     const id99RouteMock = {
-      paramMap: { get: (key: string) => (key === 'id' ? '99' : null) },
-      queryParamMap: { get: () => null },
-    };
+      paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }),
+      queryParamMap: of({ get: () => null }),
+    } as unknown as ActivatedRoute;
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -177,7 +176,6 @@ describe('SportEditComponent', () => {
         { provide: TuiAlertService, useValue: alertsMock },
         FormBuilder,
       ],
-      imports: [],
     });
 
     const newFixture = TestBed.createComponent(SportEditComponent);

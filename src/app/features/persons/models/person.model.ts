@@ -1,4 +1,4 @@
-import { PaginatedResponse, SortOrder } from '../../../core/models';
+import { PaginatedResponse } from '../../../core/models';
 
 export interface Person {
   id: number;

@@ -11,7 +11,7 @@ describe('RegisterIconComponent', () => {
 
   beforeEach(() => {
     dialogsMock = {
-      open: vi.fn(() => new Observable(subscriber => {
+      open: vi.fn().mockReturnValue(new Observable(subscriber => {
         subscriber.next({});
         subscriber.complete();
       })),

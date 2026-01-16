@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
@@ -53,7 +54,7 @@ describe('TeamEditComponent', () => {
         { provide: TuiAlertService, useValue: alertsMock },
         { provide: NavigationHelperService, useValue: navHelperMock },
       ],
-      imports: [ReactiveFormsModule],
+      imports: [ReactiveFormsModule, TeamEditComponent],
     });
 
     fixture = TestBed.createComponent(TeamEditComponent);

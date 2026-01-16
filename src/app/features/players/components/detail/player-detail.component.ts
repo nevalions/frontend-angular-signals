@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
 import { buildApiUrl } from '../../../../core/config/api.constants';
-import { Player } from '../../models/player.model';
+import { Player, PlayerTeamTournament } from '../../models/player.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { PlayerStoreService } from '../../services/player-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
@@ -97,7 +97,7 @@ export class PlayerDetailComponent {
     const player = this.player();
     if (!player?.player_team_tournaments) return [];
 
-    const teamMap = new Map<number | null, { teamTitle: string; assignments: any[] }>();
+    const teamMap = new Map<number | null, { teamTitle: string; assignments: PlayerTeamTournament[] }>();
 
     player.player_team_tournaments.forEach(ptt => {
       const teamId = ptt.team_id;
@@ -117,7 +117,7 @@ export class PlayerDetailComponent {
     const player = this.player();
     if (!player?.player_team_tournaments) return [];
 
-    const tournamentMap = new Map<number | null, { tournamentId: number | null; assignments: any[] }>();
+    const tournamentMap = new Map<number | null, { tournamentId: number | null; assignments: PlayerTeamTournament[] }>();
 
     player.player_team_tournaments.forEach(ptt => {
       const tournamentId = ptt.tournament_id;

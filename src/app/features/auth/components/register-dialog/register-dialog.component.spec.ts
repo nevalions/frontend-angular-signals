@@ -2,26 +2,38 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TuiAlertService, TuiButton } from '@taiga-ui/core';
-import { of, throwError, Observable } from 'rxjs';
+import { throwError, Observable } from 'rxjs';
 import { RegisterDialogComponent } from './register-dialog.component';
 import { AuthService } from '../../services/auth.service';
+import { RegisterRequest, UserResponse } from '../../models/register.model';
 
 describe('RegisterDialogComponent', () => {
   let component: RegisterDialogComponent;
   let fixture: ComponentFixture<RegisterDialogComponent>;
-  let authServiceMock: Partial<AuthService>;
-  let alertsMock: { open: typeof vi.fn };
+  let authServiceMock: {
+    register: (userData: RegisterRequest) => Observable<UserResponse>;
+  };
+  let alertsMock: {
+    open: typeof vi.fn;
+  };
 
   beforeEach(() => {
     authServiceMock = {
-      register: vi.fn(() => new Observable(subscriber => {
-        subscriber.next({});
+      register: vi.fn().mockReturnValue(new Observable(subscriber => {
+        subscriber.next({
+          id: 1,
+          username: 'testuser',
+          email: 'test@example.com',
+          is_active: true,
+          person_id: null,
+          roles: [],
+        } as UserResponse);
         subscriber.complete();
       })),
     };
 
     alertsMock = {
-      open: vi.fn(() => new Observable(subscriber => {
+      open: vi.fn().mockReturnValue(new Observable(subscriber => {
         subscriber.next({});
         subscriber.complete();
       })),
@@ -220,9 +232,7 @@ describe('RegisterDialogComponent', () => {
       });
 
       const error = { error: { detail: 'Username already exists' } };
-      if (authServiceMock.register) {
-        vi.mocked(authServiceMock.register).mockReturnValue(throwError(() => error));
-      }
+      authServiceMock.register = vi.fn().mockReturnValue(throwError(() => error));
 
       component.onSubmit();
 
@@ -242,9 +252,7 @@ describe('RegisterDialogComponent', () => {
       });
 
       const error = new Error('Network error');
-      if (authServiceMock.register) {
-        vi.mocked(authServiceMock.register).mockReturnValue(throwError(() => error));
-      }
+      authServiceMock.register = vi.fn().mockReturnValue(throwError(() => error));
 
       component.onSubmit();
 

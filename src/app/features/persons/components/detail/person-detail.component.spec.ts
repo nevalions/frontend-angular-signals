@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { PersonDetailComponent } from './person-detail.component';
 import { PersonStoreService } from '../../services/person-store.service';
@@ -14,7 +13,7 @@ describe('PersonDetailComponent', () => {
   let component: PersonDetailComponent;
   let fixture: ComponentFixture<PersonDetailComponent>;
   let navHelperMock: { toPersonsList: ReturnType<typeof vi.fn>; toPersonEdit: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: { get: (_key: string) => string | null }; queryParamMap: { get: () => string | null } };
+  let routeMock: ActivatedRoute;
   let storeMock: { persons: ReturnType<typeof vi.fn>; deletePerson: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
   let dialogsMock: { open: ReturnType<typeof vi.fn> };
@@ -26,9 +25,9 @@ describe('PersonDetailComponent', () => {
     };
 
     routeMock = {
-      paramMap: { get: (_key: string) => '1' },
-      queryParamMap: { get: () => null },
-    };
+      paramMap: of({ get: (_key: string) => '1' }),
+      queryParamMap: of({ get: () => null }),
+    } as unknown as ActivatedRoute;
 
     alertsMock = {
       open: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
@@ -47,7 +46,7 @@ describe('PersonDetailComponent', () => {
         { id: 2, first_name: 'Jane', second_name: 'Smith', person_photo_url: 'http://example.com/jane.jpg', isprivate: false } as Person,
       ]),
       deletePerson: vi.fn().mockReturnValue(new Observable(subscriber => {
-        subscriber.next();
+        subscriber.next(undefined);
         subscriber.complete();
       })),
     };
@@ -91,9 +90,9 @@ describe('PersonDetailComponent', () => {
 
   it('should return null when personId is null', () => {
     const nullRouteMock = {
-      paramMap: { get: (_key: string) => null },
-      queryParamMap: { get: () => null },
-    };
+      paramMap: of({ get: (_key: string) => null }),
+      queryParamMap: of({ get: () => null }),
+    } as unknown as ActivatedRoute;
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -116,16 +115,16 @@ describe('PersonDetailComponent', () => {
 
   it('should return null when person is not found', () => {
     const id99RouteMock = {
-      paramMap: { get: (key: string) => (key === 'id' ? '99' : null) },
-      queryParamMap: { get: () => null },
-    };
+      paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }),
+      queryParamMap: of({ get: () => null }),
+    } as unknown as ActivatedRoute;
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
         { provide: NavigationHelperService, useValue: navHelperMock },
-        provide: ActivatedRoute, useValue: id99RouteMock },
+        { provide: ActivatedRoute, useValue: id99RouteMock },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
         { provide: TuiDialogService, useValue: dialogsMock },

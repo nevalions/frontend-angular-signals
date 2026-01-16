@@ -10,6 +10,7 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 import { Tournament } from '../../models/tournament.model';
 import { Season } from '../../../seasons/models/season.model';
 import { Sport } from '../../../sports/models/sport.model';
+import { signal } from '@angular/core';
 
 describe('TournamentListComponent', () => {
   let component: TournamentListComponent;
@@ -302,7 +303,8 @@ describe('TournamentListComponent', () => {
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      (newComponent as unknown).selectedSeasonYear.set(2024);
+      const componentWithSignals = newComponent as TournamentListComponent & { selectedSeasonYear: ReturnType<typeof signal<number | null>> };
+      componentWithSignals.selectedSeasonYear.set(2024);
       newComponent.navigateBack();
       expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1, 2024);
     });
@@ -327,7 +329,8 @@ describe('TournamentListComponent', () => {
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      (newComponent as unknown).selectedSeasonYear.set(2024);
+      const componentWithSignals = newComponent as TournamentListComponent & { selectedSeasonYear: ReturnType<typeof signal<number | null>> };
+      componentWithSignals.selectedSeasonYear.set(2024);
       newComponent.navigateToCreate();
       expect(navHelperMock.toTournamentCreate).toHaveBeenCalledWith(1, 2024);
     });
@@ -352,7 +355,8 @@ describe('TournamentListComponent', () => {
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      (newComponent as unknown).selectedSeasonYear.set(2024);
+      const componentWithSignals = newComponent as TournamentListComponent & { selectedSeasonYear: ReturnType<typeof signal<number | null>> };
+      componentWithSignals.selectedSeasonYear.set(2024);
       newComponent.navigateToDetail(1);
       expect(navHelperMock.toTournamentDetail).toHaveBeenCalledWith(1, 2024, 1);
     });

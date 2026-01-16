@@ -44,7 +44,7 @@ describe('SeasonDetailComponent', () => {
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SeasonStoreService, useValue: storeMock },
         { provide: TuiDialogService, useValue: dialogsMock },
-        { provide: TuiAlertService, useValue: { open: vi.fn() } },
+        { provide: TuiAlertService, useValue: { open: vi.fn().mockReturnValue({ subscribe: vi.fn() }) } },
       ],
     });
 
