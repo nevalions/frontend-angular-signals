@@ -212,6 +212,115 @@ describe('SeasonCreate interface', () => {
 });
 ```
 
+## Route Mocking Patterns
+
+### Simple Route Parameter Mocking
+
+```typescript
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+
+beforeEach(() => {
+  TestBed.configureTestingModule({
+    providers: [
+      {
+        provide: ActivatedRoute,
+        useValue: {
+          paramMap: of({ get: (_key: string) => '1' }),
+        },
+      },
+    ],
+  });
+});
+```
+
+### Multiple Route Parameters
+
+```typescript
+beforeEach(() => {
+  TestBed.configureTestingModule({
+    providers: [
+      {
+        provide: ActivatedRoute,
+        useValue: {
+          paramMap: of({
+            get: (key: string) => {
+              switch (key) {
+                case 'sportId': return '1';
+                case 'year': return '2024';
+                case 'id': return '1';
+                default: return null;
+              }
+            }
+          }),
+        },
+      },
+    ],
+  });
+});
+```
+
+### Query Parameter Mocking
+
+```typescript
+beforeEach(() => {
+  TestBed.configureTestingModule({
+    providers: [
+      {
+        provide: ActivatedRoute,
+        useValue: {
+          paramMap: of({ get: (_key: string) => '1' }),
+          queryParamMap: of({ get: (key: string) => {
+            if (key === 'tab') return 'matches';
+            if (key === 'year') return '2024';
+            return null;
+          }}),
+        },
+      },
+    ],
+  });
+});
+```
+
+### Effect Detection for Route Changes
+
+When components use `effect()` to initialize signals based on route parameters, call `fixture.detectChanges()`:
+
+```typescript
+it('should get season by year from store', () => {
+  TestBed.resetTestingModule();
+  const routeMock = {
+    paramMap: of({ get: (key: string) => (key === 'year' ? '2024' : null) }),
+  };
+  TestBed.configureTestingModule({
+    providers: [
+      { provide: ActivatedRoute, useValue: routeMock },
+      { provide: SeasonStoreService, useValue: seasonStoreMock },
+    ],
+  });
+  const fixture = TestBed.createComponent(MyComponent);
+  fixture.detectChanges();  // Required for effects to run
+  expect(fixture.componentInstance.season()).toEqual(mockSeasons[0]);
+});
+```
+
+### Required Providers for Components
+
+Most components need these providers in their tests:
+
+```typescript
+TestBed.configureTestingModule({
+  providers: [
+    provideRouter([]),  // Always provide router
+    { provide: ActivatedRoute, useValue: routeMock },
+    { provide: NavigationHelperService, useValue: navHelperMock },
+    { provide: YourStoreService, useValue: storeMock },
+    { provide: TuiAlertService, useValue: alertsMock },
+    { provide: TuiDialogService, useValue: dialogsMock },
+  ],
+});
+```
+
 ## Signal Testing Utilities
 
 ```typescript

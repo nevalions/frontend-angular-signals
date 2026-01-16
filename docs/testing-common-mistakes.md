@@ -133,6 +133,80 @@ expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1, 2024);
 
 ---
 
+### ❌ Wrong: Missing `provideRouter()` Provider
+
+**Problem:** Components using Router fail with "No provider found for Router" or route-based navigation tests fail.
+
+```typescript
+// WRONG - Missing provideRouter
+TestBed.configureTestingModule({
+  providers: [
+    { provide: ActivatedRoute, useValue: routeMock },
+    { provide: NavigationHelperService, useValue: navHelperMock },
+  ],
+});
+```
+
+**Why it's wrong:** Angular needs a Router provider for components that use Router or depend on it via NavigationHelperService.
+
+**✅ Correct:**
+```typescript
+import { provideRouter } from '@angular/router';
+
+TestBed.configureTestingModule({
+  providers: [
+    provideRouter([]),  // Always provide router
+    { provide: ActivatedRoute, useValue: routeMock },
+    { provide: NavigationHelperService, useValue: navHelperMock },
+  ],
+});
+```
+
+---
+
+### ❌ Wrong: Using Router Mock Instead of NavigationHelper
+
+**Problem:** Component uses NavigationHelperService but test mocks Router directly.
+
+```typescript
+// WRONG - Component uses navigationHelper.toSportDetail(1)
+beforeEach(() => {
+  routerMock = { navigate: vi.fn() };
+  TestBed.configureTestingModule({
+    providers: [
+      { provide: Router, useValue: routerMock },
+    ],
+  });
+});
+
+it('should navigate to detail', () => {
+  component.navigateToDetail(1);
+  expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1]);  // FAILS!
+});
+```
+
+**Why it's wrong:** Components use NavigationHelperService which abstracts the actual router navigation. Mocking Router directly won't work.
+
+**✅ Correct:**
+```typescript
+beforeEach(() => {
+  navHelperMock = { toSportDetail: vi.fn() };
+  TestBed.configureTestingModule({
+    providers: [
+      provideRouter([]),
+      { provide: NavigationHelperService, useValue: navHelperMock },
+    ],
+  });
+});
+
+it('should navigate to detail', () => {
+  component.navigateToDetail(1);
+  expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1);  // Works!
+});
+```
+
+---
+
 ## Navigation Tests
 
 ### ❌ Wrong: Incorrect Router.navigate() Expectation
@@ -157,6 +231,35 @@ it('should navigate to sport detail', () => {
 it('should navigate to sport detail with year', () => {
   service.toSportDetail(1, 2024);
   expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1], { queryParams: { year: 2024 } });
+});
+```
+
+---
+
+### ❌ Wrong: Testing Tab Changes with Wrong Expectation
+
+**Problem:** Component's `onTabChange()` calls `router.navigate()` but test expects tab signal to change.
+
+```typescript
+// WRONG - onTabChange() navigates, doesn't change activeTab directly
+it('should change tab', () => {
+  component.onTabChange('teams');
+  expect(component.activeTab()).toBe('teams');  // FAILS - stays as 'matches'
+});
+```
+
+**Why it's wrong:** `onTabChange()` calls `router.navigate()` with query params. The `activeTab` signal comes from `toSignal(route.queryParamMap)`, which only updates when navigation happens.
+
+**✅ Correct:**
+```typescript
+it('should change tab', () => {
+  component.onTabChange('teams');
+  expect(routerMock.navigate).toHaveBeenCalledWith(
+    [],
+    expect.objectContaining({
+      queryParams: { tab: 'teams' },
+    })
+  );
 });
 ```
 
@@ -241,6 +344,40 @@ beforeEach(() => {
 3. **Don't mix Observable and snapshot patterns** - match what the code actually uses
 4. **Don't expect services to call alerts directly** when they use helper utilities
 5. **Don't forget to flush HTTP requests** before service instantiation (if service makes requests in constructor)
+
+---
+
+### ❌ Wrong: Expecting 0 When toSignal Returns null
+
+**Problem:** Route param is null but test expects `toSignal(Number(param))` to return 0.
+
+```typescript
+// WRONG - Number(null) returns 0, but toSignal with null returns null
+it('should return null when tournamentId is null', () => {
+  routeMock = { paramMap: of({ get: () => null }) };
+  expect(newComponent.tournamentId()).toBe(0);  // FAILS - it's null
+});
+```
+
+**Why it's wrong:** While `Number(null)` returns 0, `toSignal()` with `initialValue: null` will return null when the Observable emits null. The component explicitly returns null when params are missing:
+
+```typescript
+tournamentId = toSignal(
+  this.route.paramMap.pipe(map((params) => {
+    const val = params.get('id');
+    return val ? Number(val) : null;  // Explicit null check
+  })),
+  { initialValue: null }
+);
+```
+
+**✅ Correct:**
+```typescript
+it('should return null when tournamentId is null', () => {
+  routeMock = { paramMap: of({ get: () => null }) };
+  expect(newComponent.tournamentId()).toBe(null);
+});
+```
 
 ---
 
