@@ -20,6 +20,13 @@ Main application navigation bar with dropdown menus, mobile responsiveness, and 
 - Signal-based state management
 - Accessibility support (ARIA labels, keyboard navigation)
 
+**Layout Structure:**
+- Left: Brand title
+- Left-center: Hamburger menu (mobile), Navigation links (desktop)
+- Right: Theme toggle and auth buttons
+- Desktop: Navigation links aligned left after header
+- Mobile: Hamburger menu opens vertical slide-in navigation
+
 **Click-Outside Dropdown Behavior:**
 - Dropdowns automatically close when clicking outside the navbar
 - Uses `@HostListener` to detect document clicks
