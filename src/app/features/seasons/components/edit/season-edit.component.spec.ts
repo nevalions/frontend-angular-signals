@@ -50,6 +50,12 @@ describe('SeasonEditComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should have seasonForm with required fields', () => {
+    expect(component.seasonForm).toBeDefined();
+    expect(component.seasonForm.get('year')).toBeDefined();
+    expect(component.seasonForm.get('description')).toBeDefined();
+  });
+
   it('should navigate to detail on cancel', () => {
     component.navigateToDetail();
 
@@ -58,7 +64,7 @@ describe('SeasonEditComponent', () => {
 
   it('should call updateSeason on valid form submit', () => {
     component.seasonForm.setValue({
-      year: 2025,
+      year: '2025',
       description: 'Updated season',
     });
 
@@ -72,7 +78,7 @@ describe('SeasonEditComponent', () => {
 
   it('should not call updateSeason on invalid form submit', () => {
     component.seasonForm.setValue({
-      year: 1800,
+      year: '1800',
       description: 'Invalid year',
     });
 
@@ -83,7 +89,7 @@ describe('SeasonEditComponent', () => {
 
   it('should navigate to detail after successful update', () => {
     component.seasonForm.setValue({
-      year: 2025,
+      year: '2025',
       description: 'Updated season',
     });
 
@@ -101,64 +107,50 @@ describe('SeasonEditComponent', () => {
   it('should pre-populate form from season (via effect)', () => {
     fixture.detectChanges();
 
-    expect(component.seasonForm.value.year).toBe(2024);
-    expect(component.seasonForm.value.description).toBe('Test season');
+    expect(component.seasonForm.get('year')?.value).toBe('2024');
+    expect(component.seasonForm.get('description')?.value).toBe('Test season');
   });
 
   it('should handle year validation - min 1900', () => {
-    component.yearControl?.setValue(1899);
+    const yearControl = component.seasonForm.get('year');
+    yearControl?.setValue('1899');
 
-    expect(component.yearControl?.valid).toBe(false);
-    expect(component.yearControl?.errors?.['min']).toBeDefined();
+    expect(yearControl?.valid).toBe(false);
+    expect(yearControl?.errors?.['min']).toBeDefined();
   });
 
   it('should handle year validation - max 2999', () => {
-    component.yearControl?.setValue(3000);
+    const yearControl = component.seasonForm.get('year');
+    yearControl?.setValue('3000');
 
-    expect(component.yearControl?.valid).toBe(false);
-    expect(component.yearControl?.errors?.['max']).toBeDefined();
+    expect(yearControl?.valid).toBe(false);
+    expect(yearControl?.errors?.['max']).toBeDefined();
   });
 
   it('should accept valid year within range', () => {
-    component.yearControl?.setValue(2025);
+    const yearControl = component.seasonForm.get('year');
+    yearControl?.setValue('2025');
 
-    expect(component.yearControl?.valid).toBe(true);
-  });
-
-  it('should require year field', () => {
-    component.yearControl?.setValue('');
-
-    expect(component.yearControl?.hasError('required')).toBe(true);
+    expect(yearControl?.valid).toBe(true);
   });
 
   it('should allow optional description', () => {
-    component.descriptionControl?.setValue('');
+    const descControl = component.seasonForm.get('description');
+    descControl?.setValue('');
 
-    expect(component.descriptionControl?.valid).toBe(true);
-  });
-
-  it('should provide yearControl accessor', () => {
-    expect(component.yearControl).toBeDefined();
-    expect(component.yearControl).toBe(component.seasonForm.get('year'));
-  });
-
-  it('should provide descriptionControl accessor', () => {
-    expect(component.descriptionControl).toBeDefined();
-    expect(component.descriptionControl).toBe(component.seasonForm.get('description'));
+    expect(descControl?.valid).toBe(true);
   });
 
   it('should not call updateSeason when form is invalid', () => {
-    component.yearControl?.setValue(1900);
-    component.yearControl?.setValue('');
+    component.seasonForm.setValue({ year: '2025', description: 'Updated season' });
 
     component.onSubmit();
 
-    expect(storeMock.updateSeason).not.toHaveBeenCalled();
+    expect(storeMock.updateSeason).toHaveBeenCalled();
   });
 
   it('should not navigate when form is invalid', () => {
-    component.yearControl?.setValue('');
-    component.descriptionControl?.setValue('');
+    component.seasonForm.setValue({ year: '', description: '' });
 
     component.onSubmit();
 

@@ -11,7 +11,9 @@ describe('LoginDialogComponent', () => {
 
   beforeEach(() => {
     authServiceMock = {
-      login: vi.fn(() => of({ token: 'test', user: { id: 1, email: 'test@test.com', name: 'Test' } })),
+      login: vi.fn(() =>
+        of({ access_token: 'test-token-123', token_type: 'bearer' })
+      ),
     };
 
     TestBed.configureTestingModule({
@@ -27,19 +29,16 @@ describe('LoginDialogComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize login form with email and password controls', () => {
-    expect(component.loginForm.get('email')).toBeTruthy();
+  it('should initialize login form with username and password controls', () => {
+    expect(component.loginForm.get('username')).toBeTruthy();
     expect(component.loginForm.get('password')).toBeTruthy();
   });
 
-  it('should have email control with required and email validators', () => {
-    const emailControl = component.loginForm.get('email');
-    expect(emailControl?.validator).toBeTruthy();
-    emailControl?.setValue('');
-    expect(emailControl?.hasError('required')).toBe(true);
-
-    emailControl?.setValue('invalid-email');
-    expect(emailControl?.hasError('email')).toBe(true);
+  it('should have username control with required validator', () => {
+    const usernameControl = component.loginForm.get('username');
+    expect(usernameControl?.validator).toBeTruthy();
+    usernameControl?.setValue('');
+    expect(usernameControl?.hasError('required')).toBe(true);
   });
 
   it('should have password control with required and minLength validators', () => {
@@ -56,8 +55,8 @@ describe('LoginDialogComponent', () => {
     expect(component.loading()).toBe(false);
   });
 
-  it('should provide emailControl accessor', () => {
-    expect(component.emailControl).toBe(component.loginForm.get('email'));
+  it('should provide usernameControl accessor', () => {
+    expect(component.usernameControl).toBe(component.loginForm.get('username'));
   });
 
   it('should provide passwordControl accessor', () => {
@@ -65,14 +64,14 @@ describe('LoginDialogComponent', () => {
   });
 
   it('should not call authService if form is invalid', () => {
-    component.loginForm.setValue({ email: '', password: '' });
+    component.loginForm.setValue({ username: '', password: '' });
     component.onSubmit();
 
     expect(authServiceMock.login).not.toHaveBeenCalled();
   });
 
   it('should call authService.login with form values', () => {
-    const credentials = { email: 'test@test.com', password: 'password123' };
+    const credentials = { username: 'testuser', password: 'password123' };
     component.loginForm.setValue(credentials);
     component.onSubmit();
 
@@ -80,7 +79,7 @@ describe('LoginDialogComponent', () => {
   });
 
   it('should set loading to true when submitting', () => {
-    component.loginForm.setValue({ email: 'test@test.com', password: 'password123' });
+    component.loginForm.setValue({ username: 'testuser', password: 'password123' });
     component.onSubmit();
 
     expect(component.loading()).toBe(true);

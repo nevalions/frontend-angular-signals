@@ -50,40 +50,24 @@ describe('PersonCreateComponent', () => {
     expect(component.personForm).toBeDefined();
     expect(component.personForm.get('first_name')).toBeDefined();
     expect(component.personForm.get('second_name')).toBeDefined();
+    expect(component.personForm.get('person_eesl_id')).toBeDefined();
+    expect(component.personForm.get('person_dob')).toBeDefined();
   });
 
   it('should require first_name field', () => {
-    component.personForm.setValue({ first_name: '', second_name: '' });
+    component.personForm.setValue({ first_name: '', second_name: '', person_eesl_id: null, person_dob: '' });
 
     expect(component.personForm.get('first_name')?.hasError('required')).toBe(true);
   });
 
   it('should allow empty second_name', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: '' });
+    component.personForm.setValue({ first_name: 'John', second_name: '', person_eesl_id: null, person_dob: '' });
 
     expect(component.personForm.valid).toBe(true);
   });
 
   it('should have valid form with all fields filled', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
-
-    expect(component.personForm.valid).toBe(true);
-  });
-
-  it('should require first_name field', () => {
-    component.personForm.setValue({ first_name: '', second_name: '' });
-
-    expect(component.personForm.get('first_name')?.hasError('required')).toBe(true);
-  });
-
-  it('should allow empty second_name', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: '' });
-
-    expect(component.personForm.valid).toBe(true);
-  });
-
-  it('should have valid form with all fields filled', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
 
     expect(component.personForm.valid).toBe(true);
   });
@@ -134,7 +118,7 @@ describe('PersonCreateComponent', () => {
 
   it('should call createPerson with photo URL on valid form submit', () => {
     component.photoPreviewUrl.set('http://test.com/photo.jpg');
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -143,11 +127,13 @@ describe('PersonCreateComponent', () => {
       first_name: 'John',
       second_name: 'Doe',
       person_photo_url: 'http://test.com/photo.jpg',
+      person_eesl_id: null,
+      person_dob: '',
     });
   });
 
   it('should call createPerson without photo URL when no photo uploaded', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -156,11 +142,13 @@ describe('PersonCreateComponent', () => {
       first_name: 'John',
       second_name: 'Doe',
       person_photo_url: null,
+      person_eesl_id: null,
+      person_dob: '',
     });
   });
 
   it('should not call createPerson on invalid form submit', () => {
-    component.personForm.setValue({ first_name: '', second_name: '' });
+    component.personForm.setValue({ first_name: '', second_name: '', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -169,14 +157,14 @@ describe('PersonCreateComponent', () => {
   });
 
   it('should show alert on successful creation', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     component.onSubmit();
 
     expect(alertsMock.open).toHaveBeenCalledWith('Person created successfully', expect.any(Object));
   });
 
   it('should navigate to list after successful creation', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     component.onSubmit();
 
     expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);

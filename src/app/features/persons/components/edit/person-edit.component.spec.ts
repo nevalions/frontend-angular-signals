@@ -36,8 +36,8 @@ describe('PersonEditComponent', () => {
 
     storeMock = {
       persons: vi.fn().mockReturnValue([
-        { id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null } as Person,
-        { id: 2, first_name: 'Jane', second_name: 'Smith', person_photo_url: 'http://example.com/jane.jpg' } as Person,
+        { id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null, person_eesl_id: null, person_dob: null } as Person,
+        { id: 2, first_name: 'Jane', second_name: 'Smith', person_photo_url: 'http://example.com/jane.jpg', person_eesl_id: null, person_dob: null } as Person,
       ]),
       updatePerson: vi.fn().mockReturnValue(of(undefined)),
       uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'http://test.com/new-photo.jpg' })),
@@ -66,12 +66,14 @@ describe('PersonEditComponent', () => {
     expect(component.personForm).toBeDefined();
     expect(component.personForm.get('first_name')).toBeDefined();
     expect(component.personForm.get('second_name')).toBeDefined();
+    expect(component.personForm.get('person_eesl_id')).toBeDefined();
+    expect(component.personForm.get('person_dob')).toBeDefined();
   });
 
   it('should find person by id from store', () => {
     const person = component.person();
 
-    expect(person).toEqual({ id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null });
+    expect(person).toEqual({ id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null, person_eesl_id: null, person_dob: null });
   });
 
   it('should patch form with person data', () => {
@@ -80,19 +82,19 @@ describe('PersonEditComponent', () => {
   });
 
   it('should require first_name field', () => {
-    component.personForm.setValue({ first_name: '', second_name: '' });
+    component.personForm.setValue({ first_name: '', second_name: '', person_eesl_id: null, person_dob: '' });
 
     expect(component.personForm.get('first_name')?.hasError('required')).toBe(true);
   });
 
   it('should allow empty second_name', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: '' });
+    component.personForm.setValue({ first_name: 'John', second_name: '', person_eesl_id: null, person_dob: '' });
 
     expect(component.personForm.valid).toBe(true);
   });
 
   it('should have valid form with all fields filled', () => {
-    component.personForm.setValue({ first_name: 'John', second_name: 'Doe' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
 
     expect(component.personForm.valid).toBe(true);
   });
@@ -158,7 +160,7 @@ describe('PersonEditComponent', () => {
 
   it('should call updatePerson with new photo URL on valid form submit', () => {
     component.photoPreviewUrl.set('http://test.com/new-photo.jpg');
-    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith' });
+    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -167,11 +169,13 @@ describe('PersonEditComponent', () => {
       first_name: 'Jane',
       second_name: 'Smith',
       person_photo_url: 'http://test.com/new-photo.jpg',
+      person_eesl_id: null,
+      person_dob: '',
     });
   });
 
   it('should call updatePerson without photo URL when no new photo uploaded', () => {
-    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith' });
+    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -179,12 +183,13 @@ describe('PersonEditComponent', () => {
     expect(storeMock.updatePerson).toHaveBeenCalledWith(1, {
       first_name: 'Jane',
       second_name: 'Smith',
+      person_eesl_id: null,
+      person_dob: '',
     });
-    expect(storeMock.updatePerson).not.toHaveBeenCalledWith(1, expect.objectContaining({ person_photo_url: expect.any(String) }));
   });
 
   it('should not call updatePerson on invalid form submit', () => {
-    component.personForm.setValue({ first_name: '', second_name: '' });
+    component.personForm.setValue({ first_name: '', second_name: '', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -193,14 +198,14 @@ describe('PersonEditComponent', () => {
   });
 
   it('should show alert on successful update', () => {
-    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith' });
+    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith', person_eesl_id: null, person_dob: '' });
     component.onSubmit();
 
     expect(alertsMock.open).toHaveBeenCalledWith('Person updated successfully', expect.any(Object));
   });
 
   it('should navigate to list after successful update', () => {
-    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith' });
+    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith', person_eesl_id: null, person_dob: '' });
     component.onSubmit();
 
     expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);

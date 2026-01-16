@@ -132,10 +132,14 @@ describe('SportDetailComponent', () => {
   });
 
   it('should change tab', () => {
-    component.activeTab = 'tournaments';
     component.onTabChange('players');
 
-    expect(component.activeTab).toBe('players');
+    expect(routerMock.navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({
+        queryParams: { tab: 'players' },
+      })
+    );
   });
 
   it('should delete sport with confirmation', () => {

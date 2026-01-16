@@ -1,28 +1,36 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
-import { LoginResponse } from '../models/login-response.model';
-import { of } from 'rxjs';
+import { UserInfo } from '../models/login-response.model';
+import { of, throwError } from 'rxjs';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let httpMock: HttpTestingController;
 
-  const mockLoginResponse: LoginResponse = {
-    token: 'test-token-123',
-    user: {
-      id: 1,
-      email: 'test@example.com',
-      name: 'Test User',
-    },
+  const mockUserInfo: UserInfo = {
+    id: 1,
+    username: 'testuser',
+    email: 'test@example.com',
+    is_active: true,
+    person_id: null,
+    roles: [],
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       providers: [AuthService],
     });
 
     service = TestBed.inject(AuthService);
+    httpMock = TestBed.inject(HttpTestingController);
     localStorage.clear();
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should be created', () => {
@@ -48,7 +56,7 @@ describe('AuthService', () => {
 
   it('should clear currentUser signal on logout', () => {
     localStorage.setItem('auth_token', 'test-token');
-    localStorage.setItem('auth_user', JSON.stringify(mockLoginResponse.user));
+    localStorage.setItem('auth_user', JSON.stringify(mockUserInfo));
     service.logout();
 
     expect(service.currentUser()).toBeNull();
@@ -58,9 +66,30 @@ describe('AuthService', () => {
   });
 
   it('should load user from localStorage on initialization', () => {
-    localStorage.setItem('auth_user', JSON.stringify(mockLoginResponse.user));
+    localStorage.setItem('auth_user', JSON.stringify(mockUserInfo));
     const newService = TestBed.inject(AuthService);
-    expect(newService.currentUser()).toEqual(mockLoginResponse.user);
+    expect(newService.currentUser()).toEqual(mockUserInfo);
     expect(newService.isAuthenticated()).toBe(true);
+  });
+
+  it('should login and store token', () => {
+    service.login({ username: 'testuser', password: 'password' }).subscribe();
+
+    const req = httpMock.expectOne('/api/auth/login');
+    expect(req.request.method).toBe('POST');
+    req.flush({ access_token: 'test-token-123', token_type: 'bearer' });
+
+    expect(localStorage.getItem('auth_token')).toBe('test-token-123');
+  });
+
+  it('should return auth headers with token', () => {
+    localStorage.setItem('auth_token', 'test-token');
+    const headers = service.getAuthHeaders();
+    expect(headers).toEqual({ Authorization: 'Bearer test-token' });
+  });
+
+  it('should return empty auth headers without token', () => {
+    const headers = service.getAuthHeaders();
+    expect(headers).toEqual({});
   });
 });

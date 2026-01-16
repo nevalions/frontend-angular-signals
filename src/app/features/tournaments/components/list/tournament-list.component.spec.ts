@@ -117,7 +117,7 @@ describe('TournamentListComponent', () => {
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      expect(newComponent.year()).toBe(2024);
+      expect(newComponent.initialYear()).toBe(2024);
     });
   });
 
