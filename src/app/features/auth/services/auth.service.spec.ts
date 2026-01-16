@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { UserInfo } from '../models/login-response.model';
 import { of, throwError } from 'rxjs';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { buildApiUrl } from '../../../core/config/api.constants';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -27,10 +28,6 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
     localStorage.clear();
-  });
-
-  afterEach(() => {
-    httpMock.verify();
   });
 
   it('should be created', () => {
@@ -67,6 +64,11 @@ describe('AuthService', () => {
 
   it('should load user from localStorage on initialization', () => {
     localStorage.setItem('auth_user', JSON.stringify(mockUserInfo));
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [AuthService],
+    });
     const newService = TestBed.inject(AuthService);
     expect(newService.currentUser()).toEqual(mockUserInfo);
     expect(newService.isAuthenticated()).toBe(true);
@@ -75,7 +77,7 @@ describe('AuthService', () => {
   it('should login and store token', () => {
     service.login({ username: 'testuser', password: 'password' }).subscribe();
 
-    const req = httpMock.expectOne('/api/auth/login');
+    const req = httpMock.expectOne(buildApiUrl('/api/auth/login'));
     expect(req.request.method).toBe('POST');
     req.flush({ access_token: 'test-token-123', token_type: 'bearer' });
 

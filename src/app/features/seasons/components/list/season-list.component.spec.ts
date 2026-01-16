@@ -82,7 +82,21 @@ describe('SeasonListComponent', () => {
   });
 
   it('should handle loading state correctly', () => {
-    storeMock.loading = vi.fn(() => true);
+    const mockSeasons: Season[] = [];
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: Router, useValue: routerMock },
+        {
+          provide: SeasonStoreService,
+          useValue: {
+            seasons: vi.fn(() => mockSeasons),
+            loading: vi.fn(() => true),
+            error: vi.fn(() => null),
+          },
+        },
+      ],
+    });
     const newComponent = TestBed.createComponent(SeasonListComponent).componentInstance;
 
     expect(newComponent.loading()).toBe(true);
@@ -90,14 +104,40 @@ describe('SeasonListComponent', () => {
 
   it('should handle error state correctly', () => {
     const mockError = new Error('API Error');
-    storeMock.error = vi.fn(() => mockError);
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: Router, useValue: routerMock },
+        {
+          provide: SeasonStoreService,
+          useValue: {
+            seasons: vi.fn(() => []),
+            loading: vi.fn(() => false),
+            error: vi.fn(() => mockError),
+          },
+        },
+      ],
+    });
     const newComponent = TestBed.createComponent(SeasonListComponent).componentInstance;
 
     expect(newComponent.error()).toBe(mockError);
   });
 
   it('should handle empty seasons list', () => {
-    storeMock.seasons = vi.fn(() => []);
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: Router, useValue: routerMock },
+        {
+          provide: SeasonStoreService,
+          useValue: {
+            seasons: vi.fn(() => []),
+            loading: vi.fn(() => false),
+            error: vi.fn(() => null),
+          },
+        },
+      ],
+    });
     const newComponent = TestBed.createComponent(SeasonListComponent).componentInstance;
 
     expect(newComponent.seasons()).toEqual([]);

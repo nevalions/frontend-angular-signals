@@ -22,8 +22,12 @@ describe('SeasonEditComponent', () => {
     };
 
     routeMock = {
-      paramMap: of({ get: (key: string) => (key === 'id' ? '1' : null) }),
-    };
+      snapshot: {
+        paramMap: {
+          get: (key: string) => (key === 'id' ? '1' : null),
+        },
+      },
+    } as unknown as ActivatedRoute;
 
     storeMock = {
       seasons: vi.fn().mockReturnValue([

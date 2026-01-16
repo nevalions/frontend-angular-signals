@@ -64,7 +64,7 @@ describe('PositionStoreService', () => {
 
       service.updatePosition(1, positionData).subscribe();
 
-      const req = httpMock.expectOne(buildApiUrl('/api/positions/1'));
+      const req = httpMock.expectOne(buildApiUrl('/api/positions/1/'));
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(positionData);
       req.flush({ id: 1, title: 'Winger', sport_id: 1 } as Position);

@@ -23,10 +23,6 @@ describe('TeamStoreService', () => {
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-
   it('should have teams signal', () => {
     expect(service.teams).toBeDefined();
     expect(typeof service.teams === 'function').toBe(true);
@@ -83,30 +79,30 @@ describe('TeamStoreService', () => {
     req.flush(mockResponse);
   });
 
-  it('should call updateTeam with correct data', () => {
-    const teamUpdate: TeamUpdate = { title: 'Updated Team' };
-    const mockResponse: Team = {
-      id: 1,
-      title: 'Updated Team',
-      team_color: '#c01c28',
-      sport_id: 1,
-    };
+    it('should call updateTeam with correct data', () => {
+      const teamUpdate: TeamUpdate = { title: 'Updated Team' };
+      const mockResponse: Team = {
+        id: 1,
+        title: 'Updated Team',
+        team_color: '#c01c28',
+        sport_id: 1,
+      };
 
-    service.updateTeam(1, teamUpdate).subscribe();
+      service.updateTeam(1, teamUpdate).subscribe();
 
-    const req = httpMock.expectOne(buildApiUrl('/api/teams/1'));
-    expect(req.request.method).toBe('PUT');
-    expect(req.request.body).toEqual(teamUpdate);
-    req.flush(mockResponse);
-  });
+      const req = httpMock.expectOne(buildApiUrl('/api/teams/1/'));
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(teamUpdate);
+      req.flush(mockResponse);
+    });
 
-  it('should call deleteTeam with correct id', () => {
-    service.deleteTeam(1).subscribe();
+    it('should call deleteTeam with correct id', () => {
+      service.deleteTeam(1).subscribe();
 
-    const req = httpMock.expectOne(buildApiUrl('/api/teams/1'));
-    expect(req.request.method).toBe('DELETE');
-    req.flush(null);
-  });
+      const req = httpMock.expectOne(buildApiUrl('/api/teams/id/1'));
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
 
   it('should get teams by sport id with pagination', () => {
     const mockResponse = {

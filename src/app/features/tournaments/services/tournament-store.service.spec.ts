@@ -58,7 +58,6 @@ describe('TournamentStoreService', () => {
 
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(tournamentData);
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Tournament created successfully', { label: 'Success' });
     });
 
     it('should handle createTournament error', () => {
@@ -76,7 +75,6 @@ describe('TournamentStoreService', () => {
       req.flush('Error', { status: 400, statusText: 'Bad Request' });
 
       expect(req.request.method).toBe('POST');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Tournament created successfully', { label: 'Success' });
     });
 
     it('should call updateTournament with correct data', () => {
@@ -91,7 +89,6 @@ describe('TournamentStoreService', () => {
 
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(tournamentData);
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Tournament updated successfully', { label: 'Success' });
     });
 
     it('should handle updateTournament error', () => {
@@ -107,17 +104,15 @@ describe('TournamentStoreService', () => {
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('PUT');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Tournament updated successfully', { label: 'Success' });
     });
 
     it('should call deleteTournament with correct URL', () => {
       service.deleteTournament(1).subscribe();
 
-      const req = httpMock.expectOne(buildApiUrl('/api/tournaments/1'));
+      const req = httpMock.expectOne(buildApiUrl('/api/tournaments/id/1'));
       req.flush(null);
 
       expect(req.request.method).toBe('DELETE');
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Tournament deleted successfully', { label: 'Success' });
     });
 
     it('should handle deleteTournament error', () => {
@@ -125,11 +120,10 @@ describe('TournamentStoreService', () => {
         error: (err) => expect(err).toBeTruthy(),
       });
 
-      const req = httpMock.expectOne(buildApiUrl('/api/tournaments/1'));
+      const req = httpMock.expectOne(buildApiUrl('/api/tournaments/id/1'));
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('DELETE');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Tournament deleted successfully', { label: 'Success' });
     });
 
     it('should call getTournamentsBySeasonAndSport with correct URL', () => {

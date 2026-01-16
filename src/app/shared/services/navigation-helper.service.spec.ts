@@ -19,6 +19,7 @@ describe('NavigationHelperService', () => {
     });
 
     service = TestBed.inject(NavigationHelperService);
+    vi.clearAllMocks();
   });
 
   it('should create a service', () => {
@@ -34,7 +35,7 @@ describe('NavigationHelperService', () => {
   it('should navigate to tournament detail', () => {
     service.toTournamentDetail(1, 2024, 5);
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1, 'seasons', 2024, 'tournaments', 5]);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1, 'seasons', 2024, 'tournaments', 5], {});
   });
 
   it('should navigate to tournament edit', () => {
@@ -52,7 +53,7 @@ describe('NavigationHelperService', () => {
   it('should navigate to sport detail', () => {
     service.toSportDetail(1);
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1]);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1], { queryParams: {} });
   });
 
   it('should navigate to sport detail with year', () => {

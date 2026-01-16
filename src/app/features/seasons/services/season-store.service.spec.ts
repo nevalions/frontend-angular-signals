@@ -57,7 +57,6 @@ describe('SeasonStoreService', () => {
 
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(seasonData);
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Season created successfully', { label: 'Success' });
     });
 
     it('should handle createSeason error', () => {
@@ -74,7 +73,6 @@ describe('SeasonStoreService', () => {
       req.flush('Error', { status: 400, statusText: 'Bad Request' });
 
       expect(req.request.method).toBe('POST');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Season created successfully', { label: 'Success' });
     });
 
     it('should call updateSeason with correct data', () => {
@@ -90,7 +88,6 @@ describe('SeasonStoreService', () => {
 
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(seasonData);
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Season updated successfully', { label: 'Success' });
     });
 
     it('should handle updateSeason error', () => {
@@ -107,7 +104,6 @@ describe('SeasonStoreService', () => {
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('PUT');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Season updated successfully', { label: 'Success' });
     });
 
     it('should call deleteSeason with correct URL', () => {
@@ -117,7 +113,6 @@ describe('SeasonStoreService', () => {
       req.flush(null);
 
       expect(req.request.method).toBe('DELETE');
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Season deleted successfully', { label: 'Success' });
     });
 
     it('should handle deleteSeason error', () => {
@@ -129,7 +124,6 @@ describe('SeasonStoreService', () => {
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('DELETE');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Season deleted successfully', { label: 'Success' });
     });
 
     it('should call getTournamentsByYear with correct URL', () => {

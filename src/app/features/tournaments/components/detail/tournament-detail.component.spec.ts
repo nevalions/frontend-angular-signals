@@ -62,7 +62,7 @@ describe('TournamentDetailComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => '1' }) } },
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => '1' }), queryParamMap: of({ get: (_key: string) => null }) } },
         { provide: TournamentStoreService, useValue: tournamentStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
         { provide: SportStoreService, useValue: sportStoreMock },

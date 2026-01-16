@@ -6,6 +6,7 @@ import { TournamentListComponent } from './tournament-list.component';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { Tournament } from '../../models/tournament.model';
 import { Season } from '../../../seasons/models/season.model';
 import { Sport } from '../../../sports/models/sport.model';
@@ -13,6 +14,11 @@ import { Sport } from '../../../sports/models/sport.model';
 describe('TournamentListComponent', () => {
   let component: TournamentListComponent;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let navHelperMock: {
+    toSportDetail: ReturnType<typeof vi.fn>;
+    toTournamentDetail: ReturnType<typeof vi.fn>;
+    toTournamentCreate: ReturnType<typeof vi.fn>;
+  };
   let tournamentStoreMock: {
     tournaments: ReturnType<typeof vi.fn>;
     loading: ReturnType<typeof vi.fn>;
@@ -44,6 +50,12 @@ describe('TournamentListComponent', () => {
       navigate: vi.fn(),
     };
 
+    navHelperMock = {
+      toSportDetail: vi.fn(),
+      toTournamentDetail: vi.fn(),
+      toTournamentCreate: vi.fn(),
+    };
+
     seasonStoreMock = {
       seasons: vi.fn(() => mockSeasons),
       seasonByYear: vi.fn(() => {
@@ -70,6 +82,8 @@ describe('TournamentListComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: Router, useValue: routerMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => null }) } },
         { provide: TournamentStoreService, useValue: tournamentStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
         { provide: SportStoreService, useValue: sportStoreMock },
@@ -87,6 +101,8 @@ describe('TournamentListComponent', () => {
 
   describe('Route params', () => {
     it('should read sportId from route params', () => {
+      TestBed.resetTestingModule();
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => (key === 'sportId' ? '1' : null) }),
       };
@@ -104,6 +120,8 @@ describe('TournamentListComponent', () => {
     });
 
     it('should read year from route params', () => {
+      TestBed.resetTestingModule();
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => (key === 'year' ? '2024' : null) }),
       };
@@ -123,6 +141,8 @@ describe('TournamentListComponent', () => {
 
   describe('Computed signals', () => {
     it('should filter tournaments by sport and season', () => {
+      TestBed.resetTestingModule();
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => {
           if (key === 'sportId') return '1';
@@ -145,6 +165,7 @@ describe('TournamentListComponent', () => {
     });
 
     it('should return empty tournaments when sportId is null', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: () => null }),
       };
@@ -162,6 +183,7 @@ describe('TournamentListComponent', () => {
     });
 
     it('should return empty tournaments when year is null', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => (key === 'sportId' ? '1' : null) }),
       };
@@ -179,6 +201,7 @@ describe('TournamentListComponent', () => {
     });
 
     it('should get sport by id from store', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => (key === 'sportId' ? '1' : null) }),
       };
@@ -197,6 +220,7 @@ describe('TournamentListComponent', () => {
     });
 
     it('should return null when sport is not found', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => (key === 'sportId' ? '99' : null) }),
       };
@@ -214,6 +238,7 @@ describe('TournamentListComponent', () => {
     });
 
     it('should get season by year from store', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => (key === 'year' ? '2024' : null) }),
       };
@@ -232,6 +257,7 @@ describe('TournamentListComponent', () => {
     });
 
     it('should return null when season is not found', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => (key === 'year' ? '2026' : null) }),
       };
@@ -255,24 +281,32 @@ describe('TournamentListComponent', () => {
 
   describe('Navigation methods', () => {
     it('should navigate back to seasons year page', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
-        paramMap: of({ get: (key: string) => (key === 'year' ? '2024' : null) }),
+        paramMap: of({ get: (key: string) => {
+          if (key === 'sportId') return '1';
+          if (key === 'year') return '2024';
+          return null;
+        }}),
       };
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: Router, useValue: routerMock },
+          { provide: NavigationHelperService, useValue: navHelperMock },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
+      (newComponent as any).selectedSeasonYear.set(2024);
       newComponent.navigateBack();
-      expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024]);
+      expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1, 2024);
     });
 
     it('should navigate to create tournament page', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => {
           if (key === 'sportId') return '1';
@@ -284,17 +318,20 @@ describe('TournamentListComponent', () => {
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: Router, useValue: routerMock },
+          { provide: NavigationHelperService, useValue: navHelperMock },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
+      (newComponent as any).selectedSeasonYear.set(2024);
       newComponent.navigateToCreate();
-      expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1, 'seasons', 2024, 'tournaments', 'new']);
+      expect(navHelperMock.toTournamentCreate).toHaveBeenCalledWith(1, 2024);
     });
 
     it('should navigate to tournament detail page', () => {
+      TestBed.resetTestingModule();
       const routeMock = {
         paramMap: of({ get: (key: string) => {
           if (key === 'sportId') return '1';
@@ -306,14 +343,16 @@ describe('TournamentListComponent', () => {
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: Router, useValue: routerMock },
+          { provide: NavigationHelperService, useValue: navHelperMock },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
+      (newComponent as any).selectedSeasonYear.set(2024);
       newComponent.navigateToDetail(1);
-      expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1, 'seasons', 2024, 'tournaments', 1]);
+      expect(navHelperMock.toTournamentDetail).toHaveBeenCalledWith(1, 2024, 1);
     });
   });
 });

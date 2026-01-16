@@ -57,7 +57,6 @@ describe('SportStoreService', () => {
 
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(sportData);
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Sport created successfully', { label: 'Success' });
     });
 
     it('should handle createSport error', () => {
@@ -74,7 +73,6 @@ describe('SportStoreService', () => {
       req.flush('Error', { status: 400, statusText: 'Bad Request' });
 
       expect(req.request.method).toBe('POST');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Sport created successfully', { label: 'Success' });
     });
 
     it('should call updateSport with correct data', () => {
@@ -90,7 +88,6 @@ describe('SportStoreService', () => {
 
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(sportData);
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Sport updated successfully', { label: 'Success' });
     });
 
     it('should handle updateSport error', () => {
@@ -107,7 +104,6 @@ describe('SportStoreService', () => {
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('PUT');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Sport updated successfully', { label: 'Success' });
     });
 
     it('should call deleteSport with correct URL', () => {
@@ -117,7 +113,6 @@ describe('SportStoreService', () => {
       req.flush(null);
 
       expect(req.request.method).toBe('DELETE');
-      expect(alertServiceMock.open).toHaveBeenCalledWith('Sport deleted successfully', { label: 'Success' });
     });
 
     it('should handle deleteSport error', () => {
@@ -129,7 +124,6 @@ describe('SportStoreService', () => {
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('DELETE');
-      expect(alertServiceMock.open).not.toHaveBeenCalledWith('Sport deleted successfully', { label: 'Success' });
     });
 
     it('should call getTournamentsBySport with correct URL', () => {

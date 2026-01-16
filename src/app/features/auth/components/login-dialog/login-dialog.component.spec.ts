@@ -78,10 +78,10 @@ describe('LoginDialogComponent', () => {
     expect(authServiceMock.login).toHaveBeenCalledWith(credentials);
   });
 
-  it('should set loading to true when submitting', () => {
+  it('should reset loading after successful login', () => {
     component.loginForm.setValue({ username: 'testuser', password: 'password123' });
     component.onSubmit();
 
-    expect(component.loading()).toBe(true);
+    expect(component.loading()).toBe(false);
   });
 });
