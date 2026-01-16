@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
+import { provideRouter } from '@angular/router';
 
 import { NavbarComponent } from './navbar.component';
 import { SeasonStoreService } from '../../../features/seasons/services/season-store.service';
@@ -40,6 +41,7 @@ describe('NavbarComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         { provide: SeasonStoreService, useValue: seasonStoreMock },
         { provide: SportStoreService, useValue: sportStoreMock },
         { provide: ThemeService, useValue: themeServiceMock },

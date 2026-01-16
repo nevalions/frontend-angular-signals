@@ -163,8 +163,9 @@ describe('TournamentListComponent', () => {
           { provide: SportStoreService, useValue: sportStoreMock },
         ],
       });
-      const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      const tournaments = newComponent.tournaments();
+      const fixture = TestBed.createComponent(TournamentListComponent);
+      fixture.detectChanges();
+      const tournaments = fixture.componentInstance.tournaments();
       expect(tournaments).toEqual(mockTournaments);
     });
 
@@ -255,8 +256,9 @@ describe('TournamentListComponent', () => {
           { provide: SportStoreService, useValue: sportStoreMock },
         ],
       });
-      const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      const season = newComponent.season();
+      const fixture = TestBed.createComponent(TournamentListComponent);
+      fixture.detectChanges();
+      const season = fixture.componentInstance.season();
       expect(season).toEqual(mockSeasons[0]);
     });
 
@@ -274,8 +276,9 @@ describe('TournamentListComponent', () => {
           { provide: SportStoreService, useValue: sportStoreMock },
         ],
       });
-      const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      expect(newComponent.season()).toBeNull();
+      const fixture = TestBed.createComponent(TournamentListComponent);
+      fixture.detectChanges();
+      expect(fixture.componentInstance.season()).toBeNull();
     });
 
     it('should expose loading state from store', () => {

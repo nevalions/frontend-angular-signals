@@ -51,6 +51,6 @@ describe('AuthButtonsComponent', () => {
     component.logout();
 
     expect(authServiceMock.logout).toHaveBeenCalled();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/home']);
   });
 });

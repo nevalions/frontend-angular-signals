@@ -14,6 +14,7 @@ describe('TournamentDetailComponent', () => {
   let component: TournamentDetailComponent;
   let fixture: ComponentFixture<TournamentDetailComponent>;
   let navHelperMock: { toSportDetail: ReturnType<typeof vi.fn>; toTournamentEdit: ReturnType<typeof vi.fn> };
+  let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
   let dialogsMock: { open: ReturnType<typeof vi.fn> };
   let tournamentStoreMock: { tournaments: ReturnType<typeof vi.fn>; loading: ReturnType<typeof vi.fn>; deleteTournament: ReturnType<typeof vi.fn> };
@@ -21,6 +22,10 @@ describe('TournamentDetailComponent', () => {
   let sportStoreMock: { sports: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
+    routerMock = {
+      navigate: vi.fn(),
+    };
+
     navHelperMock = {
       toSportDetail: vi.fn(),
       toTournamentEdit: vi.fn(),
@@ -61,8 +66,23 @@ describe('TournamentDetailComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => '1' }), queryParamMap: of({ get: (_key: string) => 'matches' }) } },
+        { provide: Router, useValue: routerMock },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of({
+              get: (key: string) => {
+                switch (key) {
+                  case 'sportId': return '1';
+                  case 'year': return '2024';
+                  case 'id': return '1';
+                  default: return null;
+                }
+              }
+            }),
+            queryParamMap: of({ get: (_key: string) => 'matches' })
+          }
+        },
         { provide: TournamentStoreService, useValue: tournamentStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
         { provide: SportStoreService, useValue: sportStoreMock },
@@ -86,13 +106,31 @@ describe('TournamentDetailComponent', () => {
 
   it('should change tab', () => {
     component.onTabChange('teams');
-    expect(component.activeTab()).toBe('teams');
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({
+        queryParams: { tab: 'teams' },
+      })
+    );
 
     component.onTabChange('players');
-    expect(component.activeTab()).toBe('players');
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({
+        queryParams: { tab: 'players' },
+      })
+    );
 
     component.onTabChange('matches');
-    expect(component.activeTab()).toBe('matches');
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({
+        queryParams: { tab: 'matches' },
+      })
+    );
   });
 
   it('should navigate back on button click', () => {
@@ -115,7 +153,22 @@ describe('TournamentDetailComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => '1' }), queryParamMap: of({ get: (_key: string) => '2024' }) } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of({
+              get: (key: string) => {
+                switch (key) {
+                  case 'sportId': return '1';
+                  case 'year': return '2024';
+                  case 'id': return '1';
+                  default: return null;
+                }
+              }
+            }),
+            queryParamMap: of({ get: (_key: string) => 'matches' })
+          }
+        },
         { provide: TournamentStoreService, useValue: tournamentStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
         { provide: SportStoreService, useValue: sportStoreMock },
@@ -138,6 +191,7 @@ describe('TournamentDetailComponent', () => {
   it('should return null when tournamentId is null (Number() conversion)', () => {
     const nullRouteMock = {
       paramMap: of({ get: (_key: string) => null }),
+      queryParamMap: of({ get: (_key: string) => 'matches' }),
     };
 
     TestBed.resetTestingModule();
@@ -157,13 +211,14 @@ describe('TournamentDetailComponent', () => {
     const newFixture = TestBed.createComponent(TournamentDetailComponent);
     const newComponent = newFixture.componentInstance;
 
-    expect(newComponent.tournamentId()).toBe(0);
+    expect(newComponent.tournamentId()).toBe(null);
     expect(newComponent.tournament()).toBe(null);
   });
 
   it('should return null when tournament is not found', () => {
     const id99RouteMock = {
       paramMap: of({ get: (_key: string) => '99' }),
+      queryParamMap: of({ get: (_key: string) => 'matches' }),
     };
 
     TestBed.resetTestingModule();

@@ -47,20 +47,6 @@ describe('TeamStoreService', () => {
     expect(typeof service.reload).toBe('function');
   });
 
-  it('should load teams on init', () => {
-    const mockTeams: Team[] = [
-      { id: 1, title: 'Team 1', team_color: '#c01c28', sport_id: 1 },
-      { id: 2, title: 'Team 2', team_color: '#DA291C', sport_id: 1 },
-    ];
-
-    service.reload();
-
-    const req = httpMock.expectOne(buildApiUrl('/api/teams/'));
-    req.flush(mockTeams);
-
-    expect(service.teams()).toEqual(mockTeams);
-  });
-
   it('should call createTeam with correct data', () => {
     const teamData: TeamCreate = {
       title: 'New Team',

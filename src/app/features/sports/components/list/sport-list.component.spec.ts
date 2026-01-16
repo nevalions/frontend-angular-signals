@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
 import { SportListComponent } from './sport-list.component';
 import { SportStoreService } from '../../services/sport-store.service';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { Sport } from '../../models/sport.model';
 
 interface SportStoreMock {
@@ -14,12 +14,12 @@ interface SportStoreMock {
 describe('SportListComponent', () => {
   let component: SportListComponent;
   let fixture: ComponentFixture<SportListComponent>;
-  let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let navigationHelperMock: { toSportDetail: ReturnType<typeof vi.fn> };
   let storeMock: SportStoreMock;
 
   beforeEach(() => {
-    routerMock = {
-      navigate: vi.fn(),
+    navigationHelperMock = {
+      toSportDetail: vi.fn(),
     };
 
     const mockSports: Sport[] = [
@@ -35,7 +35,7 @@ describe('SportListComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        { provide: NavigationHelperService, useValue: navigationHelperMock },
         { provide: SportStoreService, useValue: storeMock },
       ],
     });
@@ -51,7 +51,7 @@ describe('SportListComponent', () => {
   it('should navigate to detail on card click', () => {
     component.navigateToDetail(1);
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1]);
+    expect(navigationHelperMock.toSportDetail).toHaveBeenCalledWith(1);
   });
 
   it('should expose sports from store', () => {
@@ -100,6 +100,6 @@ describe('SportListComponent', () => {
   it('should call navigate with correct sport id', () => {
     component.navigateToDetail(5);
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 5]);
+    expect(navigationHelperMock.toSportDetail).toHaveBeenCalledWith(5);
   });
 });
