@@ -12,7 +12,6 @@ import { buildApiUrl } from '../../../core/config/api.constants';
 describe('SportStoreService', () => {
   let service: SportStoreService;
   let httpMock: HttpTestingController;
-  let alertServiceMock: Partial<TuiAlertService>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -40,7 +39,6 @@ describe('SportStoreService', () => {
 
     service = TestBed.inject(SportStoreService);
     httpMock = TestBed.inject(HttpTestingController);
-    alertServiceMock = TestBed.inject(TuiAlertService);
   });
 
   describe('CRUD operations', () => {

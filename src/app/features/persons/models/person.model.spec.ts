@@ -13,6 +13,7 @@ describe('Person model interfaces', () => {
         person_photo_url: null,
         person_photo_icon_url: null,
         person_photo_web_url: null,
+        isprivate: false,
       };
 
       expect(person.id).toBe(1);
@@ -30,6 +31,7 @@ describe('Person model interfaces', () => {
         person_photo_url: 'http://example.com/photo.jpg',
         person_photo_icon_url: null,
         person_photo_web_url: null,
+        isprivate: false,
       };
 
       expect(person.person_photo_url).toBe('http://example.com/photo.jpg');
@@ -44,6 +46,7 @@ describe('Person model interfaces', () => {
         person_photo_url: null,
         person_photo_icon_url: null,
         person_photo_web_url: null,
+        isprivate: false,
       };
 
       expect(typeof person.id).toBe('number');
@@ -58,6 +61,7 @@ describe('Person model interfaces', () => {
         person_photo_url: null,
         person_photo_icon_url: null,
         person_photo_web_url: null,
+        isprivate: false,
       };
 
       expect(person.first_name).toBeDefined();

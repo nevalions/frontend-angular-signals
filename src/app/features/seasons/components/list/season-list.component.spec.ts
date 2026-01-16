@@ -23,8 +23,8 @@ describe('SeasonListComponent', () => {
     };
 
     const mockSeasons: Season[] = [
-      { id: 1, year: 2024, description: 'Season 2024' },
-      { id: 2, year: 2025, description: 'Season 2025' },
+      { id: 1, year: 2024, description: 'Season 2024', iscurrent: false },
+      { id: 2, year: 2025, description: 'Season 2025', iscurrent: true },
     ];
 
     storeMock = {
@@ -64,8 +64,8 @@ describe('SeasonListComponent', () => {
     const seasons = component.seasons();
 
     expect(seasons).toEqual([
-      { id: 1, year: 2024, description: 'Season 2024' },
-      { id: 2, year: 2025, description: 'Season 2025' },
+      { id: 1, year: 2024, description: 'Season 2024', iscurrent: false },
+      { id: 2, year: 2025, description: 'Season 2025', iscurrent: true },
     ]);
   });
 

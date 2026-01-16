@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { provideRouter } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
-import { provideRouter, Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
 import { SeasonEditComponent } from './season-edit.component';
 import { SeasonStoreService } from '../../services/season-store.service';
@@ -14,17 +13,12 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 describe('SeasonEditComponent', () => {
   let component: SeasonEditComponent;
   let fixture: ComponentFixture<SeasonEditComponent>;
-  let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let navHelperMock: { toSeasonDetail: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }> };
+  let routeMock: { paramMap: { get: (_key: string) => string | null } };
   let storeMock: { seasons: ReturnType<typeof vi.fn>; updateSeason: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    routerMock = {
-      navigate: vi.fn(),
-    };
-
     navHelperMock = {
       toSeasonDetail: vi.fn(),
     };
@@ -43,7 +37,7 @@ describe('SeasonEditComponent', () => {
 
     storeMock = {
       seasons: vi.fn().mockReturnValue([
-        { id: 1, year: 2024, description: 'Test season' } as Season,
+        { id: 1, year: 2024, description: 'Test season', iscurrent: false } as Season,
       ]),
       updateSeason: vi.fn().mockReturnValue(of(undefined)),
     };
@@ -51,7 +45,6 @@ describe('SeasonEditComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         FormBuilder,
-        { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SeasonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
@@ -77,7 +70,7 @@ describe('SeasonEditComponent', () => {
   it('should navigate to detail on cancel', () => {
     component.navigateToDetail();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 1]);
+    expect(navHelperMock.toSeasonDetail).toHaveBeenCalledWith(1);
   });
 
   it('should call updateSeason on valid form submit', () => {
@@ -115,13 +108,13 @@ describe('SeasonEditComponent', () => {
 
     component.onSubmit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 1]);
+    expect(navHelperMock.toSeasonDetail).toHaveBeenCalledWith(1);
   });
 
   it('should find season by id from store', () => {
     const season = component.season();
 
-    expect(season).toEqual({ id: 1, year: 2024, description: 'Test season' });
+    expect(season).toEqual({ id: 1, year: 2024, description: 'Test season', iscurrent: false });
   });
 
   it('should pre-populate form from season (via effect)', () => {
@@ -175,6 +168,6 @@ describe('SeasonEditComponent', () => {
     expect(component.seasonForm.valid).toBe(false);
     component.onSubmit();
 
-    expect(routerMock.navigate).not.toHaveBeenCalled();
+    expect(navHelperMock.toSeasonDetail).not.toHaveBeenCalled();
   });
 });

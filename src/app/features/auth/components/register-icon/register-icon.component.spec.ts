@@ -1,17 +1,20 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TuiDialogService } from '@taiga-ui/core';
-import { of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { RegisterIconComponent } from './register-icon.component';
 
 describe('RegisterIconComponent', () => {
   let component: RegisterIconComponent;
   let fixture: ComponentFixture<RegisterIconComponent>;
-  let dialogsMock: any;
+  let dialogsMock: { open: typeof vi.fn };
 
   beforeEach(() => {
     dialogsMock = {
-      open: vi.fn(() => of({})),
+      open: vi.fn(() => new Observable(subscriber => {
+        subscriber.next({});
+        subscriber.complete();
+      })),
     };
 
     TestBed.configureTestingModule({

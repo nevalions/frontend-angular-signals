@@ -8,6 +8,7 @@ describe('Season Model', () => {
         id: 1,
         year: 2024,
         description: 'Test season',
+        iscurrent: false,
       };
 
       expect(season.id).toBe(1);
@@ -20,6 +21,7 @@ describe('Season Model', () => {
         id: 1,
         year: 2024,
         description: null,
+        iscurrent: false,
       };
 
       expect(season.description).toBeNull();
@@ -29,6 +31,7 @@ describe('Season Model', () => {
       const season: Season = {
         id: 1,
         year: 2024,
+        iscurrent: true,
       };
 
       expect(season.description).toBeUndefined();

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TuiAlertService, TuiButton } from '@taiga-ui/core';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Observable } from 'rxjs';
 import { RegisterDialogComponent } from './register-dialog.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -10,15 +10,21 @@ describe('RegisterDialogComponent', () => {
   let component: RegisterDialogComponent;
   let fixture: ComponentFixture<RegisterDialogComponent>;
   let authServiceMock: Partial<AuthService>;
-  let alertsMock: any;
+  let alertsMock: { open: typeof vi.fn };
 
   beforeEach(() => {
     authServiceMock = {
-      register: vi.fn(() => of({} as any)),
+      register: vi.fn(() => new Observable(subscriber => {
+        subscriber.next({});
+        subscriber.complete();
+      })),
     };
 
     alertsMock = {
-      open: vi.fn(() => of({})),
+      open: vi.fn(() => new Observable(subscriber => {
+        subscriber.next({});
+        subscriber.complete();
+      })),
     };
 
     TestBed.configureTestingModule({

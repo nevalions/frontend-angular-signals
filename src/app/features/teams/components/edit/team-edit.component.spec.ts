@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
 import { provideRouter } from '@angular/router';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
 import { TeamEditComponent } from './team-edit.component';
 import { TeamStoreService } from '../../services/team-store.service';
@@ -14,7 +13,6 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 describe('TeamEditComponent', () => {
   let component: TeamEditComponent;
   let fixture: ComponentFixture<TeamEditComponent>;
-  let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let navHelperMock: { toTeamDetail: ReturnType<typeof vi.fn> };
   let routeMock: {
     snapshot: { paramMap: { get: (_key: string) => string | null }; queryParamMap: { get: (_key: string) => string | null } };
@@ -23,10 +21,6 @@ describe('TeamEditComponent', () => {
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    routerMock = {
-      navigate: vi.fn(),
-    };
-
     navHelperMock = {
       toTeamDetail: vi.fn(),
     };
@@ -44,7 +38,7 @@ describe('TeamEditComponent', () => {
 
     storeMock = {
       teams: vi.fn().mockReturnValue([
-        { id: 1, title: 'Test Team', team_color: '#FF0000', sport_id: 1 } as Team,
+        { id: 1, title: 'Test Team', team_color: '#FF0000', sport_id: 1, isprivate: false } as Team,
       ]),
       updateTeam: vi.fn().mockReturnValue(of(undefined)),
       uploadTeamLogo: vi.fn().mockReturnValue(of({})),
@@ -80,7 +74,7 @@ describe('TeamEditComponent', () => {
 
   it('should find team by id from store', () => {
     const team = component.team();
-    expect(team).toEqual({ id: 1, title: 'Test Team', team_color: '#FF0000', sport_id: 1 });
+    expect(team).toEqual({ id: 1, title: 'Test Team', team_color: '#FF0000', sport_id: 1, isprivate: false });
   });
 
   it('should navigate to detail on cancel', () => {

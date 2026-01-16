@@ -57,6 +57,7 @@ describe('TeamStoreService', () => {
       id: 1,
       ...teamData,
       team_color: '#c01c28',
+      isprivate: false,
     };
 
     service.createTeam(teamData).subscribe();
@@ -74,6 +75,7 @@ describe('TeamStoreService', () => {
         title: 'Updated Team',
         team_color: '#c01c28',
         sport_id: 1,
+        isprivate: false,
       };
 
       service.updateTeam(1, teamUpdate).subscribe();
@@ -95,7 +97,7 @@ describe('TeamStoreService', () => {
   it('should get teams by sport id with pagination', () => {
     const mockResponse = {
       data: [
-        { id: 1, title: 'Team 1', team_color: '#c01c28', sport_id: 1 },
+        { id: 1, title: 'Team 1', team_color: '#c01c28', sport_id: 1, isprivate: false },
       ],
       metadata: {
         total_items: 1,

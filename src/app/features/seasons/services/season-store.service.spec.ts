@@ -12,7 +12,6 @@ import { buildApiUrl } from '../../../core/config/api.constants';
 describe('SeasonStoreService', () => {
   let service: SeasonStoreService;
   let httpMock: HttpTestingController;
-  let alertServiceMock: Partial<TuiAlertService>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -40,7 +39,6 @@ describe('SeasonStoreService', () => {
 
     service = TestBed.inject(SeasonStoreService);
     httpMock = TestBed.inject(HttpTestingController);
-    alertServiceMock = TestBed.inject(TuiAlertService);
   });
 
   describe('CRUD operations', () => {
@@ -53,7 +51,7 @@ describe('SeasonStoreService', () => {
       service.createSeason(seasonData).subscribe();
 
       const req = httpMock.expectOne(buildApiUrl('/api/seasons/'));
-      req.flush({ id: 1, year: 2024, description: 'Test season' } as Season);
+      req.flush({ id: 1, year: 2024, description: 'Test season', iscurrent: false } as Season);
 
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(seasonData);
@@ -84,7 +82,7 @@ describe('SeasonStoreService', () => {
       service.updateSeason(2, seasonData).subscribe();
 
       const req = httpMock.expectOne(buildApiUrl('/api/seasons/2/'));
-      req.flush({ id: 2, year: 2025, description: 'Updated description' } as Season);
+      req.flush({ id: 2, year: 2025, description: 'Updated description', iscurrent: false } as Season);
 
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(seasonData);

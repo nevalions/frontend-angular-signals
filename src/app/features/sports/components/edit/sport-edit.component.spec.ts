@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { of, Observable } from 'rxjs';
+import { of } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
 import { SportEditComponent } from './sport-edit.component';
 import { SportStoreService } from '../../services/sport-store.service';
@@ -13,24 +13,19 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 describe('SportEditComponent', () => {
   let component: SportEditComponent;
   let fixture: ComponentFixture<SportEditComponent>;
-  let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let navHelperMock: { toSportDetail: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
+  let routeMock: { paramMap: { get: (key: string) => string | null }; queryParamMap: { get: () => string | null } };
   let storeMock: { sports: ReturnType<typeof vi.fn>; updateSport: ReturnType<typeof vi.fn>; loading: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    routerMock = {
-      navigate: vi.fn(),
-    };
-
     navHelperMock = {
       toSportDetail: vi.fn(),
     };
 
     routeMock = {
-      paramMap: of({ get: (_key: string) => '1' }),
-      queryParamMap: of({ get: () => null }),
+      paramMap: { get: (_key: string) => '1' },
+      queryParamMap: { get: () => null },
     };
 
     alertsMock = {
@@ -144,8 +139,8 @@ describe('SportEditComponent', () => {
 
   it('should return null when sportId is null', () => {
     const nullRouteMock = {
-      paramMap: of({ get: (_key: string) => null }),
-      queryParamMap: of({ get: () => null }),
+      paramMap: { get: (_key: string) => null },
+      queryParamMap: { get: () => null },
     };
 
     TestBed.resetTestingModule();
@@ -169,8 +164,8 @@ describe('SportEditComponent', () => {
 
   it('should return null when sport is not found', () => {
     const id99RouteMock = {
-      paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }),
-      queryParamMap: of({ get: () => null }),
+      paramMap: { get: (key: string) => (key === 'id' ? '99' : null) },
+      queryParamMap: { get: () => null },
     };
 
     TestBed.resetTestingModule();

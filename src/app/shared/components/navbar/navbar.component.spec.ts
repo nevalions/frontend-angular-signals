@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -16,9 +16,9 @@ describe('NavbarComponent', () => {
   let themeServiceMock: { currentTheme: () => 'light' | 'dark' };
 
   const mockSeasons = [
-    { id: 1, year: 2023, description: null },
-    { id: 2, year: 2024, description: null },
-    { id: 3, year: 2025, description: null },
+    { id: 1, year: 2023, description: null, iscurrent: false },
+    { id: 2, year: 2024, description: null, iscurrent: false },
+    { id: 3, year: 2025, description: null, iscurrent: false },
   ];
 
   const mockSports = [

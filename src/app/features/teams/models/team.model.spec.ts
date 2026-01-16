@@ -11,6 +11,7 @@ describe('Team model', () => {
       team_logo_url: 'https://example.com/logo.png',
       team_color: '#DA291C',
       sport_id: 1,
+      isprivate: false,
     };
     expect(team.id).toBe(1);
     expect(team.title).toBe('Manchester United');
@@ -23,6 +24,7 @@ describe('Team model', () => {
       title: 'Team Name',
       team_color: '#c01c28',
       sport_id: 1,
+      isprivate: false,
     };
     expect(team.city).toBeUndefined();
     expect(team.description).toBeUndefined();
@@ -36,6 +38,7 @@ describe('Team model', () => {
       team_logo_url: 'https://example.com/logo.png',
       team_color: '#c01c28',
       sport_id: 1,
+      isprivate: false,
     };
     expect(typeof team.team_logo_url).toBe('string');
   });
@@ -78,8 +81,8 @@ describe('TeamsPaginatedResponse interface', () => {
   it('should accept valid TeamsPaginatedResponse object', () => {
     const response: TeamsPaginatedResponse = {
       data: [
-        { id: 1, title: 'Team 1', team_color: '#c01c28', sport_id: 1 },
-        { id: 2, title: 'Team 2', team_color: '#DA291C', sport_id: 1 },
+        { id: 1, title: 'Team 1', team_color: '#c01c28', sport_id: 1, isprivate: false },
+        { id: 2, title: 'Team 2', team_color: '#DA291C', sport_id: 1, isprivate: false },
       ],
       metadata: {
         total_items: 2,

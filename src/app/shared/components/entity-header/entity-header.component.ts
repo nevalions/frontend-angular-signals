@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { TuiActiveZone } from '@taiga-ui/cdk/directives/active-zone';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';

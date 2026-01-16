@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { of, Observable } from 'rxjs';
-import { TuiAlertService } from '@taiga-ui/core';
+import { Observable } from 'rxjs';
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { PersonEditComponent } from './person-edit.component';
 import { PersonStoreService } from '../../services/person-store.service';
 import { Person } from '../../models/person.model';
@@ -13,39 +13,48 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 describe('PersonEditComponent', () => {
   let component: PersonEditComponent;
   let fixture: ComponentFixture<PersonEditComponent>;
-  let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let navHelperMock: { toPersonsList: ReturnType<typeof vi.fn>; toPersonEdit: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
+  let routeMock: { paramMap: { get: (key: string) => string | null }; queryParamMap: { get: () => string | null } };
   let storeMock: { persons: ReturnType<typeof vi.fn>; loading: ReturnType<typeof vi.fn>; updatePerson: ReturnType<typeof vi.fn>; uploadPersonPhoto: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
+  let dialogsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    routerMock = {
-      navigate: vi.fn(),
-    };
-
     navHelperMock = {
       toPersonsList: vi.fn(),
       toPersonEdit: vi.fn(),
     };
 
     routeMock = {
-      paramMap: of({ get: (_key: string) => '1' }),
-      queryParamMap: of({ get: () => null }),
+      paramMap: { get: (_key: string) => '1' },
+      queryParamMap: { get: () => null },
     };
 
     alertsMock = {
       open: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
     };
 
+    dialogsMock = {
+      open: vi.fn().mockReturnValue(new Observable(subscriber => {
+        subscriber.next(true);
+        subscriber.complete();
+      })),
+    };
+
     storeMock = {
       persons: vi.fn().mockReturnValue([
-        { id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null, person_eesl_id: null, person_dob: null } as Person,
-        { id: 2, first_name: 'Jane', second_name: 'Smith', person_photo_url: 'http://example.com/jane.jpg', person_eesl_id: null, person_dob: null } as Person,
+        { id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null, person_eesl_id: null, person_dob: null, isprivate: false } as Person,
+        { id: 2, first_name: 'Jane', second_name: 'Smith', person_photo_url: 'http://example.com/jane.jpg', person_eesl_id: null, person_dob: null, isprivate: false } as Person,
       ]),
       loading: vi.fn().mockReturnValue(false),
-      updatePerson: vi.fn().mockReturnValue(of(undefined)),
-      uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'api/persons/new-photo.jpg' })),
+      updatePerson: vi.fn().mockReturnValue(new Observable(subscriber => {
+        subscriber.next();
+        subscriber.complete();
+      })),
+      uploadPersonPhoto: vi.fn().mockReturnValue(new Observable(subscriber => {
+        subscriber.next({ webview: 'api/persons/new-photo.jpg' });
+        subscriber.complete();
+      })),
     };
 
     TestBed.configureTestingModule({
@@ -56,7 +65,9 @@ describe('PersonEditComponent', () => {
         { provide: FormBuilder, useClass: FormBuilder },
         { provide: TuiAlertService, useValue: alertsMock },
         { provide: NavigationHelperService, useValue: navHelperMock },
+        { provide: TuiDialogService, useValue: dialogsMock },
       ],
+      imports: [],
     });
 
     fixture = TestBed.createComponent(PersonEditComponent);
@@ -79,7 +90,7 @@ describe('PersonEditComponent', () => {
   it('should find person by id from store', () => {
     const person = component.person();
 
-    expect(person).toEqual({ id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null, person_eesl_id: null, person_dob: null });
+    expect(person).toEqual({ id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null, person_eesl_id: null, person_dob: null, isprivate: false });
   });
 
   it('should patch form with person data', () => {
@@ -226,10 +237,11 @@ describe('PersonEditComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => null }), queryParamMap: of({ get: () => null }) } },
+        { provide: ActivatedRoute, useValue: { paramMap: { get: (_key: string) => null }, queryParamMap: { get: () => null } } },
         { provide: PersonStoreService, useValue: storeMock },
+        { provide: FormBuilder, useClass: FormBuilder },
         { provide: TuiAlertService, useValue: alertsMock },
-        FormBuilder,
+        { provide: NavigationHelperService, useValue: navHelperMock },
       ],
       imports: [],
     });
@@ -246,10 +258,11 @@ describe('PersonEditComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }), queryParamMap: of({ get: () => null }) } },
+        { provide: ActivatedRoute, useValue: { paramMap: { get: (key: string) => (key === 'id' ? '99' : null) }, queryParamMap: { get: () => null } } },
         { provide: PersonStoreService, useValue: storeMock },
+        { provide: FormBuilder, useClass: FormBuilder },
         { provide: TuiAlertService, useValue: alertsMock },
-        FormBuilder,
+        { provide: NavigationHelperService, useValue: navHelperMock },
       ],
       imports: [],
     });

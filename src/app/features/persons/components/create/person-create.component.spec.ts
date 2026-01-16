@@ -11,16 +11,11 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 describe('PersonCreateComponent', () => {
   let component: PersonCreateComponent;
   let fixture: ComponentFixture<PersonCreateComponent>;
-  let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let navHelperMock: { toPersonsList: ReturnType<typeof vi.fn> };
   let storeMock: { createPerson: ReturnType<typeof vi.fn>; uploadPersonPhoto: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    routerMock = {
-      navigate: vi.fn(),
-    };
-
     navHelperMock = {
       toPersonsList: vi.fn(),
     };

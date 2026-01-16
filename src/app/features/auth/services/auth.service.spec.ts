@@ -1,8 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { UserInfo } from '../models/login-response.model';
-import { of, throwError } from 'rxjs';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { buildApiUrl } from '../../../core/config/api.constants';
 
@@ -11,7 +10,7 @@ describe('AuthService', () => {
   let httpMock: HttpTestingController;
 
   const mockUserInfo: UserInfo = {
-    id: 1,
+    id:1,
     username: 'testuser',
     email: 'test@example.com',
     is_active: true,

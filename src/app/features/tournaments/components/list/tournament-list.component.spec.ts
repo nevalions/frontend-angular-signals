@@ -13,7 +13,6 @@ import { Sport } from '../../../sports/models/sport.model';
 
 describe('TournamentListComponent', () => {
   let component: TournamentListComponent;
-  let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let navHelperMock: {
     toSportDetail: ReturnType<typeof vi.fn>;
     toTournamentDetail: ReturnType<typeof vi.fn>;
@@ -31,13 +30,13 @@ describe('TournamentListComponent', () => {
   let sportStoreMock: { sports: ReturnType<typeof vi.fn> };
 
   const mockTournaments: Tournament[] = [
-    { id: 1, title: 'Championship 2024', season_id: 1, sport_id: 1, description: 'Main tournament' },
-    { id: 2, title: 'Friendly Cup', season_id: 1, sport_id: 1, description: 'Friendly match' },
+    { id: 1, title: 'Championship 2024', season_id: 1, sport_id: 1, description: 'Main tournament', isprivate: false },
+    { id: 2, title: 'Friendly Cup', season_id: 1, sport_id: 1, description: 'Friendly match', isprivate: false },
   ];
 
   const mockSeasons: Season[] = [
-    { id: 1, year: 2024, description: '2024 Season' },
-    { id: 2, year: 2025, description: '2025 Season' },
+    { id: 1, year: 2024, description: '2024 Season', iscurrent: false },
+    { id: 2, year: 2025, description: '2025 Season', iscurrent: true },
   ];
 
   const mockSports: Sport[] = [
@@ -46,10 +45,6 @@ describe('TournamentListComponent', () => {
   ];
 
   beforeEach(() => {
-    routerMock = {
-      navigate: vi.fn(),
-    };
-
     navHelperMock = {
       toSportDetail: vi.fn(),
       toTournamentDetail: vi.fn(),
@@ -81,7 +76,7 @@ describe('TournamentListComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: NavigationHelperService, useValue: navHelperMock },
         { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => null }) } },
         { provide: TournamentStoreService, useValue: tournamentStoreMock },
@@ -109,7 +104,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -128,7 +123,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -157,7 +152,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -177,7 +172,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -195,7 +190,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -213,7 +208,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -232,7 +227,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -250,7 +245,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -270,7 +265,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
           { provide: SportStoreService, useValue: sportStoreMock },
@@ -299,7 +294,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: NavigationHelperService, useValue: navHelperMock },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
@@ -307,7 +302,7 @@ describe('TournamentListComponent', () => {
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      (newComponent as any).selectedSeasonYear.set(2024);
+      (newComponent as unknown).selectedSeasonYear.set(2024);
       newComponent.navigateBack();
       expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1, 2024);
     });
@@ -324,7 +319,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: NavigationHelperService, useValue: navHelperMock },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
@@ -332,7 +327,7 @@ describe('TournamentListComponent', () => {
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      (newComponent as any).selectedSeasonYear.set(2024);
+      (newComponent as unknown).selectedSeasonYear.set(2024);
       newComponent.navigateToCreate();
       expect(navHelperMock.toTournamentCreate).toHaveBeenCalledWith(1, 2024);
     });
@@ -349,7 +344,7 @@ describe('TournamentListComponent', () => {
       TestBed.configureTestingModule({
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: Router, useValue: routerMock },
+          { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: NavigationHelperService, useValue: navHelperMock },
           { provide: TournamentStoreService, useValue: tournamentStoreMock },
           { provide: SeasonStoreService, useValue: seasonStoreMock },
@@ -357,7 +352,7 @@ describe('TournamentListComponent', () => {
         ],
       });
       const newComponent = TestBed.createComponent(TournamentListComponent).componentInstance;
-      (newComponent as any).selectedSeasonYear.set(2024);
+      (newComponent as unknown).selectedSeasonYear.set(2024);
       newComponent.navigateToDetail(1);
       expect(navHelperMock.toTournamentDetail).toHaveBeenCalledWith(1, 2024, 1);
     });

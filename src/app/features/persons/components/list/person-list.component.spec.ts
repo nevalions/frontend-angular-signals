@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { PersonListComponent } from './person-list.component';
 import { PersonStoreService } from '../../services/person-store.service';
@@ -10,7 +10,6 @@ import { PersonStoreService } from '../../services/person-store.service';
 describe('PersonListComponent', () => {
   let component: PersonListComponent;
   let fixture: ComponentFixture<PersonListComponent>;
-  let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let navHelperMock: { toPersonCreate: ReturnType<typeof vi.fn>; toPersonDetail: ReturnType<typeof vi.fn> };
   let storeMock: {
     persons: ReturnType<typeof vi.fn>;
@@ -30,10 +29,6 @@ describe('PersonListComponent', () => {
   };
 
   beforeEach(() => {
-    routerMock = {
-      navigate: vi.fn(),
-    };
-
     navHelperMock = {
       toPersonCreate: vi.fn(),
       toPersonDetail: vi.fn(),

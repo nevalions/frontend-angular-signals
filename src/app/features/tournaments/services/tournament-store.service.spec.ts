@@ -12,7 +12,6 @@ import { buildApiUrl } from '../../../core/config/api.constants';
 describe('TournamentStoreService', () => {
   let service: TournamentStoreService;
   let httpMock: HttpTestingController;
-  let alertServiceMock: Partial<TuiAlertService>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -40,7 +39,6 @@ describe('TournamentStoreService', () => {
 
     service = TestBed.inject(TournamentStoreService);
     httpMock = TestBed.inject(HttpTestingController);
-    alertServiceMock = TestBed.inject(TuiAlertService);
   });
 
   describe('CRUD operations', () => {
@@ -54,7 +52,7 @@ describe('TournamentStoreService', () => {
       service.createTournament(tournamentData).subscribe();
 
       const req = httpMock.expectOne(buildApiUrl('/api/tournaments/'));
-      req.flush({ id: 1, title: 'Tournament 2024', season_id: 1, sport_id: 1 } as Tournament);
+      req.flush({ id: 1, title: 'Tournament 2024', season_id: 1, sport_id: 1, isprivate: false } as Tournament);
 
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(tournamentData);
@@ -85,7 +83,7 @@ describe('TournamentStoreService', () => {
       service.updateTournament(2, tournamentData).subscribe();
 
       const req = httpMock.expectOne(buildApiUrl('/api/tournaments/2'));
-      req.flush({ id: 2, title: 'Updated Tournament', season_id: 1, sport_id: 1 } as Tournament);
+      req.flush({ id: 2, title: 'Updated Tournament', season_id: 1, sport_id: 1, isprivate: false } as Tournament);
 
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(tournamentData);
