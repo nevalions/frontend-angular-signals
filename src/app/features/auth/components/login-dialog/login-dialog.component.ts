@@ -1,9 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { tap } from 'rxjs/operators';
-import { TuiAlertService, TuiButton } from '@taiga-ui/core';
+import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
+import { tuiDialog } from '@taiga-ui/core';
+import { TuiDialogContext } from '@taiga-ui/core';
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { LoginRequest } from '../../models/login.model';
 import { AuthService } from '../../services/auth.service';
+import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
 
 @Component({
   selector: 'app-login-dialog',
@@ -17,6 +21,14 @@ export class LoginDialogComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private alerts = inject(TuiAlertService);
+  private readonly dialogs = inject(TuiDialogService);
+  private readonly context = inject<TuiDialogContext<void, void>>(POLYMORPHEUS_CONTEXT);
+
+  private readonly registerDialog = tuiDialog(RegisterDialogComponent, {
+    size: 'm',
+    dismissible: true,
+    label: 'Create Account',
+  });
 
   loginForm = this.fb.group({
     username: ['', [Validators.required]],
@@ -50,6 +62,7 @@ export class LoginDialogComponent {
         )
         .subscribe({
           next: () => {
+            this.context.completeWith();
             this.alerts
               .open('Login successful', {
                 label: 'Success',
@@ -70,5 +83,10 @@ export class LoginDialogComponent {
           },
         });
     }
+  }
+
+  openRegisterDialog(): void {
+    this.context.completeWith();
+    this.registerDialog().subscribe();
   }
 }

@@ -146,6 +146,78 @@ navigateBack(): void {
 
 See [EntityHeader README](../shared/components/entity-header/README.md) for complete pattern documentation.
 
+## Taiga UI Dialog Patterns
+
+### Basic Dialog Setup
+
+Use `tuiDialog` from `@taiga-ui/core` to create dialog wrappers:
+
+```typescript
+import { tuiDialog } from '@taiga-ui/core';
+import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+
+@Component({...})
+export class SomeComponent {
+  private readonly dialogs = inject(TuiDialogService);
+
+  private readonly loginDialog = tuiDialog(LoginDialogComponent, {
+    size: 'm',
+    dismissible: true,
+    label: 'Sign In',
+  });
+
+  openLoginDialog(): void {
+    this.loginDialog().subscribe();
+  }
+}
+```
+
+### Dialog Switching Pattern
+
+When switching between dialogs (e.g., login ↔ signup), use `TuiDialogContext` to close the current dialog before opening the new one:
+
+```typescript
+import { TuiDialogContext } from '@taiga-ui/core';
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
+
+@Component({...})
+export class LoginDialogComponent {
+  private readonly context = inject<TuiDialogContext<void, void>>(POLYMORPHEUS_CONTEXT);
+
+  private readonly registerDialog = tuiDialog(RegisterDialogComponent, {
+    size: 'm',
+    dismissible: true,
+    label: 'Create Account',
+  });
+
+  openRegisterDialog(): void {
+    // Close current dialog before opening new one
+    this.context.completeWith();
+    this.registerDialog().subscribe();
+  }
+
+  onSubmit(): void {
+    // ... submit logic ...
+
+    this.authService.login(credentials).subscribe({
+      next: () => {
+        // Close dialog on success
+        this.context.completeWith();
+        // Show alert...
+      },
+      error: (error) => {
+        // Handle error...
+      },
+    });
+  }
+}
+```
+
+**Key Points:**
+- Always use `this.context.completeWith()` before opening another dialog to prevent dialog stacking
+- Call `completeWith()` on successful operations to close the dialog automatically
+- Import `TuiDialogContext` and `POLYMORPHEUS_CONTEXT` to access the dialog context
+
 ## Related Documentation
 
 - [Angular Signals Best Practices](./angular-signals-best-practices.md) - Signal-based patterns
