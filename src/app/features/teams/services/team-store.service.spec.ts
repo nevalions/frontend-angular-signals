@@ -53,6 +53,8 @@ describe('TeamStoreService', () => {
       { id: 2, title: 'Team 2', team_color: '#DA291C', sport_id: 1 },
     ];
 
+    service.reload();
+
     const req = httpMock.expectOne(buildApiUrl('/api/teams/'));
     req.flush(mockTeams);
 

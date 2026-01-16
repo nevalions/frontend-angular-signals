@@ -149,6 +149,10 @@ describe('TournamentListComponent', () => {
           if (key === 'year') return '2024';
           return null;
         }}),
+        queryParamMap: of({ get: (key: string) => {
+          if (key === 'year') return '2024';
+          return null;
+        }}),
       };
       TestBed.configureTestingModule({
         providers: [

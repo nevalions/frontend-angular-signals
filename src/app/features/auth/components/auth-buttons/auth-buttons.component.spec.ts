@@ -1,8 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { signal, computed } from '@angular/core';
 import { AuthButtonsComponent } from './auth-buttons.component';
 import { AuthService } from '../../services/auth.service';
+import { UserInfo } from '../../models/login-response.model';
 
 describe('AuthButtonsComponent', () => {
   let component: AuthButtonsComponent;
@@ -11,9 +13,14 @@ describe('AuthButtonsComponent', () => {
   let routerMock: Partial<Router>;
 
   beforeEach(() => {
+    const currentUserSignal = signal<UserInfo | null>(null);
+    const isAuthenticatedComputed = computed(() => !!currentUserSignal());
+
     authServiceMock = {
+      isAuthenticated: isAuthenticatedComputed,
+      currentUser: currentUserSignal.asReadonly(),
       logout: vi.fn(),
-    };
+    } as unknown as Partial<AuthService>;
 
     routerMock = {
       navigate: vi.fn(),

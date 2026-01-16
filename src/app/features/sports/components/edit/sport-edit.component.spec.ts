@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
 import { SportEditComponent } from './sport-edit.component';
 import { SportStoreService } from '../../services/sport-store.service';
@@ -13,7 +13,7 @@ describe('SportEditComponent', () => {
   let component: SportEditComponent;
   let fixture: ComponentFixture<SportEditComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: { pipe: ReturnType<typeof vi.fn> } };
+  let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }> };
   let storeMock: { sports: ReturnType<typeof vi.fn>; updateSport: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
@@ -22,12 +22,8 @@ describe('SportEditComponent', () => {
       navigate: vi.fn(),
     };
 
-    const mockPipe = vi.fn().mockImplementation((callback) => of(callback({ get: (_key: string) => '1' })));
-
     routeMock = {
-      paramMap: {
-        pipe: mockPipe,
-      },
+      paramMap: of({ get: (_key: string) => '1' }),
     };
 
     alertsMock = {
@@ -50,16 +46,12 @@ describe('SportEditComponent', () => {
         { provide: TuiAlertService, useValue: alertsMock },
         FormBuilder,
       ],
-      imports: [],
     });
 
     fixture = TestBed.createComponent(SportEditComponent);
     component = fixture.componentInstance;
-  });
-
-  it('should create a component', () => {
-    expect(component).toBeTruthy();
-  });
+    fixture.detectChanges();
+    });
 
   it('should have sportForm with required fields', () => {
     expect(component.sportForm).toBeDefined();

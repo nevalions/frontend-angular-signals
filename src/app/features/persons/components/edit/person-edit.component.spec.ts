@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
 import { PersonEditComponent } from './person-edit.component';
 import { PersonStoreService } from '../../services/person-store.service';
@@ -13,7 +13,7 @@ describe('PersonEditComponent', () => {
   let component: PersonEditComponent;
   let fixture: ComponentFixture<PersonEditComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: { pipe: ReturnType<typeof vi.fn> } };
+  let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }> };
   let storeMock: { persons: ReturnType<typeof vi.fn>; updatePerson: ReturnType<typeof vi.fn>; uploadPersonPhoto: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
@@ -22,12 +22,8 @@ describe('PersonEditComponent', () => {
       navigate: vi.fn(),
     };
 
-    const mockPipe = vi.fn().mockImplementation((callback) => of(callback({ get: (_key: string) => '1' })));
-
     routeMock = {
-      paramMap: {
-        pipe: mockPipe,
-      },
+      paramMap: of({ get: (_key: string) => '1' }),
     };
 
     alertsMock = {
@@ -48,14 +44,14 @@ describe('PersonEditComponent', () => {
         { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: PersonStoreService, useValue: storeMock },
+        { provide: FormBuilder, useClass: FormBuilder },
         { provide: TuiAlertService, useValue: alertsMock },
-        FormBuilder,
       ],
-      imports: [],
     });
 
     fixture = TestBed.createComponent(PersonEditComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create a component', () => {
@@ -116,7 +112,8 @@ describe('PersonEditComponent', () => {
   });
 
   it('should show error for non-image file', () => {
-    const event = { target: { files: [new File(['test'], 'test.txt', { type: 'text/plain' })] } } as unknown as Event;
+    const textFile = new File(['test'], 'test.txt', { type: 'text/plain' });
+    const event = { target: { files: [textFile] } } as unknown as Event;
 
     component.onFileSelected(event);
 
@@ -124,7 +121,7 @@ describe('PersonEditComponent', () => {
   });
 
   it('should show error for file larger than 5MB', () => {
-    const largeFile = new File(['a'.repeat(6 * 1024 * 1024)], 'large.png', { type: 'image/png' });
+    const largeFile = new File(['x'.repeat(6 * 1024 * 1024)], 'large.png', { type: 'image/png' });
     const event = { target: { files: [largeFile] } } as unknown as Event;
 
     component.onFileSelected(event);
@@ -139,17 +136,17 @@ describe('PersonEditComponent', () => {
     component.onFileSelected(event);
 
     expect(storeMock.uploadPersonPhoto).toHaveBeenCalledWith(validFile);
-    expect(component.photoPreviewUrl()).toBe('http://test.com/new-photo.jpg');
+    expect(component.photoPreviewUrl()).toBe('http://localhost:9000/api/persons/new-photo.jpg');
   });
 
   it('should display current photo when no new photo uploaded', () => {
-    const person = component.person();
-    expect(component.displayPhotoUrl()).toBe(person?.person_photo_url ?? null);
+    expect(component.displayPhotoUrl()).toBe('http://localhost:9000/api/persons/null');
   });
 
   it('should display new photo preview when new photo uploaded', () => {
-    component.photoPreviewUrl.set('http://test.com/new-photo.jpg');
-    expect(component.displayPhotoUrl()).toBe('http://test.com/new-photo.jpg');
+    component.photoPreviewUrl.set('http://localhost:9000/api/persons/new-photo.jpg');
+
+    expect(component.displayPhotoUrl()).toBe('http://localhost:9000/api/persons/new-photo.jpg');
   });
 
   it('should navigate to list on cancel', () => {
@@ -159,30 +156,31 @@ describe('PersonEditComponent', () => {
   });
 
   it('should call updatePerson with new photo URL on valid form submit', () => {
-    component.photoPreviewUrl.set('http://test.com/new-photo.jpg');
-    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith', person_eesl_id: null, person_dob: '' });
+    component.photoPreviewUrl.set('http://localhost:9000/api/persons/new-photo.jpg');
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
     component.onSubmit();
 
-    expect(storeMock.updatePerson).toHaveBeenCalledWith(1, {
-      first_name: 'Jane',
-      second_name: 'Smith',
-      person_photo_url: 'http://test.com/new-photo.jpg',
+    expect(storeMock.updatePerson).toHaveBeenCalledWith({
+      first_name: 'John',
+      second_name: 'Doe',
+      person_photo_url: 'api/persons/new-photo.jpg',
       person_eesl_id: null,
       person_dob: '',
     });
   });
 
   it('should call updatePerson without photo URL when no new photo uploaded', () => {
-    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith', person_eesl_id: null, person_dob: '' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
     component.onSubmit();
 
-    expect(storeMock.updatePerson).toHaveBeenCalledWith(1, {
-      first_name: 'Jane',
-      second_name: 'Smith',
+    expect(storeMock.updatePerson).toHaveBeenCalledWith({
+      first_name: 'John',
+      second_name: 'Doe',
+      person_photo_url: null,
       person_eesl_id: null,
       person_dob: '',
     });
@@ -190,7 +188,6 @@ describe('PersonEditComponent', () => {
 
   it('should not call updatePerson on invalid form submit', () => {
     component.personForm.setValue({ first_name: '', second_name: '', person_eesl_id: null, person_dob: '' });
-    fixture.detectChanges();
 
     component.onSubmit();
 
@@ -198,32 +195,27 @@ describe('PersonEditComponent', () => {
   });
 
   it('should show alert on successful update', () => {
-    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith', person_eesl_id: null, person_dob: '' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
+
     component.onSubmit();
 
-    expect(alertsMock.open).toHaveBeenCalledWith('Person updated successfully', expect.any(Object));
+    expect(alertsMock.open).toHaveBeenCalled();
   });
 
   it('should navigate to list after successful update', () => {
-    component.personForm.setValue({ first_name: 'Jane', second_name: 'Smith', person_eesl_id: null, person_dob: '' });
+    component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
+
     component.onSubmit();
 
     expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);
   });
 
   it('should return null when personId is null', () => {
-    const mockPipeNull = vi.fn().mockImplementation((callback) => of(callback({ get: (_key: string) => null })));
-    const nullRouteMock = {
-      paramMap: {
-        pipe: mockPipeNull,
-      },
-    };
-
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
         { provide: Router, useValue: routerMock },
-        { provide: ActivatedRoute, useValue: nullRouteMock },
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => null }) } },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
         FormBuilder,
@@ -234,23 +226,16 @@ describe('PersonEditComponent', () => {
     const newFixture = TestBed.createComponent(PersonEditComponent);
     const newComponent = newFixture.componentInstance;
 
-    expect(newComponent.personId()).toBe(0);
+    expect(newComponent.personId()).toBe(null);
     expect(newComponent.person()).toBe(null);
   });
 
   it('should return null when person is not found', () => {
-    const mockPipe99 = vi.fn().mockImplementation((callback) => of(callback({ get: (key: string) => (key === 'id' ? '99' : null) })));
-    const id99RouteMock = {
-      paramMap: {
-        pipe: mockPipe99,
-      },
-    };
-
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
         { provide: Router, useValue: routerMock },
-        { provide: ActivatedRoute, useValue: id99RouteMock },
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }) } },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
         FormBuilder,

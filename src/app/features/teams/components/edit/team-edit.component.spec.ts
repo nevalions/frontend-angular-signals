@@ -186,9 +186,9 @@ describe('TeamEditComponent', () => {
 
       expect(storeMock.uploadTeamLogo).toHaveBeenCalledWith(mockFile);
       expect(component.logoPreviewUrls()).toEqual({
-        original: 'http://localhost:8000/uploads/logos/test.png',
-        icon: 'http://localhost:8000/uploads/icons/test-icon.png',
-        webview: 'http://localhost:8000/uploads/web/test-web.png',
+        original: 'http://localhost:9000/uploads/logos/test.png',
+        icon: 'http://localhost:9000/uploads/icons/test-icon.png',
+        webview: 'http://localhost:9000/uploads/web/test-web.png',
       });
       expect(component.logoUploadLoading()).toBe(false);
     });

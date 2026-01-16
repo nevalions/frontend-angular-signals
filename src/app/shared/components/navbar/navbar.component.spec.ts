@@ -1,15 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 
 import { NavbarComponent } from './navbar.component';
 import { SeasonStoreService } from '../../../features/seasons/services/season-store.service';
 import { SportStoreService } from '../../../features/sports/services/sport-store.service';
+import { ThemeService } from '../../services/theme.service';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
   let fixture: ComponentFixture<NavbarComponent>;
-  let seasonStoreMock: { seasons: ReturnType<typeof vi.fn> };
-  let sportStoreMock: { sports: ReturnType<typeof vi.fn> };
+  let seasonStoreMock: { seasons: () => typeof mockSeasons };
+  let sportStoreMock: { sports: () => typeof mockSports };
+  let themeServiceMock: { currentTheme: () => 'light' | 'dark' };
 
   const mockSeasons = [
     { id: 1, year: 2023, description: null },
@@ -24,17 +27,22 @@ describe('NavbarComponent', () => {
 
   beforeEach(() => {
     seasonStoreMock = {
-      seasons: vi.fn(() => mockSeasons),
+      seasons: signal(mockSeasons),
     };
 
     sportStoreMock = {
-      sports: vi.fn(() => mockSports),
+      sports: signal(mockSports),
+    };
+
+    themeServiceMock = {
+      currentTheme: signal<'light' | 'dark'>('light'),
     };
 
     TestBed.configureTestingModule({
       providers: [
         { provide: SeasonStoreService, useValue: seasonStoreMock },
         { provide: SportStoreService, useValue: sportStoreMock },
+        { provide: ThemeService, useValue: themeServiceMock },
       ],
     });
 

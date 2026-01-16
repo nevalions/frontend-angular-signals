@@ -142,8 +142,12 @@ describe('RegisterDialogComponent', () => {
     });
 
     it('should accept matching passwords', () => {
-      component.passwordControl?.setValue('password123');
-      component.confirmPasswordControl?.setValue('password123');
+      component.registerForm.setValue({
+        username: 'testuser',
+        email: 'test@example.com',
+        password: 'password123',
+        confirm_password: 'password123',
+      });
       expect(component.registerForm.valid).toBe(true);
     });
   });

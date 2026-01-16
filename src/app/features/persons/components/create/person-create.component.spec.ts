@@ -104,7 +104,7 @@ describe('PersonCreateComponent', () => {
     component.onFileSelected(event);
 
     expect(storeMock.uploadPersonPhoto).toHaveBeenCalledWith(validFile);
-    expect(component.photoPreviewUrl()).toBe('http://test.com/photo.jpg');
+    expect(component.photoPreviewUrl()).toBe('http://localhost:9000/api/persons/photo.jpg');
   });
 
   it('should set loading state during photo upload', () => {
@@ -117,7 +117,7 @@ describe('PersonCreateComponent', () => {
   });
 
   it('should call createPerson with photo URL on valid form submit', () => {
-    component.photoPreviewUrl.set('http://test.com/photo.jpg');
+    component.photoPreviewUrl.set('http://localhost:9000/api/persons/photo.jpg');
     component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
@@ -126,7 +126,7 @@ describe('PersonCreateComponent', () => {
     expect(storeMock.createPerson).toHaveBeenCalledWith({
       first_name: 'John',
       second_name: 'Doe',
-      person_photo_url: 'http://test.com/photo.jpg',
+      person_photo_url: 'api/persons/photo.jpg',
       person_eesl_id: null,
       person_dob: '',
     });

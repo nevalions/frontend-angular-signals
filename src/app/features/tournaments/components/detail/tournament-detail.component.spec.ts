@@ -62,7 +62,7 @@ describe('TournamentDetailComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => '1' }), queryParamMap: of({ get: (_key: string) => null }) } },
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => '1' }), queryParamMap: of({ get: (_key: string) => 'matches' }) } },
         { provide: TournamentStoreService, useValue: tournamentStoreMock },
         { provide: SeasonStoreService, useValue: seasonStoreMock },
         { provide: SportStoreService, useValue: sportStoreMock },
@@ -90,6 +90,9 @@ describe('TournamentDetailComponent', () => {
 
     component.onTabChange('players');
     expect(component.activeTab()).toBe('players');
+
+    component.onTabChange('matches');
+    expect(component.activeTab()).toBe('matches');
   });
 
   it('should navigate back on button click', () => {
@@ -108,7 +111,23 @@ describe('TournamentDetailComponent', () => {
   });
 
   it('should find season by year from store', () => {
-    const season = component.season();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: Router, useValue: { navigate: vi.fn() } },
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => '1' }), queryParamMap: of({ get: (_key: string) => '2024' }) } },
+        { provide: TournamentStoreService, useValue: tournamentStoreMock },
+        { provide: SeasonStoreService, useValue: seasonStoreMock },
+        { provide: SportStoreService, useValue: sportStoreMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
+        { provide: TuiAlertService, useValue: alertsMock },
+        { provide: TuiDialogService, useValue: dialogsMock },
+      ],
+    });
+
+    const yearFixture = TestBed.createComponent(TournamentDetailComponent);
+    const yearComponent = yearFixture.componentInstance;
+    const season = yearComponent.season();
     expect(season).toEqual({ id: 1, year: 2024, description: 'Season 2024' });
   });
 
