@@ -11,6 +11,8 @@ export interface Team {
   sponsor_line_id?: number | null;
   main_sponsor_id?: number | null;
   sport_id: number;
+  isprivate: boolean;
+  user_id?: number | null;
 }
 
 export interface TeamCreate {
@@ -25,6 +27,8 @@ export interface TeamCreate {
   sponsor_line_id?: number | null;
   main_sponsor_id?: number | null;
   sport_id: number;
+  isprivate?: boolean;
+  user_id?: number | null;
 }
 
 export interface TeamUpdate {
@@ -39,6 +43,8 @@ export interface TeamUpdate {
   sponsor_line_id?: number | null;
   main_sponsor_id?: number | null;
   sport_id?: number;
+  isprivate?: boolean;
+  user_id?: number | null;
 }
 
 export interface LogoUploadResponse {
@@ -50,3 +56,30 @@ export interface LogoUploadResponse {
 import { PaginatedResponse } from '../../../core/models';
 
 export type TeamsPaginatedResponse = PaginatedResponse<Team>;
+
+export interface TeamWithDetails extends Team {
+  sport: Sport | null;
+  main_sponsor: Sponsor | null;
+  sponsor_line: SponsorLine | null;
+}
+
+export type TeamsPaginatedWithDetailsResponse = PaginatedResponse<TeamWithDetails>;
+
+export interface Sport {
+  id: number;
+  title: string;
+  description?: string | null;
+}
+
+export interface Sponsor {
+  id: number;
+  title: string;
+  logo_url?: string | null;
+  scale_logo?: number | null;
+}
+
+export interface SponsorLine {
+  id: number;
+  title: string;
+  is_visible?: boolean | null;
+}

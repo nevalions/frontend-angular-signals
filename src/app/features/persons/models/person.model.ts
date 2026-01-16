@@ -9,6 +9,8 @@ export interface Person {
   person_photo_icon_url: string | null;
   person_photo_web_url: string | null;
   person_dob?: string | null;
+  isprivate: boolean;
+  owner_user_id?: number | null;
 }
 
 export interface PhotoUploadResponse {
@@ -25,6 +27,8 @@ export interface PersonCreate {
   person_photo_icon_url?: string | null;
   person_photo_web_url?: string | null;
   person_dob?: string | null;
+  isprivate?: boolean;
+  owner_user_id?: number | null;
 }
 
 export interface PersonUpdate {
@@ -35,6 +39,8 @@ export interface PersonUpdate {
   person_photo_icon_url?: string | null;
   person_photo_web_url?: string | null;
   person_dob?: string | null;
+  isprivate?: boolean;
+  owner_user_id?: number | null;
 }
 
 export type PersonSortBy = 'first_name' | 'second_name' | 'id';

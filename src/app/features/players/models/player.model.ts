@@ -91,3 +91,72 @@ export interface RemovePersonFromSportResponse {
   success: boolean;
   message: string;
 }
+
+export interface Sport {
+  id: number;
+  title: string;
+  description?: string | null;
+}
+
+export interface Team {
+  id: number;
+  team_eesl_id?: number | null;
+  title: string;
+  city?: string | null;
+  description?: string | null;
+  team_logo_url?: string | null;
+  team_logo_icon_url?: string | null;
+  team_logo_web_url?: string | null;
+  team_color: string;
+  sponsor_line_id?: number | null;
+  main_sponsor_id?: number | null;
+  sport_id: number;
+  isprivate: boolean;
+  user_id?: number | null;
+}
+
+export interface Tournament {
+  id: number;
+  tournament_eesl_id?: number | null;
+  title: string;
+  season_id: number;
+  sport_id: number;
+  description?: string | null;
+  tournament_logo_url?: string | null;
+  tournament_logo_icon_url?: string | null;
+  tournament_logo_web_url?: string | null;
+  main_sponsor_id?: number | null;
+  sponsor_line_id?: number | null;
+  isprivate: boolean;
+  user_id?: number | null;
+}
+
+export interface Position {
+  id: number;
+  title: string;
+}
+
+export interface PlayerTeamTournamentWithFullDetails {
+  id: number;
+  player_team_tournament_eesl_id: number | null;
+  player_id: number;
+  player_number: string | null;
+  team: Team | null;
+  tournament: Tournament | null;
+  position: Position | null;
+}
+
+export interface PlayerWithFullDetails {
+  id: number;
+  sport_id: number | null;
+  person_id: number | null;
+  player_eesl_id: number | null;
+  user_id: number | null;
+  isprivate: boolean;
+  person: Person | null;
+  sport: Sport | null;
+  player_team_tournaments: PlayerTeamTournamentWithFullDetails[];
+}
+
+export type PaginatedPlayerWithFullDetailsResponse = PaginatedResponse<PlayerWithFullDetails>;
+export type PaginatedPlayerTeamTournamentWithFullDetailsResponse = PaginatedResponse<PlayerTeamTournamentWithFullDetails>;
