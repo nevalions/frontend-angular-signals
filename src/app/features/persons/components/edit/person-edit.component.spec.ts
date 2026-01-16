@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { of, Observable } from 'rxjs';
@@ -8,12 +8,14 @@ import { TuiAlertService } from '@taiga-ui/core';
 import { PersonEditComponent } from './person-edit.component';
 import { PersonStoreService } from '../../services/person-store.service';
 import { Person } from '../../models/person.model';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 describe('PersonEditComponent', () => {
   let component: PersonEditComponent;
   let fixture: ComponentFixture<PersonEditComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }> };
+  let navHelperMock: { toPersonsList: ReturnType<typeof vi.fn>; toPersonEdit: ReturnType<typeof vi.fn> };
+  let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
   let storeMock: { persons: ReturnType<typeof vi.fn>; updatePerson: ReturnType<typeof vi.fn>; uploadPersonPhoto: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
@@ -22,8 +24,14 @@ describe('PersonEditComponent', () => {
       navigate: vi.fn(),
     };
 
+    navHelperMock = {
+      toPersonsList: vi.fn(),
+      toPersonEdit: vi.fn(),
+    };
+
     routeMock = {
       paramMap: of({ get: (_key: string) => '1' }),
+      queryParamMap: of({ get: () => null }),
     };
 
     alertsMock = {
@@ -41,11 +49,12 @@ describe('PersonEditComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: FormBuilder, useClass: FormBuilder },
         { provide: TuiAlertService, useValue: alertsMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
       ],
     });
 
@@ -152,7 +161,7 @@ describe('PersonEditComponent', () => {
   it('should navigate to list on cancel', () => {
     component.cancel();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);
+    expect(navHelperMock.toPersonsList).toHaveBeenCalled();
   });
 
   it('should call updatePerson with new photo URL on valid form submit', () => {
@@ -207,15 +216,15 @@ describe('PersonEditComponent', () => {
 
     component.onSubmit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);
+    expect(navHelperMock.toPersonsList).toHaveBeenCalled();
   });
 
   it('should return null when personId is null', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => null }) } },
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (_key: string) => null }), queryParamMap: of({ get: () => null }) } },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
         FormBuilder,
@@ -234,8 +243,8 @@ describe('PersonEditComponent', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }) } },
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }), queryParamMap: of({ get: () => null }) } },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
         FormBuilder,

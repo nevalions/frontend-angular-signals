@@ -2,17 +2,20 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
+import { TuiAlertService } from '@taiga-ui/core';
 import { TeamEditComponent } from './team-edit.component';
 import { TeamStoreService } from '../../services/team-store.service';
 import { Team, LogoUploadResponse } from '../../models/team.model';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 describe('TeamEditComponent', () => {
   let component: TeamEditComponent;
   let fixture: ComponentFixture<TeamEditComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let navHelperMock: { toTeamDetail: ReturnType<typeof vi.fn> };
   let routeMock: {
     snapshot: { paramMap: { get: (_key: string) => string | null }; queryParamMap: { get: (_key: string) => string | null } };
   };
@@ -24,6 +27,10 @@ describe('TeamEditComponent', () => {
       navigate: vi.fn(),
     };
 
+    navHelperMock = {
+      toTeamDetail: vi.fn(),
+    };
+
     routeMock = {
       snapshot: {
         paramMap: { get: (key: string) => (key === 'sportId' ? '1' : key === 'teamId' ? '1' : null) },
@@ -32,7 +39,7 @@ describe('TeamEditComponent', () => {
     };
 
     alertsMock = {
-      open: vi.fn().mockReturnValue(of({})),
+      open: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
     };
 
     storeMock = {
@@ -46,10 +53,11 @@ describe('TeamEditComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         FormBuilder,
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: TeamStoreService, useValue: storeMock },
-        { provide: 'TuiAlertService', useValue: alertsMock },
+        { provide: TuiAlertService, useValue: alertsMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
       ],
       imports: [ReactiveFormsModule],
     });
@@ -77,7 +85,7 @@ describe('TeamEditComponent', () => {
 
   it('should navigate to detail on cancel', () => {
     component.navigateToDetail();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1, 'teams', 1], { queryParams: { year: 2024 } });
+    expect(navHelperMock.toTeamDetail).toHaveBeenCalledWith(1, 1, 2024);
   });
 
   it('should call updateTeam on valid form submit', () => {

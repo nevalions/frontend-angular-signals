@@ -164,6 +164,30 @@ TestBed.configureTestingModule({
 
 ---
 
+### ❌ Wrong: Missing `queryParamMap` in Route Mock
+
+**Problem:** Component uses `route.queryParamMap.pipe()` but test doesn't provide it.
+
+```typescript
+// WRONG - Component uses toSignal on queryParamMap
+routeMock = {
+  paramMap: of({ get: () => '1' }),
+  // Missing queryParamMap!
+};
+```
+
+**Why it's wrong:** Many components use query params for tabs, pagination, or filtering. Missing `queryParamMap` will cause "Cannot read properties of undefined (reading 'pipe')" errors.
+
+**✅ Correct:**
+```typescript
+routeMock = {
+  paramMap: of({ get: () => '1' }),
+  queryParamMap: of({ get: () => null }), // Add this
+};
+```
+
+---
+
 ### ❌ Wrong: Using Router Mock Instead of NavigationHelper
 
 **Problem:** Component uses NavigationHelperService but test mocks Router directly.
@@ -336,6 +360,8 @@ beforeEach(() => {
 3. **Clear mocks** between tests: `vi.clearAllMocks()`
 4. **Match the actual implementation** - read the service/component code before writing tests
 5. **Check URL patterns** - use console.log or read the service to see actual URLs
+6. **Always provide Router** using `provideRouter([])` when testing components that use navigation
+7. **Include `queryParamMap`** in route mocks when components use query params
 
 ### ❌ Never
 
@@ -344,6 +370,7 @@ beforeEach(() => {
 3. **Don't mix Observable and snapshot patterns** - match what the code actually uses
 4. **Don't expect services to call alerts directly** when they use helper utilities
 5. **Don't forget to flush HTTP requests** before service instantiation (if service makes requests in constructor)
+6. **Don't skip provideRouter** in test configuration
 
 ---
 

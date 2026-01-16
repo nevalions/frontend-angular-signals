@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { SeasonDetailComponent } from './season-detail.component';
@@ -11,7 +11,7 @@ describe('SeasonDetailComponent', () => {
   let component: SeasonDetailComponent;
   let fixture: ComponentFixture<SeasonDetailComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: Observable<{ get: (_key: string) => string }> };
+  let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
   let storeMock: { seasons: ReturnType<typeof vi.fn>; deleteSeason: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
@@ -21,18 +21,7 @@ describe('SeasonDetailComponent', () => {
 
     routeMock = {
       paramMap: of({ get: (_key: string) => '1' }),
-    };
-
-    storeMock = {
-      seasons: vi.fn().mockReturnValue([
-        { id: 1, year: 2024, description: 'Test season' } as Season,
-        { id: 2, year: 2025, description: 'Another season' } as Season,
-      ]),
-      deleteSeason: vi.fn().mockReturnValue(of(undefined)),
-    };
-
-    routeMock = {
-      paramMap: of({ get: (_key: string) => '1' }),
+      queryParamMap: of({ get: () => null }),
     };
 
     storeMock = {
@@ -45,7 +34,7 @@ describe('SeasonDetailComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SeasonStoreService, useValue: storeMock },
       ],
@@ -62,31 +51,31 @@ describe('SeasonDetailComponent', () => {
   it('should navigate back on button click', () => {
     component.navigateBack();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons'], expect.any(Object));
   });
 
   it('should navigate to edit on button click', () => {
     component.navigateToEdit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 1, 'edit']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 1, 'edit'], expect.any(Object));
   });
 
   it('should navigate to tournaments on link click', () => {
     component.navigateToTournaments();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'tournaments']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'tournaments'], expect.any(Object));
   });
 
   it('should navigate to teams on link click', () => {
     component.navigateToTeams();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'teams']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'teams'], expect.any(Object));
   });
 
   it('should navigate to matches on link click', () => {
     component.navigateToMatches();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'matches']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons', 'year', 2024, 'matches'], expect.any(Object));
   });
 
   it('should delete season on button click with confirmation', () => {
@@ -96,7 +85,7 @@ describe('SeasonDetailComponent', () => {
 
     expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this season?');
     expect(storeMock.deleteSeason).toHaveBeenCalledWith(1);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/seasons'], expect.any(Object));
   });
 
   it('should not delete season when confirmation is cancelled', () => {
@@ -117,12 +106,13 @@ describe('SeasonDetailComponent', () => {
   it('should return 0 when seasonId is null (Number() conversion)', () => {
     const nullRouteMock = {
       paramMap: of({ get: (_key: string) => null }),
+      queryParamMap: of({ get: () => null }),
     };
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: nullRouteMock },
         { provide: SeasonStoreService, useValue: storeMock },
       ],
@@ -138,12 +128,13 @@ describe('SeasonDetailComponent', () => {
   it('should return null when season is not found', () => {
     const id99RouteMock = {
       paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }),
+      queryParamMap: of({ get: () => null }),
     };
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: id99RouteMock },
         { provide: SeasonStoreService, useValue: storeMock },
       ],

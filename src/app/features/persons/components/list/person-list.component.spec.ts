@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
@@ -56,7 +56,7 @@ describe('PersonListComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: NavigationHelperService, useValue: navHelperMock },
         { provide: PersonStoreService, useValue: storeMock },
         FormBuilder,

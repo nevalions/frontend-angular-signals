@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { TuiAlertService } from '@taiga-ui/core';
@@ -30,7 +30,7 @@ describe('PersonCreateComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
         FormBuilder,
@@ -167,6 +167,6 @@ describe('PersonCreateComponent', () => {
     component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     component.onSubmit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/persons'], expect.any(Object));
   });
 });

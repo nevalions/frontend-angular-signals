@@ -2,23 +2,31 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
+import { TuiAlertService } from '@taiga-ui/core';
 import { SeasonEditComponent } from './season-edit.component';
 import { SeasonStoreService } from '../../services/season-store.service';
 import { Season } from '../../models/season.model';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 describe('SeasonEditComponent', () => {
   let component: SeasonEditComponent;
   let fixture: ComponentFixture<SeasonEditComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
+  let navHelperMock: { toSeasonDetail: ReturnType<typeof vi.fn> };
   let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }> };
   let storeMock: { seasons: ReturnType<typeof vi.fn>; updateSeason: ReturnType<typeof vi.fn> };
+  let alertsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerMock = {
       navigate: vi.fn(),
+    };
+
+    navHelperMock = {
+      toSeasonDetail: vi.fn(),
     };
 
     routeMock = {
@@ -28,6 +36,10 @@ describe('SeasonEditComponent', () => {
         },
       },
     } as unknown as ActivatedRoute;
+
+    alertsMock = {
+      open: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
+    };
 
     storeMock = {
       seasons: vi.fn().mockReturnValue([
@@ -39,9 +51,11 @@ describe('SeasonEditComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         FormBuilder,
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SeasonStoreService, useValue: storeMock },
+        { provide: TuiAlertService, useValue: alertsMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
       ],
       imports: [ReactiveFormsModule, FormsModule],
     });

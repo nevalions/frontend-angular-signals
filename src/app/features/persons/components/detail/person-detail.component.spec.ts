@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { PersonDetailComponent } from './person-detail.component';
 import { PersonStoreService } from '../../services/person-store.service';
@@ -12,7 +13,7 @@ describe('PersonDetailComponent', () => {
   let component: PersonDetailComponent;
   let fixture: ComponentFixture<PersonDetailComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: Observable<{ get: (_key: string) => string }> };
+  let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
   let storeMock: { persons: ReturnType<typeof vi.fn>; deletePerson: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
   let dialogsMock: { open: ReturnType<typeof vi.fn> };
@@ -24,6 +25,7 @@ describe('PersonDetailComponent', () => {
 
     routeMock = {
       paramMap: of({ get: (_key: string) => '1' }),
+      queryParamMap: of({ get: () => null }),
     };
 
     alertsMock = {
@@ -44,7 +46,7 @@ describe('PersonDetailComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
@@ -63,13 +65,15 @@ describe('PersonDetailComponent', () => {
   it('should navigate back on button click', () => {
     component.navigateBack();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/persons']);
+    const navHelper = TestBed.inject(NavigationHelperService);
+    expect(navHelper.toPersonsList).toHaveBeenCalled();
   });
 
   it('should navigate to edit on button click', () => {
     component.navigateToEdit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/persons', 1, 'edit']);
+    const navHelper = TestBed.inject(NavigationHelperService);
+    expect(navHelper.toPersonEdit).toHaveBeenCalledWith(1);
   });
 
   it('should find person by id from store', () => {
@@ -78,15 +82,16 @@ describe('PersonDetailComponent', () => {
     expect(person).toEqual({ id: 1, first_name: 'John', second_name: 'Doe', person_photo_url: null });
   });
 
-  it('should return 0 when personId is null', () => {
+  it('should return null when personId is null', () => {
     const nullRouteMock = {
       paramMap: of({ get: (_key: string) => null }),
+      queryParamMap: of({ get: () => null }),
     };
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: nullRouteMock },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
@@ -97,19 +102,20 @@ describe('PersonDetailComponent', () => {
     const newFixture = TestBed.createComponent(PersonDetailComponent);
     const newComponent = newFixture.componentInstance;
 
-    expect(newComponent.personId()).toBe(0);
+    expect(newComponent.personId()).toBe(null);
     expect(newComponent.person()).toBe(null);
   });
 
   it('should return null when person is not found', () => {
     const id99RouteMock = {
       paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }),
+      queryParamMap: of({ get: () => null }),
     };
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: id99RouteMock },
         { provide: PersonStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },

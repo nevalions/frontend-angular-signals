@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { of, Observable } from 'rxjs';
@@ -8,13 +8,15 @@ import { TuiAlertService } from '@taiga-ui/core';
 import { SportEditComponent } from './sport-edit.component';
 import { SportStoreService } from '../../services/sport-store.service';
 import { Sport } from '../../models/sport.model';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 describe('SportEditComponent', () => {
   let component: SportEditComponent;
   let fixture: ComponentFixture<SportEditComponent>;
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
-  let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }> };
-  let storeMock: { sports: ReturnType<typeof vi.fn>; updateSport: ReturnType<typeof vi.fn> };
+  let navHelperMock: { toSportDetail: ReturnType<typeof vi.fn> };
+  let routeMock: { paramMap: Observable<{ get: (key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
+  let storeMock: { sports: ReturnType<typeof vi.fn>; updateSport: ReturnType<typeof vi.fn>; loading: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
@@ -22,8 +24,13 @@ describe('SportEditComponent', () => {
       navigate: vi.fn(),
     };
 
+    navHelperMock = {
+      toSportDetail: vi.fn(),
+    };
+
     routeMock = {
       paramMap: of({ get: (_key: string) => '1' }),
+      queryParamMap: of({ get: () => null }),
     };
 
     alertsMock = {
@@ -36,14 +43,16 @@ describe('SportEditComponent', () => {
         { id: 2, title: 'Basketball', description: 'Basketball game' } as Sport,
       ]),
       updateSport: vi.fn().mockReturnValue(of(undefined)),
+      loading: vi.fn().mockReturnValue(false),
     };
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: SportStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
+        { provide: NavigationHelperService, useValue: navHelperMock },
         FormBuilder,
       ],
     });
@@ -51,7 +60,11 @@ describe('SportEditComponent', () => {
     fixture = TestBed.createComponent(SportEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    });
+  });
+
+  it('should create a component', () => {
+    expect(component).toBeTruthy();
+  });
 
   it('should have sportForm with required fields', () => {
     expect(component.sportForm).toBeDefined();
@@ -91,7 +104,7 @@ describe('SportEditComponent', () => {
   it('should navigate to sport detail on cancel', () => {
     component.cancel();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', '1']);
+    expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1);
   });
 
   it('should call updateSport on valid form submit', () => {
@@ -126,21 +139,19 @@ describe('SportEditComponent', () => {
     component.sportForm.setValue({ title: 'Basketball', description: 'Basketball game' });
     component.onSubmit();
 
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', '1']);
+    expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1);
   });
 
   it('should return null when sportId is null', () => {
-    const mockPipeNull = vi.fn().mockImplementation((callback) => of(callback({ get: (_key: string) => null })));
     const nullRouteMock = {
-      paramMap: {
-        pipe: mockPipeNull,
-      },
+      paramMap: of({ get: (_key: string) => null }),
+      queryParamMap: of({ get: () => null }),
     };
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: nullRouteMock },
         { provide: SportStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
@@ -152,22 +163,20 @@ describe('SportEditComponent', () => {
     const newFixture = TestBed.createComponent(SportEditComponent);
     const newComponent = newFixture.componentInstance;
 
-    expect(newComponent.sportId()).toBe(0);
+    expect(newComponent.sportId()).toBe(null);
     expect(newComponent.sport()).toBe(null);
   });
 
   it('should return null when sport is not found', () => {
-    const mockPipe99 = vi.fn().mockImplementation((callback) => of(callback({ get: (key: string) => (key === 'id' ? '99' : null) })));
     const id99RouteMock = {
-      paramMap: {
-        pipe: mockPipe99,
-      },
+      paramMap: of({ get: (key: string) => (key === 'id' ? '99' : null) }),
+      queryParamMap: of({ get: () => null }),
     };
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: id99RouteMock },
         { provide: SportStoreService, useValue: storeMock },
         { provide: TuiAlertService, useValue: alertsMock },
