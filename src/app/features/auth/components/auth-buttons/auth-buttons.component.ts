@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TuiIcon, TuiDialogService } from '@taiga-ui/core';
+import { TuiButton, TuiIcon, TuiDialogService } from '@taiga-ui/core';
 import { TuiAvatar } from '@taiga-ui/kit';
 import { tuiDialog } from '@taiga-ui/core';
 import { AuthService } from '../../services/auth.service';
@@ -11,15 +11,15 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
   selector: 'app-auth-buttons',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiAvatar, TuiIcon],
+  imports: [TuiButton, TuiAvatar, TuiIcon],
   template: `
     @if (!authService.isAuthenticated()) {
       <div class="auth-buttons">
         <button
           type="button"
           tuiButton
-          appearance="primary"
-          size="m"
+          appearance="flat"
+          size="s"
           class="auth-buttons__register"
           (click)="openRegisterDialog()"
           aria-label="Sign Up"

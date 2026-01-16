@@ -22,6 +22,43 @@ export class FeatureNameComponent {
 }
 ```
 
+### ❌ Missing Directive Imports - Critical Bug
+
+**BAD - Directive used but not imported:**
+
+```typescript
+@Component({
+  standalone: true,
+  imports: [TuiAvatar, TuiIcon], // TuiButton missing!
+  template: `
+    <button tuiButton appearance="primary">Click me</button>
+    <!-- Directive won't work - styling breaks -->
+  `
+})
+export class BadComponent {}
+```
+
+**✅ GOOD - All template dependencies imported:**
+
+```typescript
+@Component({
+  standalone: true,
+  imports: [TuiButton, TuiAvatar, TuiIcon], // All directives imported
+  template: `
+    <button tuiButton appearance="primary">Click me</button>
+    <!-- Directive works correctly -->
+  `
+})
+export class GoodComponent {}
+```
+
+**Why this matters:**
+- Missing directive imports cause subtle bugs that only appear on certain routes
+- Direct navigation/refresh may break, but navigation from other routes works
+- This happens because routes that import the directive make it temporarily available
+
+**Rule:** ALWAYS import every directive, component, pipe, or module used in your template.
+
 ## Signal Inputs/Outputs
 
 ### Signal Inputs

@@ -105,6 +105,45 @@ season = computed(() => this.store.seasons().find((s) => s.id === this.seasonId(
 
 ```html
 @if (data()) {
+  <div>{{ data }}</div>
+}
+```
+
+## CSS Anti-Patterns
+
+### ❌ Don't use global display:none for responsive design
+
+**BAD - Hides element everywhere:**
+
+```less
+.auth-buttons__text {
+  display: none; // Hidden on ALL viewports
+}
+```
+
+**✅ GOOD - Only hide on specific breakpoints:**
+
+```less
+.auth-buttons__text {
+  display: inline; // Show by default
+}
+
+@media (max-width: 640px) {
+  .auth-buttons__text {
+    display: none; // Only hide on mobile
+  }
+}
+```
+
+**Why this matters:**
+- Global `display: none` breaks responsive behavior
+- Element should be visible on desktop, hidden on mobile
+- Always use media queries for responsive behavior
+
+**✅ GOOD - Use @if with signals:**
+
+```html
+@if (data()) {
   <div>{{ data() }}</div>
 }
 ```

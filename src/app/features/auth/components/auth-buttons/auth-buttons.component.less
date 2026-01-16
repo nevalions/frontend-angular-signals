@@ -18,7 +18,13 @@
 }
 
 .auth-buttons__text {
-  display: none;
+  display: inline;
+}
+
+@media (max-width: 640px) {
+  .auth-buttons__text {
+    display: none;
+  }
 }
 
 .auth-buttons--logged-in {
