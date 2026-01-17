@@ -134,8 +134,17 @@ export class PlayerDetailComponent {
     const player = this.player();
     if (!player) return '';
     
-    const firstName = ('person' in player) ? player.person?.first_name : null;
-    const secondName = ('person' in player) ? player.person?.second_name : null;
+    let firstName: string | null = null;
+    let secondName: string | null = null;
+    
+    if ('person' in player) {
+      firstName = player.person?.first_name || null;
+      secondName = player.person?.second_name || null;
+    } else {
+      firstName = (player as any).first_name || null;
+      secondName = (player as any).second_name || null;
+    }
+    
     return (firstName || secondName) ? `${firstName || ''} ${secondName || ''}`.trim() : '';
   });
 
@@ -387,11 +396,16 @@ export class PlayerDetailComponent {
 
   careerByTeam = computed(() => {
     const player = this.player();
+    const playerCareer = this.playerCareer();
     if (!player) return [];
 
     if ('tournament_assignment' in player) {
       const playerDetail = player as PlayerDetailInTournamentResponse;
       return playerDetail.career_by_team;
+    }
+
+    if (playerCareer?.career_by_team) {
+      return playerCareer.career_by_team;
     }
 
     if (!player?.player_team_tournaments) return [];
@@ -417,11 +431,16 @@ export class PlayerDetailComponent {
 
   careerByTournament = computed(() => {
     const player = this.player();
+    const playerCareer = this.playerCareer();
     if (!player) return [];
 
     if ('tournament_assignment' in player) {
       const playerDetail = player as PlayerDetailInTournamentResponse;
       return playerDetail.career_by_tournament;
+    }
+
+    if (playerCareer?.career_by_tournament) {
+      return playerCareer.career_by_tournament;
     }
 
     if (!player?.player_team_tournaments) return [];
@@ -489,27 +508,43 @@ export class PlayerDetailComponent {
 
   personPhotoIconUrl(): string | null {
     const player = this.player();
-    if (!player?.person?.person_photo_icon_url) return null;
-    return buildStaticUrl(player.person.person_photo_icon_url);
+    if (!player) return null;
+    const url = ('person' in player) ? player.person?.person_photo_icon_url : (player as any).person_photo_icon_url;
+    if (!url) return null;
+    return buildStaticUrl(url);
   }
 
   personPhotoWebUrl(): string | null {
     const player = this.player();
-    if (!player?.person?.person_photo_web_url) return null;
-    return buildStaticUrl(player.person.person_photo_web_url);
+    if (!player) return null;
+    const url = ('person' in player) ? player.person?.person_photo_web_url : (player as any).person_photo_web_url;
+    if (!url) return null;
+    return buildStaticUrl(url);
   }
 
   getPlayerInitials(): string {
     const player = this.player();
     if (!player) return '';
-    const firstName = this.capitalizeName(player.person?.first_name ?? null);
-    const secondName = this.capitalizeName(player.person?.second_name ?? null);
-    let initials = '';
-    if (firstName && firstName[0]) {
-      initials += firstName[0].toUpperCase();
+    
+    let firstName: string | null = null;
+    let secondName: string | null = null;
+    
+    if ('person' in player) {
+      firstName = player.person?.first_name || null;
+      secondName = player.person?.second_name || null;
+    } else {
+      firstName = (player as any).first_name || null;
+      secondName = (player as any).second_name || null;
     }
-    if (secondName && secondName[0]) {
-      initials += secondName[0].toUpperCase();
+    
+    const capFirstName = this.capitalizeName(firstName);
+    const capSecondName = this.capitalizeName(secondName);
+    let initials = '';
+    if (capFirstName && capFirstName[0]) {
+      initials += capFirstName[0].toUpperCase();
+    }
+    if (capSecondName && capSecondName[0]) {
+      initials += capSecondName[0].toUpperCase();
     }
     return initials;
   }

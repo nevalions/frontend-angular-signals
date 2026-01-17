@@ -259,7 +259,7 @@
                   @for (tournament of careerByTournament(); track tournament.tournament_id) {
                     <div class="player-detail__career-card">
                       <h3 class="player-detail__career-title">
-                        Tournament ID: {{ tournament.tournament_id || 'N/A' }}
+                        {{ (tournament.tournament_title || 'Tournament #' + tournament.tournament_id).toUpperCase() }}
                       </h3>
                       <div class="player-detail__career-details">
                          @for (assignment of tournament.assignments; track assignment.id) {
