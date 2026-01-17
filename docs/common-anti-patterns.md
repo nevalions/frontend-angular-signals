@@ -140,6 +140,49 @@ season = computed(() => this.store.seasons().find((s) => s.id === this.seasonId(
 - Element should be visible on desktop, hidden on mobile
 - Always use media queries for responsive behavior
 
+### ❌ Don't leave context-specific elements without explicit dimensions
+
+**BAD - Missing width/height causes size inconsistency:**
+
+```less
+// Used in sport context
+.player-detail__player-photo {
+  background: var(--tui-background-accent-1);
+  font-size: 3rem;
+}
+
+// Used in tournament context - has explicit dimensions
+.player-detail__player-photo-large {
+  background: var(--tui-background-accent-1);
+  font-size: 3.5rem;
+  width: 150px;
+  height: 150px;
+}
+```
+
+**Result:** Avatar appears smaller in sport context than tournament context.
+
+**✅ GOOD - Apply explicit dimensions consistently:**
+
+```less
+.player-detail__player-photo {
+  background: var(--tui-background-accent-1);
+  font-size: 3.5rem;
+  width: 150px;
+  height: 150px;
+
+  ::ng-deep tui-avatar {
+    width: 150px;
+    height: 150px;
+  }
+}
+```
+
+**Why this matters:**
+- Ensures visual consistency across different contexts (sport vs tournament)
+- Prevents UI elements from rendering differently based on context
+- Use `::ng-deep tui-avatar` for Taiga UI components to ensure size is applied correctly
+
 **✅ GOOD - Use @if with signals:**
 
 ```html
