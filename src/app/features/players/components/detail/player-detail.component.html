@@ -13,16 +13,16 @@
 
     @if (isInTournamentContext()) {
       <div class="player-detail__tournament-assignment">
-        <h2 class="player-detail__section-title">Tournament Assignment</h2>
+        <h3 class="player-detail__tournament-title">{{ tournamentAssignment()?.tournament_title?.toUpperCase() || 'N/A' }}</h3>
 
         <div class="player-detail__assignment-content">
           <div class="player-detail__photo-section">
             <label class="player-detail__field-label">Player Photo</label>
             <tui-avatar
-              size="xl"
+              size="xxl"
               [round]="true"
               [src]="personPhotoIconUrl()"
-              class="player-detail__player-photo">
+              class="player-detail__player-photo-large">
               @if (!personPhotoIconUrl()) {
                 {{ getPlayerInitials() }}
               }
@@ -34,7 +34,7 @@
               <label class="player-detail__field-label">Team</label>
               @if (!editingTeam()) {
                 <div class="player-detail__field-value">
-                  <span class="player-detail__value">{{ tournamentAssignment()?.team_title || 'Not assigned' }}</span>
+                  <span class="player-detail__value">{{ (tournamentAssignment()?.team_title || 'Not assigned').toUpperCase() }}</span>
                   <button
                     type="button"
                     class="player-detail__edit-button"

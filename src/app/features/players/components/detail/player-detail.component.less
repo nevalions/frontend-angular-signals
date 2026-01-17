@@ -43,12 +43,32 @@
   gap: 1rem;
 
   @media (min-width: 769px) {
-    width: 200px;
+    width: 280px;
   }
 }
 
 .player-detail__player-photo {
   background: var(--tui-background-accent-1);
+  font-size: 3rem;
+}
+
+.player-detail__player-photo-large {
+  background: var(--tui-background-accent-1);
+  font-size: 3.5rem;
+  width: 150px;
+  height: 150px;
+
+  ::ng-deep tui-avatar {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+.player-detail__tournament-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--tui-text-primary);
+  margin: 0 0 1.5rem 0;
 }
 
 .player-detail__form-section {
