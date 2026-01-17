@@ -73,6 +73,7 @@
     "@typescript-eslint/parser": "^8.51.0",
     "@vitest/coverage-v8": "^4.0.16",
     "eslint": "^9.39.2",
+    "happy-dom": "^20.3.1",
     "jsdom": "^27.4.0",
     "less": "^4.2.0",
     "or": "^0.2.0",
