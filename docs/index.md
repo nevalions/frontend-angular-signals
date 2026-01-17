@@ -6,7 +6,7 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 
 - **[Angular Signals Best Practices](./angular-signals-best-practices.md)** - Signal-based development patterns and requirements
 - **[Component Patterns](./component-patterns.md)** - Component structure, inputs/outputs, and template patterns
-- **[Service Patterns](./service-patterns.md)** - Service patterns, httpResource vs rxResource decision matrix
+- **[Service Patterns](./service-patterns.md)** - Service patterns, httpResource vs rxResource decision matrix, mixed schemas
 - **[Template Requirements](./template-requirements.md)** - Modern control flow (@if, @for, @switch), signal bindings
 
 ## Patterns & Anti-Patterns
@@ -31,6 +31,7 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 ## Configuration
 
 - **[API Configuration](./api-configuration.md)** - API endpoints, static assets, PUT endpoint patterns, backend docs
+- **[Backend Integration Patterns](./backend-integration-patterns.md)** - Schema strategy, mixed vs nested schemas, ordering with joined tables
 
 ## Tools
 
@@ -51,6 +52,7 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 1. Review **[Navigation Pattern](./navigation-patterns.md)** for consistent routing
 2. Check **[Alert Pattern](./alert-patterns.md)** for CRUD operations
 3. Follow **[API Configuration](./api-configuration.md)** for API integration
+4. Review **[Backend Integration Patterns](./backend-integration-patterns.md)** for schema decisions and ordering issues
 
 ### Stuck?
 

@@ -14,7 +14,7 @@ import { buildApiUrl } from '../../../core/config/api.constants';
 
 ## Static Assets (Images, Logos, etc.)
 
-All static asset URLs (team logos, person photos, etc.) MUST use `buildStaticUrl()` function:
+All static asset URLs (team logos, person photos, tournament logos, etc.) MUST use `buildStaticUrl()` function:
 
 ```typescript
 import { buildStaticUrl } from '../../../core/config/api.constants';
@@ -22,6 +22,14 @@ import { buildStaticUrl } from '../../../core/config/api.constants';
 // In component
 teamLogoUrl(team: Team): string | null {
   return team.team_logo_url ? buildStaticUrl(team.team_logo_url) : null;
+}
+
+personPhotoIconUrl(player: Player): string | null {
+  return player.person_photo_icon_url ? buildStaticUrl(player.person_photo_icon_url) : null;
+}
+
+tournamentLogoUrl(tournament: Tournament): string | null {
+  return tournament.tournament_logo_web_url ? buildStaticUrl(tournament.tournament_logo_web_url) : null;
 }
 ```
 
@@ -31,6 +39,7 @@ teamLogoUrl(team: Team): string | null {
 
 ```html
 <img [src]="team.team_logo_url" [alt]="team.title" />
+<img [src]="player.person_photo_icon_url" [alt]="player.second_name" />
 ```
 
 **GOOD - Using buildStaticUrl:**
@@ -41,6 +50,8 @@ teamLogoUrl(team: Team): string | null {
 } @else {
   <div class="placeholder">No logo</div>
 }
+
+<tui-avatar [src]="personPhotoIconUrl(player)" [round]="true"></tui-avatar>
 ```
 
 ## PUT Endpoint Patterns
