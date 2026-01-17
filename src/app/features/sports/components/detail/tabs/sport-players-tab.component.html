@@ -119,8 +119,11 @@
           tuiCardLarge
           tuiCell="l"
           (click)="navigateToPlayerDetail(player.id)">
-          <tui-avatar size="l" [round]="true">
-            @if (player.first_name && player.second_name) {
+          <tui-avatar
+            size="l"
+            [round]="true"
+            [src]="playerPhotoIconUrl(player)">
+            @if (!playerPhotoIconUrl(player) && player.first_name && player.second_name) {
               {{ capitalizeName(player.first_name)[0].toUpperCase() }}{{ capitalizeName(player.second_name)[0].toUpperCase() }}
             }
           </tui-avatar>

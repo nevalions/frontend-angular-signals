@@ -110,6 +110,41 @@ updateSport(id: number, sportData: SportUpdate): Observable<Sport> {
 | Seasons   | `PUT /api/seasons/{id}/`      | `true`                       | `src/seasons/views.py:54`   |
 | Sports    | `PUT /api/sports/{id}/`       | `true`                       | `src/sports/views.py:41`    |
 
+## Players Endpoints
+
+### Players with Photos
+
+When displaying players with avatars, use endpoints that include photo fields:
+
+**Tournament Players:**
+```typescript
+getTournamentPlayersPaginatedWithPhotos(
+  tournamentId: number,
+  page: number,
+  itemsPerPage: number
+): Observable<PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse>
+```
+Endpoint: `GET /api/players_team_tournament/tournament/{tournamentId}/players/paginated/details-with-photos`
+
+**Sport Players:**
+```typescript
+getPlayersPaginatedWithDetailsAndPhotos(
+  sportId: number,
+  page: number,
+  itemsPerPage: number
+): Observable<PaginatedPlayerWithDetailsAndPhotosResponse>
+```
+Endpoint: `GET /api/players/paginated/details-with-photos`
+
+**Important:**
+- Use `details-with-photos` endpoints when displaying player avatars
+- `details` endpoints (without `-with-photos`) do not include `person_photo_icon_url` or `person_photo_url` fields
+- Always wrap photo URLs with `buildStaticUrl()` in components (see Static Assets section above)
+
+**Backend Reference:**
+- Tournament players: `src/player_team_tournament/views.py` - `get_tournament_players_paginated_with_details_and_photos_endpoint`
+- Sport players: `src/player/views.py` - `get_players_paginated_details_with_photos_endpoint`
+
 ## Team-Tournament Relation Endpoints
 
 ### Available Teams for Tournament

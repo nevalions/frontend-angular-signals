@@ -10,6 +10,7 @@ import { NavigationHelperService } from '../../../../../shared/services/navigati
 import { Person } from '../../../../persons/models/person.model';
 import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
 import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
+import { buildStaticUrl } from '../../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-sport-players-tab',
@@ -58,6 +59,11 @@ export class SportPlayersTabComponent {
 
   capitalizeName(name: string | null): string {
     return capitalizeNameUtil(name);
+  }
+
+  playerPhotoIconUrl(player: any): string | null {
+    const url = player.person_photo_icon_url;
+    return url ? buildStaticUrl(url) : null;
   }
 
   stringifyPerson(person: Person): string {

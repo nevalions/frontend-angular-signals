@@ -74,6 +74,13 @@ export type PlayersPaginatedResponse = PaginatedResponse<PlayerWithPerson>;
 export type PlayerTeamTournamentWithDetailsPaginatedResponse = PaginatedResponse<PlayerInTournament>;
 export type PaginatedPlayerWithDetailsResponse = PaginatedResponse<PlayerWithNames>;
 
+export interface PlayerWithDetailsAndPhotos extends PlayerWithNames {
+  person_photo_url: string | null;
+  person_photo_icon_url: string | null;
+}
+
+export type PaginatedPlayerWithDetailsAndPhotosResponse = PaginatedResponse<PlayerWithDetailsAndPhotos>;
+
 export type PlayerSortBy = 'id' | 'first_name' | 'second_name' | 'player_eesl_id';
 
 export interface PlayerAddToSport {

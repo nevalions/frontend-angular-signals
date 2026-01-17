@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse, PlayerWithPerson, PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse, PlayerCareer } from '../models/player.model';
+import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse, PaginatedPlayerWithDetailsAndPhotosResponse, PlayerWithPerson, PlayerWithDetailsAndPhotos, PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse, PlayerCareer } from '../models/player.model';
 import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
@@ -33,7 +33,7 @@ export class PlayerStoreService {
   sortOrder = signal<SortOrder>('asc');
   search = signal<string>('');
 
-  playersResource = rxResource<PlayersPaginatedResponse, PlayersResourceParams>({
+  playersResource = rxResource<PaginatedPlayerWithDetailsAndPhotosResponse, PlayersResourceParams>({
     params: computed(() => ({
       sportId: this.sportId(),
       teamId: this.teamId(),
@@ -44,7 +44,7 @@ export class PlayerStoreService {
     })),
     stream: ({ params }: { params: PlayersResourceParams }) => {
       if (!params.sportId) {
-        return new Observable<PlayersPaginatedResponse>(observer => {
+        return new Observable<PaginatedPlayerWithDetailsAndPhotosResponse>(observer => {
           observer.next({ data: [], metadata: { page: 1, items_per_page: 10, total_items: 0, total_pages: 0, has_next: false, has_previous: false } });
           observer.complete();
         });
@@ -64,7 +64,7 @@ export class PlayerStoreService {
         httpParams = httpParams.set('search', params.search);
       }
 
-      return this.http.get<PlayersPaginatedResponse>(buildApiUrl('/api/players/paginated/details'), { params: httpParams });
+      return this.http.get<PaginatedPlayerWithDetailsAndPhotosResponse>(buildApiUrl('/api/players/paginated/details-with-photos'), { params: httpParams });
     },
     injector: this.injector,
   });
