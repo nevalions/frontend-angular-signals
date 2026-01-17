@@ -58,12 +58,19 @@ export class PlayerDetailComponent {
     const playerId = this.playerId();
     const fromTournamentId = this.fromTournamentId();
     if (!playerId) return undefined;
-    
+
     if (fromTournamentId) {
       return buildApiUrl(`/api/players/id/${playerId}/in-tournament/${fromTournamentId}`);
     }
-    
+
     return buildApiUrl(`/api/players/id/${playerId}/person`);
+  });
+
+  // Career data for sport context
+  playerCareerResource = httpResource<PlayerCareer>(() => {
+    const playerId = this.playerId();
+    if (!playerId) return undefined;
+    return buildApiUrl(`/api/players/id/${playerId}/career`);
   });
 }
 ```
@@ -105,6 +112,49 @@ export class PlayerDetailComponent {
 - **Sport context**: Show career history across teams and tournaments
 
 **Rationale**: Career statistics represent the entity's overall history, which belongs in sport context, not when viewing a specific tournament assignment.
+
+#### Loading Career Data
+
+In sport context, load career data from the dedicated endpoint:
+
+```typescript
+careerByTeam = computed(() => {
+  const player = this.player();
+  const playerCareer = this.playerCareer();
+  if (!player) return [];
+
+  // Tournament context: career data in response
+  if ('tournament_assignment' in player) {
+    return (player as PlayerDetailInTournamentResponse).career_by_team;
+  }
+
+  // Sport context: use career resource
+  if (playerCareer?.career_by_team) {
+    return playerCareer.career_by_team;
+  }
+
+  // Fallback to legacy structure (if needed)
+  if (!player?.player_team_tournaments) return [];
+  // ... manual transformation logic
+});
+
+careerByTournament = computed(() => {
+  const player = this.player();
+  const playerCareer = this.playerCareer();
+  if (!player) return [];
+
+  if ('tournament_assignment' in player) {
+    return (player as PlayerDetailInTournamentResponse).career_by_tournament;
+  }
+
+  if (playerCareer?.career_by_tournament) {
+    return playerCareer.career_by_tournament;
+  }
+
+  if (!player?.player_team_tournaments) return [];
+  // ... manual transformation logic
+});
+```
 
 ### 3. Single Detail Component
 
@@ -156,14 +206,62 @@ This pattern applies to entities that can exist in multiple contexts:
 
 ```typescript
 GET /api/players/id/{playerId}/person
-// Returns: PlayerWithPersonAndTournaments (includes all career data)
+// Returns: PlayerWithPersonAndTournaments
+// Response structure: { id, first_name, second_name, person_photo_icon_url, ... }
+```
+
+### Career Data Endpoint (Sport Context)
+
+```typescript
+GET /api/players/id/{playerId}/career
+// Returns: PlayerCareer { career_by_team: [], career_by_tournament: [] }
+// Used separately in sport context for career sections
 ```
 
 ### Tournament Context Endpoint
 
 ```typescript
 GET /api/players/id/{playerId}/in-tournament/{tournamentId}
-// Returns: PlayerDetailInTournamentResponse (includes tournament_assignment + career data)
+// Returns: PlayerDetailInTournamentResponse
+// Response structure: { id, person: { first_name, second_name, ... }, tournament_assignment: {}, career_by_team: [], career_by_tournament: [] }
+```
+
+## Handling Different API Response Structures
+
+API responses may have different structures between contexts. Use type guards to safely access nested properties:
+
+```typescript
+playerName = computed(() => {
+  const player = this.player();
+  if (!player) return '';
+
+  let firstName: string | null = null;
+  let secondName: string | null = null;
+
+  // Tournament context: names nested in person object
+  if ('person' in player) {
+    firstName = player.person?.first_name || null;
+    secondName = player.person?.second_name || null;
+  }
+  // Sport context: names at root level
+  else {
+    firstName = (player as any).first_name || null;
+    secondName = (player as any).second_name || null;
+  }
+
+  return (firstName || secondName) ? `${firstName || ''} ${secondName || ''}`.trim() : '';
+});
+
+personPhotoIconUrl(): string | null {
+  const player = this.player();
+  if (!player) return null;
+
+  const url = ('person' in player)
+    ? player.person?.person_photo_icon_url           // Tournament context
+    : (player as any).person_photo_icon_url;        // Sport context
+  if (!url) return null;
+  return buildStaticUrl(url);
+}
 ```
 
 ## Related Documentation
