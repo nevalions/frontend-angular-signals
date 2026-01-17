@@ -15,13 +15,13 @@ export class PaginatedStoreService {
 
   // Paginated resource using httpResource
   itemsResource = httpResource<PaginatedResponse<Item>>(() =>
-    buildApiUrl(`/api/items?page=${this.currentPage()}&per_page=${this.itemsPerPage()}`),
+    buildApiUrl(`/api/items?page=${this.currentPage()}&items_per_page=${this.itemsPerPage()}`),
   );
 
   // Computed properties for component use
-  items = computed(() => this.itemsResource.value()?.items ?? []);
-  totalCount = computed(() => this.itemsResource.value()?.total ?? 0);
-  totalPages = computed(() => Math.ceil(this.totalCount() / this.itemsPerPage()));
+  items = computed(() => this.itemsResource.value()?.data ?? []);
+  totalCount = computed(() => this.itemsResource.value()?.metadata.total_items ?? 0);
+  totalPages = computed(() => this.itemsResource.value()?.metadata.total_pages ?? 1);
   loading = computed(() => this.itemsResource.isLoading());
   error = computed(() => this.itemsResource.error());
 
@@ -57,10 +57,15 @@ export class PaginatedStoreService {
 
 // Type definition
 interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
-  per_page: number;
+  data: T[];
+  metadata: {
+    page: number;
+    items_per_page: number;
+    total_items: number;
+    total_pages: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
 }
 ```
 
@@ -128,10 +133,39 @@ export class ItemsListComponent {
 }
 ```
 
+## Query Parameters
+
+Backend paginated endpoints support these parameters:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `page` | number | 1 | Page number (1-based) |
+| `items_per_page` | number | 20 | Items per page (max 100) |
+| `order_by` | string | - | First sort column |
+| `order_by_two` | string | - | Second sort column |
+| `ascending` | boolean | - | Sort order (true=asc, false=desc) |
+| `search` | string | - | Search query for text search |
+| `user_id` | string | - | Filter by user_id (privacy) |
+| `isprivate` | boolean | - | Filter by isprivate status |
+
+Example usage in service:
+
+```typescript
+itemsResource = httpResource<PaginatedResponse<Item>>(() =>
+  buildApiUrl(`/api/items`, {
+    page: this.currentPage(),
+    items_per_page: this.itemsPerPage(),
+    order_by: this.sortColumn(),
+    ascending: this.sortDirection() === 'asc',
+    search: this.searchQuery(),
+  })
+);
+```
+
 ## Pagination Best Practices
 
 1. **State in Service Only** - Never put pagination state in components
-2. **Computed Totals** - Always derive `totalPages` from `totalCount` and `itemsPerPage`
+2. **Computed Totals** - Always derive `totalPages` from `metadata.total_pages`
 3. **Page Validation** - Validate page bounds before navigation
 4. **Reset on Filter Change** - Reset to page 1 when filters or `itemsPerPage` change
 5. **Loading States** - Show loading indicator during page transitions
@@ -195,10 +229,15 @@ describe('PaginatedStoreService', () => {
 
   it('should calculate total pages correctly', () => {
     vi.spyOn(service.itemsResource, 'value').mockReturnValue({
-      items: [],
-      total: 95,
-      page: 1,
-      per_page: 10,
+      data: [],
+      metadata: {
+        page: 1,
+        items_per_page: 10,
+        total_items: 95,
+        total_pages: 10,
+        has_next: true,
+        has_previous: false,
+      },
     });
     expect(service.totalPages()).toBe(10);
   });
@@ -229,20 +268,20 @@ export class PaginatedStoreService {
 
   itemsPerPage = toSignal(
     this.route.queryParamMap.pipe(
-      map(params => Number(params.get('per_page')) || 10)
+      map(params => Number(params.get('items_per_page')) || 10)
     ),
     { initialValue: 10 }
   );
 
   itemsResource = httpResource<PaginatedResponse<Item>>(() =>
-    buildApiUrl(`/api/items?page=${this.currentPage()}&per_page=${this.itemsPerPage()}`),
+    buildApiUrl(`/api/items?page=${this.currentPage()}&items_per_page=${this.itemsPerPage()}`),
   );
 
   private syncUrl = effect(() => {
     this.router.navigate([], {
       queryParams: {
         page: this.currentPage(),
-        per_page: this.itemsPerPage(),
+        items_per_page: this.itemsPerPage(),
       },
       queryParamsHandling: 'merge',
       replaceUrl: true,
