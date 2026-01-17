@@ -113,6 +113,56 @@ export interface PlayerWithFullDetails {
 export type PaginatedPlayerWithFullDetailsResponse = PaginatedResponse<PlayerWithFullDetails>;
 export type PaginatedPlayerTeamTournamentWithFullDetailsResponse = PaginatedResponse<PlayerTeamTournamentWithFullDetails>;
 
+export interface PlayerCareer {
+  career_by_team: CareerByTeam[];
+  career_by_tournament: CareerByTournament[];
+}
+
+export interface PlayerDetailInTournamentResponse {
+  id: number;
+  sport_id: number;
+  person: {
+    first_name: string;
+    second_name: string;
+    person_dob: string;
+    person_eesl_id: number;
+    person_photo_url: string | null;
+    person_photo_icon_url: string | null;
+    person_photo_web_url: string | null;
+  };
+  sport: {
+    id: number;
+    title: string;
+    description: string | null;
+  };
+  tournament_assignment: {
+    team_title: string;
+    team_id: number;
+    position_title: string;
+    position_id: number;
+    player_number: string | null;
+    tournament_title: string;
+    tournament_year: string;
+    tournament_id: number;
+  };
+  career_by_team: CareerByTeam[];
+  career_by_tournament: CareerByTournament[];
+}
+
+export interface CareerByTeam {
+  team_id: number;
+  team_title: string;
+  assignments: PlayerTeamTournament[];
+}
+
+export interface CareerByTournament {
+  tournament_id: number;
+  tournament_title: string;
+  season_id: number;
+  season_year: number;
+  assignments: PlayerTeamTournament[];
+}
+
 export interface PlayerTeamTournamentWithDetailsAndPhotos {
   id: number;
   player_team_tournament_eesl_id: number | null;

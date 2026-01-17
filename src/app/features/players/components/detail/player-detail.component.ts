@@ -4,20 +4,17 @@ import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { TuiAlertService, TuiDialogService, TuiDataList, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiAvatar, TuiChevron, TuiComboBox, TuiFilterByInputPipe } from '@taiga-ui/kit';
 import { EMPTY } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
-import { buildApiUrl } from '../../../../core/config/api.constants';
-import { PlayerWithPersonAndTournaments, PlayerTeamTournament } from '../../models/player.model';
-import { Team as TeamModel } from '../../../teams/models/team.model';
-import { Position as PositionModel } from '../../../sports/models/position.model';
+import { buildApiUrl, buildStaticUrl } from '../../../../core/config/api.constants';
+import { PlayerWithPersonAndTournaments, PlayerTeamTournament, PlayerCareer, CareerByTournament, CareerByTeam, PlayerDetailInTournamentResponse } from '../../models/player.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { PlayerStoreService } from '../../services/player-store.service';
-import { TeamStoreService } from '../../../teams/services/team-store.service';
-import { PositionStoreService } from '../../../sports/services/position-store.service';
 import { withDeleteConfirm, withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { capitalizeName as capitalizeNameUtil } from '../../../../core/utils/string-helper.util';
 
@@ -99,28 +96,53 @@ export class PlayerDetailComponent {
     return [];
   });
 
-  playerResource = httpResource<PlayerWithPersonAndTournaments>(() => {
+  playerResource = httpResource<PlayerWithPersonAndTournaments | PlayerDetailInTournamentResponse>(() => {
     const playerId = this.playerId();
+    const fromTournamentId = this.fromTournamentId();
     if (!playerId) return undefined;
+    
+    if (fromTournamentId) {
+      return buildApiUrl(`/api/players/id/${playerId}/in-tournament/${fromTournamentId}`);
+    }
+    
     return buildApiUrl(`/api/players/id/${playerId}/person`);
   });
 
-  player = computed(() => this.playerResource.value());
+  playerCareerResource = httpResource<PlayerCareer>(() => {
+    const playerId = this.playerId();
+    if (!playerId) return undefined;
+    return buildApiUrl(`/api/players/id/${playerId}/career`);
+  });
 
-  loading = computed(() => this.playerResource.isLoading());
-  error = computed(() => this.playerResource.error());
+  player = computed(() => {
+    const fromTournamentId = this.fromTournamentId();
+    
+    if (fromTournamentId && 'tournament_assignment' in this.playerResource.value()) {
+      return (this.playerResource.value() as PlayerDetailInTournamentResponse);
+    }
+    
+    return this.playerResource.value();
+  });
+
+  loading = computed(() => this.playerResource.isLoading() || this.playerCareerResource.isLoading());
+  error = computed(() => this.playerResource.error() || this.playerCareerResource.error());
 
   playerName = computed(() => {
     const player = this.player();
     return player ? `${player.first_name || ''} ${player.second_name || ''}`.trim() : '';
   });
 
+  playerCareer = computed(() => this.playerCareerResource.value());
+
   tournamentAssignment = computed(() => {
     const player = this.player();
     const fromTournamentId = this.fromTournamentId();
-    if (!player?.player_team_tournaments || !fromTournamentId) return null;
     
-    return player.player_team_tournaments.find(ptt => ptt.tournament_id === fromTournamentId);
+    if (fromTournamentId && 'tournament_assignment' in player) {
+      return player.tournament_assignment;
+    }
+    
+    return null;
   });
 
   tournamentTeams = signal<TeamModel[]>([]);
@@ -419,6 +441,18 @@ export class PlayerDetailComponent {
 
   capitalizeName(name: string | null): string {
     return capitalizeNameUtil(name);
+  }
+
+  personPhotoIconUrl(): string | null {
+    const player = this.player();
+    if (!player?.person_photo_icon_url) return null;
+    return buildStaticUrl(player.person_photo_icon_url);
+  }
+
+  personPhotoWebUrl(): string | null {
+    const player = this.player();
+    if (!player?.person_photo_web_url) return null;
+    return buildStaticUrl(player.person_photo_web_url);
   }
 
   getPlayerInitials(): string {

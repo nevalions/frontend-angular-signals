@@ -20,9 +20,9 @@
             <tui-avatar
               size="xl"
               [round]="true"
-              [src]="player()?.person?.person_photo_icon_url"
+              [src]="personPhotoIconUrl()"
               class="player-detail__player-photo">
-              @if (!player()?.person?.person_photo_icon_url) {
+              @if (!personPhotoIconUrl()) {
                 {{ getPlayerInitials() }}
               }
             </tui-avatar>
@@ -31,10 +31,11 @@
           <div class="player-detail__form-section">
             <div class="player-detail__form-row">
               <label class="player-detail__field-label">Team</label>
-              @if (!editingTeam()) {
+              @if (tournamentAssignment()) {
                 <div class="player-detail__field-value">
-                  <span class="player-detail__value">{{ getTeamName(editedTeamId()) }}</span>
-                  <button
+                  <span class="player-detail__value">{{ tournamentAssignment()?.team_title || 'Not assigned' }}</span>
+                  @if (canEditTeam()) {
+                    <button
                     type="button"
                     class="player-detail__edit-button"
                     (click)="startEditTeam()">
