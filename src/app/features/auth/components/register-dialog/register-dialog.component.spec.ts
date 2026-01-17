@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TuiAlertService, TuiButton } from '@taiga-ui/core';
+import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { throwError, Observable } from 'rxjs';
 import { RegisterDialogComponent } from './register-dialog.component';
 import { AuthService } from '../../services/auth.service';
@@ -15,6 +16,12 @@ describe('RegisterDialogComponent', () => {
   };
   let alertsMock: {
     open: typeof vi.fn;
+  };
+  let dialogsMock: {
+    open: typeof vi.fn;
+  };
+  let contextMock: {
+    completeWith: typeof vi.fn;
   };
 
   beforeEach(() => {
@@ -39,11 +46,24 @@ describe('RegisterDialogComponent', () => {
       })),
     };
 
+    dialogsMock = {
+      open: vi.fn().mockReturnValue(new Observable(subscriber => {
+        subscriber.next({});
+        subscriber.complete();
+      })),
+    };
+
+    contextMock = {
+      completeWith: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, TuiButton, RegisterDialogComponent],
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: TuiAlertService, useValue: alertsMock },
+        { provide: TuiDialogService, useValue: dialogsMock },
+        { provide: POLYMORPHEUS_CONTEXT, useValue: contextMock },
       ],
     });
 

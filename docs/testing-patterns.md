@@ -321,6 +321,31 @@ TestBed.configureTestingModule({
 });
 ```
 
+### Taiga UI Dialog Component Testing
+
+Dialog components that use Taiga UI's polymorpheus require additional providers:
+
+```typescript
+import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
+
+beforeEach(() => {
+  contextMock = {
+    completeWith: vi.fn(),
+  };
+
+  TestBed.configureTestingModule({
+    imports: [ReactiveFormsModule, TuiButton, MyDialogComponent],
+    providers: [
+      { provide: AuthService, useValue: authServiceMock },
+      { provide: TuiAlertService, useValue: alertsMock },
+      { provide: TuiDialogService, useValue: dialogsMock },
+      { provide: POLYMORPHEUS_CONTEXT, useValue: contextMock },
+    ],
+  });
+});
+```
+
 ## Signal Testing Utilities
 
 ```typescript

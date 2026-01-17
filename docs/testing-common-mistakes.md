@@ -235,6 +235,42 @@ TestBed.configureTestingModule({
 
 ---
 
+### ❌ Wrong: Missing `POLYMORPHEUS_CONTEXT` for Taiga UI Dialogs
+
+**Problem:** Testing Taiga UI dialog components fails with "No provider found for `InjectionToken `".
+
+```typescript
+// WRONG - Missing POLYMORPHEUS_CONTEXT
+TestBed.configureTestingModule({
+  providers: [
+    { provide: AuthService, useValue: authServiceMock },
+    { provide: TuiAlertService, useValue: alertsMock },
+  ],
+});
+```
+
+**Why it's wrong:** Taiga UI dialog components use `inject(POLYMORPHEUS_CONTEXT)` to access dialog context for closing dialogs.
+
+**✅ Correct:**
+```typescript
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
+
+contextMock = {
+  completeWith: vi.fn(),
+};
+
+TestBed.configureTestingModule({
+  providers: [
+    { provide: AuthService, useValue: authServiceMock },
+    { provide: TuiAlertService, useValue: alertsMock },
+    { provide: TuiDialogService, useValue: dialogsMock },
+    { provide: POLYMORPHEUS_CONTEXT, useValue: contextMock },
+  ],
+});
+```
+
+---
+
 ### ❌ Wrong: Using window.confirm() for Delete Confirmation
 
 **Problem:** Testing delete operations with `window.confirm` mock.
@@ -543,12 +579,13 @@ beforeEach(() => {
 2. **Mock all store signals** that components depend on (persons, loading, search, etc.)
 3. **Mock all providers** that components inject (ActivatedRoute, Router, Services)
 4. **Clear mocks** between tests: `vi.clearAllMocks()`
-5. **Match the actual implementation** - read the service/component code before writing tests
+5. **Match actual implementation** - read the service/component code before writing tests
 6. **Check URL patterns** - use console.log or read the service to see actual URLs
 7. **Always provide Router** using `provideRouter([])` when testing components that use navigation
 8. **Include `queryParamMap`** in route mocks when components use query params
 9. **Check form validity** before calling submit methods in validation tests
 10. **Use relative paths** for photo upload mocks (e.g., `api/persons/photo.jpg`)
+11. **Provide `POLYMORPHEUS_CONTEXT`** when testing Taiga UI dialog components
 
 ### ❌ Never
 

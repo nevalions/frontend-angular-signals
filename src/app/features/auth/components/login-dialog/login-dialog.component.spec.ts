@@ -1,23 +1,59 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
+import { Observable } from 'rxjs';
 import { LoginDialogComponent } from './login-dialog.component';
 import { AuthService } from '../../services/auth.service';
-import { of } from 'rxjs';
+import { LoginResponse } from '../../models/login-response.model';
 
 describe('LoginDialogComponent', () => {
   let component: LoginDialogComponent;
   let fixture: ComponentFixture<LoginDialogComponent>;
-  let authServiceMock: Partial<AuthService>;
+  let authServiceMock: {
+    login: (credentials: any) => Observable<LoginResponse>;
+  };
+  let alertsMock: { open: ReturnType<typeof vi.fn> };
+  let dialogsMock: { open: ReturnType<typeof vi.fn> };
+  let contextMock: { completeWith: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     authServiceMock = {
-      login: vi.fn(() =>
-        of({ access_token: 'test-token-123', token_type: 'bearer' })
-      ),
+      login: vi.fn((credentials: any) =>
+        new Observable<LoginResponse>(subscriber => {
+          subscriber.next({ access_token: 'test-token-123', token_type: 'bearer' });
+          subscriber.complete();
+        })
+      ) as any,
+    };
+
+    alertsMock = {
+      open: vi.fn().mockReturnValue(new Observable(subscriber => {
+        subscriber.next({});
+        subscriber.complete();
+      })),
+    };
+
+    dialogsMock = {
+      open: vi.fn().mockReturnValue(new Observable(subscriber => {
+        subscriber.next({});
+        subscriber.complete();
+      })),
+    };
+
+    contextMock = {
+      completeWith: vi.fn(),
     };
 
     TestBed.configureTestingModule({
-      providers: [{ provide: AuthService, useValue: authServiceMock }],
+      imports: [ReactiveFormsModule, TuiButton, LoginDialogComponent],
+      providers: [
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: TuiAlertService, useValue: alertsMock },
+        { provide: TuiDialogService, useValue: dialogsMock },
+        { provide: POLYMORPHEUS_CONTEXT, useValue: contextMock },
+      ],
     });
 
     fixture = TestBed.createComponent(LoginDialogComponent);
