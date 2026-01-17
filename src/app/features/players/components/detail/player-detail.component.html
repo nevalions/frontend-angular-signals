@@ -5,9 +5,11 @@
   @else if (player()) {
     <app-entity-header
       [title]="playerName()"
+      [showEdit]="true"
       [showDelete]="!isInSportContext()"
       [customMenuItems]="customMenuItems()"
       (navigateBack)="navigateBack()"
+      (edit)="onEdit()"
       (customItemClick)="onCustomItemClick($event)"
     />
 
@@ -223,6 +225,17 @@
 
     @if (!isInTournamentContext()) {
       <div class="player-detail__content">
+        <div class="player-detail__photo-section">
+          <tui-avatar
+            size="xl"
+            [round]="true"
+            [src]="personPhotoIconUrl()"
+            class="player-detail__player-photo">
+            @if (!personPhotoIconUrl()) {
+              {{ getPlayerInitials() }}
+            }
+          </tui-avatar>
+        </div>
         @if (careerByTeam().length > 0 || careerByTournament().length > 0) {
           <div class="player-detail__sections">
             <section class="player-detail__section">
