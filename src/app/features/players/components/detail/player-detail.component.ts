@@ -156,8 +156,15 @@ export class PlayerDetailComponent {
     const player = this.player();
     if (!player || !('tournament_assignment' in player)) return null;
     
-    const ptt = (player as PlayerDetailInTournamentResponse).tournament_assignment as unknown as { id: number };
-    return ptt.id ?? null;
+    const playerDetail = player as PlayerDetailInTournamentResponse;
+    const tournamentId = this.fromTournamentId();
+    
+    if (!tournamentId || !playerDetail.career_by_tournament?.length) return null;
+    
+    const tournamentCareer = playerDetail.career_by_tournament.find(t => t.tournament_id === tournamentId);
+    if (!tournamentCareer?.assignments?.length) return null;
+    
+    return tournamentCareer.assignments[0].id;
   });
 
   tournamentTeams = signal<Team[]>([]);

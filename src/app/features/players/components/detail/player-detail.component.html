@@ -32,7 +32,7 @@
           <div class="player-detail__form-section">
             <div class="player-detail__form-row">
               <label class="player-detail__field-label">Team</label>
-              @if (tournamentAssignment()) {
+              @if (!editingTeam()) {
                 <div class="player-detail__field-value">
                   <span class="player-detail__value">{{ tournamentAssignment()?.team_title || 'Not assigned' }}</span>
                   <button
@@ -89,6 +89,12 @@
                       class="player-detail__action-button player-detail__save-button"
                       (click)="saveTeam()">
                       <tui-icon icon="@tui.check" />
+                    </button>
+                    <button
+                      type="button"
+                      class="player-detail__action-button player-detail__cancel-button"
+                      (click)="cancelEditTeam()">
+                      <tui-icon icon="@tui.x" />
                     </button>
                   </div>
                 </div>
