@@ -141,6 +141,6 @@ export class TournamentEditComponent implements OnInit {
   }
 
   cancel(): void {
-    this.navigationHelper.toTournamentsList(this.sportId, this.year);
+    this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
   }
 }
