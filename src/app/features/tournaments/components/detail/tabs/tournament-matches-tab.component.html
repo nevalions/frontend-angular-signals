@@ -93,7 +93,7 @@
                     [alt]="match.team_a.title"
                   />
                 }
-                <span class="tournament-matches-tab__team-name">{{ match.team_a?.title || 'Team A' }}</span>
+                <span class="tournament-matches-tab__team-name">{{ match.team_a?.title | uppercase }}</span>
               </div>
               <span class="tournament-matches-tab__vs">vs</span>
               <div class="tournament-matches-tab__team tournament-matches-tab__team--b">
@@ -104,7 +104,7 @@
                     [alt]="match.team_b.title"
                   />
                 }
-                <span class="tournament-matches-tab__team-name">{{ match.team_b?.title || 'Team B' }}</span>
+                <span class="tournament-matches-tab__team-name">{{ match.team_b?.title | uppercase }}</span>
               </div>
             </div>
             @if (match.match_eesl_id) {

@@ -6,12 +6,14 @@ import { MatchStoreService } from '../../../../matches/services/match-store.serv
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 import { MatchWithDetails } from '../../../../matches/models/match.model';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-tournament-matches-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    UpperCasePipe,
     TuiTextfield,
     TuiCardLarge,
     TuiCell,
@@ -23,6 +25,7 @@ import { buildStaticUrl } from '../../../../../core/config/api.constants';
 export class TournamentMatchesTabComponent {
   private matchStore = inject(MatchStoreService);
   private navigationHelper = inject(NavigationHelperService);
+  private upperCasePipe = new UpperCasePipe();
 
   tournamentId = input.required<number>();
   sportId = input.required<number>();
@@ -81,11 +84,13 @@ export class TournamentMatchesTabComponent {
   onMatchesSearchChange(query: string): void {
     this.matchesSearch.set(query);
     this.matchesCurrentPage.set(1);
+    this.loadMatches();
   }
 
   clearMatchesSearch(): void {
     this.matchesSearch.set('');
     this.matchesCurrentPage.set(1);
+    this.loadMatches();
   }
 
   onMatchesWeekChange(week: number | null): void {
