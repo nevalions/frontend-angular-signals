@@ -206,4 +206,8 @@ export class PlayerStoreService {
       tap(() => this.playersResource.reload())
     );
   }
+
+  updatePlayerTeamTournament(id: number, data: { player_number?: string | null; team_id?: number | null; position_id?: number | null }): Observable<PlayerTeamTournament> {
+    return this.apiService.put<PlayerTeamTournament>('/api/players_team_tournament/', id, data, true);
+  }
 }

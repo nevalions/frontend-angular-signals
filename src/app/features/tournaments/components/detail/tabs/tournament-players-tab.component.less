@@ -115,8 +115,37 @@
 .tournament-players-tab__player-content {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
   min-width: 0;
+}
+
+.tournament-players-tab__editable-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  tui-textfield {
+    width: 100%;
+  }
+}
+
+.tournament-players-tab__field-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--tui-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tournament-players-tab__combobox,
+.tournament-players-tab__textfield {
+  min-width: 120px;
+}
+
+.tournament-players-tab__option {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
 }
 
 .tournament-players-tab__player-name {

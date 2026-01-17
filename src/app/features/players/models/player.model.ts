@@ -72,6 +72,8 @@ export interface PlayerTeamTournamentWithDetails {
   tournament_id: number | null;
   first_name: string | null;
   second_name: string | null;
+  person_photo_url: string | null;
+  person_photo_icon_url: string | null;
 }
 
 export type PlayersPaginatedResponse = PaginatedResponse<PlayerWithPerson>;
