@@ -46,7 +46,7 @@ export class MatchStoreService {
       let httpParams = new HttpParams()
         .set('page', params.page.toString())
         .set('items_per_page', params.itemsPerPage.toString())
-        .set('order_by', 'match_date')
+        .set('order_by', 'week')
         .set('order_by_two', 'match_date')
         .set('ascending', (params.sortOrder === 'asc').toString())
         .set('tournament_id', params.tournamentId.toString());
@@ -106,7 +106,7 @@ export class MatchStoreService {
     let httpParams = new HttpParams()
       .set('page', page.toString())
       .set('items_per_page', itemsPerPage.toString())
-      .set('order_by', 'match_date')
+      .set('order_by', 'week')
       .set('order_by_two', 'match_date')
       .set('ascending', ascending.toString())
       .set('tournament_id', tournamentId.toString());

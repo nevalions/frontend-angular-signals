@@ -31,7 +31,7 @@ export class TournamentMatchesTabComponent {
   matchesLoading = signal(false);
   matchesError = signal<string | null>(null);
   matchesCurrentPage = signal(1);
-  matchesItemsPerPage = signal(20);
+  matchesItemsPerPage = signal(10);
   matchesTotalCount = signal(0);
   matchesTotalPages = signal(0);
 
