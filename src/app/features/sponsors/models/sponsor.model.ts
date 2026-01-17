@@ -1,11 +1,7 @@
+import { Sponsor } from '../../../shared/types';
 import { PaginatedResponse } from '../../../core/models';
 
-export interface Sponsor {
-  id: number;
-  title: string;
-  logo_url?: string | null;
-  scale_logo?: number | null;
-}
+export type { Sponsor };
 
 export interface SponsorCreate {
   title: string;

@@ -2,6 +2,34 @@
 
 This document covers type definition conventions and patterns.
 
+## Shared Types
+
+Common entity types used across multiple features are centralized in `src/app/shared/types/`:
+
+- **Import shared types:** `import { Person, Team, Sport, Tournament, Sponsor, SponsorLine, Position, Season } from '../../../shared/types';`
+- **Available entities:** Person, Sport, Team, Tournament, Sponsor, SponsorLine, Position, Season
+- **Documentation:** See [Shared Types README](../app/shared/types/README.md) for detailed usage guidelines
+
+**When to use shared types:**
+- When a type is used in 2 or more different features
+- For core entities that are stable and unlikely to change frequently
+- When you need a single source of truth for common data structures
+
+**When NOT to use shared types:**
+- For feature-specific types (e.g., `TeamCreate`, `TournamentWithDetails`)
+- When types are highly volatile or feature-specific logic
+
+**Example usage:**
+```typescript
+import { Person, Team } from '../../../shared/types';
+
+export interface TeamWithDetails extends Team {
+  sport: Sport | null;
+  main_sponsor: Sponsor | null;
+  sponsor_line: SponsorLine | null;
+}
+```
+
 ## Type Directory Location
 
 - Models defined in `src/app/features/<feature>/models/` directories (e.g., `src/app/features/teams/models/team.model.ts`)
@@ -158,23 +186,8 @@ export interface PlayerInTournament {
 Use `WithDetails` suffix for interfaces that include nested related entities from backend:
 
 ```typescript
-// Base Team interface
-export interface Team {
-  id: number;
-  team_eesl_id?: number | null;
-  title: string;
-  city?: string | null;
-  description?: string | null;
-  team_logo_url?: string | null;
-  team_logo_icon_url?: string | null;
-  team_logo_web_url?: string | null;
-  team_color: string;
-  sponsor_line_id?: number | null;
-  main_sponsor_id?: number | null;
-  sport_id: number;
-  isprivate: boolean;
-  user_id?: number | null;
-}
+// Base Team interface (imported from shared/types)
+import { Team, Sport, Sponsor, SponsorLine } from '../../../shared/types';
 
 // TeamWithDetails - includes nested entities
 export interface TeamWithDetails extends Team {
@@ -246,7 +259,7 @@ export interface Team {
 ### Best Practices
 
 1. **Name interfaces by context** - `PlayerWithPerson`, `PlayerInTournament`, `TeamWithDetails`, not just `Player` or `Team`
-2. **Match API response exactly** - don't add fields that don't exist in the response
+2. **Match API response exactly** - don't add fields that don't exist in response
 3. **Use composition over inheritance** - combine smaller focused interfaces
 4. **Keep base interface minimal** - only include fields truly shared across all responses
 5. **Update paginated response types** to use appropriate context-specific interface
@@ -257,23 +270,6 @@ export interface Team {
 export type PlayersPaginatedResponse = PaginatedResponse<PlayerWithPerson>;
 export type PlayerTeamTournamentWithDetailsPaginatedResponse = PaginatedResponse<PlayerInTournament>;
 export type TeamsPaginatedWithDetailsResponse = PaginatedResponse<TeamWithDetails>;
-
-// Avoid - Don't use a single generic Player type
-export type PlayersPaginatedResponse = PaginatedResponse<Player>;
-```
-
-### Best Practices
-
-1. **Name interfaces by context** - `PlayerWithPerson`, `PlayerInTournament`, not just `Player`
-2. **Match API response exactly** - don't add fields that don't exist in the response
-3. **Use composition over inheritance** - combine smaller focused interfaces
-4. **Keep base interface minimal** - only include fields truly shared across all responses
-5. **Update paginated response types** to use the appropriate context-specific interface
-
-```typescript
-// Correct - Use context-specific types
-export type PlayersPaginatedResponse = PaginatedResponse<PlayerWithPerson>;
-export type PlayerTeamTournamentWithDetailsPaginatedResponse = PaginatedResponse<PlayerInTournament>;
 
 // Avoid - Don't use a single generic Player type
 export type PlayersPaginatedResponse = PaginatedResponse<Player>;

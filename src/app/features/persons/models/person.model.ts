@@ -1,17 +1,7 @@
+import { Person } from '../../../shared/types';
 import { PaginatedResponse } from '../../../core/models';
 
-export interface Person {
-  id: number;
-  person_eesl_id?: number | null;
-  first_name: string;
-  second_name: string;
-  person_photo_url: string | null;
-  person_photo_icon_url: string | null;
-  person_photo_web_url: string | null;
-  person_dob?: string | null;
-  isprivate: boolean;
-  owner_user_id?: number | null;
-}
+export type { Person };
 
 export interface PhotoUploadResponse {
   original: string;

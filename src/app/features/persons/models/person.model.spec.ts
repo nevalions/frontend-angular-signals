@@ -13,6 +13,8 @@ describe('Person model interfaces', () => {
         person_photo_url: null,
         person_photo_icon_url: null,
         person_photo_web_url: null,
+        person_dob: null,
+        owner_user_id: null,
         isprivate: false,
       };
 
@@ -31,6 +33,8 @@ describe('Person model interfaces', () => {
         person_photo_url: 'http://example.com/photo.jpg',
         person_photo_icon_url: null,
         person_photo_web_url: null,
+        person_dob: null,
+        owner_user_id: null,
         isprivate: false,
       };
 
@@ -46,6 +50,8 @@ describe('Person model interfaces', () => {
         person_photo_url: null,
         person_photo_icon_url: null,
         person_photo_web_url: null,
+        person_dob: null,
+        owner_user_id: null,
         isprivate: false,
       };
 
@@ -61,6 +67,8 @@ describe('Person model interfaces', () => {
         person_photo_url: null,
         person_photo_icon_url: null,
         person_photo_web_url: null,
+        person_dob: null,
+        owner_user_id: null,
         isprivate: false,
       };
 

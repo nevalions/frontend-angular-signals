@@ -107,7 +107,7 @@ export class SportPlayersTabComponent {
     this.playerStore.getAvailablePersonsForSport(sportId).pipe(
       tap((persons: Person[]) => {
         const sortedPersons = Array.isArray(persons)
-          ? [...persons].sort((a, b) => a.second_name.localeCompare(b.second_name))
+          ? [...persons].sort((a, b) => (a.second_name || '').localeCompare(b.second_name || ''))
           : [];
         this.availablePersons.set(sortedPersons);
         this.availablePersonsLoading.set(false);

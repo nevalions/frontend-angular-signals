@@ -77,12 +77,12 @@
         <div class="person-card" tuiAppearance="neutral" tuiCardLarge tuiCell="l" (click)="navigateToPersonDetail(person.id)">
           <tui-avatar size="l" [src]="photoUrl(person)" [round]="true">
             @if (!person.person_photo_url) {
-              {{ person.first_name[0].toUpperCase() }}{{ person.second_name[0].toUpperCase() }}
+              {{ person.first_name?.[0]?.toUpperCase() }}{{ person.second_name?.[0]?.toUpperCase() }}
             }
           </tui-avatar>
           <div class="person-name-container">
-            <strong class="second-name">{{ capitalizeName(person.second_name) }}</strong>
-            <span class="first-name">{{ capitalizeName(person.first_name) }}</span>
+            <strong class="second-name">{{ capitalizeName(person.second_name || '') }}</strong>
+            <span class="first-name">{{ capitalizeName(person.first_name || '') }}</span>
           </div>
         </div>
       }

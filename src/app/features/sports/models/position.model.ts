@@ -1,9 +1,6 @@
-export interface Position {
-  id: number;
-  title: string;
-  category?: string | null;
-  sport_id: number;
-}
+import { Position } from '../../../shared/types';
+
+export type { Position };
 
 export interface PositionCreate {
   title: string;

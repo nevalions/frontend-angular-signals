@@ -1,8 +1,6 @@
-export interface Sport {
-  id: number;
-  title: string;
-  description?: string | null;
-}
+import { Sport } from '../../../shared/types';
+
+export type { Sport };
 
 export interface SportCreate {
   title: string;
