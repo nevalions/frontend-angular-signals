@@ -112,3 +112,21 @@ export interface PlayerWithFullDetails {
 
 export type PaginatedPlayerWithFullDetailsResponse = PaginatedResponse<PlayerWithFullDetails>;
 export type PaginatedPlayerTeamTournamentWithFullDetailsResponse = PaginatedResponse<PlayerTeamTournamentWithFullDetails>;
+
+export interface PlayerTeamTournamentWithDetailsAndPhotos {
+  id: number;
+  player_team_tournament_eesl_id: number | null;
+  player_number: string | null;
+  team_id: number | null;
+  team_title: string | null;
+  position_id: number | null;
+  position_title: string | null;
+  tournament_id: number | null;
+  player_id: number;
+  first_name: string | null;
+  second_name: string | null;
+  person_photo_url: string | null;
+  person_photo_icon_url: string | null;
+}
+
+export type PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse = PaginatedResponse<PlayerTeamTournamentWithDetailsAndPhotos>;

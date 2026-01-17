@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse, PlayerWithPerson } from '../models/player.model';
+import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse, PlayerWithPerson, PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse } from '../models/player.model';
 import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
@@ -178,6 +178,35 @@ export class PlayerStoreService {
 
     return this.http.get<PaginatedPlayerWithDetailsResponse>(
       buildApiUrl(`/api/tournaments/id/${tournamentId}/players/paginated`),
+      { params: httpParams }
+    );
+  }
+
+  getTournamentPlayersPaginatedWithPhotos(
+    tournamentId: number,
+    page: number,
+    itemsPerPage: number,
+    ascending: boolean = true,
+    search: string = '',
+    orderBy: string = 'second_name',
+    orderByTwo?: string
+  ): Observable<PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse> {
+    let httpParams = new HttpParams()
+      .set('page', page.toString())
+      .set('items_per_page', itemsPerPage.toString())
+      .set('ascending', ascending.toString())
+      .set('order_by', orderBy);
+
+    if (search) {
+      httpParams = httpParams.set('search', search);
+    }
+
+    if (orderByTwo) {
+      httpParams = httpParams.set('order_by_two', orderByTwo);
+    }
+
+    return this.http.get<PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse>(
+      buildApiUrl(`/api/players_team_tournament/tournament/${tournamentId}/players/paginated/details-with-photos`),
       { params: httpParams }
     );
   }

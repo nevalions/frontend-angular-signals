@@ -1,17 +1,20 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import { UpperCasePipe } from '@angular/common';
 import { TuiTextfield } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
-import { PlayerTeamTournamentWithDetails } from '../../../../players/models/player.model';
+import { PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsAndPhotos } from '../../../../players/models/player.model';
 import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
+import { buildStaticUrl } from '../../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-tournament-players-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    UpperCasePipe,
     TuiTextfield,
     TuiCardLarge,
     TuiCell,
@@ -36,7 +39,7 @@ export class TournamentPlayersTabComponent {
   playersTotalCount = signal(0);
   playersTotalPages = signal(0);
 
-  players = signal<PlayerTeamTournamentWithDetails[]>([]);
+  players = signal<PlayerTeamTournamentWithDetailsAndPhotos[]>([]);
   playersSearch = signal('');
 
   playersSortOrder = signal<'asc' | 'desc'>('asc');
@@ -57,7 +60,7 @@ export class TournamentPlayersTabComponent {
     this.playersLoading.set(true);
     this.playersError.set(null);
 
-    this.playerStore.getTournamentPlayersPaginatedV2(
+    this.playerStore.getTournamentPlayersPaginatedWithPhotos(
       tournamentId,
       this.playersCurrentPage(),
       this.playersItemsPerPage(),
@@ -65,25 +68,7 @@ export class TournamentPlayersTabComponent {
       this.playersSearch()
     ).subscribe({
       next: (response) => {
-        const playersWithTeamInfo: PlayerTeamTournamentWithDetails[] = (response.data || []).map(player => {
-          const teamTournament = player.player_team_tournaments?.find(ptt => ptt.tournament_id === tournamentId);
-          return {
-            id: player.id,
-            player_team_tournament_eesl_id: teamTournament?.player_team_tournament_eesl_id || null,
-            player_id: player.id,
-            player_number: teamTournament?.player_number || null,
-            team_id: teamTournament?.team_id || null,
-            team_title: teamTournament?.team_title || null,
-            position_id: teamTournament?.position_id || null,
-            position_title: teamTournament?.position_title || null,
-            tournament_id: tournamentId,
-            first_name: player.first_name,
-            second_name: player.second_name,
-            person_photo_url: null,
-            person_photo_icon_url: null
-          };
-        });
-        this.players.set(playersWithTeamInfo);
+        this.players.set(response.data || []);
         this.playersTotalCount.set(response.metadata?.total_items || 0);
         this.playersTotalPages.set(response.metadata?.total_pages || 0);
         this.playersLoading.set(false);
@@ -133,5 +118,9 @@ export class TournamentPlayersTabComponent {
 
   capitalizeName(name: string | null): string {
     return capitalizeNameUtil(name);
+  }
+
+  playerPhotoIconUrl(player: PlayerTeamTournamentWithDetailsAndPhotos): string | null {
+    return player.person_photo_icon_url ? buildStaticUrl(player.person_photo_icon_url) : null;
   }
 }

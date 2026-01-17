@@ -54,9 +54,9 @@
           <tui-avatar
             size="l"
             [round]="true"
-            [src]="player.person_photo_icon_url"
+            [src]="playerPhotoIconUrl(player)"
             class="tournament-players-tab__player-avatar">
-            @if (!player.person_photo_icon_url && player.first_name && player.second_name) {
+            @if (!playerPhotoIconUrl(player) && player.first_name && player.second_name) {
               {{ capitalizeName(player.first_name)[0].toUpperCase() }}{{ capitalizeName(player.second_name)[0].toUpperCase() }}
             }
           </tui-avatar>
@@ -69,7 +69,7 @@
               <p class="tournament-players-tab__player-eesl-id">EESL ID: {{ player.player_team_tournament_eesl_id }}</p>
             }
             @if (player.team_title) {
-              <p class="tournament-players-tab__player-team">Team: {{ player.team_title }}</p>
+              <p class="tournament-players-tab__player-team">Team: {{ player.team_title | uppercase }}</p>
             }
             @if (player.position_title) {
               <p class="tournament-players-tab__player-position">Position: {{ player.position_title }}</p>
