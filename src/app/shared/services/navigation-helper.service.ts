@@ -93,4 +93,11 @@ export class NavigationHelperService {
   toPlayerDetailFromSport(sportId: number | string, playerId: number | string): void {
     this.toPlayerDetail(sportId, playerId, true);
   }
+
+  toMatchDetail(sportId: number | string, matchId: number | string, year?: number | string, tournamentId?: number | string): void {
+    const queryParams: { year?: number | string; tournamentId?: number | string } = {};
+    if (year) queryParams.year = year.toString();
+    if (tournamentId) queryParams.tournamentId = tournamentId.toString();
+    this.router.navigate(['/sports', sportId, 'matches', matchId], { queryParams });
+  }
 }

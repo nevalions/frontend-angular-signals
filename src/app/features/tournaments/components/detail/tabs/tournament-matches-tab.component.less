@@ -1,0 +1,186 @@
+.tournament-matches-tab {
+  padding: 1rem;
+
+  &__header {
+    margin-bottom: 1rem;
+  }
+
+  &__filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__search-container {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+  }
+
+  &__week-container {
+    position: relative;
+    flex: 0 0 150px;
+  }
+
+  &__search-clear,
+  &__week-clear {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &__sort-controls {
+    margin-bottom: 1rem;
+  }
+
+  .sort-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__loading,
+  &__error,
+  &__empty-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--tui-text-03);
+  }
+
+  &__error {
+    color: var(--tui-error-fill);
+  }
+
+  &__match-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  &__match-card {
+    width: 100%;
+    text-align: left;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--tui-shadow-hover);
+    }
+  }
+
+  &__match-content {
+    width: 100%;
+  }
+
+  &__match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--tui-border-normal);
+  }
+
+  &__week {
+    font-weight: 600;
+    color: var(--tui-text-02);
+    font-size: 0.875rem;
+  }
+
+  &__date {
+    color: var(--tui-text-03);
+    font-size: 0.875rem;
+  }
+
+  &__teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__team {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: var(--tui-radius-m);
+    background-color: var(--tui-background-neutral-1);
+
+    &--a {
+      justify-content: flex-start;
+    }
+
+    &--b {
+      justify-content: flex-start;
+    }
+  }
+
+  &__team-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+
+  &__team-name {
+    font-weight: 500;
+    color: var(--tui-text-01);
+  }
+
+  &__vs {
+    font-weight: 600;
+    color: var(--tui-text-03);
+    font-size: 0.875rem;
+    padding: 0 0.5rem;
+  }
+
+  &__eesl-id {
+    font-size: 0.75rem;
+    color: var(--tui-text-03);
+    margin-top: 0.5rem;
+  }
+
+  &__pagination-wrapper {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  &__items-per-page {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    span {
+      color: var(--tui-text-02);
+      font-size: 0.875rem;
+    }
+  }
+
+  &__items-option {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+
+    &:not(.tournament-matches-tab__items-option--active) {
+      background-color: var(--tui-background-neutral-1);
+    }
+
+    &--active {
+      background-color: var(--tui-background-accent-1);
+      color: var(--tui-text-on-accent-1);
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+  }
+}

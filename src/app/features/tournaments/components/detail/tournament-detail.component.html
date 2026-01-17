@@ -34,11 +34,11 @@
     </div>
 
     @if (activeTab() === 'matches') {
-      <div class="tournament-detail__matches">
-        <div class="tournament-detail__placeholder">
-          <p>Matches section coming soon</p>
-        </div>
-      </div>
+      <app-tournament-matches-tab
+        [tournamentId]="tournamentId()!"
+        [sportId]="sportId()!"
+        [year]="year()"
+      />
     } @else if (activeTab() === 'teams') {
       <app-tournament-teams-tab
         [tournamentId]="tournamentId()!"

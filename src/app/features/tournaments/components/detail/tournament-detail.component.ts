@@ -9,6 +9,7 @@ import { SportStoreService } from '../../../sports/services/sport-store.service'
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+import { TournamentMatchesTabComponent } from './tabs/tournament-matches-tab.component';
 import { TournamentTeamsTabComponent } from './tabs/tournament-teams-tab.component';
 import { TournamentPlayersTabComponent } from './tabs/tournament-players-tab.component';
 
@@ -16,7 +17,7 @@ import { TournamentPlayersTabComponent } from './tabs/tournament-players-tab.com
   selector: 'app-tournament-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EntityHeaderComponent, TournamentTeamsTabComponent, TournamentPlayersTabComponent],
+  imports: [EntityHeaderComponent, TournamentMatchesTabComponent, TournamentTeamsTabComponent, TournamentPlayersTabComponent],
   templateUrl: './tournament-detail.component.html',
   styleUrl: './tournament-detail.component.less',
 })

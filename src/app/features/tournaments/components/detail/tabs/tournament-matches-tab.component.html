@@ -1,0 +1,142 @@
+<div class="tournament-matches-tab">
+  <div class="tournament-matches-tab__header">
+    <div class="tournament-matches-tab__filters">
+      <div class="tournament-matches-tab__search-container">
+        <tui-textfield iconStart="@tui.search">
+          <label tuiLabel>Search matches</label>
+          <input
+            placeholder="Search by team name..."
+            tuiTextfield
+            [value]="matchesSearch()"
+            (input)="onMatchesSearchChange($any($event.target).value)"
+          />
+        </tui-textfield>
+        @if (matchesSearch()) {
+          <button
+            type="button"
+            tuiButton
+            appearance="flat"
+            iconStart="@tui.close"
+            size="s"
+            (click)="clearMatchesSearch()"
+            class="tournament-matches-tab__search-clear">
+          </button>
+        }
+      </div>
+      <div class="tournament-matches-tab__week-container">
+        <tui-textfield iconStart="@tui.calendar">
+          <label tuiLabel>Week</label>
+          <input
+            type="number"
+            min="1"
+            placeholder="Filter by week..."
+            tuiTextfield
+            [value]="matchesWeek() ?? ''"
+            (input)="onMatchesWeekInputChange($any($event.target).value)"
+          />
+        </tui-textfield>
+        @if (matchesWeek()) {
+          <button
+            type="button"
+            tuiButton
+            appearance="flat"
+            iconStart="@tui.close"
+            size="s"
+            (click)="clearWeekFilter()"
+            class="tournament-matches-tab__week-clear">
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="tournament-matches-tab__sort-controls">
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      size="s"
+      class="sort-button"
+      iconEnd="matchesSortOrder() === 'asc' ? '@tui.chevron-up' : '@tui.chevron-down'"
+      (click)="toggleMatchesSort()">
+      Sort by Date
+    </button>
+  </div>
+
+  @if (matchesLoading()) {
+    <div class="tournament-matches-tab__loading">Loading matches...</div>
+  } @else if (matchesError()) {
+    <div class="tournament-matches-tab__error">{{ matchesError() }}</div>
+  } @else if (matches().length === 0) {
+    <p class="tournament-matches-tab__empty-message">No matches found for this tournament</p>
+  } @else {
+    <div class="tournament-matches-tab__match-list">
+      @for (match of matches(); track match.id) {
+        <button
+          class="tournament-matches-tab__match-card"
+          tuiCardLarge
+          tuiCell="l"
+          (click)="navigateToMatchDetail(match.id)">
+          <div class="tournament-matches-tab__match-content">
+            <div class="tournament-matches-tab__match-header">
+              @if (match.week) {
+                <span class="tournament-matches-tab__week">Week {{ match.week }}</span>
+              }
+              <span class="tournament-matches-tab__date">{{ formatMatchDate(match.match_date) }}</span>
+            </div>
+            <div class="tournament-matches-tab__teams">
+              <div class="tournament-matches-tab__team tournament-matches-tab__team--a">
+                @if (match.team_a && match.team_a.team_logo_icon_url) {
+                  <img
+                    class="tournament-matches-tab__team-logo"
+                    [src]="teamLogoUrl(match.team_a.team_logo_icon_url)"
+                    [alt]="match.team_a.title"
+                  />
+                }
+                <span class="tournament-matches-tab__team-name">{{ match.team_a?.title || 'Team A' }}</span>
+              </div>
+              <span class="tournament-matches-tab__vs">vs</span>
+              <div class="tournament-matches-tab__team tournament-matches-tab__team--b">
+                @if (match.team_b && match.team_b.team_logo_icon_url) {
+                  <img
+                    class="tournament-matches-tab__team-logo"
+                    [src]="teamLogoUrl(match.team_b.team_logo_icon_url)"
+                    [alt]="match.team_b.title"
+                  />
+                }
+                <span class="tournament-matches-tab__team-name">{{ match.team_b?.title || 'Team B' }}</span>
+              </div>
+            </div>
+            @if (match.match_eesl_id) {
+              <p class="tournament-matches-tab__eesl-id">EESL ID: {{ match.match_eesl_id }}</p>
+            }
+          </div>
+        </button>
+      }
+    </div>
+
+    @if (matchesTotalPages() > 1) {
+      <div class="tournament-matches-tab__pagination-wrapper">
+        <div class="tournament-matches-tab__items-per-page">
+          <span>Items per page:</span>
+          @for (option of itemsPerPageOptions; track option) {
+            <button
+              type="button"
+              tuiButton
+              class="tournament-matches-tab__items-option"
+              [class.tournament-matches-tab__items-option--active]="matchesItemsPerPage() === option"
+              (click)="onMatchesItemsPerPageChange(option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+        <div class="tournament-matches-tab__pagination">
+          <tui-pagination
+            [length]="matchesTotalPages()"
+            [index]="matchesCurrentPage() - 1"
+            (indexChange)="onMatchesPageChange($event)" />
+        </div>
+      </div>
+    }
+  }
+</div>
