@@ -487,19 +487,16 @@ export class PlayerDetailComponent {
 
     let personId: number | null = null;
 
-    if ('person' in player) {
-      personId = player.person?.person_eesl_id || null;
+    if ('tournament_assignment' in player) {
+      personId = (player as PlayerDetailInTournamentResponse).person?.id || null;
+    } else if ('person' in player) {
+      personId = player.person?.id || null;
     } else if ('person_eesl_id' in (player as any)) {
       personId = (player as any).person_eesl_id || null;
     }
 
     if (personId) {
       this.navigationHelper.toPersonEdit(personId);
-    } else {
-      const playerId = this.playerId();
-      if (playerId) {
-        this.navigationHelper.toPersonEdit(playerId);
-      }
     }
   }
 

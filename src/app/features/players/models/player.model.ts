@@ -129,6 +129,7 @@ export interface PlayerDetailInTournamentResponse {
   id: number;
   sport_id: number;
   person: {
+    id: number;
     first_name: string;
     second_name: string;
     person_dob: string;
