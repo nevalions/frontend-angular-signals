@@ -1,5 +1,5 @@
 <div class="tournament-players-tab">
-  <div class="tournament-players-tab__header">
+  <div class="tournament-players-tab__header-with-actions">
     <div class="tournament-players-tab__search-container">
       <tui-textfield iconStart="@tui.search">
         <label tuiLabel>Search players</label>
@@ -22,6 +22,15 @@
         </button>
       }
     </div>
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      iconStart="@tui.plus"
+      (click)="openAddPlayerDialog()"
+      class="tournament-players-tab__add-button">
+      Add Player
+    </button>
   </div>
 
   <div class="tournament-players-tab__sort-controls">
@@ -105,5 +114,97 @@
         </div>
       </div>
     }
+  }
+
+  @if (addPlayerDialogOpen()) {
+    <div class="tournament-players-tab__modal-overlay">
+      <div class="tournament-players-tab__modal">
+        <div class="tournament-players-tab__modal-header">
+          <h2>Add Player to Tournament</h2>
+          <button
+            type="button"
+            tuiButtonClose
+            tuiIconButton
+            appearance="flat"
+            (click)="closeAddPlayerDialog()">
+          </button>
+        </div>
+        <div class="tournament-players-tab__modal-body">
+          <div class="tournament-players-tab__modal-search">
+            <tui-textfield iconStart="@tui.search">
+              <label tuiLabel>Search available players</label>
+              <input
+                placeholder="Search by name..."
+                tuiTextfield
+                [value]="availablePlayersSearch()"
+                (input)="onAvailablePlayersSearchChange($any($event.target).value)" />
+            </tui-textfield>
+            @if (availablePlayersSearch()) {
+              <button
+                type="button"
+                tuiButton
+                appearance="flat"
+                iconStart="@tui.close"
+                size="s"
+                (click)="clearAvailablePlayersSearch()"
+                class="tournament-players-tab__modal-search-clear">
+              </button>
+            }
+          </div>
+
+          @if (availablePlayersLoading()) {
+            <div class="tournament-players-tab__modal-loading">Loading available players...</div>
+          } @else if (availablePlayersError()) {
+            <div class="tournament-players-tab__modal-error">{{ availablePlayersError() }}</div>
+          } @else if (filteredAvailablePlayers().length === 0) {
+            <div class="tournament-players-tab__modal-empty">No available players found</div>
+          } @else {
+            <div class="tournament-players-tab__modal-player-list">
+              @for (player of filteredAvailablePlayers(); track player.id) {
+                <button
+                  [class.tournament-players-tab__modal-player-card--selected]="selectedPlayerId() === player.id"
+                  class="tournament-players-tab__modal-player-card"
+                  (click)="selectPlayer(player.id)">
+                  <tui-avatar
+                    size="m"
+                    [round]="true"
+                    [src]="availablePlayerPhotoIconUrl(player)"
+                    class="tournament-players-tab__modal-player-avatar">
+                    @if (!availablePlayerPhotoIconUrl(player) && player.person.first_name && player.person.second_name) {
+                      {{ capitalizeAvailablePlayerName(player.person.first_name)[0].toUpperCase() }}{{ capitalizeAvailablePlayerName(player.person.second_name)[0].toUpperCase() }}
+                    }
+                  </tui-avatar>
+                  <div class="tournament-players-tab__modal-player-content">
+                    <span class="tournament-players-tab__modal-player-name">
+                      {{ capitalizeAvailablePlayerName(player.person.second_name || '') }} {{ capitalizeAvailablePlayerName(player.person.first_name || '') }}
+                    </span>
+                    @if (player.player_eesl_id) {
+                      <span class="tournament-players-tab__modal-player-eesl-id">EESL ID: {{ player.player_eesl_id }}</span>
+                    }
+                  </div>
+                </button>
+              }
+            </div>
+          }
+        </div>
+        <div class="tournament-players-tab__modal-footer">
+          <button
+            type="button"
+            tuiButton
+            appearance="flat"
+            (click)="closeAddPlayerDialog()">
+            Cancel
+          </button>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            [disabled]="!selectedPlayerId()"
+            (click)="addPlayerToTournament()">
+            Add Player
+          </button>
+        </div>
+      </div>
+    </div>
   }
 </div>
