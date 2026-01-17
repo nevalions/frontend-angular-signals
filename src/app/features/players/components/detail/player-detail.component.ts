@@ -311,18 +311,28 @@ export class PlayerDetailComponent {
     this.editingPosition.set(false);
   }
 
-  stringifyTeam(team: TeamModel): string {
-    return team.title || `Team #${team.id}`;
+  stringifyTeam(teamOrId: TeamModel | number | null): string {
+    if (teamOrId === null) return 'No team';
+    if (typeof teamOrId === 'number') {
+      const team = this.tournamentTeams().find(t => t.id === teamOrId);
+      return team ? (team.title || `Team #${team.id}`).toUpperCase() : 'Unknown';
+    }
+    return (teamOrId.title || `Team #${teamOrId.id}`).toUpperCase();
   }
 
-  stringifyPosition(position: PositionModel): string {
-    return position.title || `Position #${position.id}`;
+  stringifyPosition(positionOrId: PositionModel | number | null): string {
+    if (positionOrId === null) return 'No position';
+    if (typeof positionOrId === 'number') {
+      const position = this.sportPositions().find(p => p.id === positionOrId);
+      return position ? (position.title || `Position #${position.id}`) : 'Unknown';
+    }
+    return positionOrId.title || `Position #${positionOrId.id}`;
   }
 
   getTeamName(teamId: number | null): string {
     if (teamId === null) return 'No team';
     const team = this.tournamentTeams().find(t => t.id === teamId);
-    return team ? (team.title || `Team #${team.id}`) : 'Unknown';
+    return team ? (team.title || `Team #${team.id}`).toUpperCase() : 'Unknown';
   }
 
   getPositionName(positionId: number | null): string {
@@ -341,7 +351,7 @@ export class PlayerDetailComponent {
       const teamId = ptt.team_id;
       if (!teamMap.has(teamId)) {
         teamMap.set(teamId, {
-          teamTitle: ptt.team_title || 'Unknown Team',
+          teamTitle: (ptt.team_title || 'Unknown Team').toUpperCase(),
           assignments: []
         });
       }

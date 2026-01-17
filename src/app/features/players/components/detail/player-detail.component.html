@@ -45,7 +45,7 @@
                 <div class="player-detail__field-edit">
                   <tui-textfield
                     tuiChevron
-                    [stringify]="stringifyTeam"
+                    [stringify]="stringifyTeam.bind(this)"
                     tuiTextfieldSize="m">
                     <label tuiLabel>Select team</label>
                     <input
@@ -69,16 +69,16 @@
                           class="player-detail__option">
                           No team
                         </button>
-                        @for (team of tournamentTeams() | tuiFilterByInput; track team.id) {
-                          <button
-                            new
-                            tuiOption
-                            type="button"
-                            [value]="team.id"
-                            class="player-detail__option">
-                            {{ stringifyTeam(team) }}
-                          </button>
-                        }
+                         @for (team of tournamentTeams() | tuiFilterByInput; track team.id) {
+                           <button
+                             new
+                             tuiOption
+                             type="button"
+                             [value]="team.id"
+                             class="player-detail__option">
+                             {{ (team.title || 'Team #' + team.id).toUpperCase() }}
+                           </button>
+                         }
                       }
                     </tui-data-list>
                   </tui-textfield>
@@ -161,7 +161,7 @@
                 <div class="player-detail__field-edit">
                   <tui-textfield
                     tuiChevron
-                    [stringify]="stringifyPosition"
+                    [stringify]="stringifyPosition.bind(this)"
                     tuiTextfieldSize="m">
                     <label tuiLabel>Select position</label>
                     <input
@@ -260,23 +260,23 @@
                       Tournament ID: {{ tournament.tournamentId || 'N/A' }}
                     </h3>
                     <div class="player-detail__career-details">
-                      @for (assignment of tournament.assignments; track assignment.id) {
-                        <div class="player-detail__tournament-item">
-                          <div>
-                            <strong>Team:</strong> {{ assignment.team_title || 'N/A' }}
-                          </div>
-                          @if (assignment.position_title) {
-                            <div>
-                              <strong>Position:</strong> {{ assignment.position_title }}
-                            </div>
-                          }
-                          @if (assignment.player_number) {
-                            <div>
-                              <strong>Number:</strong> {{ assignment.player_number }}
-                            </div>
-                          }
-                        </div>
-                      }
+                       @for (assignment of tournament.assignments; track assignment.id) {
+                         <div class="player-detail__tournament-item">
+                           <div>
+                             <strong>Team:</strong> {{ (assignment.team_title || 'N/A').toUpperCase() }}
+                           </div>
+                           @if (assignment.position_title) {
+                             <div>
+                               <strong>Position:</strong> {{ assignment.position_title }}
+                             </div>
+                           }
+                           @if (assignment.player_number) {
+                             <div>
+                               <strong>Number:</strong> {{ assignment.player_number }}
+                             </div>
+                           }
+                         </div>
+                       }
                     </div>
                   </div>
                 }
