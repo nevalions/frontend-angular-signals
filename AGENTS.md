@@ -20,6 +20,7 @@ This project uses a modular documentation structure. See the [`docs/`](./docs/) 
 - **[Pagination Pattern](./docs/pagination-patterns.md)** - Paginated list pattern
 - **[Navigation Pattern](./docs/navigation-patterns.md)** - Navigation helper service
 - **[Alert Pattern](./docs/alert-patterns.md)** - User feedback patterns
+- **[Inline Editable Forms Pattern](./docs/inline-editable-forms-pattern.md)** - Inline editing with edit/save/cancel icons
 
 ## Style & Conventions
 

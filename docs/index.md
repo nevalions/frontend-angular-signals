@@ -16,6 +16,7 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 - **[Pagination Pattern](./pagination-patterns.md)** - Canonical pattern for paginated lists
 - **[Navigation Pattern](./navigation-patterns.md)** - NavigationHelperService for consistent routing
 - **[Alert Pattern](./alert-patterns.md)** - Alert helpers for consistent CRUD UX
+- **[Inline Editable Forms Pattern](./inline-editable-forms-pattern.md)** - Inline editing with edit/save/cancel icons
 
 ## Style & Conventions
 
