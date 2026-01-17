@@ -1,32 +1,18 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TuiTextfield, TuiButton, TuiAlertService, TuiDataList } from '@taiga-ui/core';
+import { TuiTextfield } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
-import { TuiAvatar, TuiChevron, TuiComboBox, TuiFilterByInputPipe, TuiPagination } from '@taiga-ui/kit';
-import { EMPTY } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
-import { TeamStoreService } from '../../../../teams/services/team-store.service';
-import { PositionStoreService } from '../../../../sports/services/position-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
-import { PlayerTeamTournamentWithDetails, PlayerWithPerson } from '../../../../players/models/player.model';
-import { Team } from '../../../../teams/models/team.model';
-import { Position } from '../../../../sports/models/position.model';
+import { PlayerTeamTournamentWithDetails } from '../../../../players/models/player.model';
 import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
-import { withCreateAlert, withUpdateAlert } from '../../../../../core/utils/alert-helper.util';
 
 @Component({
   selector: 'app-tournament-players-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     TuiTextfield,
-    TuiButton,
-    TuiDataList,
-    TuiChevron,
-    TuiComboBox,
-    TuiFilterByInputPipe,
     TuiCardLarge,
     TuiCell,
     TuiAvatar,
@@ -37,10 +23,7 @@ import { withCreateAlert, withUpdateAlert } from '../../../../../core/utils/aler
 })
 export class TournamentPlayersTabComponent {
   private playerStore = inject(PlayerStoreService);
-  private teamStore = inject(TeamStoreService);
-  private positionStore = inject(PositionStoreService);
   private navigationHelper = inject(NavigationHelperService);
-  private alerts = inject(TuiAlertService);
 
   tournamentId = input.required<number>();
   sportId = input.required<number>();
@@ -58,39 +41,12 @@ export class TournamentPlayersTabComponent {
 
   playersSortOrder = signal<'asc' | 'desc'>('asc');
 
-  availablePlayers = signal<PlayerWithPerson[]>([]);
-  availablePlayersLoading = signal(false);
-  availablePlayersError = signal<string | null>(null);
-
-  playersWithoutTeam = signal<PlayerWithPerson[]>([]);
-  playersWithoutTeamLoading = signal(false);
-  playersWithoutTeamError = signal<string | null>(null);
-
-  showAddPlayerForm = signal(false);
-  selectedPlayer = signal<PlayerWithPerson | null>(null);
-
-  tournamentTeams = signal<Team[]>([]);
-  tournamentTeamsLoading = signal(false);
-  tournamentTeamsError = signal<string | null>(null);
-
-  sportPositions = signal<Position[]>([]);
-  sportPositionsLoading = signal(false);
-  sportPositionsError = signal<string | null>(null);
-
   readonly itemsPerPageOptions = [10, 20, 50];
 
   private loadPlayersOnTournamentChange = effect(() => {
     const tournamentId = this.tournamentId();
     if (tournamentId) {
       this.loadPlayers();
-      this.loadTournamentTeams();
-    }
-  });
-
-  private loadPositionsOnSportChange = effect(() => {
-    const sportId = this.sportId();
-    if (sportId) {
-      this.loadSportPositions();
     }
   });
 
@@ -139,48 +95,6 @@ export class TournamentPlayersTabComponent {
     });
   }
 
-  loadTournamentTeams(): void {
-    const tournamentId = this.tournamentId();
-    if (!tournamentId) return;
-
-    this.tournamentTeamsLoading.set(true);
-    this.tournamentTeamsError.set(null);
-
-    this.teamStore.getTeamsByTournamentId(tournamentId).pipe(
-      tap((teams: Team[]) => {
-        this.tournamentTeams.set(teams);
-        this.tournamentTeamsLoading.set(false);
-      }),
-      catchError((_err) => {
-        this.tournamentTeamsError.set('Failed to load teams');
-        this.tournamentTeamsLoading.set(false);
-        this.tournamentTeams.set([]);
-        return EMPTY;
-      })
-    ).subscribe();
-  }
-
-  loadSportPositions(): void {
-    const sportId = this.sportId();
-    if (!sportId) return;
-
-    this.sportPositionsLoading.set(true);
-    this.sportPositionsError.set(null);
-
-    this.positionStore.getPositionsBySportId(sportId).pipe(
-      tap((positions: Position[]) => {
-        this.sportPositions.set(positions);
-        this.sportPositionsLoading.set(false);
-      }),
-      catchError((_err) => {
-        this.sportPositionsError.set('Failed to load positions');
-        this.sportPositionsLoading.set(false);
-        this.sportPositions.set([]);
-        return EMPTY;
-      })
-    ).subscribe();
-  }
-
   onPlayersSearchChange(query: string): void {
     this.playersSearch.set(query);
     this.playersCurrentPage.set(1);
@@ -217,154 +131,7 @@ export class TournamentPlayersTabComponent {
     }
   }
 
-  toggleAddPlayerForm(): void {
-    if (!this.showAddPlayerForm()) {
-      this.loadPlayersWithoutTeam();
-    }
-    this.showAddPlayerForm.update(v => !v);
-  }
-
-  loadAvailablePlayers(): void {
-    const tournamentId = this.tournamentId();
-    if (!tournamentId) return;
-
-    this.availablePlayersLoading.set(true);
-    this.availablePlayersError.set(null);
-
-    this.playerStore.getAvailablePlayersForTournament(tournamentId).pipe(
-      tap((players: PlayerWithPerson[]) => {
-        const sortedPlayers = Array.isArray(players)
-          ? [...players].sort((a, b) => {
-              const nameA = `${a.person?.second_name || ''} ${a.person?.first_name || ''}`.toLowerCase();
-              const nameB = `${b.person?.second_name || ''} ${b.person?.first_name || ''}`.toLowerCase();
-              return nameA.localeCompare(nameB);
-            })
-          : [];
-        this.availablePlayers.set(sortedPlayers);
-        this.availablePlayersLoading.set(false);
-      }),
-      catchError((_err) => {
-        this.availablePlayersError.set('Failed to load available players');
-        this.availablePlayersLoading.set(false);
-        this.availablePlayers.set([]);
-        return EMPTY;
-      })
-    ).subscribe();
-  }
-
-  loadPlayersWithoutTeam(): void {
-    const tournamentId = this.tournamentId();
-    if (!tournamentId) return;
-
-    this.playersWithoutTeamLoading.set(true);
-    this.playersWithoutTeamError.set(null);
-
-    this.playerStore.getAvailablePlayersForTournament(tournamentId).pipe(
-      tap((players: PlayerWithPerson[]) => {
-        const sortedPlayers = Array.isArray(players)
-          ? [...players].sort((a, b) => {
-              const nameA = `${a.person?.second_name || ''} ${a.person?.first_name || ''}`.toLowerCase();
-              const nameB = `${b.person?.second_name || ''} ${b.person?.first_name || ''}`.toLowerCase();
-              return nameA.localeCompare(nameB);
-            })
-          : [];
-        this.playersWithoutTeam.set(sortedPlayers);
-        this.playersWithoutTeamLoading.set(false);
-      }),
-      catchError((_err) => {
-        this.playersWithoutTeamError.set('Failed to load available players');
-        this.playersWithoutTeamLoading.set(false);
-        this.playersWithoutTeam.set([]);
-        return EMPTY;
-      })
-    ).subscribe();
-  }
-
-  addPlayer(): void {
-    const tournamentId = this.tournamentId();
-    const player = this.selectedPlayer();
-    if (!tournamentId || !player) return;
-
-    withCreateAlert(
-      this.alerts,
-      () => this.playerStore.addPlayerToTournament(tournamentId, player.id),
-      () => this.onAddPlayerSuccess(),
-      'Player'
-    );
-  }
-
-  onAddPlayerSuccess(): void {
-    this.loadPlayers();
-    this.showAddPlayerForm.set(false);
-    this.selectedPlayer.set(null);
-  }
-
-  cancelAddPlayer(): void {
-    this.showAddPlayerForm.set(false);
-    this.selectedPlayer.set(null);
-  }
-
   capitalizeName(name: string | null): string {
     return capitalizeNameUtil(name);
-  }
-
-  stringifyPlayer(player: PlayerWithPerson): string {
-    const firstName = capitalizeNameUtil(player.person?.first_name)?.trim() || '';
-    const secondName = capitalizeNameUtil(player.person?.second_name)?.trim() || '';
-
-    if (firstName || secondName) {
-      const name = `${secondName} ${firstName}`.trim();
-      return name || `Player #${player.id}`;
-    }
-
-    return `Player #${player.id}`;
-  }
-
-  stringifyTeam(team: Team): string {
-    return team.title || `Team #${team.id}`;
-  }
-
-  stringifyPosition(position: Position): string {
-    return position.title || `Position #${position.id}`;
-  }
-
-  updatePlayerTeam(playerId: number, teamId: number | null): void {
-    const player = this.players().find(p => p.player_id === playerId);
-    if (!player) return;
-
-    withUpdateAlert(
-      this.alerts,
-      () => this.playerStore.updatePlayerTeamTournament(player.id, { team_id: teamId }),
-      () => this.onUpdateSuccess(),
-      'Player team'
-    );
-  }
-
-  updatePlayerNumber(playerId: number, playerNumber: string | null): void {
-    const player = this.players().find(p => p.player_id === playerId);
-    if (!player) return;
-
-    withUpdateAlert(
-      this.alerts,
-      () => this.playerStore.updatePlayerTeamTournament(player.id, { player_number: playerNumber }),
-      () => this.onUpdateSuccess(),
-      'Player number'
-    );
-  }
-
-  updatePlayerPosition(playerId: number, positionId: number | null): void {
-    const player = this.players().find(p => p.player_id === playerId);
-    if (!player) return;
-
-    withUpdateAlert(
-      this.alerts,
-      () => this.playerStore.updatePlayerTeamTournament(player.id, { position_id: positionId }),
-      () => this.onUpdateSuccess(),
-      'Player position'
-    );
-  }
-
-  onUpdateSuccess(): void {
-    this.loadPlayers();
   }
 }

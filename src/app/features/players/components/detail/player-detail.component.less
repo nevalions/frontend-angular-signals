@@ -17,6 +17,83 @@
   margin-top: 1rem;
 }
 
+.player-detail__tournament-assignment {
+  background: var(--tui-background-base);
+  border-radius: var(--tui-radius-m);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--tui-shadow-small);
+}
+
+.player-detail__assignment-content {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.player-detail__photo-section {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  @media (min-width: 769px) {
+    width: 200px;
+  }
+}
+
+.player-detail__player-photo {
+  background: var(--tui-background-accent-1);
+}
+
+.player-detail__form-section {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.player-detail__form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  tui-textfield {
+    width: 100%;
+  }
+}
+
+.player-detail__form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.player-detail__dropdown-loading,
+.player-detail__dropdown-error,
+.player-detail__dropdown-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--tui-text-secondary);
+}
+
+.player-detail__dropdown-error {
+  color: var(--tui-text-negative);
+}
+
+.player-detail__option {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+}
+
 .player-detail__sections {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
@@ -123,4 +200,12 @@
 
 .player-detail__error {
   color: var(--tui-text-negative);
+}
+
+.player-detail__field-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--tui-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }

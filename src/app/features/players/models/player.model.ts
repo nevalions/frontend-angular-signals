@@ -29,6 +29,10 @@ export interface PlayerWithPerson extends Player {
   person: Person;
 }
 
+export interface PlayerWithPersonAndTournaments extends PlayerWithPerson {
+  player_team_tournaments?: PlayerTeamTournament[];
+}
+
 export interface PlayerWithNames extends Player {
   first_name: string | null;
   second_name: string | null;

@@ -1,5 +1,5 @@
 <div class="tournament-players-tab">
-  <div class="tournament-players-tab__header-with-actions">
+  <div class="tournament-players-tab__header">
     <div class="tournament-players-tab__search-container">
       <tui-textfield iconStart="@tui.search">
         <label tuiLabel>Search players</label>
@@ -22,76 +22,7 @@
         </button>
       }
     </div>
-    <button
-      type="button"
-      tuiButton
-      appearance="flat"
-      iconStart="@tui.plus"
-      (click)="toggleAddPlayerForm()"
-      class="tournament-players-tab__add-button">
-      @if (showAddPlayerForm()) {
-        Cancel
-      } @else {
-        Add Player
-      }
-    </button>
   </div>
-
-  @if (showAddPlayerForm()) {
-    <div class="tournament-players-tab__add-player-form">
-      <div class="tournament-players-tab__form-row">
-        <tui-textfield
-          tuiChevron
-          iconStart="@tui.search"
-          [stringify]="stringifyPlayer"
-          tuiTextfieldSize="m">
-          <label tuiLabel>Select Player</label>
-            <input
-              placeholder="Search and select player to add..."
-              tuiComboBox
-              [(ngModel)]="selectedPlayer"
-              [disabled]="playersWithoutTeamLoading()" />
-          <tui-data-list *tuiTextfieldDropdown size="l" class="tournament-players-tab__dropdown-list">
-            @if (playersWithoutTeamLoading()) {
-              <div class="tournament-players-tab__dropdown-loading">Loading players...</div>
-            } @else if (playersWithoutTeamError()) {
-              <div class="tournament-players-tab__dropdown-error">{{ playersWithoutTeamError() }}</div>
-            } @else if (playersWithoutTeam().length === 0) {
-              <div class="tournament-players-tab__dropdown-empty">No available players</div>
-            } @else {
-              @for (player of playersWithoutTeam() | tuiFilterByInput; track player.id) {
-                <button
-                  new
-                  tuiOption
-                  type="button"
-                  [value]="player"
-                  class="tournament-players-tab__player-option">
-                  {{ stringifyPlayer(player) }}
-                </button>
-              }
-            }
-          </tui-data-list>
-        </tui-textfield>
-      </div>
-      <div class="tournament-players-tab__form-actions">
-        <button
-          type="button"
-          tuiButton
-          appearance="primary"
-          (click)="addPlayer()"
-          [disabled]="!selectedPlayer()">
-          Add Player
-        </button>
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          (click)="cancelAddPlayer()">
-          Cancel
-        </button>
-      </div>
-    </div>
-  }
 
   <div class="tournament-players-tab__sort-controls">
     <button
@@ -137,105 +68,15 @@
             @if (player.player_team_tournament_eesl_id) {
               <p class="tournament-players-tab__player-eesl-id">EESL ID: {{ player.player_team_tournament_eesl_id }}</p>
             }
-            <div class="tournament-players-tab__editable-field">
-              <label class="tournament-players-tab__field-label">Team</label>
-              <tui-textfield
-                tuiChevron
-                [stringify]="stringifyTeam"
-                tuiTextfieldSize="s"
-                class="tournament-players-tab__combobox">
-                <label tuiLabel>Select team</label>
-                <input
-                  placeholder="No team"
-                  tuiComboBox
-                  [(ngModel)]="player.team_id"
-                  (ngModelChange)="updatePlayerTeam(player.player_id, $event)"
-                  [disabled]="tournamentTeamsLoading()" />
-                <tui-data-list *tuiTextfieldDropdown class="tournament-players-tab__dropdown-list">
-                  @if (tournamentTeamsLoading()) {
-                    <div class="tournament-players-tab__dropdown-loading">Loading teams...</div>
-                  } @else if (tournamentTeamsError()) {
-                    <div class="tournament-players-tab__dropdown-error">{{ tournamentTeamsError() }}</div>
-                  } @else if (tournamentTeams().length === 0) {
-                    <div class="tournament-players-tab__dropdown-empty">No teams available</div>
-                  } @else {
-                    <button
-                      new
-                      tuiOption
-                      type="button"
-                      [value]="null"
-                      class="tournament-players-tab__option">
-                      No team
-                    </button>
-                    @for (team of tournamentTeams() | tuiFilterByInput; track team.id) {
-                      <button
-                        new
-                        tuiOption
-                        type="button"
-                        [value]="team.id"
-                        class="tournament-players-tab__option">
-                        {{ stringifyTeam(team) }}
-                      </button>
-                    }
-                  }
-                </tui-data-list>
-              </tui-textfield>
-            </div>
-            <div class="tournament-players-tab__editable-field">
-              <label class="tournament-players-tab__field-label">Number</label>
-              <tui-textfield tuiTextfieldSize="s" class="tournament-players-tab__textfield">
-                <label tuiLabel>Player number</label>
-                <input
-                  placeholder="#"
-                  tuiTextfield
-                  [(ngModel)]="player.player_number"
-                  (blur)="updatePlayerNumber(player.player_id, player.player_number)" />
-              </tui-textfield>
-            </div>
-            <div class="tournament-players-tab__editable-field">
-              <label class="tournament-players-tab__field-label">Position</label>
-              <tui-textfield
-                tuiChevron
-                [stringify]="stringifyPosition"
-                tuiTextfieldSize="s"
-                class="tournament-players-tab__combobox">
-                <label tuiLabel>Select position</label>
-                <input
-                  placeholder="No position"
-                  tuiComboBox
-                  [(ngModel)]="player.position_id"
-                  (ngModelChange)="updatePlayerPosition(player.player_id, $event)"
-                  [disabled]="sportPositionsLoading()" />
-                <tui-data-list *tuiTextfieldDropdown class="tournament-players-tab__dropdown-list">
-                  @if (sportPositionsLoading()) {
-                    <div class="tournament-players-tab__dropdown-loading">Loading positions...</div>
-                  } @else if (sportPositionsError()) {
-                    <div class="tournament-players-tab__dropdown-error">{{ sportPositionsError() }}</div>
-                  } @else if (sportPositions().length === 0) {
-                    <div class="tournament-players-tab__dropdown-empty">No positions available</div>
-                  } @else {
-                    <button
-                      new
-                      tuiOption
-                      type="button"
-                      [value]="null"
-                      class="tournament-players-tab__option">
-                      No position
-                    </button>
-                    @for (position of sportPositions() | tuiFilterByInput; track position.id) {
-                      <button
-                        new
-                        tuiOption
-                        type="button"
-                        [value]="position.id"
-                        class="tournament-players-tab__option">
-                        {{ stringifyPosition(position) }}
-                      </button>
-                    }
-                  }
-                </tui-data-list>
-              </tui-textfield>
-            </div>
+            @if (player.team_title) {
+              <p class="tournament-players-tab__player-team">Team: {{ player.team_title }}</p>
+            }
+            @if (player.position_title) {
+              <p class="tournament-players-tab__player-position">Position: {{ player.position_title }}</p>
+            }
+            @if (player.player_number) {
+              <p class="tournament-players-tab__player-number">#{{ player.player_number }}</p>
+            }
           </div>
         </button>
       }
