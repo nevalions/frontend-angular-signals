@@ -15,6 +15,7 @@ This project uses a modular documentation structure. See the [`docs/`](./docs/) 
 
 ## Patterns & Anti-Patterns
 
+- **[Context-Based Entity Pattern](./docs/context-based-entity-pattern.md)** - Sport vs tournament context rendering (players, teams)
 - **[Common Anti-Patterns](./docs/common-anti-patterns.md)** - What to avoid
 - **[Signals vs RxJS](./docs/signals-vs-rxjs.md)** - When to use each
 - **[Pagination Pattern](./docs/pagination-patterns.md)** - Paginated list pattern
@@ -95,17 +96,22 @@ npm run test:browser      # Run component tests in Happy-DOM (real browser envir
    - Shared components include: `EntityHeader`, `Navbar`, `EmptyPage`, `Error404`
    - Example: Use `EntityHeaderComponent` for detail pages instead of duplicating header code
    - See `src/app/shared/components/README.md` for usage documentation
-2. Create component directory: `src/app/components/feature-name/`
-3. Create component files: `*.component.ts`, `*.html`, `*.less`
-4. Create type definition: `src/app/type/feature.type.ts`
-5. Create service extending `BaseApiService`: `feature.service.ts`
-6. Create facade service in component directory
-7. Add route to `src/app/app.routes.ts` with state injection
-8. Update `src/app/store/appstate.ts` with feature state interface
-9. For CRUD operations, use alert helpers from `src/app/core/utils/alert-helper.util.ts`:
-   - `withCreateAlert()` for create operations
-   - `withUpdateAlert()` for update operations
-   - `withDeleteConfirm()` for delete operations
+2. **For entities existing in multiple contexts (sport/tournament)**, follow the [Context-Based Entity Pattern](./docs/context-based-entity-pattern.md):
+   - Use single component with conditional rendering based on `fromSport` and `tournamentId` query params
+   - Show forms only in tournament context
+   - Show career/history only in sport context
+   - Navigate back to originating context
+3. Create component directory: `src/app/components/feature-name/`
+4. Create component files: `*.component.ts`, `*.html`, `*.less`
+5. Create type definition: `src/app/type/feature.type.ts`
+6. Create service extending `BaseApiService`: `feature.service.ts`
+7. Create facade service in component directory
+8. Add route to `src/app/app.routes.ts` with state injection
+9. Update `src/app/store/appstate.ts` with feature state interface
+10. For CRUD operations, use alert helpers from `src/app/core/utils/alert-helper.util.ts`:
+    - `withCreateAlert()` for create operations
+    - `withUpdateAlert()` for update operations
+    - `withDeleteConfirm()` for delete operations
 
 ## Console Logging
 

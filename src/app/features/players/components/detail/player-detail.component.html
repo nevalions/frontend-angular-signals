@@ -1,7 +1,8 @@
 <div class="player-detail">
   @if (loading()) {
     <div class="player-detail__loading">Loading player...</div>
-  } @else if (player()) {
+  }
+  @else if (player()) {
     <app-entity-header
       [title]="playerName()"
       [showDelete]="!isInSportContext()"
@@ -13,7 +14,7 @@
     @if (isInTournamentContext()) {
       <div class="player-detail__tournament-assignment">
         <h2 class="player-detail__section-title">Tournament Assignment</h2>
-        
+
         <div class="player-detail__assignment-content">
           <div class="player-detail__photo-section">
             <label class="player-detail__field-label">Player Photo</label>
@@ -34,8 +35,7 @@
               @if (tournamentAssignment()) {
                 <div class="player-detail__field-value">
                   <span class="player-detail__value">{{ tournamentAssignment()?.team_title || 'Not assigned' }}</span>
-                  @if (canEditTeam()) {
-                    <button
+                  <button
                     type="button"
                     class="player-detail__edit-button"
                     (click)="startEditTeam()">
@@ -70,16 +70,16 @@
                           class="player-detail__option">
                           No team
                         </button>
-                         @for (team of tournamentTeams() | tuiFilterByInput; track team.id) {
-                           <button
-                             new
-                             tuiOption
-                             type="button"
-                             [value]="team.id"
-                             class="player-detail__option">
-                             {{ (team.title || 'Team #' + team.id).toUpperCase() }}
-                           </button>
-                         }
+                        @for (team of tournamentTeams() | tuiFilterByInput; track team.id) {
+                          <button
+                            new
+                            tuiOption
+                            type="button"
+                            [value]="team.id"
+                            class="player-detail__option">
+                            {{ (team.title || 'Team #' + team.id).toUpperCase() }}
+                          </button>
+                        }
                       }
                     </tui-data-list>
                   </tui-textfield>
@@ -89,12 +89,6 @@
                       class="player-detail__action-button player-detail__save-button"
                       (click)="saveTeam()">
                       <tui-icon icon="@tui.check" />
-                    </button>
-                    <button
-                      type="button"
-                      class="player-detail__action-button player-detail__cancel-button"
-                      (click)="cancelEditTeam()">
-                      <tui-icon icon="@tui.x" />
                     </button>
                   </div>
                 </div>
@@ -221,78 +215,80 @@
       </div>
     }
 
-    <div class="player-detail__content">
-      @if (careerByTeam().length > 0 || careerByTournament().length > 0) {
-        <div class="player-detail__sections">
-          <section class="player-detail__section">
-            <h2 class="player-detail__section-title">Career by Team</h2>
-            @if (careerByTeam().length > 0) {
-              <div class="player-detail__career-list">
-                @for (team of careerByTeam(); track team.teamTitle) {
-                  <div class="player-detail__career-card">
-                    <h3 class="player-detail__career-title">{{ team.teamTitle }}</h3>
-                    <div class="player-detail__career-details">
-                      @for (assignment of team.assignments; track assignment.id) {
-                        <div class="player-detail__career-item">
-                          @if (assignment.position_title) {
-                            <span class="player-detail__position">{{ assignment.position_title }}</span>
-                          }
-                          @if (assignment.player_number) {
-                            <span class="player-detail__number">#{{ assignment.player_number }}</span>
-                          }
-                        </div>
-                      }
+    @if (!isInTournamentContext()) {
+      <div class="player-detail__content">
+        @if (careerByTeam().length > 0 || careerByTournament().length > 0) {
+          <div class="player-detail__sections">
+            <section class="player-detail__section">
+              <h2 class="player-detail__section-title">Career by Team</h2>
+              @if (careerByTeam().length > 0) {
+                <div class="player-detail__career-list">
+                  @for (team of careerByTeam(); track team.team_id) {
+                    <div class="player-detail__career-card">
+                      <h3 class="player-detail__career-title">{{ team.team_title.toUpperCase() }}</h3>
+                      <div class="player-detail__career-details">
+                        @for (assignment of team.assignments; track assignment.id) {
+                          <div class="player-detail__career-item">
+                            @if (assignment.position_title) {
+                              <span class="player-detail__position">{{ assignment.position_title }}</span>
+                            }
+                            @if (assignment.player_number) {
+                              <span class="player-detail__number">#{{ assignment.player_number }}</span>
+                            }
+                          </div>
+                        }
+                      </div>
                     </div>
-                  </div>
-                }
-              </div>
-            } @else {
-              <p class="player-detail__empty">No team assignments yet</p>
-            }
-          </section>
+                  }
+                </div>
+              } @else {
+                <p class="player-detail__empty">No team assignments yet</p>
+              }
+            </section>
 
-          <section class="player-detail__section">
-            <h2 class="player-detail__section-title">Career by Tournament</h2>
-            @if (careerByTournament().length > 0) {
-              <div class="player-detail__career-list">
-                @for (tournament of careerByTournament(); track tournament.tournamentId) {
-                  <div class="player-detail__career-card">
-                    <h3 class="player-detail__career-title">
-                      Tournament ID: {{ tournament.tournamentId || 'N/A' }}
-                    </h3>
-                    <div class="player-detail__career-details">
-                       @for (assignment of tournament.assignments; track assignment.id) {
-                         <div class="player-detail__tournament-item">
-                           <div>
-                             <strong>Team:</strong> {{ (assignment.team_title || 'N/A').toUpperCase() }}
+            <section class="player-detail__section">
+              <h2 class="player-detail__section-title">Career by Tournament</h2>
+              @if (careerByTournament().length > 0) {
+                <div class="player-detail__career-list">
+                  @for (tournament of careerByTournament(); track tournament.tournament_id) {
+                    <div class="player-detail__career-card">
+                      <h3 class="player-detail__career-title">
+                        Tournament ID: {{ tournament.tournament_id || 'N/A' }}
+                      </h3>
+                      <div class="player-detail__career-details">
+                         @for (assignment of tournament.assignments; track assignment.id) {
+                           <div class="player-detail__tournament-item">
+                             <div>
+                               <strong>Team:</strong> {{ (assignment.team_title || 'N/A').toUpperCase() }}
+                             </div>
+                             @if (assignment.position_title) {
+                               <div>
+                                 <strong>Position:</strong> {{ assignment.position_title }}
+                               </div>
+                             }
+                             @if (assignment.player_number) {
+                               <div>
+                                 <strong>Number:</strong> {{ assignment.player_number }}
+                               </div>
+                             }
                            </div>
-                           @if (assignment.position_title) {
-                             <div>
-                               <strong>Position:</strong> {{ assignment.position_title }}
-                             </div>
-                           }
-                           @if (assignment.player_number) {
-                             <div>
-                               <strong>Number:</strong> {{ assignment.player_number }}
-                             </div>
-                           }
-                         </div>
-                       }
+                         }
+                      </div>
                     </div>
-                  </div>
-                }
-              </div>
-            } @else {
-              <p class="player-detail__empty">No tournament assignments yet</p>
-            }
-          </section>
-        </div>
-      } @else {
-        <div class="player-detail__empty-state">
-          <p>This player has no team or tournament assignments yet.</p>
-        </div>
-      }
-    </div>
+                  }
+                </div>
+              } @else {
+                <p class="player-detail__empty">No tournament assignments yet</p>
+              }
+            </section>
+          </div>
+        } @else {
+          <div class="player-detail__empty-state">
+            <p>This player has no team or tournament assignments yet.</p>
+          </div>
+        }
+      </div>
+    }
   } @else if (error()) {
     <div class="player-detail__error">
       <p>Error loading player</p>
@@ -300,4 +296,3 @@
   } @else {
     <div class="player-detail__not-found">Player not found</div>
   }
-</div>

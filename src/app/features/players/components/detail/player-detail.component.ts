@@ -4,9 +4,8 @@ import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
-import { TuiAlertService, TuiDialogService, TuiDataList, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiAlertService, TuiDialogService, TuiDataList, TuiTextfield, TuiIcon } from '@taiga-ui/core';
 import { TuiAvatar, TuiChevron, TuiComboBox, TuiFilterByInputPipe } from '@taiga-ui/kit';
 import { EMPTY } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -15,6 +14,9 @@ import { buildApiUrl, buildStaticUrl } from '../../../../core/config/api.constan
 import { PlayerWithPersonAndTournaments, PlayerTeamTournament, PlayerCareer, CareerByTournament, CareerByTeam, PlayerDetailInTournamentResponse } from '../../models/player.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { PlayerStoreService } from '../../services/player-store.service';
+import { TeamStoreService } from '../../../teams/services/team-store.service';
+import { PositionStoreService } from '../../../sports/services/position-store.service';
+import { Team, Position } from '../../../../shared/types';
 import { withDeleteConfirm, withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { capitalizeName as capitalizeNameUtil } from '../../../../core/utils/string-helper.util';
 
@@ -116,12 +118,13 @@ export class PlayerDetailComponent {
 
   player = computed(() => {
     const fromTournamentId = this.fromTournamentId();
+    const value = this.playerResource.value();
     
-    if (fromTournamentId && 'tournament_assignment' in this.playerResource.value()) {
-      return (this.playerResource.value() as PlayerDetailInTournamentResponse);
+    if (fromTournamentId && value && 'tournament_assignment' in value) {
+      return (value as PlayerDetailInTournamentResponse);
     }
     
-    return this.playerResource.value();
+    return value;
   });
 
   loading = computed(() => this.playerResource.isLoading() || this.playerCareerResource.isLoading());
@@ -129,8 +132,10 @@ export class PlayerDetailComponent {
 
   playerName = computed(() => {
     const player = this.player();
-    const firstName = player?.first_name ?? player?.person?.first_name ?? null;
-    const secondName = player?.second_name ?? player?.person?.second_name ?? null;
+    if (!player) return '';
+    
+    const firstName = ('person' in player) ? player.person?.first_name : null;
+    const secondName = ('person' in player) ? player.person?.second_name : null;
     return (firstName || secondName) ? `${firstName || ''} ${secondName || ''}`.trim() : '';
   });
 
@@ -140,18 +145,26 @@ export class PlayerDetailComponent {
     const player = this.player();
     const fromTournamentId = this.fromTournamentId();
     
-    if (fromTournamentId && 'tournament_assignment' in player) {
+    if (player && fromTournamentId && 'tournament_assignment' in player) {
       return player.tournament_assignment;
     }
     
     return null;
   });
 
-  tournamentTeams = signal<TeamModel[]>([]);
+  tournamentAssignmentId = computed(() => {
+    const player = this.player();
+    if (!player || !('tournament_assignment' in player)) return null;
+    
+    const ptt = (player as PlayerDetailInTournamentResponse).tournament_assignment as unknown as { id: number };
+    return ptt.id ?? null;
+  });
+
+  tournamentTeams = signal<Team[]>([]);
   tournamentTeamsLoading = signal(false);
   tournamentTeamsError = signal<string | null>(null);
 
-  sportPositions = signal<PositionModel[]>([]);
+  sportPositions = signal<Position[]>([]);
   sportPositionsLoading = signal(false);
   sportPositionsError = signal<string | null>(null);
 
@@ -193,7 +206,7 @@ export class PlayerDetailComponent {
     this.tournamentTeamsError.set(null);
 
     this.teamStore.getTeamsByTournamentId(tournamentId).pipe(
-      tap((teams: TeamModel[]) => {
+      tap((teams: Team[]) => {
         this.tournamentTeams.set(teams);
         this.tournamentTeamsLoading.set(false);
       }),
@@ -211,7 +224,7 @@ export class PlayerDetailComponent {
     this.sportPositionsError.set(null);
 
     this.positionStore.getPositionsBySportId(sportId).pipe(
-      tap((positions: PositionModel[]) => {
+      tap((positions: Position[]) => {
         this.sportPositions.set(positions);
         this.sportPositionsLoading.set(false);
       }),
@@ -225,12 +238,12 @@ export class PlayerDetailComponent {
   }
 
   updateTournamentAssignment(): void {
-    const assignment = this.tournamentAssignment();
-    if (!assignment) return;
+    const assignmentId = this.tournamentAssignmentId();
+    if (!assignmentId) return;
 
     withUpdateAlert(
       this.alerts,
-      () => this.playerStore.updatePlayerTeamTournament(assignment.id, {
+      () => this.playerStore.updatePlayerTeamTournament(assignmentId, {
         team_id: this.editedTeamId(),
         player_number: this.editedPlayerNumber(),
         position_id: this.editedPositionId()
@@ -250,12 +263,12 @@ export class PlayerDetailComponent {
   }
 
   saveTeam(): void {
-    const assignment = this.tournamentAssignment();
-    if (!assignment) return;
+    const assignmentId = this.tournamentAssignmentId();
+    if (!assignmentId) return;
 
     withUpdateAlert(
       this.alerts,
-      () => this.playerStore.updatePlayerTeamTournament(assignment.id, {
+      () => this.playerStore.updatePlayerTeamTournament(assignmentId, {
         team_id: this.editedTeamId(),
         player_number: this.editedPlayerNumber(),
         position_id: this.editedPositionId()
@@ -281,12 +294,12 @@ export class PlayerDetailComponent {
   }
 
   saveNumber(): void {
-    const assignment = this.tournamentAssignment();
-    if (!assignment) return;
+    const assignmentId = this.tournamentAssignmentId();
+    if (!assignmentId) return;
 
     withUpdateAlert(
       this.alerts,
-      () => this.playerStore.updatePlayerTeamTournament(assignment.id, {
+      () => this.playerStore.updatePlayerTeamTournament(assignmentId, {
         team_id: this.editedTeamId(),
         player_number: this.editedPlayerNumber(),
         position_id: this.editedPositionId()
@@ -312,12 +325,12 @@ export class PlayerDetailComponent {
   }
 
   savePosition(): void {
-    const assignment = this.tournamentAssignment();
-    if (!assignment) return;
+    const assignmentId = this.tournamentAssignmentId();
+    if (!assignmentId) return;
 
     withUpdateAlert(
       this.alerts,
-      () => this.playerStore.updatePlayerTeamTournament(assignment.id, {
+      () => this.playerStore.updatePlayerTeamTournament(assignmentId, {
         team_id: this.editedTeamId(),
         player_number: this.editedPlayerNumber(),
         position_id: this.editedPositionId()
@@ -335,7 +348,7 @@ export class PlayerDetailComponent {
     this.editingPosition.set(false);
   }
 
-  stringifyTeam(teamOrId: TeamModel | number | null): string {
+  stringifyTeam(teamOrId: Team | number | null): string {
     if (teamOrId === null) return 'No team';
     if (typeof teamOrId === 'number') {
       const team = this.tournamentTeams().find(t => t.id === teamOrId);
@@ -344,7 +357,7 @@ export class PlayerDetailComponent {
     return (teamOrId.title || `Team #${teamOrId.id}`).toUpperCase();
   }
 
-  stringifyPosition(positionOrId: PositionModel | number | null): string {
+  stringifyPosition(positionOrId: Position | number | null): string {
     if (positionOrId === null) return 'No position';
     if (typeof positionOrId === 'number') {
       const position = this.sportPositions().find(p => p.id === positionOrId);
@@ -367,19 +380,29 @@ export class PlayerDetailComponent {
 
   careerByTeam = computed(() => {
     const player = this.player();
+    if (!player) return [];
+
+    if ('tournament_assignment' in player) {
+      const playerDetail = player as PlayerDetailInTournamentResponse;
+      return playerDetail.career_by_team;
+    }
+
     if (!player?.player_team_tournaments) return [];
 
-    const teamMap = new Map<number | null, { teamTitle: string; assignments: PlayerTeamTournament[] }>();
+    const teamMap = new Map<number | null, CareerByTeam>();
 
-    player.player_team_tournaments.forEach(ptt => {
+    player.player_team_tournaments.forEach((ptt: PlayerTeamTournament) => {
       const teamId = ptt.team_id;
-      if (!teamMap.has(teamId)) {
+      if (teamId !== null && !teamMap.has(teamId)) {
         teamMap.set(teamId, {
-          teamTitle: (ptt.team_title || 'Unknown Team').toUpperCase(),
+          team_id: teamId,
+          team_title: (ptt.team_title || 'Unknown Team'),
           assignments: []
         });
       }
-      teamMap.get(teamId)!.assignments.push(ptt);
+      if (teamId !== null) {
+        teamMap.get(teamId)!.assignments.push(ptt);
+      }
     });
 
     return Array.from(teamMap.values());
@@ -387,19 +410,31 @@ export class PlayerDetailComponent {
 
   careerByTournament = computed(() => {
     const player = this.player();
+    if (!player) return [];
+
+    if ('tournament_assignment' in player) {
+      const playerDetail = player as PlayerDetailInTournamentResponse;
+      return playerDetail.career_by_tournament;
+    }
+
     if (!player?.player_team_tournaments) return [];
 
-    const tournamentMap = new Map<number | null, { tournamentId: number | null; assignments: PlayerTeamTournament[] }>();
+    const tournamentMap = new Map<number, CareerByTournament>();
 
-    player.player_team_tournaments.forEach(ptt => {
+    player.player_team_tournaments.forEach((ptt: PlayerTeamTournament) => {
       const tournamentId = ptt.tournament_id;
-      if (!tournamentMap.has(tournamentId)) {
+      if (tournamentId !== null && !tournamentMap.has(tournamentId)) {
         tournamentMap.set(tournamentId, {
-          tournamentId: tournamentId,
+          tournament_id: tournamentId,
+          tournament_title: 'Unknown Tournament',
+          season_id: 0,
+          season_year: 0,
           assignments: []
         });
       }
-      tournamentMap.get(tournamentId)!.assignments.push(ptt);
+      if (tournamentId !== null) {
+        tournamentMap.get(tournamentId)!.assignments.push(ptt);
+      }
     });
 
     return Array.from(tournamentMap.values());
@@ -447,21 +482,21 @@ export class PlayerDetailComponent {
 
   personPhotoIconUrl(): string | null {
     const player = this.player();
-    if (!player?.person_photo_icon_url) return null;
-    return buildStaticUrl(player.person_photo_icon_url);
+    if (!player?.person?.person_photo_icon_url) return null;
+    return buildStaticUrl(player.person.person_photo_icon_url);
   }
 
   personPhotoWebUrl(): string | null {
     const player = this.player();
-    if (!player?.person_photo_web_url) return null;
-    return buildStaticUrl(player.person_photo_web_url);
+    if (!player?.person?.person_photo_web_url) return null;
+    return buildStaticUrl(player.person.person_photo_web_url);
   }
 
   getPlayerInitials(): string {
     const player = this.player();
     if (!player) return '';
-    const firstName = this.capitalizeName(player.first_name ?? player.person?.first_name ?? null);
-    const secondName = this.capitalizeName(player.second_name ?? player.person?.second_name ?? null);
+    const firstName = this.capitalizeName(player.person?.first_name ?? null);
+    const secondName = this.capitalizeName(player.person?.second_name ?? null);
     let initials = '';
     if (firstName && firstName[0]) {
       initials += firstName[0].toUpperCase();

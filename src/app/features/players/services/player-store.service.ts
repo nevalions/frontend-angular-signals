@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse, PlayerWithPerson, PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse } from '../models/player.model';
+import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse, PlayerWithPerson, PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse, PlayerCareer } from '../models/player.model';
 import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
@@ -238,5 +238,9 @@ export class PlayerStoreService {
 
   updatePlayerTeamTournament(id: number, data: { player_number?: string | null; team_id?: number | null; position_id?: number | null }): Observable<PlayerTeamTournament> {
     return this.apiService.put<PlayerTeamTournament>('/api/players_team_tournament/', id, data, true);
+  }
+
+  getPlayerCareer(playerId: number): Observable<PlayerCareer> {
+    return this.http.get<PlayerCareer>(buildApiUrl(`/api/players/id/${playerId}/career`));
   }
 }

@@ -52,6 +52,12 @@ toTeamEdit(sportId: number | string, teamId: number | string)
 toTeamCreate(sportId: number | string)
 ```
 
+### Players
+
+```typescript
+toPlayerDetail(sportId: number | string, playerId: number | string, fromSport?: boolean, tournamentId?: number | string, year?: number | string)
+```
+
 ### Persons
 
 ```typescript
