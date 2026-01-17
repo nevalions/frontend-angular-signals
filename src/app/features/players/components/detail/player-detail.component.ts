@@ -129,7 +129,9 @@ export class PlayerDetailComponent {
 
   playerName = computed(() => {
     const player = this.player();
-    return player ? `${player.first_name || ''} ${player.second_name || ''}`.trim() : '';
+    const firstName = player?.first_name ?? player?.person?.first_name ?? null;
+    const secondName = player?.second_name ?? player?.person?.second_name ?? null;
+    return (firstName || secondName) ? `${firstName || ''} ${secondName || ''}`.trim() : '';
   });
 
   playerCareer = computed(() => this.playerCareerResource.value());
