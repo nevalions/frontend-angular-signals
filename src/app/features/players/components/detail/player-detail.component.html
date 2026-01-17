@@ -31,109 +31,189 @@
           <div class="player-detail__form-section">
             <div class="player-detail__form-row">
               <label class="player-detail__field-label">Team</label>
-              <tui-textfield
-                tuiChevron
-                [stringify]="stringifyTeam"
-                tuiTextfieldSize="m">
-                <label tuiLabel>Select team</label>
-                <input
-                  placeholder="No team"
-                  tuiComboBox
-                  [(ngModel)]="editedTeamId"
-                  [disabled]="tournamentTeamsLoading()" />
-                <tui-data-list *tuiTextfieldDropdown>
-                  @if (tournamentTeamsLoading()) {
-                    <div class="player-detail__dropdown-loading">Loading teams...</div>
-                  } @else if (tournamentTeamsError()) {
-                    <div class="player-detail__dropdown-error">{{ tournamentTeamsError() }}</div>
-                  } @else if (tournamentTeams().length === 0) {
-                    <div class="player-detail__dropdown-empty">No teams available</div>
-                  } @else {
+              @if (!editingTeam()) {
+                <div class="player-detail__field-value">
+                  <span class="player-detail__value">{{ getTeamName(editedTeamId()) }}</span>
+                  <button
+                    type="button"
+                    class="player-detail__edit-button"
+                    (click)="startEditTeam()">
+                    <tui-icon icon="@tui.pencil" />
+                  </button>
+                </div>
+              } @else {
+                <div class="player-detail__field-edit">
+                  <tui-textfield
+                    tuiChevron
+                    [stringify]="stringifyTeam"
+                    tuiTextfieldSize="m">
+                    <label tuiLabel>Select team</label>
+                    <input
+                      placeholder="No team"
+                      tuiComboBox
+                      [(ngModel)]="editedTeamId"
+                      [disabled]="tournamentTeamsLoading()" />
+                    <tui-data-list *tuiTextfieldDropdown>
+                      @if (tournamentTeamsLoading()) {
+                        <div class="player-detail__dropdown-loading">Loading teams...</div>
+                      } @else if (tournamentTeamsError()) {
+                        <div class="player-detail__dropdown-error">{{ tournamentTeamsError() }}</div>
+                      } @else if (tournamentTeams().length === 0) {
+                        <div class="player-detail__dropdown-empty">No teams available</div>
+                      } @else {
+                        <button
+                          new
+                          tuiOption
+                          type="button"
+                          [value]="null"
+                          class="player-detail__option">
+                          No team
+                        </button>
+                        @for (team of tournamentTeams() | tuiFilterByInput; track team.id) {
+                          <button
+                            new
+                            tuiOption
+                            type="button"
+                            [value]="team.id"
+                            class="player-detail__option">
+                            {{ stringifyTeam(team) }}
+                          </button>
+                        }
+                      }
+                    </tui-data-list>
+                  </tui-textfield>
+                  <div class="player-detail__field-actions">
                     <button
-                      new
-                      tuiOption
                       type="button"
-                      [value]="null"
-                      class="player-detail__option">
-                      No team
+                      class="player-detail__action-button player-detail__save-button"
+                      (click)="saveTeam()">
+                      <tui-icon icon="@tui.check" />
                     </button>
-                    @for (team of tournamentTeams() | tuiFilterByInput; track team.id) {
-                      <button
-                        new
-                        tuiOption
-                        type="button"
-                        [value]="team.id"
-                        class="player-detail__option">
-                        {{ stringifyTeam(team) }}
-                      </button>
-                    }
-                  }
-                </tui-data-list>
-              </tui-textfield>
+                    <button
+                      type="button"
+                      class="player-detail__action-button player-detail__cancel-button"
+                      (click)="cancelEditTeam()">
+                      <tui-icon icon="@tui.x" />
+                    </button>
+                  </div>
+                </div>
+              }
             </div>
 
             <div class="player-detail__form-row">
               <label class="player-detail__field-label">Player Number</label>
-              <tui-textfield tuiTextfieldSize="m">
-                <label tuiLabel>Player number</label>
-                <input
-                  placeholder="#"
-                  tuiTextfield
-                  [(ngModel)]="editedPlayerNumber" />
-              </tui-textfield>
+              @if (!editingNumber()) {
+                <div class="player-detail__field-value">
+                  <span class="player-detail__value">
+                    @if (editedPlayerNumber()) {
+                      #{{ editedPlayerNumber() }}
+                    } @else {
+                      No number
+                    }
+                  </span>
+                  <button
+                    type="button"
+                    class="player-detail__edit-button"
+                    (click)="startEditNumber()">
+                    <tui-icon icon="@tui.pencil" />
+                  </button>
+                </div>
+              } @else {
+                <div class="player-detail__field-edit">
+                  <tui-textfield tuiTextfieldSize="m">
+                    <label tuiLabel>Player number</label>
+                    <input
+                      placeholder="#"
+                      tuiTextfield
+                      [(ngModel)]="editedPlayerNumber" />
+                  </tui-textfield>
+                  <div class="player-detail__field-actions">
+                    <button
+                      type="button"
+                      class="player-detail__action-button player-detail__save-button"
+                      (click)="saveNumber()">
+                      <tui-icon icon="@tui.check" />
+                    </button>
+                    <button
+                      type="button"
+                      class="player-detail__action-button player-detail__cancel-button"
+                      (click)="cancelEditNumber()">
+                      <tui-icon icon="@tui.x" />
+                    </button>
+                  </div>
+                </div>
+              }
             </div>
 
             <div class="player-detail__form-row">
               <label class="player-detail__field-label">Position</label>
-              <tui-textfield
-                tuiChevron
-                [stringify]="stringifyPosition"
-                tuiTextfieldSize="m">
-                <label tuiLabel>Select position</label>
-                <input
-                  placeholder="No position"
-                  tuiComboBox
-                  [(ngModel)]="editedPositionId"
-                  [disabled]="sportPositionsLoading()" />
-                <tui-data-list *tuiTextfieldDropdown>
-                  @if (sportPositionsLoading()) {
-                    <div class="player-detail__dropdown-loading">Loading positions...</div>
-                  } @else if (sportPositionsError()) {
-                    <div class="player-detail__dropdown-error">{{ sportPositionsError() }}</div>
-                  } @else if (sportPositions().length === 0) {
-                    <div class="player-detail__dropdown-empty">No positions available</div>
-                  } @else {
+              @if (!editingPosition()) {
+                <div class="player-detail__field-value">
+                  <span class="player-detail__value">{{ getPositionName(editedPositionId()) }}</span>
+                  <button
+                    type="button"
+                    class="player-detail__edit-button"
+                    (click)="startEditPosition()">
+                    <tui-icon icon="@tui.pencil" />
+                  </button>
+                </div>
+              } @else {
+                <div class="player-detail__field-edit">
+                  <tui-textfield
+                    tuiChevron
+                    [stringify]="stringifyPosition"
+                    tuiTextfieldSize="m">
+                    <label tuiLabel>Select position</label>
+                    <input
+                      placeholder="No position"
+                      tuiComboBox
+                      [(ngModel)]="editedPositionId"
+                      [disabled]="sportPositionsLoading()" />
+                    <tui-data-list *tuiTextfieldDropdown>
+                      @if (sportPositionsLoading()) {
+                        <div class="player-detail__dropdown-loading">Loading positions...</div>
+                      } @else if (sportPositionsError()) {
+                        <div class="player-detail__dropdown-error">{{ sportPositionsError() }}</div>
+                      } @else if (sportPositions().length === 0) {
+                        <div class="player-detail__dropdown-empty">No positions available</div>
+                      } @else {
+                        <button
+                          new
+                          tuiOption
+                          type="button"
+                          [value]="null"
+                          class="player-detail__option">
+                          No position
+                        </button>
+                        @for (position of sportPositions() | tuiFilterByInput; track position.id) {
+                          <button
+                            new
+                            tuiOption
+                            type="button"
+                            [value]="position.id"
+                            class="player-detail__option">
+                            {{ stringifyPosition(position) }}
+                          </button>
+                        }
+                      }
+                    </tui-data-list>
+                  </tui-textfield>
+                  <div class="player-detail__field-actions">
                     <button
-                      new
-                      tuiOption
                       type="button"
-                      [value]="null"
-                      class="player-detail__option">
-                      No position
+                      class="player-detail__action-button player-detail__save-button"
+                      (click)="savePosition()">
+                      <tui-icon icon="@tui.check" />
                     </button>
-                    @for (position of sportPositions() | tuiFilterByInput; track position.id) {
-                      <button
-                        new
-                        tuiOption
-                        type="button"
-                        [value]="position.id"
-                        class="player-detail__option">
-                        {{ stringifyPosition(position) }}
-                      </button>
-                    }
-                  }
-                </tui-data-list>
-              </tui-textfield>
-            </div>
-
-            <div class="player-detail__form-actions">
-              <button
-                type="button"
-                tuiButton
-                appearance="primary"
-                (click)="updateTournamentAssignment()">
-                Save Changes
-              </button>
+                    <button
+                      type="button"
+                      class="player-detail__action-button player-detail__cancel-button"
+                      (click)="cancelEditPosition()">
+                      <tui-icon icon="@tui.x" />
+                    </button>
+                  </div>
+                </div>
+              }
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TuiAlertService, TuiDialogService, TuiDataList, TuiTextfield } from '@taiga-ui/core';
+import { TuiAlertService, TuiDialogService, TuiDataList, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiAvatar, TuiChevron, TuiComboBox, TuiFilterByInputPipe } from '@taiga-ui/kit';
 import { EMPTY } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -30,6 +30,7 @@ import { capitalizeName as capitalizeNameUtil } from '../../../../core/utils/str
     FormsModule,
     TuiDataList,
     TuiTextfield,
+    TuiIcon,
     TuiAvatar,
     TuiChevron,
     TuiComboBox,
@@ -134,6 +135,14 @@ export class PlayerDetailComponent {
   editedPlayerNumber = signal<string | null>(null);
   editedPositionId = signal<number | null>(null);
 
+  editingTeam = signal(false);
+  editingNumber = signal(false);
+  editingPosition = signal(false);
+
+  tempTeamId = signal<number | null>(null);
+  tempPlayerNumber = signal<string | null>(null);
+  tempPositionId = signal<number | null>(null);
+
   private loadTournamentContext = effect(() => {
     const tournamentId = this.fromTournamentId();
     const sportId = this.sportId();
@@ -149,6 +158,9 @@ export class PlayerDetailComponent {
       this.editedTeamId.set(assignment.team_id);
       this.editedPlayerNumber.set(assignment.player_number);
       this.editedPositionId.set(assignment.position_id);
+      this.tempTeamId.set(assignment.team_id);
+      this.tempPlayerNumber.set(assignment.player_number);
+      this.tempPositionId.set(assignment.position_id);
     }
   });
 
@@ -206,12 +218,117 @@ export class PlayerDetailComponent {
     );
   }
 
+  startEditTeam(): void {
+    this.editingTeam.set(true);
+    this.tempTeamId.set(this.editedTeamId());
+    this.editingNumber.set(false);
+    this.editingPosition.set(false);
+  }
+
+  saveTeam(): void {
+    const assignment = this.tournamentAssignment();
+    if (!assignment) return;
+
+    withUpdateAlert(
+      this.alerts,
+      () => this.playerStore.updatePlayerTeamTournament(assignment.id, {
+        team_id: this.editedTeamId(),
+        player_number: this.editedPlayerNumber(),
+        position_id: this.editedPositionId()
+      }),
+      () => {
+        this.playerResource.reload();
+        this.editingTeam.set(false);
+      },
+      'Team'
+    );
+  }
+
+  cancelEditTeam(): void {
+    this.editedTeamId.set(this.tempTeamId());
+    this.editingTeam.set(false);
+  }
+
+  startEditNumber(): void {
+    this.editingNumber.set(true);
+    this.tempPlayerNumber.set(this.editedPlayerNumber());
+    this.editingTeam.set(false);
+    this.editingPosition.set(false);
+  }
+
+  saveNumber(): void {
+    const assignment = this.tournamentAssignment();
+    if (!assignment) return;
+
+    withUpdateAlert(
+      this.alerts,
+      () => this.playerStore.updatePlayerTeamTournament(assignment.id, {
+        team_id: this.editedTeamId(),
+        player_number: this.editedPlayerNumber(),
+        position_id: this.editedPositionId()
+      }),
+      () => {
+        this.playerResource.reload();
+        this.editingNumber.set(false);
+      },
+      'Player number'
+    );
+  }
+
+  cancelEditNumber(): void {
+    this.editedPlayerNumber.set(this.tempPlayerNumber());
+    this.editingNumber.set(false);
+  }
+
+  startEditPosition(): void {
+    this.editingPosition.set(true);
+    this.tempPositionId.set(this.editedPositionId());
+    this.editingTeam.set(false);
+    this.editingNumber.set(false);
+  }
+
+  savePosition(): void {
+    const assignment = this.tournamentAssignment();
+    if (!assignment) return;
+
+    withUpdateAlert(
+      this.alerts,
+      () => this.playerStore.updatePlayerTeamTournament(assignment.id, {
+        team_id: this.editedTeamId(),
+        player_number: this.editedPlayerNumber(),
+        position_id: this.editedPositionId()
+      }),
+      () => {
+        this.playerResource.reload();
+        this.editingPosition.set(false);
+      },
+      'Position'
+    );
+  }
+
+  cancelEditPosition(): void {
+    this.editedPositionId.set(this.tempPositionId());
+    this.editingPosition.set(false);
+  }
+
   stringifyTeam(team: TeamModel): string {
     return team.title || `Team #${team.id}`;
   }
 
   stringifyPosition(position: PositionModel): string {
     return position.title || `Position #${position.id}`;
+  }
+
+  getTeamName(teamId: number | null): string {
+    if (teamId === null) return 'No team';
+    const team = this.tournamentTeams().find(t => t.id === teamId);
+    return team ? (team.title || `Team #${team.id}`) : 'Unknown';
+  }
+
+  getPositionName(positionId: number | null): string {
+    if (positionId === null) return 'No position';
+    const position = this.sportPositions().find(p => p.id === positionId);
+    return position ? (position.title || `Position #${position.id}`) : 'Unknown';
   }
 
   careerByTeam = computed(() => {
