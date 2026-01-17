@@ -1,53 +1,60 @@
 <div class="tournament-matches-tab">
-  <div class="tournament-matches-tab__header">
-    <div class="tournament-matches-tab__filters">
-      <div class="tournament-matches-tab__search-container">
-        <tui-textfield iconStart="@tui.search">
-          <label tuiLabel>Search matches</label>
-          <input
-            placeholder="Search by team name..."
-            tuiTextfield
-            [value]="matchesSearch()"
-            (input)="onMatchesSearchChange($any($event.target).value)"
-          />
-        </tui-textfield>
-        @if (matchesSearch()) {
-          <button
-            type="button"
-            tuiButton
-            appearance="flat"
-            iconStart="@tui.close"
-            size="s"
-            (click)="clearMatchesSearch()"
-            class="tournament-matches-tab__search-clear">
-          </button>
-        }
-      </div>
-      <div class="tournament-matches-tab__week-container">
-        <tui-textfield iconStart="@tui.calendar">
-          <label tuiLabel>Week</label>
-          <input
-            type="number"
-            min="1"
-            placeholder="Filter by week..."
-            tuiTextfield
-            [value]="matchesWeek() ?? ''"
-            (input)="onMatchesWeekInputChange($any($event.target).value)"
-          />
-        </tui-textfield>
-        @if (matchesWeek()) {
-          <button
-            type="button"
-            tuiButton
-            appearance="flat"
-            iconStart="@tui.close"
-            size="s"
-            (click)="clearWeekFilter()"
-            class="tournament-matches-tab__week-clear">
-          </button>
-        }
-      </div>
+  <div class="tournament-matches-tab__header-with-actions">
+    <div class="tournament-matches-tab__search-container">
+      <tui-textfield iconStart="@tui.search">
+        <label tuiLabel>Search matches</label>
+        <input
+          placeholder="Search by team name..."
+          tuiTextfield
+          [value]="matchesSearch()"
+          (input)="onMatchesSearchChange($any($event.target).value)"
+        />
+      </tui-textfield>
+      @if (matchesSearch()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          iconStart="@tui.close"
+          size="s"
+          (click)="clearMatchesSearch()"
+          class="tournament-matches-tab__search-clear">
+        </button>
+      }
     </div>
+    <div class="tournament-matches-tab__week-container">
+      <tui-textfield iconStart="@tui.calendar">
+        <label tuiLabel>Week</label>
+        <input
+          type="number"
+          min="1"
+          placeholder="Filter by week..."
+          tuiTextfield
+          [value]="matchesWeek() ?? ''"
+          (input)="onMatchesWeekInputChange($any($event.target).value)"
+        />
+      </tui-textfield>
+      @if (matchesWeek()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          iconStart="@tui.close"
+          size="s"
+          (click)="clearWeekFilter()"
+          class="tournament-matches-tab__week-clear">
+        </button>
+      }
+    </div>
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      iconStart="@tui.plus"
+      (click)="navigateToMatchCreate()"
+      class="tournament-matches-tab__add-button">
+      Add Match
+    </button>
   </div>
 
   <div class="tournament-matches-tab__sort-controls">

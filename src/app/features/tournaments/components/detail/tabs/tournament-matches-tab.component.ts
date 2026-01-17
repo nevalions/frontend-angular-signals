@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
-import { TuiTextfield } from '@taiga-ui/core';
+import { TuiTextfield, TuiButton } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiPagination } from '@taiga-ui/kit';
 import { MatchStoreService } from '../../../../matches/services/match-store.service';
@@ -15,6 +15,7 @@ import { UpperCasePipe } from '@angular/common';
   imports: [
     UpperCasePipe,
     TuiTextfield,
+    TuiButton,
     TuiCardLarge,
     TuiCell,
     TuiPagination
@@ -157,5 +158,14 @@ export class TournamentMatchesTabComponent {
 
   teamLogoUrl(logoPath: string | null): string {
     return logoPath ? buildStaticUrl(logoPath) : '';
+  }
+
+  navigateToMatchCreate(): void {
+    const sportId = this.sportId();
+    const year = this.year();
+    const tournamentId = this.tournamentId();
+    if (sportId && tournamentId) {
+      this.navigationHelper.toMatchCreate(sportId, tournamentId, year || undefined);
+    }
   }
 }

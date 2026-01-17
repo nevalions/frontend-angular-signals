@@ -9,6 +9,7 @@ import { TournamentEditComponent } from './features/tournaments/components/edit/
 import { TeamDetailComponent } from './features/teams/components/detail/team-detail.component';
 import { TeamEditComponent } from './features/teams/components/edit/team-edit.component';
 import { TeamCreateComponent } from './features/teams/components/create/team-create.component';
+import { MatchCreateComponent } from './features/matches/components/create/match-create.component';
 import { Error404Component } from './shared/components/error404/error404.component';
 import { PersonListComponent } from './features/persons/components/list/person-list.component';
 import { PersonDetailComponent } from './features/persons/components/detail/person-detail.component';
@@ -65,6 +66,10 @@ export const routes: Routes = [
       {
         path: ':sportId/teams/:teamId',
         component: TeamDetailComponent,
+      },
+      {
+        path: ':sportId/matches/new',
+        component: MatchCreateComponent,
       },
       {
         path: ':sportId/players/:playerId',

@@ -1,186 +1,199 @@
 .tournament-matches-tab {
-  padding: 1rem;
+  padding: 2rem;
+}
 
-  &__header {
-    margin-bottom: 1rem;
-  }
+.tournament-matches-tab__header-with-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
 
-  &__filters {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
+.tournament-matches-tab__search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 200px;
 
-  &__search-container {
-    position: relative;
+  tui-textfield {
     flex: 1;
-    min-width: 250px;
-    max-width: 400px;
+  }
+}
+
+.tournament-matches-tab__search-clear {
+  flex-shrink: 0;
+}
+
+.tournament-matches-tab__week-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  tui-textfield {
+    width: 150px;
+  }
+}
+
+.tournament-matches-tab__week-clear {
+  flex-shrink: 0;
+}
+
+.tournament-matches-tab__add-button {
+  flex-shrink: 0;
+}
+
+.tournament-matches-tab__sort-controls {
+  margin-bottom: 1rem;
+}
+
+.tournament-matches-tab .sort-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tournament-matches-tab__loading,
+.tournament-matches-tab__error,
+.tournament-matches-tab__empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--tui-text-03);
+}
+
+.tournament-matches-tab__error {
+  color: var(--tui-error-fill);
+}
+
+.tournament-matches-tab__match-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.tournament-matches-tab__match-card {
+  width: 100%;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--tui-shadow-hover);
+  }
+}
+
+.tournament-matches-tab__match-content {
+  width: 100%;
+}
+
+.tournament-matches-tab__match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--tui-border-normal);
+}
+
+.tournament-matches-tab__week {
+  font-weight: 600;
+  color: var(--tui-text-02);
+  font-size: 0.875rem;
+}
+
+.tournament-matches-tab__date {
+  color: var(--tui-text-03);
+  font-size: 0.875rem;
+}
+
+.tournament-matches-tab__teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.tournament-matches-tab__team {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: var(--tui-radius-m);
+  background-color: var(--tui-background-neutral-1);
+
+  &--a {
+    justify-content: flex-start;
   }
 
-  &__week-container {
-    position: relative;
-    flex: 0 0 150px;
+  &--b {
+    justify-content: flex-start;
   }
+}
 
-  &__search-clear,
-  &__week-clear {
-    position: absolute;
-    right: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-  }
+.tournament-matches-tab__team-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 4px;
+}
 
-  &__sort-controls {
-    margin-bottom: 1rem;
-  }
+.tournament-matches-tab__team-name {
+  font-weight: 500;
+  color: var(--tui-text-01);
+}
 
-  .sort-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+.tournament-matches-tab__vs {
+  font-weight: 600;
+  color: var(--tui-text-03);
+  font-size: 0.875rem;
+  padding: 0 0.5rem;
+}
 
-  &__loading,
-  &__error,
-  &__empty-message {
-    text-align: center;
-    padding: 2rem;
-    color: var(--tui-text-03);
-  }
+.tournament-matches-tab__eesl-id {
+  font-size: 0.75rem;
+  color: var(--tui-text-03);
+  margin-top: 0.5rem;
+}
 
-  &__error {
-    color: var(--tui-error-fill);
-  }
+.tournament-matches-tab__pagination-wrapper {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 
-  &__match-list {
-    display: grid;
-    gap: 1rem;
-  }
+.tournament-matches-tab__items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 
-  &__match-card {
-    width: 100%;
-    text-align: left;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--tui-shadow-hover);
-    }
-  }
-
-  &__match-content {
-    width: 100%;
-  }
-
-  &__match-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--tui-border-normal);
-  }
-
-  &__week {
-    font-weight: 600;
+  span {
     color: var(--tui-text-02);
     font-size: 0.875rem;
   }
+}
 
-  &__date {
-    color: var(--tui-text-03);
-    font-size: 0.875rem;
-  }
+.tournament-matches-tab__items-option {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
 
-  &__teams {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  &__team {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    border-radius: var(--tui-radius-m);
+  &:not(.tournament-matches-tab__items-option--active) {
     background-color: var(--tui-background-neutral-1);
-
-    &--a {
-      justify-content: flex-start;
-    }
-
-    &--b {
-      justify-content: flex-start;
-    }
   }
 
-  &__team-logo {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    border-radius: 4px;
+  &--active {
+    background-color: var(--tui-background-accent-1);
+    color: var(--tui-text-on-accent-1);
   }
+}
 
-  &__team-name {
-    font-weight: 500;
-    color: var(--tui-text-01);
-  }
-
-  &__vs {
-    font-weight: 600;
-    color: var(--tui-text-03);
-    font-size: 0.875rem;
-    padding: 0 0.5rem;
-  }
-
-  &__eesl-id {
-    font-size: 0.75rem;
-    color: var(--tui-text-03);
-    margin-top: 0.5rem;
-  }
-
-  &__pagination-wrapper {
-    margin-top: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  &__items-per-page {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    span {
-      color: var(--tui-text-02);
-      font-size: 0.875rem;
-    }
-  }
-
-  &__items-option {
-    padding: 0.25rem 0.75rem;
-    font-size: 0.875rem;
-
-    &:not(.tournament-matches-tab__items-option--active) {
-      background-color: var(--tui-background-neutral-1);
-    }
-
-    &--active {
-      background-color: var(--tui-background-accent-1);
-      color: var(--tui-text-on-accent-1);
-    }
-  }
-
-  &__pagination {
-    display: flex;
-    justify-content: center;
-    flex: 1;
-  }
+.tournament-matches-tab__pagination {
+  display: flex;
+  justify-content: center;
+  flex: 1;
 }

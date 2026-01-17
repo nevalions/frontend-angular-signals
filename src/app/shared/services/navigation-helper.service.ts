@@ -100,4 +100,11 @@ export class NavigationHelperService {
     if (tournamentId) queryParams.tournamentId = tournamentId.toString();
     this.router.navigate(['/sports', sportId, 'matches', matchId], { queryParams });
   }
+
+  toMatchCreate(sportId: number | string, tournamentId: number | string, year?: number | string): void {
+    const queryParams: { year?: number | string; tournamentId?: number | string } = {};
+    if (year) queryParams.year = year.toString();
+    if (tournamentId) queryParams.tournamentId = tournamentId.toString();
+    this.router.navigate(['/sports', sportId, 'matches', 'new'], { queryParams });
+  }
 }

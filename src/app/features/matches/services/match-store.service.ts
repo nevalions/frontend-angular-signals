@@ -2,8 +2,10 @@ import { computed, inject, Injectable, Injector, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { MatchesPaginatedWithDetailsResponse } from '../models/match.model';
+import { MatchesPaginatedWithDetailsResponse, MatchCreate, Match } from '../models/match.model';
 import { SortOrder } from '../../../core/models';
 
 interface MatchesResourceParams {
@@ -19,6 +21,7 @@ interface MatchesResourceParams {
 })
 export class MatchStoreService {
   private http = inject(HttpClient);
+  private apiService = inject(ApiService);
   private readonly injector = inject(Injector);
 
   tournamentId = signal<number | null>(null);
@@ -120,5 +123,9 @@ export class MatchStoreService {
     }
 
     return this.http.get<MatchesPaginatedWithDetailsResponse>(buildApiUrl('/api/matches/with-details/paginated'), { params: httpParams });
+  }
+
+  createMatch(data: MatchCreate): Observable<Match> {
+    return this.apiService.post<Match>('/api/matches/', data).pipe(tap(() => this.reload()));
   }
 }
