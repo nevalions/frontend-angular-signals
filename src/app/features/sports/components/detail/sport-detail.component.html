@@ -7,9 +7,11 @@
         (edit)="navigateToEdit()"
         (delete)="deleteSport()"
       />
-      <button class="sport-detail__parse-btn" (click)="navigateToParseEesl()">
-        📥 Parse EESL
-      </button>
+      @if (showParseButton()) {
+        <button class="sport-detail__parse-btn" (click)="navigateToParseEesl()">
+          📥 Parse EESL
+        </button>
+      }
     </div>
 
     <div class="sport-detail__subnav">

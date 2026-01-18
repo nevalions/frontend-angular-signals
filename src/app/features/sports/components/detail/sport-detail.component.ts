@@ -153,6 +153,15 @@ export class SportDetailComponent {
     this.navigationHelper.toSportsList();
   }
 
+  showParseButton(): boolean {
+    const sport = this.sport();
+    if (!sport) return false;
+    
+    // Show parse button only for football
+    const footballSports = ['football', 'soccer'];
+    return footballSports.some(s => sport.title.toLowerCase().includes(s));
+  }
+
   navigateToParseEesl(): void {
     const sportId = this.sportId();
     if (sportId) {

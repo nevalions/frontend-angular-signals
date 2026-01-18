@@ -2,6 +2,8 @@
 
 **Route**: `/sports/:sportId/parse-eesl`
 
+**Note**: Parse EESL button only shows for football/soccer sports (detected by title containing "football" or "soccer")
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    ┌─────────────────┐                      │
@@ -15,50 +17,56 @@
                                                               
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
-│  Parse tournaments from EESL API and import them           │
-│  into the database.                                         │
-│                                                             │
-│  EESL Season ID _                                          │
-│  [_________________]                                         │
-│                                                             │
-│  [🔍 Parse]  [💾 Save All]                                 │
+│  Parse tournaments from EESL API and automatically        │
+│  create them in the database.                                │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
                                                               
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
-│  Parsed Tournaments                                         │
+│  EESL Season ID _                                          │
+│  [_________________]                                         │
 │                                                             │
-│  📦 Tournament 1                       [❌]                 │
+│  [📥 Parse and Create]                                     │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+                                                              
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  Tournaments Created                                          │
+│                                                             │
+│  🏆 Tournament 1                                          │
 │     Title: EESL Tournament Name                             │
 │     EESL ID: 12345                                          │
+│     ID: 1                                                   │
 │                                                             │
-│  📦 Tournament 2                       [❌]                 │
+│  🏆 Tournament 2                                          │
 │     Title: Another EESL Tournament                           │
 │     EESL ID: 67890                                          │
+│     ID: 2                                                   │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## What's on the page
 
-- Back button → Navigate back to `/sports/:sportId`
+- Back button → Navigate to `/sports/:sportId`
 - Page title: "Parse EESL Season"
-- Cancel button → Navigate back to `/sports/:sportId`
-- Description text explaining the feature
+- Cancel button → Navigate to `/sports/:sportId`
+- Description text explaining to feature
 - Form field:
   - EESL Season ID (number input, required)
-- Action buttons:
-  - "Parse" button → Fetch tournaments from EESL API
-  - "Save All" button → Save all parsed tournaments to database
-- Parsed tournaments list:
-  - Shows each tournament with title and EESL ID
-  - Each tournament has a remove button to exclude from import
+- Action button:
+  - "Parse and Create" button → Fetch tournaments from EESL API and create them in database in one step
+  - Shows "Parsing and Creating..." while processing
+- Created tournaments list:
+  - Shows each tournament with title, EESL ID, and database ID
   - Only displayed after successful parse
+  - No remove buttons (all tournaments are created)
 
 ## What we need from backend
 
-**For parsing EESL season:**
+**For parsing and creating EESL season:**
 
 - EESL Season ID
 - List of tournament data from EESL API
@@ -76,7 +84,7 @@
 - Season ID (from route parameter `:sportId`)
 - Sport ID (from route parameter `:sportId`)
 - List of tournaments to create
-- Returns: List of created tournaments
+- Returns: List of created tournaments with full Tournament objects (including id)
 - **Backend API Endpoint:** `POST /api/tournaments/pars_and_create/season/{eesl_season_id}?season_id={season_id}&sport_id={sport_id}`
 
 **For sport context:**
@@ -87,6 +95,14 @@
 - [Backend Schema: `SportSchema`](../../../../statsboards-backend/src/sports/schemas.py)
 - **Backend API Endpoint:** `GET /api/sports/id/{sport_id}/`
 
+**For season context:**
+
+- Season ID (current season or latest season by year if no current is marked)
+- Season year
+- [Interface: `Season`](../../../src/app/features/seasons/models/season.model.ts)
+- [Backend Schema: `SeasonSchema`](../../../../statsboards-backend/src/seasons/schemas.py)
+- **Backend API Endpoint:** `GET /api/seasons/`
+
 ## Backend Endpoint Verification
 
 All endpoints exist in backend:
@@ -94,3 +110,4 @@ All endpoints exist in backend:
 - `GET /api/tournaments/pars/season/{eesl_season_id}` - Verified in `/statsboards-backend/src/tournaments/views.py:476`
 - `POST /api/tournaments/pars_and_create/season/{eesl_season_id}` - Verified in `/statsboards-backend/src/tournaments/views.py:482`
 - `GET /api/sports/id/{sport_id}/` - Standard BaseRouter endpoint
+- `GET /api/seasons/` - Standard BaseRouter endpoint
