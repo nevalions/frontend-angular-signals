@@ -44,8 +44,8 @@
             tuiCell="l"
             (click)="navigateToTournamentDetail(tournament.id)">
             <div class="sport-tournaments-tab__tournament-icon">
-              @if (tournament.tournament_logo_icon_url) {
-                <img [src]="tournament.tournament_logo_icon_url" [alt]="tournament.title" class="sport-tournaments-tab__tournament-logo" />
+              @if (tournamentLogoUrl(tournament); as logoUrl) {
+                <img [src]="logoUrl" [alt]="tournament.title" class="sport-tournaments-tab__tournament-logo" />
               } @else {
                 <tui-avatar size="l" class="sport-tournaments-tab__tournament-avatar">
                   <tui-icon icon="@tui.trophy" />

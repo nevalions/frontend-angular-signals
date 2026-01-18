@@ -61,8 +61,8 @@ export class SportTournamentsTabComponent {
     );
   });
 
-  sportLogoUrl(tournament: Tournament): string | null {
-    return tournament.title ? buildStaticUrl(tournament.title) : null;
+  tournamentLogoUrl(tournament: Tournament): string | null {
+    return tournament.tournament_logo_icon_url ? buildStaticUrl(tournament.tournament_logo_icon_url) : null;
   }
 
   totalCount = computed(() => this.tournaments().length);
