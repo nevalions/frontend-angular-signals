@@ -26,7 +26,7 @@ describe('PersonCreateComponent', () => {
 
     storeMock = {
       createPerson: vi.fn().mockReturnValue(of(undefined)),
-      uploadPersonPhoto: vi.fn().mockReturnValue(of({ webview: 'api/persons/photo.jpg' })),
+      uploadPersonPhoto: vi.fn().mockReturnValue(of({ original: 'api/persons/photo.jpg', icon: 'api/persons/photo-icon.jpg', webview: 'api/persons/photo-web.jpg' })),
     };
 
     TestBed.configureTestingModule({
@@ -78,8 +78,8 @@ describe('PersonCreateComponent', () => {
     expect(component.photoUploadLoading).toBeDefined();
   });
 
-  it('should have photoPreviewUrl signal', () => {
-    expect(component.photoPreviewUrl).toBeDefined();
+  it('should have photoPreviewUrls signal', () => {
+    expect(component.photoPreviewUrls).toBeDefined();
   });
 
   it('should show error for non-image file', () => {
@@ -106,7 +106,7 @@ describe('PersonCreateComponent', () => {
     component.onFileSelected(event);
 
     expect(storeMock.uploadPersonPhoto).toHaveBeenCalledWith(validFile);
-    expect(component.photoPreviewUrl()).toBe('http://localhost:9000/api/persons/photo.jpg');
+    expect(component.photoPreviewUrls()?.webview).toBe('http://localhost:9000/api/persons/photo-web.jpg');
   });
 
   it('should set loading state during photo upload', () => {
@@ -118,8 +118,12 @@ describe('PersonCreateComponent', () => {
     expect(component.photoUploadLoading()).toBe(false);
   });
 
-  it('should call createPerson with photo URL on valid form submit', () => {
-    component.photoPreviewUrl.set('http://localhost:9000/api/persons/photo.jpg');
+  it('should call createPerson with photo URLs on valid form submit', () => {
+    component.photoPreviewUrls.set({
+      original: 'http://localhost:9000/api/persons/photo.jpg',
+      icon: 'http://localhost:9000/api/persons/photo-icon.jpg',
+      webview: 'http://localhost:9000/api/persons/photo-web.jpg',
+    });
     component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
@@ -129,6 +133,8 @@ describe('PersonCreateComponent', () => {
       first_name: 'John',
       second_name: 'Doe',
       person_photo_url: 'api/persons/photo.jpg',
+      person_photo_icon_url: 'api/persons/photo-icon.jpg',
+      person_photo_web_url: 'api/persons/photo-web.jpg',
       person_eesl_id: null,
       person_dob: null,
     });
@@ -143,7 +149,6 @@ describe('PersonCreateComponent', () => {
     expect(storeMock.createPerson).toHaveBeenCalledWith({
       first_name: 'John',
       second_name: 'Doe',
-      person_photo_url: null,
       person_eesl_id: null,
       person_dob: null,
     });

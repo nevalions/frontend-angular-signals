@@ -17,15 +17,16 @@
 │  Title *                                                   │
 │  [Tournament title]                                       │
 │                                                             │
-│  Description                                               │
-│  [Tournament description]                                 │
-│  [                                                  ]       │
-│  [                                                  ]       │
-│  [                                                  ]       │
-│  [                                                  ]       │
-│                                                             │
-│  Logo Icon URL                                             │
-│  [https://example.com/logo.png]                            │
+ │  Description                                               │
+ │  [Tournament description]                                 │
+ │  [                                                  ]       │
+ │  [                                                  ]       │
+ │  [                                                  ]       │
+ │  [                                                  ]       │
+ │                                                             │
+ │  Logo                                                      │
+ │  [Choose file...]                                           │
+ │  [Original] [Icon] [Web View]                            │
 │                                                             │
 │  Season *                                                  │
 │  [Select season ▼]                                        │
@@ -40,24 +41,28 @@
 - Page title: "Create Tournament"
 - "Cancel" button → Navigate back to previous page or `/home`
 - "Save" button → Submit form
-- Form with:
-  - Title field (required)
-  - Description field (optional, 4 rows)
-  - Logo icon URL field (optional)
-  - Season dropdown (required)
-  - Sport dropdown (required)
+ - Form with:
+   - Title field (required)
+   - Description field (optional, 4 rows)
+   - Logo (optional) - File upload with preview showing Original, Icon, Web View
+   - Season dropdown (required)
+   - Sport dropdown (required)
 
 ## What we need from backend
 
-**To create tournament:**
-- Tournament title
-- Tournament description (optional)
-- Tournament logo icon URL (optional)
-- Season id
-- Sport id
-- [Interface: `TournamentCreate`](../../../src/app/features/tournaments/models/tournament.model.ts)
-- [Backend Schema: `TournamentSchemaCreate`](../../../../statsboards-backend/src/tournaments/schemas.py)
-- **Backend API Endpoint:** `POST /api/tournaments/`
+ **To create tournament:**
+ - Tournament title
+ - Tournament description (optional)
+ - Tournament logo URLs (optional) - from file upload
+   - Original URL
+   - Icon URL
+   - Web View URL
+ - Season id
+ - Sport id
+ - [Interface: `TournamentCreate`](../../../src/app/features/tournaments/models/tournament.model.ts)
+ - [Backend Schema: `TournamentSchemaCreate`](../../../../statsboards-backend/src/tournaments/schemas.py)
+ - **Backend API Endpoint:** `POST /api/tournaments/`
+ - **Backend File Upload Endpoint:** `POST /api/tournaments/upload_resize_logo` (optional)
 
 **For seasons dropdown:**
 - Season id

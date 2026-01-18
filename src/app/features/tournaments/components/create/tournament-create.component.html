@@ -81,9 +81,9 @@
       />
       @if (logoUploadLoading()) {
         <div class="tournament-create__loading">Uploading logo...</div>
-      } @else if (logoPreviewUrl()) {
+      } @else if (logoPreviewUrls()?.webview) {
         <div class="tournament-create__preview">
-          <img [src]="logoPreviewUrl()!" alt="Logo preview" class="tournament-create__preview-image" />
+          <img [src]="logoPreviewUrls()!.webview" alt="Logo preview" class="tournament-create__preview-image" />
         </div>
       }
     </div>

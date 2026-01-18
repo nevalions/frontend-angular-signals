@@ -30,7 +30,7 @@ export class PersonCreateComponent {
   });
 
   photoUploadLoading = signal(false);
-  photoPreviewUrl = signal<string | null>(null);
+  photoPreviewUrls = signal<{ original: string; icon: string; webview: string } | null>(null);
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -51,7 +51,11 @@ export class PersonCreateComponent {
       this.photoUploadLoading.set(true);
       this.personStore.uploadPersonPhoto(file).subscribe({
         next: (response: PhotoUploadResponse) => {
-          this.photoPreviewUrl.set(buildStaticUrl(response.webview));
+          this.photoPreviewUrls.set({
+            original: buildStaticUrl(response.original),
+            icon: buildStaticUrl(response.icon),
+            webview: buildStaticUrl(response.webview),
+          });
           this.photoUploadLoading.set(false);
         },
         error: () => {
@@ -64,15 +68,20 @@ export class PersonCreateComponent {
   onSubmit(): void {
     if (this.personForm.valid) {
       const formData = this.personForm.value;
-      const photoUrl = this.photoPreviewUrl();
+      const photoUrls = this.photoPreviewUrls();
 
       const data: PersonCreate = {
         first_name: formData.first_name as string,
         second_name: (formData.second_name as string) || '',
-        person_photo_url: photoUrl ? photoUrl.replace(`${API_BASE_URL}/`, '') : null,
         person_eesl_id: formData.person_eesl_id ? Number(formData.person_eesl_id) : null,
         person_dob: formData.person_dob || null,
       };
+
+      if (photoUrls) {
+        data.person_photo_url = photoUrls.original.replace(`${API_BASE_URL}/`, '');
+        data.person_photo_icon_url = photoUrls.icon.replace(`${API_BASE_URL}/`, '');
+        data.person_photo_web_url = photoUrls.webview.replace(`${API_BASE_URL}/`, '');
+      }
 
       withCreateAlert(
         this.alerts,

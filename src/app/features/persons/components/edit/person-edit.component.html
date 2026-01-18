@@ -57,9 +57,9 @@
 
       <div class="person-edit__field">
         <label for="person_photo" class="person-edit__label">Photo</label>
-        @if (displayPhotoUrl()) {
+        @if (displayPhotoUrls()?.webview) {
           <div class="person-edit__current-photo">
-            <img [src]="displayPhotoUrl()!" alt="Current photo" class="person-edit__photo-preview" />
+            <img [src]="displayPhotoUrls()!.webview" alt="Current photo" class="person-edit__photo-preview" />
           </div>
         }
         <input

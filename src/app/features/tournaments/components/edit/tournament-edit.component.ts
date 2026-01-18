@@ -37,14 +37,19 @@ export class TournamentEditComponent implements OnInit {
   });
 
   logoUploadLoading = signal(false);
-  logoPreviewUrl = signal<string | null>(null);
+  logoPreviewUrls = signal<{ original: string; icon: string; webview: string } | null>(null);
 
-  currentLogoUrl = computed(() => {
-    const url = this.tournament?.tournament_logo_url ?? null;
-    return url ? buildStaticUrl(url) : null;
+  currentLogoUrls = computed(() => {
+    const tournament = this.tournament;
+    if (!tournament) return null;
+    return {
+      original: tournament.tournament_logo_url ? buildStaticUrl(tournament.tournament_logo_url) : null,
+      icon: tournament.tournament_logo_icon_url ? buildStaticUrl(tournament.tournament_logo_icon_url) : null,
+      webview: tournament.tournament_logo_web_url ? buildStaticUrl(tournament.tournament_logo_web_url) : null,
+    };
   });
 
-  displayLogoUrl = computed(() => this.logoPreviewUrl() ?? this.currentLogoUrl());
+  displayLogoUrls = computed(() => this.logoPreviewUrls() ?? this.currentLogoUrls());
 
   sportId = this.route.snapshot.paramMap.get('sportId') || '';
   year = this.route.snapshot.paramMap.get('year') || '';
@@ -86,7 +91,11 @@ export class TournamentEditComponent implements OnInit {
       this.logoUploadLoading.set(true);
       this.tournamentStore.uploadTournamentLogo(file).subscribe({
         next: (response) => {
-          this.logoPreviewUrl.set(buildStaticUrl(response.webview));
+          this.logoPreviewUrls.set({
+            original: buildStaticUrl(response.original),
+            icon: buildStaticUrl(response.icon),
+            webview: buildStaticUrl(response.webview),
+          });
           this.logoUploadLoading.set(false);
         },
         error: () => {
@@ -114,9 +123,11 @@ export class TournamentEditComponent implements OnInit {
         updateData.tournament_eesl_id = Number(formData.tournament_eesl_id);
       }
 
-      const newLogoUrl = this.logoPreviewUrl();
-      if (newLogoUrl) {
-        updateData.tournament_logo_url = newLogoUrl.replace(`${API_BASE_URL}/`, '');
+      const newLogoUrls = this.logoPreviewUrls();
+      if (newLogoUrls) {
+        updateData.tournament_logo_url = newLogoUrls.original.replace(`${API_BASE_URL}/`, '');
+        updateData.tournament_logo_icon_url = newLogoUrls.icon.replace(`${API_BASE_URL}/`, '');
+        updateData.tournament_logo_web_url = newLogoUrls.webview.replace(`${API_BASE_URL}/`, '');
       }
 
       if (formData.main_sponsor_id) {

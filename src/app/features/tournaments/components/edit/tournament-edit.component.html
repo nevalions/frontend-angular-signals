@@ -77,9 +77,9 @@
 
       <div class="tournament-edit__field">
         <label for="tournament_logo" class="tournament-edit__label">Logo</label>
-        @if (displayLogoUrl()) {
+        @if (displayLogoUrls()?.webview) {
           <div class="tournament-edit__current-logo">
-            <img [src]="displayLogoUrl()!" alt="Current logo" class="tournament-edit__logo-preview" />
+            <img [src]="displayLogoUrls()!.webview" alt="Current logo" class="tournament-edit__logo-preview" />
           </div>
         }
         <input

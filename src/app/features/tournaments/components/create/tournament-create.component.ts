@@ -37,7 +37,7 @@ export class TournamentCreateComponent {
   });
 
   logoUploadLoading = signal(false);
-  logoPreviewUrl = signal<string | null>(null);
+  logoPreviewUrls = signal<{ original: string; icon: string; webview: string } | null>(null);
 
   sportId = Number(this.route.snapshot.paramMap.get('sportId')) || 0;
   year = Number(this.route.snapshot.paramMap.get('year')) || 0;
@@ -64,7 +64,11 @@ export class TournamentCreateComponent {
       this.logoUploadLoading.set(true);
       this.tournamentStore.uploadTournamentLogo(file).subscribe({
         next: (response) => {
-          this.logoPreviewUrl.set(buildStaticUrl(response.webview));
+          this.logoPreviewUrls.set({
+            original: buildStaticUrl(response.original),
+            icon: buildStaticUrl(response.icon),
+            webview: buildStaticUrl(response.webview),
+          });
           this.logoUploadLoading.set(false);
         },
         error: () => {
@@ -81,18 +85,24 @@ export class TournamentCreateComponent {
       if (!season) {
         return;
       }
+      const newLogoUrls = this.logoPreviewUrls();
+
       const data: TournamentCreate = {
         title: formData.title as string,
         description: (formData.description as string) || null,
         sport_id: this.sportId,
         season_id: season.id,
         tournament_eesl_id: formData.tournament_eesl_id || null,
-        tournament_logo_url: this.logoPreviewUrl() ? this.logoPreviewUrl()!.replace(`${API_BASE_URL}/`, '') : null,
-        tournament_logo_icon_url: null,
-        tournament_logo_web_url: null,
         main_sponsor_id: formData.main_sponsor_id || null,
         sponsor_line_id: formData.sponsor_line_id || null,
       };
+
+      if (newLogoUrls) {
+        data.tournament_logo_url = newLogoUrls.original.replace(`${API_BASE_URL}/`, '');
+        data.tournament_logo_icon_url = newLogoUrls.icon.replace(`${API_BASE_URL}/`, '');
+        data.tournament_logo_web_url = newLogoUrls.webview.replace(`${API_BASE_URL}/`, '');
+      }
+
       withCreateAlert(
         this.alerts,
         () => this.tournamentStore.createTournament(data),

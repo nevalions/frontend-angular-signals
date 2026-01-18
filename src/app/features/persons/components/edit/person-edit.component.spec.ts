@@ -52,7 +52,7 @@ describe('PersonEditComponent', () => {
         subscriber.complete();
       })),
       uploadPersonPhoto: vi.fn().mockReturnValue(new Observable(subscriber => {
-        subscriber.next({ webview: 'api/persons/new-photo.jpg' });
+        subscriber.next({ original: 'api/persons/new-photo.jpg', icon: 'api/persons/new-photo-icon.jpg', webview: 'api/persons/new-photo-web.jpg' });
         subscriber.complete();
       })),
     };
@@ -120,16 +120,16 @@ describe('PersonEditComponent', () => {
     expect(component.photoUploadLoading).toBeDefined();
   });
 
-  it('should have photoPreviewUrl signal', () => {
-    expect(component.photoPreviewUrl).toBeDefined();
+  it('should have photoPreviewUrls signal', () => {
+    expect(component.photoPreviewUrls).toBeDefined();
   });
 
-  it('should have currentPhotoUrl computed', () => {
-    expect(component.currentPhotoUrl).toBeDefined();
+  it('should have currentPhotoUrls computed', () => {
+    expect(component.currentPhotoUrls).toBeDefined();
   });
 
-  it('should have displayPhotoUrl computed', () => {
-    expect(component.displayPhotoUrl).toBeDefined();
+  it('should have displayPhotoUrls computed', () => {
+    expect(component.displayPhotoUrls).toBeDefined();
   });
 
   it('should show error for non-image file', () => {
@@ -157,17 +157,25 @@ describe('PersonEditComponent', () => {
     component.onFileSelected(event);
 
     expect(storeMock.uploadPersonPhoto).toHaveBeenCalledWith(validFile);
-    expect(component.photoPreviewUrl()).toBe('http://localhost:9000/api/persons/new-photo.jpg');
+    expect(component.photoPreviewUrls()?.webview).toBe('http://localhost:9000/api/persons/new-photo-web.jpg');
   });
 
   it('should display current photo when no new photo uploaded', () => {
-    expect(component.displayPhotoUrl()).toBe(null);
+    expect(component.displayPhotoUrls()).toEqual({
+      original: null,
+      icon: null,
+      webview: null,
+    });
   });
 
   it('should display new photo preview when new photo uploaded', () => {
-    component.photoPreviewUrl.set('http://localhost:9000/api/persons/new-photo.jpg');
+    component.photoPreviewUrls.set({
+      original: 'http://localhost:9000/api/persons/new-photo.jpg',
+      icon: 'http://localhost:9000/api/persons/new-photo-icon.jpg',
+      webview: 'http://localhost:9000/api/persons/new-photo-web.jpg',
+    });
 
-    expect(component.displayPhotoUrl()).toBe('http://localhost:9000/api/persons/new-photo.jpg');
+    expect(component.displayPhotoUrls()?.webview).toBe('http://localhost:9000/api/persons/new-photo-web.jpg');
   });
 
   it('should navigate to list on cancel', () => {
@@ -176,8 +184,12 @@ describe('PersonEditComponent', () => {
     expect(navHelperMock.toPersonsList).toHaveBeenCalled();
   });
 
-  it('should call updatePerson with new photo URL on valid form submit', () => {
-    component.photoPreviewUrl.set('http://localhost:9000/api/persons/new-photo.jpg');
+  it('should call updatePerson with new photo URLs on valid form submit', () => {
+    component.photoPreviewUrls.set({
+      original: 'http://localhost:9000/api/persons/new-photo.jpg',
+      icon: 'http://localhost:9000/api/persons/new-photo-icon.jpg',
+      webview: 'http://localhost:9000/api/persons/new-photo-web.jpg',
+    });
     component.personForm.setValue({ first_name: 'John', second_name: 'Doe', person_eesl_id: null, person_dob: '' });
     fixture.detectChanges();
 
@@ -189,6 +201,8 @@ describe('PersonEditComponent', () => {
         first_name: 'John',
         second_name: 'Doe',
         person_photo_url: 'api/persons/new-photo.jpg',
+        person_photo_icon_url: 'api/persons/new-photo-icon.jpg',
+        person_photo_web_url: 'api/persons/new-photo-web.jpg',
       }
     );
   });

@@ -63,9 +63,9 @@
       />
       @if (photoUploadLoading()) {
         <div class="person-create__loading">Uploading photo...</div>
-      } @else if (photoPreviewUrl()) {
+      } @else if (photoPreviewUrls()?.webview) {
         <div class="person-create__preview">
-          <img [src]="photoPreviewUrl()!" alt="Photo preview" class="person-create__preview-image" />
+          <img [src]="photoPreviewUrls()!.webview" alt="Photo preview" class="person-create__preview-image" />
         </div>
       }
     </div>

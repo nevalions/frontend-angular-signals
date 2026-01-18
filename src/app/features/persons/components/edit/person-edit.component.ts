@@ -50,14 +50,19 @@ export class PersonEditComponent {
   loading = computed(() => this.personStore.loading());
 
   photoUploadLoading = signal(false);
-  photoPreviewUrl = signal<string | null>(null);
+  photoPreviewUrls = signal<{ original: string; icon: string; webview: string } | null>(null);
 
-  currentPhotoUrl = computed(() => {
-    const url = this.person()?.person_photo_url ?? null;
-    return url ? buildStaticUrl(url) : null;
+  currentPhotoUrls = computed(() => {
+    const person = this.person();
+    if (!person) return null;
+    return {
+      original: person.person_photo_url ? buildStaticUrl(person.person_photo_url) : null,
+      icon: person.person_photo_icon_url ? buildStaticUrl(person.person_photo_icon_url) : null,
+      webview: person.person_photo_web_url ? buildStaticUrl(person.person_photo_web_url) : null,
+    };
   });
 
-  displayPhotoUrl = computed(() => this.photoPreviewUrl() ?? this.currentPhotoUrl());
+  displayPhotoUrls = computed(() => this.photoPreviewUrls() ?? this.currentPhotoUrls());
 
   private patchFormOnPersonChange = effect(() => {
     const person = this.person();
@@ -90,7 +95,11 @@ export class PersonEditComponent {
       this.photoUploadLoading.set(true);
       this.personStore.uploadPersonPhoto(file).subscribe({
         next: (response: PhotoUploadResponse) => {
-          this.photoPreviewUrl.set(buildStaticUrl(response.webview));
+          this.photoPreviewUrls.set({
+            original: buildStaticUrl(response.original),
+            icon: buildStaticUrl(response.icon),
+            webview: buildStaticUrl(response.webview),
+          });
           this.photoUploadLoading.set(false);
         },
         error: () => {
@@ -106,7 +115,7 @@ export class PersonEditComponent {
       if (!id) return;
 
       const formData = this.personForm.value;
-      const newPhotoUrl = this.photoPreviewUrl();
+      const newPhotoUrls = this.photoPreviewUrls();
 
       const data: PersonUpdate = {
         first_name: formData.first_name as string,
@@ -121,12 +130,10 @@ export class PersonEditComponent {
         data.person_dob = formData.person_dob;
       }
 
-      if (newPhotoUrl) {
-        data.person_photo_url = newPhotoUrl.replace(`${API_BASE_URL}/`, '');
-      }
-
-      if (newPhotoUrl) {
-        data.person_photo_url = newPhotoUrl.replace(`${API_BASE_URL}/`, '');
+      if (newPhotoUrls) {
+        data.person_photo_url = newPhotoUrls.original.replace(`${API_BASE_URL}/`, '');
+        data.person_photo_icon_url = newPhotoUrls.icon.replace(`${API_BASE_URL}/`, '');
+        data.person_photo_web_url = newPhotoUrls.webview.replace(`${API_BASE_URL}/`, '');
       }
 
       withUpdateAlert(
