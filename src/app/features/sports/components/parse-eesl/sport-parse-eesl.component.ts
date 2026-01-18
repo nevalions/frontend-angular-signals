@@ -45,8 +45,7 @@ export class SportParseEeslComponent {
 
   currentSeason = computed(() => {
     const seasons = this.seasonStore.seasons();
-    const currentSeasonId = seasons.find(s => s.iscurrent)?.id;
-    return seasons.find(s => s.id === currentSeasonId) || null;
+    return seasons.find(s => s.iscurrent) || null;
   });
 
   parseSeason(): void {
@@ -59,10 +58,17 @@ export class SportParseEeslComponent {
       return;
     }
 
-    if (!sportId || !season) {
-      alert('Missing sport or season data');
+    if (!sportId) {
+      alert('Missing sport ID. Please navigate from a sport detail page.');
       return;
     }
+
+    if (!season) {
+      alert('No current season found. Please ensure a season is marked as current.');
+      return;
+    }
+
+    console.log('Parsing EESL season:', { eeslId, sportId, seasonId: season.id });
 
     this.isParsing.set(true);
     this.tournamentStore.parseAndCreateEESLSeason(eeslId, season.id, sportId).subscribe({
