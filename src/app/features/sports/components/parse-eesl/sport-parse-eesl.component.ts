@@ -33,14 +33,32 @@ export class SportParseEeslComponent {
 
   eeslSeasonYear = signal<number | null>(null);
 
+  private seasonYearParam = toSignal(
+    this.route.queryParamMap.pipe(map((params) => {
+      const yearStr = params.get('year');
+      return yearStr ? Number(yearStr) : null;
+    })),
+    { initialValue: null }
+  );
+
   private initializeSeasonYear = effect(() => {
     const current = this.currentSeason();
+    const routeYear = this.seasonYearParam();
     const currentYear = this.eeslSeasonYear();
     
-    // Only set the year if not already set by user
+    console.log('Season year effect:', { current, routeYear, currentYear });
+    
+    // Preselect from route parameter if available
+    if (routeYear && routeYear !== currentYear) {
+      this.eeslSeasonYear.set(routeYear);
+      console.log('Preselecting route year:', routeYear);
+      return;
+    }
+    
+    // Otherwise preselect current season (only if not already set by user)
     if (current && currentYear === null) {
       this.eeslSeasonYear.set(current.year);
-      console.log('Preselected current season year:', current.year);
+      console.log('Preselecting current season year:', current.year);
     }
   });
 
