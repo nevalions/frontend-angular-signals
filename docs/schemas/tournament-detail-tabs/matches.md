@@ -78,8 +78,8 @@
 - `ascending`: Sort order (true=asc, false=desc)
 
 **For creating match:**
-**TODO BACK**
 
-- ⚠️ Backend endpoint not yet implemented
-- Future: `POST /api/matches/` (will need to create full match with match_data and scoreboard)
-- Will need: MatchSchemaCreate, MatchDataSchemaCreate, ScoreboardSchemaCreate
+- `POST /api/matches/` - Creates a basic match
+- `POST /api/matches/create_with_full_data/` - Creates match with match_data, playclock, gameclock, and scoreboard
+- `POST /api/matches/add` - Creates match with full data and scoreboard
+- [Backend Schema: `MatchSchemaCreate`](../../../../../statsboards-backend/src/matches/schemas.py:27-33)
