@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { SportListComponent } from './features/sports/components/list/sport-list.component';
 import { SportDetailComponent } from './features/sports/components/detail/sport-detail.component';
 import { SportEditComponent } from './features/sports/components/edit/sport-edit.component';
+import { SportParseEeslComponent } from './features/sports/components/parse-eesl/sport-parse-eesl.component';
 import { TournamentListComponent } from './features/tournaments/components/list/tournament-list.component';
 import { TournamentDetailComponent } from './features/tournaments/components/detail/tournament-detail.component';
 import { TournamentCreateComponent } from './features/tournaments/components/create/tournament-create.component';
@@ -82,6 +83,10 @@ export const routes: Routes = [
       {
         path: ':id/edit',
         component: SportEditComponent,
+      },
+      {
+        path: ':sportId/parse-eesl',
+        component: SportParseEeslComponent,
       },
     ],
   },

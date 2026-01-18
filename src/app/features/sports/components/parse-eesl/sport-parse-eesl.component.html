@@ -1,0 +1,99 @@
+<div class="sport-parse-eesl">
+  <div class="sport-parse-eesl__header">
+    <button class="sport-parse-eesl__back-btn" (click)="navigateBack()">
+      ← Back
+    </button>
+    <h1 class="sport-parse-eesl__title">Parse EESL Season</h1>
+    <button class="sport-parse-eesl__cancel-btn" (click)="navigateBack()">
+      Cancel
+    </button>
+  </div>
+
+  <div class="sport-parse-eesl__content">
+    <div class="sport-parse-eesl__info">
+      <p>Parse tournaments from EESL API and import them into the database.</p>
+    </div>
+
+    <div class="sport-parse-eesl__form">
+      <div class="sport-parse-eesl__field">
+        <label class="sport-parse-eesl__label" for="eesl-season-id">EESL Season ID</label>
+        <input
+          id="eesl-season-id"
+          class="sport-parse-eesl__input"
+          type="number"
+          placeholder="Enter EESL Season ID"
+          [(ngModel)]="eeslSeasonId"
+        />
+      </div>
+
+      <div class="sport-parse-eesl__actions">
+        <button
+          class="sport-parse-eesl__btn sport-parse-eesl__btn--primary"
+          [disabled]="isParsing()"
+          (click)="parseSeason()"
+        >
+          @if (isParsing()) {
+            <span class="sport-parse-eesl__btn-icon">🔍</span> Parsing...
+          } @else {
+            <span class="sport-parse-eesl__btn-icon">🔍</span> Parse
+          }
+        </button>
+        <button
+          class="sport-parse-eesl__btn sport-parse-eesl__btn--secondary"
+          [disabled]="isSaving() || parsedTournaments().length === 0"
+          (click)="saveTournaments()"
+        >
+          @if (isSaving()) {
+            <span class="sport-parse-eesl__btn-icon">💾</span> Saving...
+          } @else {
+            <span class="sport-parse-eesl__btn-icon">💾</span> Save All
+          }
+        </button>
+      </div>
+    </div>
+
+    @if (parsedTournaments().length > 0) {
+      <div class="sport-parse-eesl__results">
+        <h2 class="sport-parse-eesl__results-title">Parsed Tournaments</h2>
+
+        @for (tournament of parsedTournaments(); track tournament.tournament_eesl_id ?? $index) {
+          <div 
+            class="sport-parse-eesl__tournament-card"
+            [class.sport-parse-eesl__tournament-card--selected]="tournament.tournament_eesl_id && selectedTournamentIds().has(tournament.tournament_eesl_id)"
+          >
+            <div class="sport-parse-eesl__tournament-content">
+              <div class="sport-parse-eesl__tournament-icon">📦</div>
+              <div class="sport-parse-eesl__tournament-info">
+                <div class="sport-parse-eesl__tournament-title">{{ tournament.title }}</div>
+                <div class="sport-parse-eesl__tournament-id">EESL ID: {{ tournament.tournament_eesl_id ?? 'N/A' }}</div>
+                @if (tournament.description) {
+                  <div class="sport-parse-eesl__tournament-description">{{ tournament.description }}</div>
+                }
+              </div>
+            </div>
+            <button
+              class="sport-parse-eesl__remove-btn"
+              [class.sport-parse-eesl__remove-btn--hidden]="!(tournament.tournament_eesl_id && selectedTournamentIds().has(tournament.tournament_eesl_id))"
+              (click)="toggleTournamentSelection(tournament.tournament_eesl_id)"
+            >
+              ✕
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (showSuccessDialog()) {
+    <div class="sport-parse-eesl__dialog-overlay" (click)="closeSuccessDialog()">
+      <div class="sport-parse-eesl__dialog" (click)="$event.stopPropagation()">
+        <div class="sport-parse-eesl__dialog-icon">✓</div>
+        <h3 class="sport-parse-eesl__dialog-title">Success!</h3>
+        <p class="sport-parse-eesl__dialog-message">{{ successMessage() }}</p>
+        <button class="sport-parse-eesl__dialog-btn" (click)="closeSuccessDialog()">
+          OK
+        </button>
+      </div>
+    </div>
+  }
+</div>

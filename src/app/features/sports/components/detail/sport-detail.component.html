@@ -1,11 +1,16 @@
 @if (sport(); as s) {
   <div class="sport-detail">
-    <app-entity-header
-      [title]="s.title"
-      (navigateBack)="navigateBack()"
-      (edit)="navigateToEdit()"
-      (delete)="deleteSport()"
-    />
+    <div class="sport-detail__header">
+      <app-entity-header
+        [title]="s.title"
+        (navigateBack)="navigateBack()"
+        (edit)="navigateToEdit()"
+        (delete)="deleteSport()"
+      />
+      <button class="sport-detail__parse-btn" (click)="navigateToParseEesl()">
+        📥 Parse EESL
+      </button>
+    </div>
 
     <div class="sport-detail__subnav">
       <nav class="sport-detail__tabs">

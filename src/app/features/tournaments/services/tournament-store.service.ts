@@ -85,4 +85,14 @@ export class TournamentStoreService {
   getTeamsByTournamentId(tournamentId: number): Observable<Team[]> {
     return this.http.get<Team[]>(buildApiUrl(`/api/team_in_tournament/tournament/id/${tournamentId}/teams`));
   }
+
+  parseEESLSeason(eeslSeasonId: number): Observable<TournamentCreate[]> {
+    return this.http.get<TournamentCreate[]>(buildApiUrl(`/api/tournaments/pars/season/${eeslSeasonId}`));
+  }
+
+  parseAndCreateEESLSeason(eeslSeasonId: number, seasonId: number, sportId: number): Observable<Tournament[]> {
+    return this.http.post<Tournament[]>(buildApiUrl(`/api/tournaments/pars_and_create/season/${eeslSeasonId}`), null, {
+      params: { season_id: seasonId, sport_id: sportId }
+    }).pipe(tap(() => this.reload()));
+  }
 }

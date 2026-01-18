@@ -13,12 +13,12 @@ import { PlayerStoreService } from '../../../players/services/player-store.servi
 import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
-import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
-import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
-import { SportTournamentsTabComponent } from './tabs/sport-tournaments-tab.component';
-import { SportTeamsTabComponent } from './tabs/sport-teams-tab.component';
-import { SportPlayersTabComponent } from './tabs/sport-players-tab.component';
-import { SportPositionsTabComponent } from './tabs/sport-positions-tab.component';
+  import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
+  import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+  import { SportTournamentsTabComponent } from './tabs/sport-tournaments-tab.component';
+  import { SportTeamsTabComponent } from './tabs/sport-teams-tab.component';
+  import { SportPlayersTabComponent } from './tabs/sport-players-tab.component';
+  import { SportPositionsTabComponent } from './tabs/sport-positions-tab.component';
 
 @Component({
   selector: 'app-sport-detail',
@@ -151,5 +151,12 @@ export class SportDetailComponent {
 
   navigateBack(): void {
     this.navigationHelper.toSportsList();
+  }
+
+  navigateToParseEesl(): void {
+    const sportId = this.sportId();
+    if (sportId) {
+      this.router.navigate(['/sports', sportId, 'parse-eesl']);
+    }
   }
 }
