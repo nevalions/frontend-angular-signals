@@ -55,7 +55,6 @@
 ## What we need from backend
 
 **For matches list:**
-**TODO** mark it as complex schema
 
 - Match id
 - Match week (optional)
@@ -64,18 +63,22 @@
 - Team B (id, title, logo icon URL)
 - Match EESL ID (optional)
 - Tournament id
-  **TODO** its complex model check schema and interface
-- [Interface: `Match`](../../../../src/app/features/matches/models/match.model.ts)
-- [Backend Schema: `MatchSchema`](../../../../../statsboards-backend/src/matches/schemas.py)
-- **Backend API Endpoint:** `GET /api/matches/tournament/{tournament_id}/paginated`
+- [Interface: `MatchWithDetails`](../../../../src/app/features/matches/models/match.model.ts)
+- [Backend Schema: `MatchWithDetailsSchema`](../../../../../statsboards-backend/src/matches/schemas.py:113-116)
+- **Backend API Endpoint:** `GET /api/matches/with-details/paginated`
 
 **Query params:**
 
-- `search`: Search by team name
+- `search`: Search by match_eesl_id
 - `week`: Filter by week number
+- `tournament_id`: Filter by tournament id
 - `page`: Page number
-- `page_size`: Items per page
-- `sort`: Sort field (week, date)
-- `sort_order`: asc or desc
+- `items_per_page`: Items per page (max 100)
+- `order_by`: Sort field (match_date, id, etc.)
+- `ascending`: Sort order (true=asc, false=desc)
 
-**TODO** we need to add info about creating match
+**For creating match:**
+
+- ⚠️ Backend endpoint not yet implemented
+- Future: `POST /api/matches/` (will need to create full match with match_data and scoreboard)
+- Will need: MatchSchemaCreate, MatchDataSchemaCreate, ScoreboardSchemaCreate
