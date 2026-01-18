@@ -20,7 +20,8 @@
         <select
           id="eesl-season-year"
           class="sport-parse-eesl__select"
-          [(ngModel)]="eeslSeasonYear"
+          [ngModel]="eeslSeasonYear()"
+          (ngModelChange)="onSeasonChange($event)"
         >
           <option value="">Select a season...</option>
           @for (year of availableYears(); track year) {

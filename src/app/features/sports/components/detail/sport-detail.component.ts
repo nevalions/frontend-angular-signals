@@ -149,6 +149,18 @@ export class SportDetailComponent {
     }
   });
 
+  onSeasonChange(year: number | null): void {
+    if (year) {
+      this.selectedSeasonYear.set(year);
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { year },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    }
+  }
+
   navigateBack(): void {
     this.navigationHelper.toSportsList();
   }
@@ -164,10 +176,10 @@ export class SportDetailComponent {
 
   navigateToParseEesl(): void {
     const sportId = this.sportId();
+    const selectedYear = this.selectedSeasonYear();
     if (sportId) {
-      // Preserve the current year query parameter
-      const year = this.route.snapshot.queryParamMap.get('year');
-      this.router.navigate(['/sports', sportId, 'parse-eesl'], { queryParams: year ? { year } : {} });
+      // Use the selected season year from the dropdown
+      this.router.navigate(['/sports', sportId, 'parse-eesl'], { queryParams: selectedYear ? { year: selectedYear } : {} });
     }
   }
 }

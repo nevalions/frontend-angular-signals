@@ -48,7 +48,7 @@
 
       <div class="sport-detail__season-selector">
         <tui-textfield tuiChevron tuiTextfieldSize="s">
-          <input placeholder="Select Season" tuiSelect [(ngModel)]="selectedSeasonYear" />
+          <input placeholder="Select Season" tuiSelect [ngModel]="selectedSeasonYear()" (ngModelChange)="onSeasonChange($event)" />
           <tui-data-list *tuiTextfieldDropdown size="l">
             @for (year of seasonYears(); track year) {
               <button

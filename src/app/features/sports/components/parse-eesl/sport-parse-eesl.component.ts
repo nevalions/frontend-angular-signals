@@ -41,26 +41,39 @@ export class SportParseEeslComponent {
     { initialValue: null }
   );
 
+  private userHasChangedSelection = signal(false);
+
   private initializeSeasonYear = effect(() => {
-    const current = this.currentSeason();
     const routeYear = this.seasonYearParam();
     const currentYear = this.eeslSeasonYear();
-    
-    console.log('Season year effect:', { current, routeYear, currentYear });
-    
-    // Preselect from route parameter if available
-    if (routeYear && routeYear !== currentYear) {
+    const userChanged = this.userHasChangedSelection();
+
+    console.log('Season year effect:', { routeYear, currentYear, userChanged });
+
+    // Only preselect from route parameter if user hasn't manually selected
+    if (!userChanged && routeYear && routeYear !== currentYear) {
       this.eeslSeasonYear.set(routeYear);
       console.log('Preselecting route year:', routeYear);
       return;
     }
-    
-    // Otherwise preselect current season (only if not already set by user)
-    if (current && currentYear === null) {
-      this.eeslSeasonYear.set(current.year);
-      console.log('Preselecting current season year:', current.year);
+
+    // Otherwise preselect current season if available (only if not already set by user)
+    if (!userChanged && currentYear === null) {
+      const seasons = this.seasonStore.seasons();
+      const currentSeason = seasons.find(s => s.iscurrent);
+      if (currentSeason) {
+        this.eeslSeasonYear.set(currentSeason.year);
+        console.log('Preselecting current season year:', currentSeason.year);
+      }
     }
   });
+
+  onSeasonChange(year: number | null): void {
+    if (year) {
+      this.userHasChangedSelection.set(true);
+      this.eeslSeasonYear.set(year);
+    }
+  }
 
   parsedTournaments = signal<Tournament[]>([]);
   isParsing = signal(false);
@@ -78,27 +91,16 @@ export class SportParseEeslComponent {
     return this.sportStore.sports().find((s: Sport) => s.id === id) || null;
   });
 
-  currentSeason = computed(() => {
-    const seasons = this.seasonStore.seasons();
-    
-    // First, try to find a season marked as current
-    let season = seasons.find(s => s.iscurrent);
-    
-    // If no current season, fall back to the latest season (highest year)
-    if (!season && seasons.length > 0) {
-      season = seasons.reduce((latest, current) => 
-        current.year > latest.year ? current : latest
-      );
-      console.log('No current season found, using latest season by year:', season);
-    }
-    
-    return season || null;
+  selectedSeason = computed(() => {
+    const year = this.eeslSeasonYear();
+    if (!year) return null;
+    return this.seasonStore.seasonByYear().get(year) || null;
   });
 
   parseSeason(): void {
     const eeslYear = this.eeslSeasonYear();
     const sportId = this.sportId();
-    const season = this.currentSeason();
+    const season = this.selectedSeason();
 
     if (!eeslYear) {
       alert('Please select an EESL Season Year');
@@ -111,7 +113,7 @@ export class SportParseEeslComponent {
     }
 
     if (!season) {
-      alert('No current season found. Please ensure a season is marked as current.');
+      alert(`No season found for year ${eeslYear}. Please ensure a season exists.`);
       return;
     }
 
