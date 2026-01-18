@@ -43,7 +43,7 @@
 - Each tournament has season_id connection
 - [Interface: `Tournament`](../../../src/app/features/tournaments/models/tournament.model.ts)
 - [Backend Schema: `TournamentSchema`](../../../../statsboards-backend/src/tournaments/schemas.py)
-- **Backend API Endpoint:** `GET /api/seasons/id/{season_id}/sports/id/{sport_id}/tournaments` (non-paginated, uses season_id from selected season and sport_id from route)
+- **Backend API Endpoint:** `GET /api/seasons/year/{year}/sports/id/{sport_id}/tournaments` (non-paginated, uses year from selected season and sport_id from route)
 
 **Pagination metadata:**
 - Total count
