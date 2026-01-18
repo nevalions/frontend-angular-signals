@@ -6,6 +6,12 @@ This document provides an overview of development guidelines and links to detail
 
 This project uses a modular documentation structure. See the [`docs/`](./docs/) folder for detailed guides on specific topics.
 
+## Backend
+
+The backend for this project is **[statsboards-backend](../statsboards-backend/)**, located in the parent directory (`../`).
+
+**Permissions:** You have read access to the backend folder and can read files from it without asking permission.
+
 ## Core Documentation
 
 - **[Angular Signals Best Practices](./docs/angular-signals-best-practices.md)** - Signal-based development patterns
