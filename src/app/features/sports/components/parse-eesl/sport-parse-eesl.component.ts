@@ -31,11 +31,16 @@ export class SportParseEeslComponent {
     { initialValue: null }
   );
 
-  eeslSeasonId = signal<number | null>(null);
+  eeslSeasonYear = signal<number | null>(null);
   parsedTournaments = signal<Tournament[]>([]);
   isParsing = signal(false);
   showSuccessDialog = signal(false);
   successMessage = signal('');
+
+  availableYears = computed(() => {
+    const seasons = this.seasonStore.seasons();
+    return seasons.map(s => s.year).sort((a, b) => b - a);
+  });
 
   sport = computed(() => {
     const id = this.sportId();
@@ -61,12 +66,12 @@ export class SportParseEeslComponent {
   });
 
   parseSeason(): void {
-    const eeslId = this.eeslSeasonId();
+    const eeslYear = this.eeslSeasonYear();
     const sportId = this.sportId();
     const season = this.currentSeason();
 
-    if (!eeslId) {
-      alert('Please enter an EESL Season ID');
+    if (!eeslYear) {
+      alert('Please select an EESL Season Year');
       return;
     }
 
@@ -80,19 +85,19 @@ export class SportParseEeslComponent {
       return;
     }
 
-    console.log('Parsing EESL season:', { eeslId, sportId, seasonId: season.id });
+    console.log('Parsing EESL season:', { eeslYear, sportId, seasonId: season.id });
 
     this.isParsing.set(true);
-    this.tournamentStore.parseAndCreateEESLSeason(eeslId, season.id, sportId).subscribe({
+    this.tournamentStore.parseAndCreateEESLSeason(eeslYear, season.id, sportId).subscribe({
       next: (tournaments) => {
         this.parsedTournaments.set(tournaments);
-        this.successMessage.set(`Successfully parsed and created ${tournaments.length} tournaments`);
+        this.successMessage.set(`Successfully parsed and created ${tournaments.length} tournaments from EESL season ${eeslYear}`);
         this.showSuccessDialog.set(true);
         this.isParsing.set(false);
       },
       error: (err) => {
         console.error('Error parsing and creating EESL season:', err);
-        alert('Failed to parse and create EESL season. Please check ID and try again.');
+        alert('Failed to parse and create EESL season. Please check year and try again.');
         this.isParsing.set(false);
       }
     });

@@ -11,25 +11,28 @@
 
   <div class="sport-parse-eesl__content">
     <div class="sport-parse-eesl__info">
-      <p>Parse tournaments from EESL API and automatically create them in the database.</p>
+      <p>Select the EESL season year to parse and automatically create tournaments in the database.</p>
     </div>
 
     <div class="sport-parse-eesl__form">
       <div class="sport-parse-eesl__field">
-        <label class="sport-parse-eesl__label" for="eesl-season-id">EESL Season ID</label>
-        <input
-          id="eesl-season-id"
-          class="sport-parse-eesl__input"
-          type="number"
-          placeholder="Enter EESL Season ID"
-          [(ngModel)]="eeslSeasonId"
-        />
+        <label class="sport-parse-eesl__label" for="eesl-season-year">EESL Season Year</label>
+        <select
+          id="eesl-season-year"
+          class="sport-parse-eesl__select"
+          [(ngModel)]="eeslSeasonYear"
+        >
+          <option value="">Select a season...</option>
+          @for (year of availableYears(); track year) {
+            <option [value]="year">{{ year }}</option>
+          }
+        </select>
       </div>
 
       <div class="sport-parse-eesl__actions">
         <button
           class="sport-parse-eesl__btn sport-parse-eesl__btn--primary"
-          [disabled]="isParsing()"
+          [disabled]="isParsing() || !eeslSeasonYear()"
           (click)="parseSeason()"
         >
           @if (isParsing()) {

@@ -97,6 +97,64 @@
   outline: none;
   background: var(--tui-background-base);
   color: var(--tui-text-primary);
+
+  &:focus {
+    border-color: var(--tui-border-focus, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &::placeholder {
+    color: var(--tui-text-tertiary);
+  }
+}
+
+.sport-parse-eesl__select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  background: var(--tui-background-base);
+  color: var(--tui-text-primary);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3e%3cpath fill='%236b7280' d='M6 9l6-6 6-6-6 6 1.41-1.41 4-4 0 6.41z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 36px;
+
+  &:focus {
+    border-color: var(--tui-border-focus, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &::placeholder {
+    color: var(--tui-text-tertiary);
+  }
+}
+
+.sport-parse-eesl__label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--tui-text-primary);
+  font-size: 14px;
+}
+
+.sport-parse-eesl__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  background: var(--tui-background-base);
+  color: var(--tui-text-primary);
 }
 
 .sport-parse-eesl__input:focus {
