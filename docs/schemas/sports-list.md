@@ -52,6 +52,7 @@
 - [Interface: `Sport`](../../../src/app/features/sports/models/sport.model.ts)
 - [Backend Schema: `SportSchema`](../../../../statsboards-backend/src/sports/schemas.py)
 - **Backend API Endpoint:** `GET /api/sports/`
+<<<<<<< HEAD
 - **TODO:** Need paginated endpoint for sports list
 
 **Pagination metadata:**
@@ -59,3 +60,5 @@
 - Total pages
 - Current page
 - Items per page
+=======
+>>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead

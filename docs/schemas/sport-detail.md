@@ -28,6 +28,7 @@
 ## What's on the page
 
 - Entity header with:
+<<<<<<< HEAD
   - Back button
   - Sport title
   - Edit button
@@ -35,6 +36,15 @@
 - Tab navigation: Tournaments, Teams, Players, Positions
 - Season dropdown selector
 - Tab content area
+=======
+  - Back button → Navigate to `/sports`
+  - Sport title
+  - Edit button → Navigate to `/sports/:id/edit`
+  - Delete button → Confirm and delete sport, navigate to `/sports`
+- Tab navigation: Tournaments, Teams, Players, Positions
+- Season dropdown selector → Updates `?year={season_year}` query param, refreshes tab content
+- Tab content area → Shows data for selected season
+>>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
 
 ## What we need from backend
 

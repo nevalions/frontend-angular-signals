@@ -25,8 +25,11 @@
 │  SURNAME Firstname                                        │
 │  EESL ID: 12346 (optional)                                 │
 └─────────────────────────────────────────────────────────────┘
+<<<<<<< HEAD
                                                               │
 [Items per page: 10 20 50]           [< 1 2 3 >]
+=======
+>>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
 ```
 
 ## What's on the page
@@ -71,3 +74,15 @@
 - [Interface: `Person`](../../../src/app/features/persons/models/person.model.ts)
 - [Backend Schema: `PersonSchema`](../../../../statsboards-backend/src/person/schemas.py)
 - **Backend API Endpoint:** `GET /api/persons/not-in-sport/{sport_id}/all`
+<<<<<<< HEAD
+=======
+
+**For adding player to sport:**
+- Person ID
+- Sport ID (from route parameter `:sportId`)
+- IsPrivate flag (optional)
+- User ID (optional)
+- [Interface: `PlayerAddToSport`](../../../src/app/features/players/models/player.model.ts)
+- [Backend Schema: `PlayerAddToSportSchema`](../../../../statsboards-backend/src/player/schemas.py)
+- **Backend API Endpoint:** `POST /api/players/add-person-to-sport`
+>>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
