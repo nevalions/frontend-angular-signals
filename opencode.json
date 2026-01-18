@@ -27,6 +27,17 @@
       "enabled": true
     }
   },
+  "permission": {
+    "read": {
+      "../statsboards-backend/": "allow"
+    },
+    "edit": {
+      "../statsboards-backend/": "deny"
+    },
+    "external_directory": {
+      "../statsboards-backend/": "allow"
+    }
+  },
   "agent": {
     "frontend-angular-taiga": {
       "description": "Angular 21 + Taiga UI frontend engineer with Playwright MCP testing",
