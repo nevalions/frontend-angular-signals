@@ -3,6 +3,9 @@
     <button tuiButton iconStart="@tui.chevron-left" appearance="flat" (click)="navigateBack.emit()">
       Back
     </button>
+    @if (logoUrl()) {
+      <img [src]="logoUrl() || ''" class="entity-header__logo" alt="Entity logo" />
+    }
     <h1 class="entity-header__title">{{ title() | uppercase }}</h1>
     <div
       class="entity-header__menu-container"

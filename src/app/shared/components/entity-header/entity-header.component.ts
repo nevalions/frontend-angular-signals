@@ -20,6 +20,7 @@ export interface CustomMenuItem {
 })
 export class EntityHeaderComponent {
   title = input.required<string>();
+  logoUrl = input<string | null>();
   showEdit = input(true);
   showDelete = input(true);
   customMenuItems = input<CustomMenuItem[]>([]);

@@ -2,6 +2,7 @@
   <div class="tournament-detail">
     <app-entity-header
       [title]="t.title"
+      [logoUrl]="tournamentLogoUrl()"
       (navigateBack)="navigateBack()"
       (edit)="navigateToEdit()"
       (delete)="deleteTournament()"

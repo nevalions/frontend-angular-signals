@@ -12,6 +12,7 @@ import { EntityHeaderComponent } from '../../../../shared/components/entity-head
 import { TournamentMatchesTabComponent } from './tabs/tournament-matches-tab.component';
 import { TournamentTeamsTabComponent } from './tabs/tournament-teams-tab.component';
 import { TournamentPlayersTabComponent } from './tabs/tournament-players-tab.component';
+import { buildStaticUrl } from '../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-tournament-detail',
@@ -74,6 +75,11 @@ export class TournamentDetailComponent {
   });
 
   loading = this.tournamentStore.loading;
+
+  tournamentLogoUrl = computed(() => {
+    const t = this.tournament();
+    return t?.tournament_logo_icon_url ? buildStaticUrl(t.tournament_logo_icon_url) : null;
+  });
 
   activeTab = toSignal(
     this.route.queryParamMap.pipe(map((params) => params.get('tab') || 'matches')),

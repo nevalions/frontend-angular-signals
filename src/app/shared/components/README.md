@@ -80,6 +80,7 @@ A reusable header component for detail pages with back button, title, and settin
 
 **Features:**
 - Back button with custom navigation callback
+- Optional logo display with proper sizing
 - Uppercase title display (automatically converts to uppercase)
 - Gear menu with Edit/Delete actions (can be hidden)
 - Support for custom menu items
@@ -91,6 +92,7 @@ A reusable header component for detail pages with back button, title, and settin
 
 ```typescript
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+import { buildStaticUrl } from '../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-my-detail',
@@ -99,10 +101,11 @@ import { EntityHeaderComponent } from '../../../../shared/components/entity-head
   template: `
     <app-entity-header
       [title]="entityName"
-      [navigateBack]="onBack"
+      [logoUrl]="logoUrl()"
       [showEdit]="true"
       [showDelete]="true"
       [customMenuItems]="menuItems"
+      (navigateBack)="onBack()"
       (edit)="onEdit()"
       (delete)="onDelete()"
       (customItemClick)="onCustomItemClick($event)"
@@ -111,6 +114,11 @@ import { EntityHeaderComponent } from '../../../../shared/components/entity-head
 })
 export class MyDetailComponent {
   entityName = 'My Entity';
+
+  logoUrl = computed(() => {
+    const entity = this.entity();
+    return entity?.logo_path ? buildStaticUrl(entity.logo_path) : null;
+  });
 
   onBack() {
     this.router.navigate(['/list']);
@@ -144,6 +152,7 @@ export class MyDetailComponent {
 | Name | Type | Required | Default | Description |
 |------|------|----------|----------|-------------|
 | `title` | `string` | Yes | - | Entity title (will be displayed in uppercase) |
+| `logoUrl` | `string \| null` | No | - | Optional logo URL to display before title |
 | `navigateBack` | `() => void` | Yes | - | Function called when back button is clicked |
 | `showEdit` | `boolean` | No | `true` | Show/hide Edit menu item |
 | `showDelete` | `boolean` | No | `true` | Show/hide Delete menu item |
@@ -184,5 +193,12 @@ interface CustomMenuItem {
    ```typescript
    personName = computed(() => `${person.first_name} ${person.second_name}`);
    ```
-2. Use `NavigationHelperService` for consistent navigation patterns
-3. For delete operations, use `withDeleteConfirm()` utility for consistent UX
+2. For `logoUrl`, always wrap static asset URLs with `buildStaticUrl()`:
+   ```typescript
+   logoUrl = computed(() => {
+     const entity = this.entity();
+     return entity?.logo_path ? buildStaticUrl(entity.logo_path) : null;
+   });
+   ```
+3. Use `NavigationHelperService` for consistent navigation patterns
+4. For delete operations, use `withDeleteConfirm()` utility for consistent UX
