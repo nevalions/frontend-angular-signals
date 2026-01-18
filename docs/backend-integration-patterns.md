@@ -175,8 +175,8 @@ personPhotoIconUrl(player: Player): string | null {
 }
 
 teamLogoUrl(team: Team): string | null {
-  return team.team_logo_url
-    ? buildStaticUrl(team.team_logo_url)
+  return team.team_logo_icon_url
+    ? buildStaticUrl(team.team_logo_icon_url)
     : null;
 }
 

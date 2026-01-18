@@ -21,7 +21,7 @@ import { buildStaticUrl } from '../../../core/config/api.constants';
 
 // In component
 teamLogoUrl(team: Team): string | null {
-  return team.team_logo_url ? buildStaticUrl(team.team_logo_url) : null;
+  return team.team_logo_icon_url ? buildStaticUrl(team.team_logo_icon_url) : null;
 }
 
 personPhotoIconUrl(player: Player): string | null {
