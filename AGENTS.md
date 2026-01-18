@@ -38,6 +38,62 @@ This project uses a modular documentation structure. See the [`docs/`](./docs/) 
 
 - **[API Configuration](./docs/api-configuration.md)** - API endpoints and static assets
 
+## Page Schemas & Backend Requirements
+
+**CRITICAL**: Page schemas define the source of truth for the entire frontend project.
+
+- **[Page Schemas](./docs/schemas/)** - All page layouts, UI elements, and backend data requirements
+- Each page schema includes:
+  - ASCII art showing page layout (including tabs)
+  - What's on the page
+  - What data is needed from backend (with schema links)
+  - Backend API endpoints to use
+  - TODOs for missing endpoints
+
+### 🔴 IMPORTANT RULES FOR AGENTS:
+
+1. **NEVER modify schema files without explicit user permission**
+   - Schema files are the source of truth for the entire project
+   - Any changes must be approved by the user first
+   - If you need to change a schema, ask the user first
+
+2. **Schema-first development workflow**
+   - Before creating any component, check if the schema exists in `docs/schemas/`
+   - If schema doesn't exist, **STOP and ask user to create it first**
+   - Only after schema is approved, proceed with component creation
+   - Component must match the schema exactly (UI elements, data requirements, backend endpoints)
+
+3. **Schema validation**
+   - Every page must have a corresponding schema file
+   - Complex schemas (mixed schemas) are marked with ⚠️
+   - Backend schema links must match actual backend schemas
+   - Backend API endpoints must be verified to exist
+   - If endpoint doesn't exist, add TODO and notify user
+
+4. **When working with existing pages**
+   - Read the schema first to understand requirements
+   - Follow the schema exactly for implementation
+   - Don't add features not in the schema without user approval
+   - If you need to change the page, update the schema first (with user approval)
+
+### Schema File Structure:
+
+```
+docs/schemas/
+├── home.md                        # Pages without tabs
+├── sports-list.md                 # List pages
+├── sport-detail.md                # Detail pages with tab links
+└── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
+    ├── tournaments.md
+    ├── teams.md
+    ├── players.md              # ⚠️ Complex schema marked
+    └── positions.md
+```
+
+### Schema Template for New Pages:
+
+See the schema template in `docs/schemas/home.md` for reference when creating new schema files.
+
 ## Tools
 
 - **[MCP Tools for Angular Development](./docs/mcp-tools.md)** - Angular CLI and ESLint MCP tools

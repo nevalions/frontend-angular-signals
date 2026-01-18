@@ -32,6 +32,22 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 
 - **[API Configuration](./api-configuration.md)** - API endpoints, static assets, PUT endpoint patterns, backend docs
 - **[Backend Integration Patterns](./backend-integration-patterns.md)** - Schema strategy, mixed vs nested schemas, ordering with joined tables
+- **[Page Schemas](./schemas/)** - Page layouts, UI elements, and backend data requirements
+
+## Page Schemas & Backend Requirements
+
+**CRITICAL**: Page schemas define the source of truth for the entire frontend project.
+
+See [`docs/schemas/`](./schemas/) for:
+- Page layouts with ASCII art (including tabs)
+- What's on each page
+- Data needed from backend (with schema links)
+- Backend API endpoints to use
+- TODOs for missing endpoints
+
+**Schema-First Development Rule**: Before creating any component, check if the schema exists in `docs/schemas/`. If not, STOP and ask user to create it first.
+
+See [AGENTS.md](../AGENTS.md#page-schemas--backend-requirements) for full rules and agent restrictions.
 
 ## Tools
 

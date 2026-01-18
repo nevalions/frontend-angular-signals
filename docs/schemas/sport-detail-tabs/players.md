@@ -1,0 +1,73 @@
+# Sport Detail - Players Tab
+
+**Tab**: Players
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  🔍 Search players                  [+ Add Player]         │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+                                                              │
+┌─────────────────────────────────────────────────────────────┐
+│  🔍 Select Person to add...      [Add Player] [Cancel]   │
+└─────────────────────────────────────────────────────────────┘
+                                                              │
+[Sort by Name ⬆⬇]
+                                                              │
+┌─────────────────────────────────────────────────────────────┐
+│  [AB]                                                      │
+│  SURNAME Firstname                                        │
+│  EESL ID: 12345 (optional)                                 │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  [CD]                                                      │
+│  SURNAME Firstname                                        │
+│  EESL ID: 12346 (optional)                                 │
+└─────────────────────────────────────────────────────────────┘
+                                                              │
+[Items per page: 10 20 50]           [< 1 2 3 >]
+```
+
+## What's on the page
+
+- Search field for players
+- "Add Player" / "Cancel" button (toggles form)
+- Add player form (when open):
+  - Person dropdown selector
+  - "Add Player" and "Cancel" buttons
+- "Sort by Name" button (toggle ascending/descending)
+- List of player cards:
+  - Avatar with initials
+  - Player surname and first name
+  - EESL ID (optional)
+  - Click to go to player detail
+- Items per page selector (10, 20, 50)
+- Pagination controls
+
+## What we need from backend
+
+**For players list:**
+⚠️ **COMPLEX SCHEMA: Player with Person and Photos**
+- Player id
+- Person first name
+- Person second name (surname)
+- Player EESL ID (optional)
+- Player photo icon URL (optional)
+- [Interface: `PlayerWithDetailsAndPhotos`](../../../src/app/features/players/models/player.model.ts)
+- [Backend Schema: `PlayerWithDetailsAndPhotosSchema`](../../../../statsboards-backend/src/player/schemas.py)
+- **Backend API Endpoint:** `GET /api/players/paginated/details-with-photos?sport_id={sport_id}&page={page}&items_per_page={items_per_page}&search={search}&ascending={ascending}`
+
+**Pagination metadata:**
+- Total count
+- Total pages
+- Current page
+- Items per page
+
+**For adding player (available persons):**
+- Person id
+- Person first name
+- Person second name (surname)
+- [Interface: `Person`](../../../src/app/features/persons/models/person.model.ts)
+- [Backend Schema: `PersonSchema`](../../../../statsboards-backend/src/person/schemas.py)
+- **Backend API Endpoint:** `GET /api/persons/not-in-sport/{sport_id}/all`
