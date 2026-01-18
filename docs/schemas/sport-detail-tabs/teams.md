@@ -41,3 +41,9 @@
 - [Interface: `Team`](../../../src/app/features/teams/models/team.model.ts)
 - [Backend Schema: `TeamSchema`](../../../../statsboards-backend/src/teams/schemas.py)
 - **Backend API Endpoint:** `GET /api/sports/id/{sport_id}/teams/paginated`
+
+**Pagination metadata:**
+- Total count
+- Total pages
+- Current page
+- Items per page
