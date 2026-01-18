@@ -30,7 +30,7 @@
 - Entity header with:
   - Back button → Navigate to tournaments list in sport
   - Tournament title
-    **TODO** - we need tournament logo on header entity, need to refactor entity header to have optional logo
+  - Tournament logo (optional) - ⚠️ requires refactoring EntityHeaderComponent to support optional logo input
   - Edit button → Navigate to `/sports/:sportId/seasons/:year/tournaments/:id/edit`
   - Delete button → Confirm and delete tournament, navigate to tournaments list
 - Tab navigation: Matches, Teams, Players
