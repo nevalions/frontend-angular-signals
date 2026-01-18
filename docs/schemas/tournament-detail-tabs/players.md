@@ -80,7 +80,6 @@
 ## What we need from backend
 
 **For players list:**
-**TODO** mark it as complex schema
 
 - Player id
 - Player number (optional)
@@ -94,21 +93,19 @@
 - Team title (optional)
 - Position id (optional)
 - Position title (optional)
-  **TODO** its complex model check schema and interface
-- [Interface: `Player`](../../../../src/app/features/players/models/player.model.ts)
-- [Backend Schema: `PlayerTournamentSchema`](../../../../../statsboards-backend/src/players/schemas.py)
-- **Backend API Endpoint:** `GET /api/players/tournament/{tournament_id}/paginated`
+- [Interface: `PlayerTeamTournamentWithDetailsAndPhotos`](../../../../src/app/features/players/models/player.model.ts:174-188)
+- [Backend Schema: `PlayerTeamTournamentWithDetailsAndPhotosSchema`](../../../../../statsboards-backend/src/player_team_tournament/schemas.py:38-45)
+- **Backend API Endpoint:** `GET /api/player-team-tournament/tournament/{tournament_id}/paginated-with-details-and-photos`
 
 **Query params:**
 
 - `search`: Search by name
 - `page`: Page number
-- `page_size`: Items per page
-- `sort`: Sort field (name)
-- `sort_order`: asc or desc
+- `items_per_page`: Items per page (max 100)
+- `order_by`: Sort field
+- `ascending`: Sort order (true=asc, false=desc)
 
 **For available players dropdown (add player):**
-**TODO** mark it as complex schema
 
 - Player id
 - Player EESL ID (optional)
@@ -116,8 +113,8 @@
 - Person first name
 - Person second name
 - Person photo URL (optional)
-  **TODO** its complex model check schema and interface
-- [Backend API Endpoint:\*\* `GET /api/players/sport/{sport_id}/available-for-tournament/{tournament_id}`
+- [Backend Schema: `PlayerWithDetailsAndPhotosSchema`](../../../../../statsboards-backend/src/player/schemas.py:45-49)
+- **Backend API Endpoint:** `GET /api/tournaments/{tournament_id}/available-players-for-tournament`
 
 **To add player to tournament:**
 
@@ -126,10 +123,5 @@
 - Team id (optional)
 - Position id (optional)
 - Player number (optional)
-- [Backend Schema: `PlayerTournamentAssignmentCreate`](../../../../../statsboards-backend/src/players/schemas.py)
-- **Backend API Endpoint:** `POST /api/tournaments/{tournament_id}/players/`
-
-## TODO
-
-- Verify backend endpoint exists for available players for tournament
-- Verify backend endpoint exists for adding player to tournament
+- [Backend Schema: `PlayerTeamTournamentSchemaCreate`](../../../../../statsboards-backend/src/player_team_tournament/schemas.py:22-23)
+- **Backend API Endpoint:** `POST /api/player-team-tournament/`
