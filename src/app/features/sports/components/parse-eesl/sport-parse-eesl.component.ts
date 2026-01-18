@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -32,6 +32,18 @@ export class SportParseEeslComponent {
   );
 
   eeslSeasonYear = signal<number | null>(null);
+
+  private initializeSeasonYear = effect(() => {
+    const current = this.currentSeason();
+    const currentYear = this.eeslSeasonYear();
+    
+    // Only set the year if not already set by user
+    if (current && currentYear === null) {
+      this.eeslSeasonYear.set(current.year);
+      console.log('Preselected current season year:', current.year);
+    }
+  });
+
   parsedTournaments = signal<Tournament[]>([]);
   isParsing = signal(false);
   showSuccessDialog = signal(false);
