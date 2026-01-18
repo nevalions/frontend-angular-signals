@@ -45,7 +45,19 @@ export class SportParseEeslComponent {
 
   currentSeason = computed(() => {
     const seasons = this.seasonStore.seasons();
-    return seasons.find(s => s.iscurrent) || null;
+    
+    // First, try to find a season marked as current
+    let season = seasons.find(s => s.iscurrent);
+    
+    // If no current season, fall back to the latest season (highest year)
+    if (!season && seasons.length > 0) {
+      season = seasons.reduce((latest, current) => 
+        current.year > latest.year ? current : latest
+      );
+      console.log('No current season found, using latest season by year:', season);
+    }
+    
+    return season || null;
   });
 
   parseSeason(): void {
