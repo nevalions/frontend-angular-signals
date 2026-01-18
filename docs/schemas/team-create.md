@@ -47,7 +47,7 @@
 ## What's on the page
 
 - Page title: "Create New Team"
-- "Cancel" button → Navigate back to teams list
+- "Cancel" button → Navigate back to teams list in sport
 - "Create Team" button → Submit form
 - Form fields:
   - Title (required)
@@ -62,6 +62,7 @@
 ## What we need from backend
 
 **For creating team:**
+
 - Title (required)
 - City (optional)
 - Team color (required)
