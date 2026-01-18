@@ -7,28 +7,28 @@ This directory contains the **source of truth** for all pages in the frontend pr
 ### For Developers/Agents
 
 1. **NEVER modify schema files without explicit user permission**
-   - These files define the complete page structure and data requirements
-   - Any changes must be approved by the user first
-   - If you need to modify a schema, ask the user before making changes
+    - These files define the complete page structure and data requirements
+    - Any changes must be approved by the user first
+    - If you need to modify a schema, ask the user before making changes
 
 2. **Schema-First Development Workflow**
-   - Before creating any component, check if the schema exists
-   - If schema doesn't exist, **STOP** and ask the user to create it first
-   - Only after the schema is approved, proceed with component creation
-   - Component must match the schema exactly (UI elements, data requirements, backend endpoints)
+    - Before creating any component, check if the schema exists
+    - If schema doesn't exist, **STOP** and ask the user to create it first
+    - Only after the schema is approved, proceed with component creation
+    - Component must match the schema exactly (UI elements, data requirements, backend endpoints)
 
 3. **Schema Validation**
-   - Every page must have a corresponding schema file
-   - Complex schemas (mixed schemas) are marked with ⚠️
-   - Backend schema links must match actual backend schemas in `../../statsboards-backend/src/`
-   - Backend API endpoints must be verified to exist
-   - If an endpoint doesn't exist, add a TODO and notify the user
+    - Every page must have a corresponding schema file
+    - Complex schemas (mixed schemas) are marked with ⚠️
+    - Backend schema links must match actual backend schemas in `../../statsboards-backend/src/`
+    - Backend API endpoints must be verified to exist
+    - If an endpoint doesn't exist, add a TODO and notify the user
 
 4. **When Working with Existing Pages**
-   - Read the schema first to understand requirements
-   - Follow the schema exactly for implementation
-   - Don't add features not in the schema without user approval
-   - If you need to change the page, update the schema first (with user approval)
+    - Read the schema first to understand requirements
+    - Follow the schema exactly for implementation
+    - Don't add features not in the schema without user approval
+    - If you need to change the page, update the schema first (with user approval)
 
 ## Directory Structure
 
@@ -47,7 +47,9 @@ docs/schemas/
 
 ## Schema Template
 
-When creating a new page schema, use `home.md` as a reference:
+**📖 For detailed step-by-step instructions on creating schemas, see [Schema Creation Guide](../schema-creation-guide.md)**
+
+Quick template reference:
 
 ```markdown
 # Page Name Schema
@@ -66,10 +68,9 @@ When creating a new page schema, use `home.md` as a reference:
 
 ## What's on the page
 
-- Element 1
-- Element 2
+- Element1
+- Element2
 - List of items
-  - Item property
   - Item property
 
 ## What we need from backend
@@ -80,12 +81,6 @@ When creating a new page schema, use `home.md` as a reference:
 - [Interface: `InterfaceName`](../../../src/app/path/to/model.ts)
 - [Backend Schema: `SchemaName`](../../../../statsboards-backend/src/path/to/schemas.py)
 - **Backend API Endpoint:** `GET /api/endpoint`
-
-**Pagination metadata:**
-- Total count
-- Total pages
-- Current page
-- Items per page
 ```
 
 ## Schema Elements
@@ -96,43 +91,21 @@ Each schema file must include:
 2. **ASCII Art**: Visual representation of the page layout (including tabs)
 3. **What's on the page**: Simple bullet list of UI elements
 4. **What we need from backend**:
-   - Required data fields
-   - Frontend interface link (e.g., `[Interface: Player]`)
-   - Backend schema link (e.g., `[Backend Schema: PlayerSchema]`)
-   - Backend API endpoint (e.g., `GET /api/players`)
-   - TODOs for missing endpoints
-   - ⚠️ mark for complex/combined schemas
-
-## Marking Complex Schemas
-
-Use ⚠️ to mark schemas that combine multiple backend schemas:
-
-```markdown
-⚠️ **COMPLEX SCHEMA: Player with Person and Photos**
-- Player id
-- Person first name
-- Person second name
-- Player EESL ID (optional)
-- Player photo icon URL (optional)
-```
+    - Required data fields
+    - Frontend interface link (e.g., `[Interface: Player]`)
+    - Backend schema link (e.g., `[Backend Schema: PlayerSchema]`)
+    - Backend API endpoint (e.g., `GET /api/players`)
+    - TODOs for missing endpoints (see [TODO Guidelines](#adding-todos))
+    - ⚠️ mark for complex/combined schemas
 
 ## Adding TODOs
 
-If a required backend endpoint doesn't exist, add a TODO:
+**⚠️ CRITICAL: Always verify backend endpoints exist before adding TODOs**
 
-```markdown
-- **Backend API Endpoint:** `GET /api/endpoint`
-- **TODO:** Need paginated endpoint for data by sport and season
-```
+- **Only add TODOs when the endpoint is genuinely missing from backend code**
+- See [Schema Creation Guide](../schema-creation-guide.md#step-6-add-todos-for-missing-endpoints) for detailed instructions
+- Quick verification checklist:
+  - Check `views.py` for custom endpoints
+  - Check `BaseRouter` for standard CRUD (GET, DELETE)
+  - Search: `grep -rn "endpoint/path" ../statsboards-backend/src/`
 
-## Verification Checklist
-
-Before marking a schema as complete, verify:
-
-- [ ] Frontend interface file exists and link is correct
-- [ ] Backend schema file exists and link is correct
-- [ ] Backend API endpoint exists in backend views.py
-- [ ] Backend endpoint returns the required data
-- [ ] Pagination metadata is included if needed
-- [ ] Complex schemas are marked with ⚠️
-- [ ] Missing endpoints have TODOs

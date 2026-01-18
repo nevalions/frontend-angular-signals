@@ -38,7 +38,8 @@
 ## What's on the page
 
 - Page title: "Create Tournament"
-- "Cancel" and "Save" buttons
+- "Cancel" button → Navigate back to previous page or `/home`
+- "Save" button → Submit form
 - Form with:
   - Title field (required)
   - Description field (optional, 4 rows)

@@ -23,30 +23,25 @@
 ┌─────────────────────────────────────────────────────────────┐
 │  [CD]                                                      │
 │  SURNAME Firstname                                        │
-│  EESL ID: 12346 (optional)                                 │
+  │  EESL ID: 12346 (optional)                                 │
 └─────────────────────────────────────────────────────────────┘
-<<<<<<< HEAD
-                                                              │
-[Items per page: 10 20 50]           [< 1 2 3 >]
-=======
->>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
 ```
 
 ## What's on the page
 
 - Search field for players
-- "Add Player" / "Cancel" button (toggles form)
+- "Add Player" button → Open add player form
+- "Cancel" button → Close add player form
 - Add player form (when open):
   - Person dropdown selector
-  - "Add Player" and "Cancel" buttons
-- "Sort by Name" button (toggle ascending/descending)
+  - "Add Player" button → Submit form to add player to sport
+  - "Cancel" button → Close form without saving
+- "Sort by Name" button → Toggle ascending/descending order
 - List of player cards:
   - Avatar with initials
   - Player surname and first name
   - EESL ID (optional)
   - Click to go to player detail
-- Items per page selector (10, 20, 50)
-- Pagination controls
 
 ## What we need from backend
 
@@ -74,8 +69,6 @@
 - [Interface: `Person`](../../../src/app/features/persons/models/person.model.ts)
 - [Backend Schema: `PersonSchema`](../../../../statsboards-backend/src/person/schemas.py)
 - **Backend API Endpoint:** `GET /api/persons/not-in-sport/{sport_id}/all`
-<<<<<<< HEAD
-=======
 
 **For adding player to sport:**
 - Person ID
@@ -85,4 +78,3 @@
 - [Interface: `PlayerAddToSport`](../../../src/app/features/players/models/player.model.ts)
 - [Backend Schema: `PlayerAddToSportSchema`](../../../../statsboards-backend/src/player/schemas.py)
 - **Backend API Endpoint:** `POST /api/players/add-person-to-sport`
->>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead

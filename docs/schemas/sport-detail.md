@@ -28,15 +28,6 @@
 ## What's on the page
 
 - Entity header with:
-<<<<<<< HEAD
-  - Back button
-  - Sport title
-  - Edit button
-  - Delete button
-- Tab navigation: Tournaments, Teams, Players, Positions
-- Season dropdown selector
-- Tab content area
-=======
   - Back button → Navigate to `/sports`
   - Sport title
   - Edit button → Navigate to `/sports/:id/edit`
@@ -44,11 +35,11 @@
 - Tab navigation: Tournaments, Teams, Players, Positions
 - Season dropdown selector → Updates `?year={season_year}` query param, refreshes tab content
 - Tab content area → Shows data for selected season
->>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
 
 ## What we need from backend
 
 **For sport details:**
+
 - Sport id
 - Sport title
 - Sport description (optional)
@@ -57,8 +48,9 @@
 - **Backend API Endpoint:** `GET /api/sports/id/{sport_id}/`
 
 **For seasons dropdown:**
+
 - Season id
 - Season year
 - [Interface: `Season`](../../../src/app/features/seasons/models/season.model.ts)
 - [Backend Schema: `SeasonSchema`](../../../../statsboards-backend/src/seasons/schemas.py)
-- **Backend API Endpoint:** `GET /api/seasons/paginated`
+- **Backend API Endpoint:** `GET /api/seasons/`

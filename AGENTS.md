@@ -40,15 +40,16 @@ This project uses a modular documentation structure. See the [`docs/`](./docs/) 
 
 ## Page Schemas & Backend Requirements
 
-**CRITICAL**: Page schemas define the source of truth for the entire frontend project.
+**CRITICAL**: Page schemas define source of truth for entire frontend project.
 
-- **[Page Schemas](./docs/schemas/)** - All page layouts, UI elements, and backend data requirements
+- **[Page Schemas README](./docs/schemas/README.md)** - Directory overview, CRITICAL RULES, and quick reference
+- **[Schema Creation Guide](./docs/schema-creation-guide.md)** - Detailed tutorial for creating new schemas
 - Each page schema includes:
   - ASCII art showing page layout (including tabs)
   - What's on the page
   - What data is needed from backend (with schema links)
   - Backend API endpoints to use
-  - TODOs for missing endpoints
+  - TODOs for genuinely missing endpoints (verified by checking backend code)
 
 ### 🔴 IMPORTANT RULES FOR AGENTS:
 
@@ -64,11 +65,11 @@ This project uses a modular documentation structure. See the [`docs/`](./docs/) 
    - Component must match the schema exactly (UI elements, data requirements, backend endpoints)
 
 3. **Schema validation**
+   - See detailed schema validation rules in **[Schema README](./docs/schemas/README.md)**
    - Every page must have a corresponding schema file
    - Complex schemas (mixed schemas) are marked with ⚠️
    - Backend schema links must match actual backend schemas
-   - Backend API endpoints must be verified to exist
-   - If endpoint doesn't exist, add TODO and notify user
+   - Backend API endpoints must be verified to exist before adding TODOs
 
 4. **When working with existing pages**
    - Read the schema first to understand requirements
@@ -92,7 +93,7 @@ docs/schemas/
 
 ### Schema Template for New Pages:
 
-See the schema template in `docs/schemas/home.md` for reference when creating new schema files.
+For detailed instructions on creating schema files, see **[Schema Creation Guide](./docs/schema-creation-guide.md)**.
 
 ## Tools
 
@@ -182,10 +183,12 @@ Current codebase uses console.log for debugging. When making changes:
 ### Backend API Documentation
 
 Backend API documentation is available at:
+
 - Interactive docs: http://localhost:9000/docs
 - Backend codebase: ../statsboards-backend
 
 Refer to these resources for:
+
 - Available endpoints and their parameters
 - Request/response schemas
 - Authentication requirements

@@ -17,33 +17,22 @@
 ┌─────────────────────────────────────────────────────────────┐
 │  [LOGO]                                                    │
 │  TEAM NAME 2                                               │
-│  CITY (optional)                                           │
+  │  CITY (optional)                                           │
 └─────────────────────────────────────────────────────────────┘
-<<<<<<< HEAD
-                                                              │
 [Items per page: 10 20 50]           [< 1 2 3 >]
-=======
->>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
 ```
 
 ## What's on the page
 
 - Search field for teams
-<<<<<<< HEAD
-- "Add Team" button
-=======
 - "Add Team" button → Navigate to [Team Create](../../team-create.md)
->>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
 - List of team cards:
   - Team logo or avatar with initials
   - Team name
   - City (optional)
   - Click to go to team detail
-<<<<<<< HEAD
 - Items per page selector (10, 20, 50)
 - Pagination controls
-=======
->>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
 
 ## What we need from backend
 

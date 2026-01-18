@@ -29,7 +29,8 @@
 ## What's on the page
 
 - Page title: "Edit Sport"
-- "Cancel" and "Save Changes" buttons
+- "Cancel" button → Navigate back to `/sports/:id` (sport detail)
+- "Save Changes" button → Submit form
 - Form with:
   - Title field (required, pre-filled)
   - Description field (optional, pre-filled, 4 rows)
@@ -50,10 +51,8 @@
 - [Interface: `SportUpdate`](../../../src/app/features/sports/models/sport.model.ts)
 - [Backend Schema: `SportSchemaUpdate`](../../../../statsboards-backend/src/sports/schemas.py)
 - **Backend API Endpoint:** `PUT /api/sports/{item_id}/`
-<<<<<<< HEAD
-=======
 
 **To delete sport:**
 - [Interface: `Sport`](../../../src/app/features/sports/models/sport.model.ts)
 - **Backend API Endpoint:** `DELETE /api/sports/id/{sport_id}` (from BaseRouter)
->>>>>>> nevalions/staf-156-show-tournament-logo-in-sport-detail-tournaments-tab-instead
+
