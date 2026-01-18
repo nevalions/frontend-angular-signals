@@ -58,15 +58,17 @@
 - Team city (optional)
 - Team logo icon URL (optional)
 - [Interface: `Team`](../../../../src/app/features/teams/models/team.model.ts)
-- [Backend Schema: `TeamSchema`](../../../../../statsboards-backend/src/teams/schemas.py)
-- **Backend API Endpoint:** `GET /api/teams/tournament/{tournament_id}/paginated`
+- [Backend Schema: `TeamSchema`](../../../../../statsboards-backend/src/teams/schemas.py:42-45)
+- **Backend API Endpoint:** `GET /api/tournaments/id/{tournament_id}/teams/paginated`
 
 **Query params:**
 
-- `search`: Search by name or city
-  **TODO** check if it search and city also or only team title
+- `search`: Search by team title only (not city)
 - `page`: Page number
-- `page_size`: Items per page
+- `items_per_page`: Items per page (max 100)
+- `order_by`: Sort field
+- `order_by_two`: Second sort field
+- `ascending`: Sort order (true=asc, false=desc)
 
 **For available teams dropdown (add team):**
 
@@ -74,17 +76,12 @@
 - Team title
 - Team city (optional)
 - Team logo icon URL (optional)
-  **TODO** check interface
-- [Backend API Endpoint:\*\* `GET /api/teams/sport/{sport_id}/available-for-tournament/{tournament_id}`
+- [Backend Schema: `TeamSchema`](../../../../../statsboards-backend/src/teams/schemas.py:42-45)
+- [Backend API Endpoint:** `GET /api/tournaments/{tournament_id}/available-teams-for-tournament`
 
 **To add team to tournament:**
 
 - Team id
 - Tournament id
-- [Backend Schema: `TournamentTeamSchemaCreate`](../../../../../statsboards-backend/src/tournaments/schemas.py)
-- **Backend API Endpoint:** `POST /api/tournaments/{tournament_id}/teams/`
-
-## TODO
-
-- Verify backend endpoint exists for available teams for tournament
-- Verify backend endpoint exists for adding team to tournament
+- [Backend Schema: `TeamTournamentSchemaCreate`](../../../../../statsboards-backend/src/team_tournament/schemas.py)
+- **Backend API Endpoint:** `POST /api/team_in_tournament/{team_id}in{tournament_id}`
