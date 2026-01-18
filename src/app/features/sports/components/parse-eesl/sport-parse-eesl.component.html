@@ -11,7 +11,7 @@
 
   <div class="sport-parse-eesl__content">
     <div class="sport-parse-eesl__info">
-      <p>Parse tournaments from EESL API and import them into the database.</p>
+      <p>Parse tournaments from EESL API and automatically create them in the database.</p>
     </div>
 
     <div class="sport-parse-eesl__form">
@@ -33,20 +33,9 @@
           (click)="parseSeason()"
         >
           @if (isParsing()) {
-            <span class="sport-parse-eesl__btn-icon">🔍</span> Parsing...
+            <span class="sport-parse-eesl__btn-icon">🔍</span> Parsing and Creating...
           } @else {
-            <span class="sport-parse-eesl__btn-icon">🔍</span> Parse
-          }
-        </button>
-        <button
-          class="sport-parse-eesl__btn sport-parse-eesl__btn--secondary"
-          [disabled]="isSaving() || parsedTournaments().length === 0"
-          (click)="saveTournaments()"
-        >
-          @if (isSaving()) {
-            <span class="sport-parse-eesl__btn-icon">💾</span> Saving...
-          } @else {
-            <span class="sport-parse-eesl__btn-icon">💾</span> Save All
+            <span class="sport-parse-eesl__btn-icon">📥</span> Parse and Create
           }
         </button>
       </div>
@@ -54,15 +43,12 @@
 
     @if (parsedTournaments().length > 0) {
       <div class="sport-parse-eesl__results">
-        <h2 class="sport-parse-eesl__results-title">Parsed Tournaments</h2>
+        <h2 class="sport-parse-eesl__results-title">Tournaments Created</h2>
 
-        @for (tournament of parsedTournaments(); track tournament.tournament_eesl_id ?? $index) {
-          <div 
-            class="sport-parse-eesl__tournament-card"
-            [class.sport-parse-eesl__tournament-card--selected]="tournament.tournament_eesl_id && selectedTournamentIds().has(tournament.tournament_eesl_id)"
-          >
+        @for (tournament of parsedTournaments(); track tournament.id ?? $index) {
+          <div class="sport-parse-eesl__tournament-card">
             <div class="sport-parse-eesl__tournament-content">
-              <div class="sport-parse-eesl__tournament-icon">📦</div>
+              <div class="sport-parse-eesl__tournament-icon">🏆</div>
               <div class="sport-parse-eesl__tournament-info">
                 <div class="sport-parse-eesl__tournament-title">{{ tournament.title }}</div>
                 <div class="sport-parse-eesl__tournament-id">EESL ID: {{ tournament.tournament_eesl_id ?? 'N/A' }}</div>
@@ -71,13 +57,6 @@
                 }
               </div>
             </div>
-            <button
-              class="sport-parse-eesl__remove-btn"
-              [class.sport-parse-eesl__remove-btn--hidden]="!(tournament.tournament_eesl_id && selectedTournamentIds().has(tournament.tournament_eesl_id))"
-              (click)="toggleTournamentSelection(tournament.tournament_eesl_id)"
-            >
-              ✕
-            </button>
           </div>
         }
       </div>
