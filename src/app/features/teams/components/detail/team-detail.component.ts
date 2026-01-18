@@ -60,7 +60,7 @@ export class TeamDetailComponent {
 
   teamLogoUrl(teamId: number): string | null {
     const team = this.teamStore.teams().find((t) => t.id === teamId);
-    return team?.team_logo_url ? buildStaticUrl(team.team_logo_url) : null;
+    return team?.team_logo_icon_url ? buildStaticUrl(team.team_logo_icon_url) : null;
   }
 
   navigateToEdit(): void {

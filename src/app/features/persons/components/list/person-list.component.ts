@@ -47,7 +47,7 @@ export class PersonListComponent {
   sortOrder = this.personStore.sortOrder;
 
   photoUrl(person: Person): string | null {
-    return person.person_photo_url ? buildStaticUrl(person.person_photo_url) : null;
+    return person.person_photo_icon_url ? buildStaticUrl(person.person_photo_icon_url) : null;
   }
 
   searchControl = new FormControl('');

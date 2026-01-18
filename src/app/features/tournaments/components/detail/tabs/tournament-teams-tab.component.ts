@@ -69,7 +69,7 @@ export class TournamentTeamsTabComponent {
   });
 
   teamLogoUrl(team: Team): string | null {
-    return team.team_logo_url ? buildStaticUrl(team.team_logo_url) : null;
+    return team.team_logo_icon_url ? buildStaticUrl(team.team_logo_icon_url) : null;
   }
 
   loadTeams(): void {

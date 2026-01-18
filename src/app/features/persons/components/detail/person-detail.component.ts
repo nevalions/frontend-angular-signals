@@ -47,7 +47,7 @@ export class PersonDetailComponent {
 
   photoUrl = computed(() => {
     const person = this.person();
-    return person?.person_photo_url ? buildStaticUrl(person.person_photo_url) : null;
+    return person?.person_photo_icon_url ? buildStaticUrl(person.person_photo_icon_url) : null;
   });
 
   navigateBack(): void {
