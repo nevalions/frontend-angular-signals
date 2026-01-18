@@ -44,7 +44,7 @@ export class SportDetailComponent {
   private sportStore = inject(SportStoreService);
   private seasonStore = inject(SeasonStoreService);
   private playerStore = inject(PlayerStoreService);
-  private navigationHelper = inject(NavigationHelperService);
+  private readonly navigationHelper = inject(NavigationHelperService);
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
 
@@ -165,7 +165,9 @@ export class SportDetailComponent {
   navigateToParseEesl(): void {
     const sportId = this.sportId();
     if (sportId) {
-      this.router.navigate(['/sports', sportId, 'parse-eesl']);
+      // Preserve the current year query parameter
+      const year = this.route.snapshot.queryParamMap.get('year');
+      this.router.navigate(['/sports', sportId, 'parse-eesl'], { queryParams: year ? { year } : {} });
     }
   }
 }
