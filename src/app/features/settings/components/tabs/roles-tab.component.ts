@@ -67,6 +67,7 @@ export class RolesTabComponent {
 
   constructor() {
     this.stringifyOnlineFilter = this.stringifyOnlineFilter.bind(this);
+    this.stringifyRole = this.stringifyRole.bind(this);
     this.setupSearchDebounce();
 
     effect(() => {
@@ -397,5 +398,11 @@ export class RolesTabComponent {
     if (!status) return '';
     const option = this.onlineFilterOptions.find(o => o.value === status);
     return option ? option.label : '';
+  }
+
+  stringifyRole(roleId: number | null): string {
+    if (!roleId) return '';
+    const role = this.roles().find(r => r.id === roleId);
+    return role ? role.name : '';
   }
 }

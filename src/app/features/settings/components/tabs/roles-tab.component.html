@@ -213,7 +213,7 @@
 
 <ng-template #selectRoleDialog let-observer>
   <p class="roles-tab__dialog-title">Select a role to add to <strong>{{ userToAddRole()?.username || userToAddRole()?.email }}</strong></p>
-  <tui-textfield tuiChevron class="roles-tab__role-select">
+  <tui-textfield tuiChevron class="roles-tab__role-select" [stringify]="stringifyRole">
     <label tuiLabel>Role</label>
     <input
       placeholder="Select role"
