@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { httpResource } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { TuiAlertService, TuiDialogService, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiValidator } from '@taiga-ui/cdk';
 import { EMPTY } from 'rxjs';
@@ -10,6 +10,20 @@ import { buildApiUrl } from '../../../../core/config/api.constants';
 import { User } from '../../models/user.model';
 import { UserStoreService } from '../../services/user-store.service';
 import { withDeleteConfirm, withUpdateAlert } from '../../../../core/utils/alert-helper.util';
+
+function passwordMatchValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const group = control as FormGroup;
+    const newPassword = group.get('newPassword')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+
+    if (!newPassword || !confirmPassword) {
+      return null;
+    }
+
+    return newPassword !== confirmPassword ? { passwordMismatch: true } : null;
+  };
+}
 
 @Component({
   selector: 'app-user-profile',
@@ -55,7 +69,7 @@ export class UserProfileComponent {
     currentPassword: ['', Validators.required],
     newPassword: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', Validators.required],
-  });
+  }, { validators: passwordMatchValidator() });
 
   passwordError = signal<string | null>(null);
   changingPassword = signal(false);
@@ -164,11 +178,6 @@ export class UserProfileComponent {
 
     if (!currentPassword || !newPassword || !confirmPassword) {
       this.passwordError.set('All fields are required');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      this.passwordError.set('Passwords do not match');
       return;
     }
 
