@@ -13,9 +13,9 @@
 │  ← Back                Settings                              │
 └─────────────────────────────────────────────────────────────┘
                                                                │
-┌─────────────────────────────────────────────────────────────┐
-  │  [Users] [Roles] [Global Settings]                           │
-└─────────────────────────────────────────────────────────────┘
+ ┌─────────────────────────────────────────────────────────────┐
+    │  [Dashboard] [Users] [Roles] [Global Settings]              │
+  └─────────────────────────────────────────────────────────────┘
                                                                │
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
@@ -30,8 +30,8 @@
   - Back button → Navigate to `/home` or previous page
   - Page title: "Settings"
   - No gear/settings button (unlike sport-detail, tournament-detail)
-- Tab navigation: Users, Admins, Global Settings
-- Tab content area → Shows content for selected tab
+- Tab navigation: Dashboard (default), Users, Roles, Global Settings
+- Tab content area → Shows content for selected tab (defaults to Dashboard)
 
 ## What we need from backend
 

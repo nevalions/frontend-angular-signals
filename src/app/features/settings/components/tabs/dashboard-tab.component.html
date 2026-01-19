@@ -1,0 +1,121 @@
+<div class="dashboard-tab">
+  <h2 class="dashboard-tab__title">📊 Dashboard Overview</h2>
+
+  <div class="dashboard-tab__grid">
+    <section class="dashboard-tab__section">
+      <div class="dashboard-tab__section-header">
+        <h3 class="dashboard-tab__section-title">👥 Users Online</h3>
+      </div>
+      <div class="dashboard-tab__section-content">
+        @if (usersOnlineLoading()) {
+          <p>Loading...</p>
+        } @else if (usersOnlineError()) {
+          <p class="dashboard-tab__error">{{ usersOnlineError() }}</p>
+        } @else if (usersOnline().length === 0) {
+          <p class="dashboard-tab__empty">No users online</p>
+        } @else {
+          <div class="dashboard-tab__user-list">
+            @for (user of usersOnline(); track user.id) {
+              <div class="dashboard-tab__user-item">
+                <div class="dashboard-tab__user-info">
+                  <span class="dashboard-tab__user-status dashboard-tab__user-status--online"></span>
+                  <span class="dashboard-tab__username">{{ user.username }}</span>
+                </div>
+                <span class="dashboard-tab__user-activity">
+                  Last activity: {{ formatLastOnline(user.last_online ?? null) }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+      <div class="dashboard-tab__section-footer">
+        <button
+          type="button"
+          tuiButton
+          appearance="outline"
+          size="s"
+          (click)="navigateToUsersTab()">
+          View All Users →
+        </button>
+      </div>
+    </section>
+
+    <section class="dashboard-tab__section">
+      <div class="dashboard-tab__section-header">
+        <h3 class="dashboard-tab__section-title">👨‍💼 Admins Online</h3>
+      </div>
+      <div class="dashboard-tab__section-content">
+        @if (adminsOnlineLoading()) {
+          <p>Loading...</p>
+        } @else if (adminsOnlineError()) {
+          <p class="dashboard-tab__error">{{ adminsOnlineError() }}</p>
+        } @else if (adminsOnline().length === 0) {
+          <p class="dashboard-tab__empty">No admins online</p>
+        } @else {
+          <div class="dashboard-tab__user-list">
+            @for (admin of adminsOnline(); track admin.id) {
+              <div class="dashboard-tab__user-item">
+                <div class="dashboard-tab__user-info">
+                  <span class="dashboard-tab__user-status dashboard-tab__user-status--online"></span>
+                  <span class="dashboard-tab__username">{{ admin.username }}</span>
+                </div>
+                <span class="dashboard-tab__user-activity">
+                  Last activity: {{ formatLastOnline(admin.last_online ?? null) }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+      <div class="dashboard-tab__section-footer">
+        <button
+          type="button"
+          tuiButton
+          appearance="outline"
+          size="s"
+          (click)="navigateToUsersTab()">
+          View All Admins →
+        </button>
+      </div>
+    </section>
+
+    <section class="dashboard-tab__section">
+      <div class="dashboard-tab__section-header">
+        <h3 class="dashboard-tab__section-title">🆕 Recently Registered Users</h3>
+      </div>
+      <div class="dashboard-tab__section-content">
+        @if (recentlyRegisteredLoading()) {
+          <p>Loading...</p>
+        } @else if (recentlyRegisteredError()) {
+          <p class="dashboard-tab__error">{{ recentlyRegisteredError() }}</p>
+        } @else if (recentlyRegistered().length === 0) {
+          <p class="dashboard-tab__empty">No users found</p>
+        } @else {
+          <div class="dashboard-tab__user-list">
+            @for (user of recentlyRegistered(); track user.id) {
+              <div class="dashboard-tab__user-item">
+                <div class="dashboard-tab__user-info">
+                  <span class="dashboard-tab__username">{{ user.username }}</span>
+                </div>
+                <span class="dashboard-tab__user-joined">
+                  Joined: {{ formatJoinedDate(user.created) }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+      <div class="dashboard-tab__section-footer">
+        <button
+          type="button"
+          tuiButton
+          appearance="outline"
+          size="s"
+          (click)="navigateToUsersTab()">
+          View All Users →
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

@@ -13,6 +13,13 @@
     <nav class="settings__tab-nav">
       <button
         class="settings__tab"
+        [class.settings__tab--active]="activeTab() === 'dashboard'"
+        (click)="onTabChange('dashboard')"
+      >
+        Dashboard
+      </button>
+      <button
+        class="settings__tab"
         [class.settings__tab--active]="activeTab() === 'users'"
         (click)="onTabChange('users')"
       >
@@ -36,7 +43,9 @@
   </div>
 
   <div class="settings__content">
-    @if (activeTab() === 'users') {
+    @if (activeTab() === 'dashboard') {
+      <app-dashboard-tab />
+    } @else if (activeTab() === 'users') {
       <app-users-tab />
     } @else if (activeTab() === 'roles') {
       <app-roles-tab />
