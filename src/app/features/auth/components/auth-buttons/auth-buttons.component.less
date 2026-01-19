@@ -31,10 +31,30 @@
   gap: 1rem;
 }
 
-.auth-buttons__user {
+.auth-buttons__dropdown-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-buttons__user-menu {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--tui-background-neutral-1-hover);
+  }
+
+  &.active {
+    background-color: var(--tui-background-neutral-1-hover);
+  }
 }
 
 .auth-buttons__avatar {
@@ -47,12 +67,63 @@
   color: var(--tui-text-primary);
 }
 
-.auth-buttons__logout {
-  font-weight: 400;
+.auth-buttons__dropdown-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--tui-text-secondary);
+  transition: transform 0.2s ease;
 }
 
-.auth-buttons__text--hide-mobile {
-  @media (max-width: 640px) {
-    display: none;
+.auth-buttons__user-menu.active .auth-buttons__dropdown-icon {
+  transform: rotate(180deg);
+}
+
+.auth-buttons__dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 180px;
+  background-color: var(--tui-background-base);
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0.25rem 0;
+  z-index: 1000;
+}
+
+.auth-buttons__dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--tui-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--tui-background-neutral-1-hover);
+  }
+
+  tui-icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--tui-text-secondary);
+  }
+
+  &--logout {
+    color: var(--tui-text-negative);
+
+    &:hover {
+      background-color: var(--tui-background-negative-pale-hover);
+
+      tui-icon {
+        color: var(--tui-text-negative);
+      }
+    }
   }
 }

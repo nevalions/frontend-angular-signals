@@ -37,7 +37,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(buildApiUrl('/api/auth/login'), body.toString(), { headers }).pipe(
       tap((response: LoginResponse) => {
         localStorage.setItem(this.TOKEN_KEY, response.access_token);
-        this.fetchCurrentUser();
+        this.fetchCurrentUser().subscribe();
       }),
       catchError((error) => {
         return throwError(() => error);

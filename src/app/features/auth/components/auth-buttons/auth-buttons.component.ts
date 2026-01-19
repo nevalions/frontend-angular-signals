@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 import { TuiButton, TuiIcon, TuiDialogService } from '@taiga-ui/core';
 import { TuiAvatar } from '@taiga-ui/kit';
 import { tuiDialog } from '@taiga-ui/core';
@@ -45,28 +45,45 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
       </div>
     } @else {
       <div class="auth-buttons auth-buttons--logged-in">
-        <div class="auth-buttons__user">
-          <tui-avatar
-            [src]="userAvatar()"
-            size="s"
-            class="auth-buttons__avatar"
-          ></tui-avatar>
-          <span class="auth-buttons__username">{{ authService.currentUser()?.username }}</span>
-        </div>
+        <div class="auth-buttons__dropdown-container">
+          <button
+            type="button"
+            class="auth-buttons__user-menu"
+            (click)="toggleDropdown($event)"
+            [class.active]="dropdownOpen()"
+            aria-haspopup="true"
+            [attr.aria-expanded]="dropdownOpen()"
+          >
+            <tui-avatar
+              [src]="userAvatar()"
+              size="s"
+              class="auth-buttons__avatar"
+            ></tui-avatar>
+            <span class="auth-buttons__username">{{ authService.currentUser()?.username }}</span>
+            <tui-icon class="auth-buttons__dropdown-icon" icon="@tui.chevron-down"></tui-icon>
+          </button>
 
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          size="s"
-          class="auth-buttons__logout"
-          (click)="logout()"
-          aria-label="Sign Out"
-          title="Sign Out"
-        >
-          <tui-icon class="auth-buttons__icon" icon="@tui.log-out"></tui-icon>
-          <span class="auth-buttons__text auth-buttons__text--hide-mobile">Sign Out</span>
-        </button>
+          @if (dropdownOpen()) {
+            <div class="auth-buttons__dropdown-menu">
+              <button
+                type="button"
+                class="auth-buttons__dropdown-item"
+                (click)="goToProfile()"
+              >
+                <tui-icon icon="@tui.user"></tui-icon>
+                <span>Profile</span>
+              </button>
+              <button
+                type="button"
+                class="auth-buttons__dropdown-item auth-buttons__dropdown-item--logout"
+                (click)="logout()"
+              >
+                <tui-icon icon="@tui.log-out"></tui-icon>
+                <span>Logout</span>
+              </button>
+            </div>
+          }
+        </div>
       </div>
     }
   `,
@@ -89,6 +106,30 @@ export class AuthButtonsComponent {
     label: 'Create Account',
   });
 
+  readonly dropdownOpen = signal(false);
+
+  @HostListener('document:click', ['$event.target'])
+  onClickOutside(target: EventTarget | null): void {
+    if (!this.dropdownOpen() || !target) {
+      return;
+    }
+
+    const targetElement = target as HTMLElement;
+    const authButtonsElement = document.querySelector('app-auth-buttons');
+    if (authButtonsElement && !authButtonsElement.contains(targetElement)) {
+      this.dropdownOpen.set(false);
+    }
+  }
+
+  toggleDropdown(event: Event): void {
+    event.stopPropagation();
+    this.dropdownOpen.update(open => !open);
+  }
+
+  closeDropdown(): void {
+    this.dropdownOpen.set(false);
+  }
+
   protected userAvatar(): string {
     const user = this.authService.currentUser();
     return user?.person_id ? `/api/persons/${user.person_id}/photo` : '';
@@ -102,7 +143,18 @@ export class AuthButtonsComponent {
     this.registerDialog().subscribe();
   }
 
+  goToProfile(): void {
+    this.closeDropdown();
+    const user = this.authService.currentUser();
+    if (user?.person_id) {
+      this.navigationHelper.toPersonDetail(user.person_id);
+    } else {
+      this.navigationHelper.toPersonsList();
+    }
+  }
+
   logout(): void {
+    this.closeDropdown();
     this.authService.logout();
     this.navigationHelper.toHome();
   }
