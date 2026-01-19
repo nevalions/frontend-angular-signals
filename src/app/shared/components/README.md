@@ -110,7 +110,7 @@ Main application navigation bar with dropdown menus, mobile responsiveness, and 
   - Admin users additionally see Settings option
   - Dropdown closes when clicking outside component
   - Profile navigates to user's person detail page (or persons list if no person_id)
-  - Settings navigates to `/admin/settings` (admin only)
+  - Settings navigates to `/settings` (admin only)
   - Logout clears session and redirects to home
 
 **Click-Outside Dropdown Behavior:**

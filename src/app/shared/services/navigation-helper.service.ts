@@ -109,7 +109,7 @@ export class NavigationHelperService {
   }
 
   toSettings(): void {
-    this.router.navigate(['/admin', 'settings']);
+    this.router.navigate(['/settings']);
   }
 
   toUserProfile(userId: number | string, fromSettings?: boolean): void {
