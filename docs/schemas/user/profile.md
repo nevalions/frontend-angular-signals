@@ -82,35 +82,46 @@
 - User roles (list of role names)
 - Person id (optional, linked person)
 - [Interface: `User` or `UserInfo`](../../../src/app/features/auth/models/login-response.model.ts)
-- [Backend Schema: `UserSchema`](../../../../statsboards-backend/src/users/schemas.py) (verify)
-- **Backend API Endpoint:** `GET /api/users/id/{user_id}/` (verify endpoint exists)
+- [Backend Schema: `UserSchema`](../../../../statsboards-backend/src/users/schemas.py)
+- **Backend API Endpoints:**
+  - `GET /api/users/me` - Get current user profile
+  - `GET /api/users/{user_id}` - Admin only: Get any user profile with roles
 
 **For updating email:**
 - User id
 - New email
-- [Interface: `UserEmailUpdate`](../../../src/app/features/auth/models/user.model.ts) (create if needed)
-- [Backend Schema: `UserEmailUpdateSchema`](../../../../statsboards-backend/src/users/schemas.py) (verify)
-- **Backend API Endpoint:** `PATCH /api/users/id/{user_id}/email` or `PUT /api/users/id/{user_id}/` (verify)
+- [Interface: `UserEmailUpdate`](../../../src/app/features/users/models/user.model.ts)
+- [Backend Schema: `UserSchemaUpdate`](../../../../statsboards-backend/src/users/schemas.py)
+- **Backend API Endpoints:**
+  - `PUT /api/users/me` - Update own email
+  - `PUT /api/users/{user_id}` - Admin only: Update user email/status
 
 **For changing password:**
 - User id
-- Current password
+- Old password (current password) - for own password change
 - New password
-- [Interface: `PasswordChange`](../../../src/app/features/auth/models/user.model.ts) (create if needed)
-- [Backend Schema: `PasswordChangeSchema`](../../../../statsboards-backend/src/users/schemas.py) (verify)
-- **Backend API Endpoint:** `POST /api/users/id/{user_id}/change-password` (verify)
+- [Interface: `PasswordChange`](../../../src/app/features/users/models/user.model.ts)
+- [Backend Schema: `UserChangePassword`](../../../../statsboards-backend/src/users/schemas.py) (for own change)
+- **Backend API Endpoints:**
+  - `POST /api/users/me/change-password` - Change own password (validates current password)
+  - `POST /api/users/{user_id}/change-password` - Admin only: Change user password (no validation needed)
 
 **For deleting account:**
 - User id
-- [Backend API Endpoint:** `DELETE /api/users/id/{user_id}/` (verify)
+- [Backend API Endpoint:** `DELETE /api/users/{user_id}` - Admin only or self-delete
 
-## TODOs (Backend endpoints to verify)
+## Frontend Implementation Notes
 
-- [ ] Verify user profile endpoint: `GET /api/users/id/{user_id}/`
-- [ ] Verify email update endpoint: `PATCH /api/users/id/{user_id}/email` or `PUT /api/users/id/{user_id}/`
-- [ ] Verify password change endpoint: `POST /api/users/id/{user_id}/change-password`
-- [ ] Verify delete user endpoint: `DELETE /api/users/id/{user_id}/`
-- [ ] Check if backend has `UserSchema`, `UserEmailUpdateSchema`, `PasswordChangeSchema` definitions
+**Authentication:**
+- Auth token automatically added to all API requests via `authInterceptor`
+- Uses `Authorization: Bearer {token}` header
+- Interceptor registered in `app.config.ts`
+
+**Authorization:**
+- Users can view/edit own profile
+- Admin users can view/edit any user profile
+- Non-admin users redirected to `/home` when accessing other users' profiles
+- Delete option visible only for own profile or admin
 
 ## Related Documentation
 

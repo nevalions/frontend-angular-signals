@@ -2,6 +2,8 @@
   <p>Loading...</p>
 } @else if (error()) {
   <p>Error loading user profile</p>
+} @else if (!user() && !loading() && !canView()) {
+  <p>You don't have permission to view this profile</p>
 } @else if (user()) {
   <app-entity-header
     [title]="userDisplayName()"
@@ -31,22 +33,23 @@
       </div>
     </div>
 
-    <div class="email-section">
-      <div class="field-row">
-        <label class="field-label">Email</label>
+    @if (canEdit()) {
+      <div class="email-section">
+        <div class="field-row">
+          <label class="field-label">Email</label>
 
-        @if (!editingEmail()) {
-          <div class="field-value">
-            <span class="value">{{ emailForm.value.email || 'No email' }}</span>
-            <button
-              type="button"
-              class="edit-button"
-              (click)="startEditEmail()">
-              <tui-icon icon="@tui.pencil" />
-            </button>
-          </div>
-        } @else {
-          <form [formGroup]="emailForm" class="field-edit">
+          @if (!editingEmail()) {
+            <div class="field-value">
+              <span class="value">{{ emailForm.value.email || 'No email' }}</span>
+              <button
+                type="button"
+                class="edit-button"
+                (click)="startEditEmail()">
+                <tui-icon icon="@tui.pencil" />
+              </button>
+            </div>
+          } @else {
+            <form [formGroup]="emailForm" class="field-edit">
             <div class="field-actions-wrapper">
               <tui-textfield tuiTextfieldSize="l">
                 <label tuiLabel>Email</label>
@@ -88,11 +91,22 @@
               </div>
             }
           </form>
-        }
+          }
+        </div>
       </div>
-    </div>
+    } @else {
+      <div class="email-section">
+        <div class="field-row">
+          <label class="field-label">Email</label>
+          <div class="field-value">
+            <span class="value">{{ emailForm.value.email || 'No email' }}</span>
+          </div>
+        </div>
+      </div>
+    }
 
-    <div class="password-section">
+    @if (canEdit()) {
+      <div class="password-section">
       <div class="section-header">
         <h3>Change Password</h3>
         @if (!changingPassword()) {
@@ -197,7 +211,8 @@
             </button>
           </div>
         </form>
-      }
-    </div>
+        }
+      </div>
+    }
   </div>
 }

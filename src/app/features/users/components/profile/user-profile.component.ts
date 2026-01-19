@@ -4,12 +4,12 @@ import { httpResource } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { TuiAlertService, TuiDialogService, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiValidator } from '@taiga-ui/cdk';
-import { EMPTY } from 'rxjs';
 import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
 import { buildApiUrl } from '../../../../core/config/api.constants';
 import { User } from '../../models/user.model';
 import { UserStoreService } from '../../services/user-store.service';
 import { withDeleteConfirm, withUpdateAlert } from '../../../../core/utils/alert-helper.util';
+import { AuthService } from '../../../auth/services/auth.service';
 
 function passwordMatchValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -46,18 +46,59 @@ export class UserProfileComponent {
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
   private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
   readonly emailValidator = Validators.email;
 
   userId = signal<number | null>(null);
   userResource = httpResource<User>(() => {
     const userId = this.userId();
+    const current = this.currentUser();
+
     if (!userId) return undefined;
-    return buildApiUrl(`/api/users/id/${userId}/`);
+
+    if (current?.id === userId) {
+      return buildApiUrl('/api/users/me');
+    }
+
+    if (current?.roles?.includes('admin')) {
+      return buildApiUrl(`/api/users/${userId}`);
+    }
+
+    return undefined;
   });
 
   user = computed(() => this.userResource.value());
   loading = computed(() => this.userResource.isLoading());
   error = computed(() => this.userResource.error());
+
+  currentUser = this.authService.currentUser;
+  isAuthenticated = this.authService.isAuthenticated;
+
+  isOwner = computed(() => {
+    const current = this.currentUser();
+    const profileId = this.userId();
+    return current?.id === profileId;
+  });
+
+  canView = computed(() => {
+    const userId = this.userId();
+    const current = this.currentUser();
+    return userId === current?.id || current?.roles?.includes('admin');
+  });
+
+  private checkAccess = effect(() => {
+    if (!this.canView()) {
+      this.router.navigate(['/home']);
+    }
+  });
+
+  isAdmin = computed(() => {
+    const current = this.currentUser();
+    return current?.roles?.includes('admin') ?? false;
+  });
+
+  canEdit = computed(() => this.isOwner() || this.isAdmin());
+  canDelete = computed(() => this.isOwner() || this.isAdmin());
 
   editingEmail = signal(false);
 
@@ -75,7 +116,9 @@ export class UserProfileComponent {
   changingPassword = signal(false);
 
   customMenuItems = computed<CustomMenuItem[]>(() => {
-    return [{ id: 'delete-user', label: 'Delete account', type: 'danger', icon: '@tui.trash' }];
+    return this.canDelete()
+      ? [{ id: 'delete-user', label: 'Delete account', type: 'danger', icon: '@tui.trash' }]
+      : [];
   });
 
   private syncUserData = effect(() => {
@@ -187,7 +230,7 @@ export class UserProfileComponent {
     withUpdateAlert(
       this.alerts,
       () => this.userStore.changePassword(userId, {
-        current_password: currentPassword,
+        old_password: currentPassword,
         new_password: newPassword,
       }),
       () => {
