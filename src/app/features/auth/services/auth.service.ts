@@ -20,8 +20,17 @@ export class AuthService {
 
   private heartbeatIntervalId: ReturnType<typeof setInterval> | null = null;
 
+  private initializationDone = false;
+
   constructor() {
     this.loadFromStorage();
+  }
+
+  initialize(): void {
+    if (this.initializationDone) return;
+
+    this.initializationDone = true;
+
     if (this.isAuthenticated()) {
       this.fetchCurrentUser().subscribe(() => {
         this.startHeartbeat();
