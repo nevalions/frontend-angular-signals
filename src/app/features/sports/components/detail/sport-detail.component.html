@@ -6,12 +6,9 @@
         (navigateBack)="navigateBack()"
         (edit)="navigateToEdit()"
         (delete)="deleteSport()"
+        [customMenuItems]="customMenuItems()"
+        (customItemClick)="onCustomItemClick($event)"
       />
-      @if (showParseButton()) {
-        <button class="sport-detail__parse-btn" (click)="navigateToParseEesl()">
-          📥 Parse EESL
-        </button>
-      }
     </div>
 
     <div class="sport-detail__subnav">

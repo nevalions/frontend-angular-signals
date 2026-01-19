@@ -14,7 +14,7 @@ import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
   import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
-  import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+  import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
   import { SportTournamentsTabComponent } from './tabs/sport-tournaments-tab.component';
   import { SportTeamsTabComponent } from './tabs/sport-teams-tab.component';
   import { SportPlayersTabComponent } from './tabs/sport-players-tab.component';
@@ -86,6 +86,18 @@ export class SportDetailComponent {
   seasons = this.seasonStore.seasons;
 
   seasonYears = computed(() => this.seasons().map((season: Season) => season.year));
+
+  customMenuItems = computed<CustomMenuItem[]>(() => {
+    if (!this.showParseButton()) return [];
+    
+    return [
+      {
+        id: 'parse-eesl',
+        label: 'Parse EESL',
+        icon: '@tui.download'
+      }
+    ];
+  });
 
   activeTab = toSignal(
     this.route.queryParamMap.pipe(map((params) => params.get('tab') || 'tournaments')),
@@ -168,17 +180,21 @@ export class SportDetailComponent {
   showParseButton(): boolean {
     const sport = this.sport();
     if (!sport) return false;
-    
-    // Show parse button only for football
+
     const footballSports = ['football', 'soccer'];
     return footballSports.some(s => sport.title.toLowerCase().includes(s));
+  }
+
+  onCustomItemClick(itemId: string): void {
+    if (itemId === 'parse-eesl') {
+      this.navigateToParseEesl();
+    }
   }
 
   navigateToParseEesl(): void {
     const sportId = this.sportId();
     const selectedYear = this.selectedSeasonYear();
     if (sportId) {
-      // Use the selected season year from the dropdown
       this.router.navigate(['/sports', sportId, 'parse-eesl'], { queryParams: selectedYear ? { year: selectedYear } : {} });
     }
   }

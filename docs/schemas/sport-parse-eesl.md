@@ -2,7 +2,7 @@
 
 **Route**: `/sports/:sportId/parse-eesl`
 
-**Note**: Parse EESL button only shows for football/soccer sports (detected by title containing "football" or "soccer")
+**Note**: Parse EESL menu item only shows in gear menu for football/soccer sports (detected by title containing "football" or "soccer")
 
 ```
 ┌─────────────────────────────────────────────────────┐
