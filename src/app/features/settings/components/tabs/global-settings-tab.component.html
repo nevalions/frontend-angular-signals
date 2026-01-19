@@ -343,6 +343,105 @@
           </label>
         </div>
       </div>
+
+      <div class="global-settings-tab__section">
+        <div class="global-settings-tab__section-header">
+          <h2 class="global-settings-tab__section-title">Seasons</h2>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            iconStart="@tui.plus"
+            (click)="openSeasonForm()">
+            Add Season
+          </button>
+        </div>
+
+        @if (seasonsLoading()) {
+          <div class="global-settings-tab__loading">Loading seasons...</div>
+        } @else if (seasons().length === 0) {
+          <div class="global-settings-tab__empty">No seasons found</div>
+        } @else {
+          <div class="global-settings-tab__seasons-list">
+            @for (season of seasons(); track season.id) {
+              <div class="global-settings-tab__season-item">
+                <div class="global-settings-tab__season-info">
+                  <span class="global-settings-tab__season-year">{{ season.year }}</span>
+                  @if (season.description) {
+                    <span class="global-settings-tab__season-description">{{ season.description }}</span>
+                  }
+                  @if (season.iscurrent) {
+                    <span class="global-settings-tab__season-badge">Current</span>
+                  }
+                </div>
+                <div class="global-settings-tab__season-actions">
+                  <button
+                    type="button"
+                    tuiButton
+                    appearance="flat"
+                    size="s"
+                    (click)="openSeasonForm(season)"
+                    class="global-settings-tab__action-button">
+                    <tui-icon icon="@tui.pencil" />
+                  </button>
+                  <button
+                    type="button"
+                    tuiButton
+                    appearance="flat"
+                    size="s"
+                    (click)="deleteSeason(season)"
+                    class="global-settings-tab__action-button global-settings-tab__action-button--delete">
+                    <tui-icon icon="@tui.trash" />
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
     </div>
   }
 </div>
+
+<ng-template #seasonDialog let-observer>
+  <form (ngSubmit)="observer.next({ year: seasonFormYear(), description: seasonFormDescription(), iscurrent: seasonFormIsCurrent() }); observer.complete()">
+    <div class="global-settings-tab__form-field">
+      <tui-textfield>
+        <label tuiLabel>Year</label>
+        <input
+          type="number"
+          placeholder="Enter year"
+          [(ngModel)]="seasonFormYear"
+          name="seasonYear"
+          required />
+      </tui-textfield>
+    </div>
+    <div class="global-settings-tab__form-field">
+      <tui-textfield>
+        <label tuiLabel>Description (optional)</label>
+        <input
+          type="text"
+          placeholder="Enter description"
+          [(ngModel)]="seasonFormDescription"
+          name="seasonDescription" />
+      </tui-textfield>
+    </div>
+    <div class="global-settings-tab__form-checkbox">
+      <label class="global-settings-tab__checkbox-label">
+        <input
+          type="checkbox"
+          [(ngModel)]="seasonFormIsCurrent"
+          name="seasonIsCurrent" />
+        <span>Set as Current Season</span>
+      </label>
+    </div>
+    <div class="global-settings-tab__dialog-actions">
+      <button type="button" tuiButton appearance="flat" (click)="observer.complete()">
+        Cancel
+      </button>
+      <button type="submit" tuiButton appearance="primary" [disabled]="!seasonFormYear()">
+        {{ editingSeason() ? 'Save' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</ng-template>

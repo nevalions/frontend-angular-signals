@@ -10,6 +10,13 @@
     color: var(--tui-text-negative);
   }
 
+  &__empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--tui-text-secondary);
+    font-style: italic;
+  }
+
   &__sections {
     display: flex;
     flex-direction: column;
@@ -23,13 +30,20 @@
     padding: 1.5rem;
   }
 
+  &__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--tui-border-normal);
+    padding-bottom: 0.75rem;
+  }
+
   &__section-title {
-    margin: 0 0 1.5rem 0;
+    margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--tui-text-primary);
-    border-bottom: 1px solid var(--tui-border-normal);
-    padding-bottom: 0.75rem;
   }
 
   &__setting-row {
@@ -75,6 +89,84 @@
 
     span {
       user-select: none;
+    }
+  }
+
+  &__form-field {
+    margin-bottom: 1rem;
+  }
+
+  &__form-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__dialog-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+
+  &__seasons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__season-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--tui-background-neutral-1);
+    border: 1px solid var(--tui-border-normal);
+    border-radius: var(--tui-radius-s);
+    padding: 1rem;
+    transition: box-shadow var(--tui-duration);
+
+    &:hover {
+      box-shadow: var(--tui-shadow-small);
+    }
+  }
+
+  &__season-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  &__season-year {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--tui-text-primary);
+  }
+
+  &__season-description {
+    font-size: 0.875rem;
+    color: var(--tui-text-secondary);
+  }
+
+  &__season-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: var(--tui-chart-success);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: var(--tui-radius-s);
+  }
+
+  &__season-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  &__action-button {
+    &--delete {
+      color: var(--tui-text-negative);
     }
   }
 }
