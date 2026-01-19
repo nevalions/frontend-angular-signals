@@ -34,20 +34,22 @@ This directory contains the **source of truth** for all pages in the frontend pr
 
 ```
 docs/schemas/
-├── home.md                        # Pages without tabs
-├── sports-list.md                 # List pages
-├── sport-detail.md                # Detail pages with tab links
-├── sport-edit.md                 # Edit/Create pages
-├── match-create.md                # Match create page
-├── scoreboards/                   # Scoreboard-related pages and components
-│   ├── scoreboard-admin.md         # Scoreboard control/admin page
-│   ├── scoreboard-view.md         # FullHD scoreboard view page (broadcast)
-│   └── scoreboard-display.md       # Shared scoreboard display component
-└── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
-    ├── tournaments.md
-    ├── teams.md
-    ├── players.md              # ⚠️ Complex schema marked
-    └── positions.md
+ ├── home.md                        # Pages without tabs
+ ├── sports-list.md                 # List pages
+ ├── sport-detail.md                # Detail pages with tab links
+ ├── sport-edit.md                 # Edit/Create pages
+ ├── match-create.md                # Match create page
+ ├── user/                         # User-related pages
+ │   └── profile.md                # User profile page
+ ├── scoreboards/                   # Scoreboard-related pages and components
+ │   ├── scoreboard-admin.md         # Scoreboard control/admin page
+ │   ├── scoreboard-view.md         # FullHD scoreboard view page (broadcast)
+ │   └── scoreboard-display.md       # Shared scoreboard display component
+ └── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
+     ├── tournaments.md
+     ├── teams.md
+     ├── players.md              # ⚠️ Complex schema marked
+     └── positions.md
 ```
 
 **Component Schemas:**

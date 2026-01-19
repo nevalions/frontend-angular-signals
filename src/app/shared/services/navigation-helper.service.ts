@@ -111,4 +111,8 @@ export class NavigationHelperService {
   toSettings(): void {
     this.router.navigate(['/admin', 'settings']);
   }
+
+  toUserProfile(userId: number | string): void {
+    this.router.navigate(['/users', userId]);
+  }
 }

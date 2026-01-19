@@ -19,6 +19,7 @@ import { PersonCreateComponent } from './features/persons/components/create/pers
 import { PersonEditComponent } from './features/persons/components/edit/person-edit.component';
 import { PlayerDetailComponent } from './features/players/components/detail/player-detail.component';
 import { HomeComponent } from './features/home/components/home.component';
+import { UserProfileComponent } from './features/users/components/profile/user-profile.component';
 
 export const routes: Routes = [
   {
@@ -115,6 +116,10 @@ export const routes: Routes = [
         component: PersonEditComponent,
       },
     ],
+  },
+  {
+    path: 'users/:userId',
+    component: UserProfileComponent,
   },
   {
     path: 'error404',

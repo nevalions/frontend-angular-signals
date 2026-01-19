@@ -67,6 +67,12 @@ toPersonEdit(id: number | string)
 toPersonCreate()
 ```
 
+### Users
+
+```typescript
+toUserProfile(userId: number | string)
+```
+
 ### System
 
 ```typescript

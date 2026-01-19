@@ -1,0 +1,196 @@
+@if (loading()) {
+  <p>Loading...</p>
+} @else if (error()) {
+  <p>Error loading user profile</p>
+} @else if (user()) {
+  <app-entity-header
+    [title]="userDisplayName()"
+    [showEdit]="false"
+    [showDelete]="false"
+    [customMenuItems]="customMenuItems()"
+    (navigateBack)="navigateBack()"
+    (customItemClick)="onCustomItemClick($event)"
+  ></app-entity-header>
+
+  <div class="user-profile-container">
+    <div class="profile-info">
+      <div class="info-row">
+        <span class="info-label">Status:</span>
+        <span class="info-value" [class.active]="userStatus() === 'Active'" [class.inactive]="userStatus() === 'Inactive'">
+          {{ userStatus() }}
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Roles:</span>
+        <div class="roles-container">
+          @for (role of userRoles(); track role) {
+            <span class="role-badge">{{ role }}</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="email-section">
+      <div class="field-row">
+        <label class="field-label">Email</label>
+
+        @if (!editingEmail()) {
+          <div class="field-value">
+            <span class="value">{{ emailForm.value.email || 'No email' }}</span>
+            <button
+              type="button"
+              class="edit-button"
+              (click)="startEditEmail()">
+              <tui-icon icon="@tui.pencil" />
+            </button>
+          </div>
+        } @else {
+          <form [formGroup]="emailForm" class="field-edit">
+            <div class="field-actions-wrapper">
+              <tui-textfield tuiTextfieldSize="l">
+                <label tuiLabel>Email</label>
+                <input
+                  type="email"
+                  placeholder="Enter email"
+                  tuiTextfield
+                  formControlName="email"
+                  [tuiValidator]="emailValidator" />
+              </tui-textfield>
+
+              <div class="field-actions">
+                <button
+                  type="button"
+                  class="action-button save-button"
+                  (click)="saveEmail()">
+                  <tui-icon icon="@tui.check" />
+                </button>
+                <button
+                  type="button"
+                  class="action-button cancel-button"
+                  (click)="cancelEditEmail()">
+                  <tui-icon icon="@tui.x" />
+                </button>
+              </div>
+            </div>
+
+            @if (emailForm.get('email')?.touched && emailForm.get('email')?.errors?.['required']) {
+              <div class="error-message">
+                <tui-icon icon="@tui.info" />
+                Email is required
+              </div>
+            }
+
+            @if (emailForm.get('email')?.touched && emailForm.get('email')?.errors?.['email']) {
+              <div class="error-message">
+                <tui-icon icon="@tui.info" />
+                Please enter a valid email address
+              </div>
+            }
+          </form>
+        }
+      </div>
+    </div>
+
+    <div class="password-section">
+      <div class="section-header">
+        <h3>Change Password</h3>
+        @if (!changingPassword()) {
+          <button
+            type="button"
+            class="change-password-button"
+            (click)="changingPassword.set(true)">
+            Change Password
+          </button>
+        }
+      </div>
+
+      @if (changingPassword()) {
+        <form [formGroup]="passwordForm" class="password-form">
+          <div class="form-field">
+            <label class="field-label">Current Password *</label>
+            <tui-textfield tuiTextfieldSize="l">
+              <input
+                type="password"
+                placeholder="Enter current password"
+                tuiTextfield
+                formControlName="currentPassword" />
+            </tui-textfield>
+
+            @if (passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors?.['required']) {
+              <div class="error-message">
+                <tui-icon icon="@tui.info" />
+                Current password is required
+              </div>
+            }
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">New Password *</label>
+            <tui-textfield tuiTextfieldSize="l">
+              <input
+                type="password"
+                placeholder="Enter new password"
+                tuiTextfield
+                formControlName="newPassword" />
+            </tui-textfield>
+
+            @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['required']) {
+              <div class="error-message">
+                <tui-icon icon="@tui.info" />
+                New password is required
+              </div>
+            }
+
+            @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['minlength']) {
+              <div class="error-message">
+                <tui-icon icon="@tui.info" />
+                Password must be at least 8 characters long
+              </div>
+            }
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Confirm Password *</label>
+            <tui-textfield tuiTextfieldSize="l">
+              <input
+                type="password"
+                placeholder="Confirm new password"
+                tuiTextfield
+                formControlName="confirmPassword" />
+            </tui-textfield>
+
+            @if (passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.errors?.['required']) {
+              <div class="error-message">
+                <tui-icon icon="@tui.info" />
+                Please confirm your password
+              </div>
+            }
+          </div>
+
+          @if (passwordError()) {
+            <div class="error-message">
+              <tui-icon icon="@tui.info" />
+              {{ passwordError() }}
+            </div>
+          }
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="action-button cancel-button"
+              (click)="cancelPasswordChange()">
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="action-button save-button"
+              (click)="submitPasswordChange()">
+              Change Password
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+}
