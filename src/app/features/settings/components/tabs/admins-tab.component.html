@@ -1,0 +1,110 @@
+<div class="admins-tab">
+  <div class="admins-tab__search-container">
+    <tui-textfield iconStart="@tui.search">
+      <label tuiLabel>Search admins</label>
+      <input
+        placeholder="Search by name or email..."
+        tuiTextfield
+        [value]="adminSearchQuery()"
+        (input)="onAdminSearchChange($any($event.target).value)" />
+    </tui-textfield>
+    @if (adminSearchQuery()) {
+      <button
+        type="button"
+        tuiButton
+        appearance="flat"
+        size="s"
+        (click)="clearAdminSearch()"
+        class="admins-tab__search-clear">
+        <tui-icon icon="@tui.close" />
+      </button>
+    }
+  </div>
+
+  @if (adminsLoading()) {
+    <div class="admins-tab__loading">Loading admins...</div>
+  } @else if (adminsError()) {
+    <div class="admins-tab__error">{{ adminsError() }}</div>
+  } @else if (adminsList().length === 0) {
+    <p class="admins-tab__empty-message">No admins found</p>
+  } @else {
+    <div class="admins-tab__admin-list">
+      @for (admin of adminsList(); track admin.id) {
+        <div
+          class="admins-tab__admin-card"
+          tuiCardLarge
+          (click)="editAdmin(admin)">
+          <div class="admins-tab__admin-info">
+            <h3 class="admins-tab__username">{{ admin.username }}</h3>
+            <p class="admins-tab__email">{{ admin.email }}</p>
+            <div class="admins-tab__admin-details">
+              <div class="admins-tab__detail-row">
+                <span class="admins-tab__detail-label">Roles:</span>
+                <div class="admins-tab__roles-list">
+                  @for (role of admin.roles; track role) {
+                    <span class="admins-tab__role-badge">{{ role }}</span>
+                  }
+                  @if (!admin.roles || admin.roles.length === 0) {
+                    <span class="admins-tab__role-badge admins-tab__role-badge--none">No roles</span>
+                  }
+                </div>
+              </div>
+              <div class="admins-tab__detail-row">
+                <span class="admins-tab__detail-label">Status:</span>
+                <div class="admins-tab__status" [class]="admin.is_active ? 'admins-tab__status--online' : 'admins-tab__status--offline'">
+                  <span class="admins-tab__status-dot"></span>
+                  <span class="admins-tab__status-text">{{ admin.is_active ? 'Active' : 'Inactive' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="admins-tab__admin-actions">
+            <button
+              type="button"
+              tuiButton
+              appearance="flat"
+              size="s"
+              (click)="editAdmin(admin)"
+              class="admins-tab__action-button">
+              <tui-icon icon="@tui.edit" />
+            </button>
+            <button
+              type="button"
+              tuiButton
+              appearance="flat"
+              size="s"
+              (click)="removeAdmin(admin)"
+              class="admins-tab__action-button admins-tab__action-button--danger">
+              <tui-icon icon="@tui.ban" />
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (apiTotalPages > 1) {
+      <div class="admins-tab__pagination-wrapper">
+        <div class="admins-tab__items-per-page">
+          <span>Items per page:</span>
+          @for (option of itemsPerPageOptions; track option) {
+            <button
+              type="button"
+              tuiButton
+              [appearance]="adminsItemsPerPage() === option ? 'primary' : 'outline'"
+              size="xs"
+              class="admins-tab__items-option"
+              (click)="onAdminsItemsPerPageChange(option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+        <div class="admins-tab__pagination">
+          <tui-pagination
+            [length]="apiTotalPages"
+            [index]="adminsCurrentPage() - 1"
+            (indexChange)="onAdminsPageChange($any($event))" />
+        </div>
+      </div>
+    }
+  }
+</div>

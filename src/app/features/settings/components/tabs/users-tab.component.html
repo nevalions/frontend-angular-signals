@@ -1,0 +1,145 @@
+<div class="users-tab">
+  <div class="users-tab__header">
+    <div class="users-tab__search-container">
+      <tui-textfield iconStart="@tui.search" class="users-tab__search-input">
+        <label tuiLabel>Search users</label>
+        <input
+          placeholder="Search by name or email..."
+          tuiTextfield
+          [value]="userSearchQuery()"
+          (input)="onUserSearchChange($any($event.target).value)" />
+      </tui-textfield>
+      @if (userSearchQuery()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          size="s"
+          (click)="clearUserSearch()"
+          class="users-tab__search-clear">
+          <tui-icon icon="@tui.close" />
+        </button>
+      }
+    </div>
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      iconStart="@tui.plus"
+      (click)="navigateToAddUser()"
+      class="users-tab__add-button">
+      Add User
+    </button>
+  </div>
+
+  <div class="users-tab__sort-bar">
+    <div class="users-tab__sort-container">
+      <label class="users-tab__sort-label">Sort by:</label>
+      <div class="users-tab__sort-buttons">
+        <button
+          type="button"
+          tuiButton
+          [appearance]="usersSortBy() === 'username' ? 'primary' : 'outline'"
+          size="s"
+          (click)="onSortByClick('username')"
+          class="users-tab__sort-button">
+          Name
+          @if (usersSortBy() === 'username') {
+            <tui-icon [icon]="usersSortAscending() ? '@tui.chevron-up' : '@tui.chevron-down'" />
+          }
+        </button>
+        <button
+          type="button"
+          tuiButton
+          [appearance]="usersSortBy() === 'email' ? 'primary' : 'outline'"
+          size="s"
+          (click)="onSortByClick('email')"
+          class="users-tab__sort-button">
+          Email
+          @if (usersSortBy() === 'email') {
+            <tui-icon [icon]="usersSortAscending() ? '@tui.chevron-up' : '@tui.chevron-down'" />
+          }
+        </button>
+        <button
+          type="button"
+          tuiButton
+          [appearance]="usersSortBy() === 'online' ? 'primary' : 'outline'"
+          size="s"
+          (click)="onSortByClick('online')"
+          class="users-tab__sort-button">
+          Online Status
+          @if (usersSortBy() === 'online') {
+            <tui-icon [icon]="usersSortAscending() ? '@tui.chevron-up' : '@tui.chevron-down'" />
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (usersLoading()) {
+    <div class="users-tab__loading">Loading users...</div>
+  } @else if (usersError()) {
+    <div class="users-tab__error">{{ usersError() }}</div>
+  } @else if (users().length === 0) {
+    <p class="users-tab__empty-message">No users found</p>
+  } @else {
+    <div class="users-tab__user-list">
+      @for (user of users(); track user.id) {
+        <div
+          class="users-tab__user-card"
+          tuiCardLarge
+          (click)="navigateToUserDetail(user.id)">
+          <div class="users-tab__user-info">
+            <h3 class="users-tab__username">{{ user.username }}</h3>
+            <p class="users-tab__user-email">{{ user.email }}</p>
+                <div class="users-tab__user-details">
+                  <div class="users-tab__detail-row">
+                    <span class="users-tab__detail-label">Roles:</span>
+                    <div class="users-tab__roles-list">
+                      @for (role of user.roles; track role) {
+                        <span class="users-tab__role-badge">{{ role }}</span>
+                      }
+                      @if (!user.roles || user.roles.length === 0) {
+                        <span class="users-tab__role-badge users-tab__role-badge--none">No roles</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="users-tab__detail-row">
+                    <span class="users-tab__detail-label">Status:</span>
+                    <div class="users-tab__status" [class]="user.is_active ? 'users-tab__status--online' : 'users-tab__status--offline'">
+                      <span class="users-tab__status-dot"></span>
+                      <span class="users-tab__status-text">{{ user.is_active ? 'Active' : 'Inactive' }}</span>
+                    </div>
+                  </div>
+                </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (apiTotalPages > 1) {
+    <div class="users-tab__pagination-wrapper">
+      <div class="users-tab__items-per-page">
+        <span>Items per page:</span>
+        @for (option of itemsPerPageOptions; track option) {
+          <button
+            type="button"
+            tuiButton
+            [appearance]="usersItemsPerPage() === option ? 'primary' : 'outline'"
+            size="xs"
+            class="users-tab__items-option"
+            (click)="onUsersItemsPerPageChange(option)">
+            {{ option }}
+          </button>
+        }
+      </div>
+      <div class="users-tab__pagination">
+        <tui-pagination
+          [length]="apiTotalPages"
+          [index]="usersCurrentPage() - 1"
+          (indexChange)="onUsersPageChange($any($event))" />
+      </div>
+    </div>
+  }
+</div>

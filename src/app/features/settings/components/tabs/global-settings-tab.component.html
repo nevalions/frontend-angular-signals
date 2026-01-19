@@ -1,0 +1,334 @@
+<div class="global-settings-tab">
+  @if (settingsLoading()) {
+    <div class="global-settings-tab__loading">Loading settings...</div>
+  } @else if (settingsError()) {
+    <div class="global-settings-tab__error">{{ settingsError() }}</div>
+  } @else if (settings(); as settings) {
+    <div class="global-settings-tab__sections">
+      <div class="global-settings-tab__section">
+        <h2 class="global-settings-tab__section-title">General Settings</h2>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Site Name</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.site_name"
+              placeholder="Site name" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('site_name', settings.site_name)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <div class="global-settings-tab__setting-input">
+            <label class="global-settings-tab__label">Default Season</label>
+            <tui-textfield tuiChevron>
+              <select
+                tuiSelect
+                [(ngModel)]="settings.default_season_id"
+                (ngModelChange)="updateSetting('default_season_id', $event)">
+                @for (season of seasons(); track season.id) {
+                  <option [value]="season.id">{{ season.year }}</option>
+                }
+              </select>
+              <tui-data-list *tuiTextfieldDropdown>
+                @for (season of seasons(); track season.id) {
+                  <button new tuiOption [value]="season.id">
+                    {{ season.year }}
+                  </button>
+                }
+              </tui-data-list>
+            </tui-textfield>
+          </div>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Timezone</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.timezone"
+              placeholder="Timezone" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('timezone', settings.timezone)">
+            Save
+          </button>
+        </div>
+      </div>
+
+      <div class="global-settings-tab__section">
+        <h2 class="global-settings-tab__section-title">Registration Settings</h2>
+
+        <div class="global-settings-tab__setting-row global-settings-tab__setting-row--checkbox">
+          <label class="global-settings-tab__checkbox-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="settings.allow_public_registration"
+              (change)="updateSetting('allow_public_registration', settings.allow_public_registration)" />
+            <span>Allow Public Registration</span>
+          </label>
+        </div>
+
+        <div class="global-settings-tab__setting-row global-settings-tab__setting-row--checkbox">
+          <label class="global-settings-tab__checkbox-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="settings.require_email_verification"
+              (change)="updateSetting('require_email_verification', settings.require_email_verification)" />
+            <span>Require Email Verification</span>
+          </label>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Default User Role</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.default_user_role"
+              placeholder="Default user role" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('default_user_role', settings.default_user_role)">
+            Save
+          </button>
+        </div>
+      </div>
+
+      <div class="global-settings-tab__section">
+        <h2 class="global-settings-tab__section-title">Email Settings</h2>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>SMTP Server</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.smtp_server"
+              placeholder="SMTP server" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('smtp_server', settings.smtp_server)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>SMTP Port</label>
+            <input
+              type="number"
+              tuiTextfield
+              [(ngModel)]="settings.smtp_port"
+              placeholder="SMTP port" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('smtp_port', settings.smtp_port)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>SMTP Username</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.smtp_username"
+              placeholder="SMTP username" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('smtp_username', settings.smtp_username)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>SMTP Password</label>
+            <input
+              type="password"
+              tuiTextfield
+              [(ngModel)]="settings.smtp_password"
+              placeholder="SMTP password" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('smtp_password', settings.smtp_password)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Sender Email</label>
+            <input
+              type="email"
+              tuiTextfield
+              [(ngModel)]="settings.sender_email"
+              placeholder="Sender email" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('sender_email', settings.sender_email)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Sender Name</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.sender_name"
+              placeholder="Sender name" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('sender_name', settings.sender_name)">
+            Save
+          </button>
+        </div>
+      </div>
+
+      <div class="global-settings-tab__section">
+        <h2 class="global-settings-tab__section-title">Storage Settings</h2>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Max File Upload Size (MB)</label>
+            <input
+              type="number"
+              tuiTextfield
+              [(ngModel)]="settings.max_file_upload_size_mb"
+              placeholder="Max upload size" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('max_file_upload_size_mb', settings.max_file_upload_size_mb)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Allowed Image Formats</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.allowed_image_formats"
+              placeholder="JPG, PNG, WEBP" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('allowed_image_formats', settings.allowed_image_formats)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Static Files Path</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.static_files_path"
+              placeholder="Static files path" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('static_files_path', settings.static_files_path)">
+            Save
+          </button>
+        </div>
+      </div>
+
+      <div class="global-settings-tab__section">
+        <h2 class="global-settings-tab__section-title">API Settings</h2>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>Rate Limit (requests/min)</label>
+            <input
+              type="number"
+              tuiTextfield
+              [(ngModel)]="settings.rate_limit_per_minute"
+              placeholder="Rate limit" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('rate_limit_per_minute', settings.rate_limit_per_minute)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row">
+          <tui-textfield class="global-settings-tab__setting-input">
+            <label tuiLabel>API Version</label>
+            <input
+              type="text"
+              tuiTextfield
+              [(ngModel)]="settings.api_version"
+              placeholder="API version" />
+          </tui-textfield>
+          <button
+            type="button"
+            tuiButton
+            appearance="primary"
+            (click)="updateSetting('api_version', settings.api_version)">
+            Save
+          </button>
+        </div>
+
+        <div class="global-settings-tab__setting-row global-settings-tab__setting-row--checkbox">
+          <label class="global-settings-tab__checkbox-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="settings.enable_api_documentation"
+              (change)="updateSetting('enable_api_documentation', settings.enable_api_documentation)" />
+            <span>Enable API Documentation</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  }
+</div>

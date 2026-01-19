@@ -1,0 +1,47 @@
+<div class="settings">
+  <div class="settings__header">
+    <app-entity-header
+      title="Settings"
+      [showEdit]="false"
+      [showDelete]="false"
+      [showGear]="false"
+      (navigateBack)="navigateBack()"
+    />
+  </div>
+
+  <div class="settings__tabs">
+    <nav class="settings__tab-nav">
+      <button
+        class="settings__tab"
+        [class.settings__tab--active]="activeTab() === 'users'"
+        (click)="onTabChange('users')"
+      >
+        Users
+      </button>
+      <button
+        class="settings__tab"
+        [class.settings__tab--active]="activeTab() === 'admins'"
+        (click)="onTabChange('admins')"
+      >
+        Admins
+      </button>
+      <button
+        class="settings__tab"
+        [class.settings__tab--active]="activeTab() === 'global-settings'"
+        (click)="onTabChange('global-settings')"
+      >
+        Global Settings
+      </button>
+    </nav>
+  </div>
+
+  <div class="settings__content">
+    @if (activeTab() === 'users') {
+      <app-users-tab />
+    } @else if (activeTab() === 'admins') {
+      <app-admins-tab />
+    } @else if (activeTab() === 'global-settings') {
+      <app-global-settings-tab />
+    }
+  </div>
+</div>

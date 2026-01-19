@@ -20,6 +20,7 @@ import { PersonEditComponent } from './features/persons/components/edit/person-e
 import { PlayerDetailComponent } from './features/players/components/detail/player-detail.component';
 import { HomeComponent } from './features/home/components/home.component';
 import { UserProfileComponent } from './features/users/components/profile/user-profile.component';
+import { SettingsComponent } from './features/settings/components/settings.component';
 
 export const routes: Routes = [
   {
@@ -120,6 +121,10 @@ export const routes: Routes = [
   {
     path: 'users/:userId',
     component: UserProfileComponent,
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
   },
   {
     path: 'error404',
