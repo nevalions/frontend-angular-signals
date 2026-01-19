@@ -1,45 +1,53 @@
 <div class="sport-parse-eesl">
-  <div class="sport-parse-eesl__header">
-    <button class="sport-parse-eesl__back-btn" (click)="navigateBack()">
-      ← Back
-    </button>
-    <h1 class="sport-parse-eesl__title">Parse EESL Season</h1>
-    <button class="sport-parse-eesl__cancel-btn" (click)="navigateBack()">
-      Cancel
-    </button>
-  </div>
+  <app-entity-header
+    [title]="sport()?.title || 'Parse EESL Season'"
+    [showEdit]="false"
+    [showDelete]="false"
+    (navigateBack)="navigateBack()"
+  />
 
   <div class="sport-parse-eesl__content">
-    <div class="sport-parse-eesl__info">
-      <p>Select the EESL season year to parse and automatically create tournaments in the database.</p>
-    </div>
+    <div class="sport-parse-eesl__form-card">
+      <div class="sport-parse-eesl__info">
+        <p>Select a season year to parse and automatically create tournaments in database.</p>
+      </div>
 
-    <div class="sport-parse-eesl__form">
       <div class="sport-parse-eesl__field">
-        <label class="sport-parse-eesl__label" for="eesl-season-year">EESL Season Year</label>
-        <select
-          id="eesl-season-year"
-          class="sport-parse-eesl__select"
-          [ngModel]="eeslSeasonYear()"
-          (ngModelChange)="onSeasonChange($event)"
-        >
-          <option value="">Select a season...</option>
-          @for (year of availableYears(); track year) {
-            <option [value]="year">{{ year }}</option>
-          }
-        </select>
+        <label class="sport-parse-eesl__label">Select EESL season year</label>
+        <tui-textfield tuiChevron>
+          <input
+            placeholder="Select a season"
+            tuiSelect
+            [ngModel]="eeslSeasonYear()"
+            (ngModelChange)="onSeasonChange($event)"
+          />
+          <tui-data-list *tuiTextfieldDropdown>
+            @for (year of availableYears(); track year) {
+              <button
+                new
+                tuiOption
+                type="button"
+                [value]="year"
+              >
+                {{ year }}
+              </button>
+            }
+          </tui-data-list>
+        </tui-textfield>
       </div>
 
       <div class="sport-parse-eesl__actions">
         <button
-          class="sport-parse-eesl__btn sport-parse-eesl__btn--primary"
+          tuiButton
+          type="button"
+          appearance="primary"
           [disabled]="isParsing() || !eeslSeasonYear()"
           (click)="parseSeason()"
         >
           @if (isParsing()) {
-            <span class="sport-parse-eesl__btn-icon">🔍</span> Parsing and Creating...
+            Parsing and Creating...
           } @else {
-            <span class="sport-parse-eesl__btn-icon">📥</span> Parse and Create
+            Parse and Create
           }
         </button>
       </div>
@@ -52,7 +60,7 @@
         @for (tournament of parsedTournaments(); track tournament.id ?? $index) {
           <div class="sport-parse-eesl__tournament-card">
             <div class="sport-parse-eesl__tournament-content">
-              <div class="sport-parse-eesl__tournament-icon">🏆</div>
+              <tui-icon icon="@tui.trophy" class="sport-parse-eesl__tournament-icon" />
               <div class="sport-parse-eesl__tournament-info">
                 <div class="sport-parse-eesl__tournament-title">{{ tournament.title }}</div>
                 <div class="sport-parse-eesl__tournament-id">EESL ID: {{ tournament.tournament_eesl_id ?? 'N/A' }}</div>
@@ -66,17 +74,4 @@
       </div>
     }
   </div>
-
-  @if (showSuccessDialog()) {
-    <div class="sport-parse-eesl__dialog-overlay" (click)="closeSuccessDialog()">
-      <div class="sport-parse-eesl__dialog" (click)="$event.stopPropagation()">
-        <div class="sport-parse-eesl__dialog-icon">✓</div>
-        <h3 class="sport-parse-eesl__dialog-title">Success!</h3>
-        <p class="sport-parse-eesl__dialog-message">{{ successMessage() }}</p>
-        <button class="sport-parse-eesl__dialog-btn" (click)="closeSuccessDialog()">
-          OK
-        </button>
-      </div>
-    </div>
-  }
 </div>

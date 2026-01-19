@@ -4,18 +4,30 @@ import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TuiTextfield, TuiDialogService, TuiButton, TuiDataList, TuiIcon } from '@taiga-ui/core';
+import { TuiSelect } from '@taiga-ui/kit';
 import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
 import { SportStoreService } from '../../services/sport-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { Tournament } from '../../../tournaments/models/tournament.model';
 import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
+import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 
 @Component({
   selector: 'app-sport-parse-eesl',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    TuiTextfield,
+    TuiButton,
+    TuiDataList,
+    TuiSelect,
+    TuiIcon,
+    EntityHeaderComponent
+  ],
   templateUrl: './sport-parse-eesl.component.html',
   styleUrl: './sport-parse-eesl.component.less',
 })
@@ -25,6 +37,7 @@ export class SportParseEeslComponent {
   private tournamentStore = inject(TournamentStoreService);
   private sportStore = inject(SportStoreService);
   private seasonStore = inject(SeasonStoreService);
+  private readonly dialogs = inject(TuiDialogService);
 
   sportId = toSignal(
     this.route.paramMap.pipe(map((params) => Number(params.get('sportId')))),
@@ -77,8 +90,6 @@ export class SportParseEeslComponent {
 
   parsedTournaments = signal<Tournament[]>([]);
   isParsing = signal(false);
-  showSuccessDialog = signal(false);
-  successMessage = signal('');
 
   private readonly YEAR_TO_EESL_SEASON_ID: Record<number, number> = {
     2021: 1,
@@ -137,8 +148,13 @@ export class SportParseEeslComponent {
     this.tournamentStore.parseAndCreateEESLSeason(eeslSeasonId, season.id, sportId).subscribe({
       next: (tournaments) => {
         this.parsedTournaments.set(tournaments);
-        this.successMessage.set(`Successfully parsed and created ${tournaments.length} tournaments from EESL season ${eeslYear} (EESL ID: ${eeslSeasonId})`);
-        this.showSuccessDialog.set(true);
+        const message = `Successfully parsed and created ${tournaments.length} tournaments from EESL season ${eeslYear} (EESL ID: ${eeslSeasonId})`;
+        this.dialogs.open(message, {
+          label: 'Success',
+          size: 'm'
+        }).subscribe({
+          complete: () => this.navigateBack()
+        });
         this.isParsing.set(false);
       },
       error: (err) => {
@@ -147,11 +163,6 @@ export class SportParseEeslComponent {
         this.isParsing.set(false);
       }
     });
-  }
-
-  closeSuccessDialog(): void {
-    this.showSuccessDialog.set(false);
-    this.navigateBack();
   }
 
   navigateBack(): void {
