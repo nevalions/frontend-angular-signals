@@ -42,10 +42,14 @@ export class TeamStoreService {
     return this.apiService.uploadFile<LogoUploadResponse>('/api/teams/upload_resize_logo', file);
   }
 
-  getTeamsBySportIdPaginated(sportId: number, page: number, itemsPerPage: number): Observable<TeamsPaginatedResponse> {
-    const params = new HttpParams()
+  getTeamsBySportIdPaginated(sportId: number, page: number, itemsPerPage: number, searchQuery?: string): Observable<TeamsPaginatedResponse> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('items_per_page', itemsPerPage.toString());
+
+    if (searchQuery) {
+      params = params.set('search', searchQuery);
+    }
 
     return this.http.get<TeamsPaginatedResponse>(
       buildApiUrl(`/api/sports/id/${sportId}/teams/paginated`),

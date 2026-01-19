@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal, DestroyRef } from '@angular/core';
+import { debounceTime, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TuiTextfield, TuiButton } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiAvatar, TuiPagination } from '@taiga-ui/kit';
@@ -27,6 +29,7 @@ import { UpperCasePipe } from '@angular/common';
 export class SportTeamsTabComponent {
   private teamStore = inject(TeamStoreService);
   private navigationHelper = inject(NavigationHelperService);
+  private destroyRef = inject(DestroyRef);
 
   sportId = input.required<number>();
   selectedSeasonYear = input.required<number | null>();
@@ -42,35 +45,51 @@ export class SportTeamsTabComponent {
 
   readonly itemsPerPageOptions = [10, 20, 50];
 
-  private loadTeamsOnSportChange = effect(() => {
-    const sportId = this.sportId();
-    if (sportId) {
-      this.loadTeams();
-    }
-  });
+  private searchSubject$ = new Subject<string>();
 
-  private loadTeamsOnPageChange = effect(() => {
-    const currentPage = this.teamsCurrentPage();
-    if (currentPage >= 1) {
-      this.loadTeams();
-    }
-  });
+  constructor() {
+    this.setupSearchDebounce();
 
-  private loadTeamsOnItemsPerPageChange = effect(() => {
-    const itemsPerPage = this.teamsItemsPerPage();
-    if (itemsPerPage > 0) {
-      this.loadTeams();
-    }
-  });
+    effect(() => {
+      const sportId = this.sportId();
+      if (sportId) {
+        this.loadTeams();
+      }
+    });
 
-  filteredTeams = computed(() => {
-    const query = this.teamSearchQuery().toLowerCase();
-    if (!query) return this.teams();
-    return this.teams().filter(t =>
-      t.title.toLowerCase().includes(query) ||
-      (t.city && t.city.toLowerCase().includes(query))
-    );
-  });
+    effect(() => {
+      const currentPage = this.teamsCurrentPage();
+      if (currentPage >= 1) {
+        this.loadTeams();
+      }
+    });
+
+    effect(() => {
+      const itemsPerPage = this.teamsItemsPerPage();
+      if (itemsPerPage > 0) {
+        this.loadTeams();
+      }
+    });
+
+    effect(() => {
+      const searchQuery = this.teamSearchQuery();
+      if (searchQuery !== undefined) {
+        this.loadTeams();
+      }
+    });
+  }
+
+  private setupSearchDebounce(): void {
+    this.searchSubject$
+      .pipe(
+        debounceTime(300),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((query: string) => {
+        this.teamSearchQuery.set(query);
+        this.teamsCurrentPage.set(1);
+      });
+  }
 
   get apiTotalPages(): number {
     return this.teamsTotalPages();
@@ -90,7 +109,8 @@ export class SportTeamsTabComponent {
     this.teamStore.getTeamsBySportIdPaginated(
       sportId,
       this.teamsCurrentPage(),
-      this.teamsItemsPerPage()
+      this.teamsItemsPerPage(),
+      this.teamSearchQuery() || undefined
     ).subscribe({
       next: (response) => {
         this.teams.set(response.data);
@@ -106,8 +126,9 @@ export class SportTeamsTabComponent {
   }
 
   onTeamSearchChange(query: string): void {
-    this.teamSearchQuery.set(query);
-    this.teamsCurrentPage.set(1);
+    if (query.length >= 2 || query.length === 0) {
+      this.searchSubject$.next(query);
+    }
   }
 
   clearTeamSearch(): void {
