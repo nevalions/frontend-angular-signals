@@ -46,21 +46,24 @@ docs/schemas/
  │   ├── scoreboard-admin.md         # Scoreboard control/admin page
  │   ├── scoreboard-view.md         # FullHD scoreboard view page (broadcast)
  │   └── scoreboard-display.md       # Shared scoreboard display component
+ ├── shared/                       # Shared/reusable components
+ │   └── user-card.md             # User card component used in multiple places
  ├── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
  │    ├── tournaments.md
  │    ├── teams.md
  │    ├── players.md              # ⚠️ Complex schema marked
  │    └── positions.md
  └── settings-tabs/                 # Settings page tabs (no navbar/entity header)
-      ├── users.md                  # Users list tab
-      ├── admins.md                 # Admins list tab
-      └── global-settings.md        # Global settings tab (seasons)
+       ├── users.md                  # Users list tab
+       ├── admins.md                 # Admins list tab
+       └── global-settings.md        # Global settings tab (seasons)
 ```
 
 **Component Schemas:**
 
 Some schema files document **shared/reusable components** (not full pages):
 - `scoreboards/scoreboard-display.md` - Main scoreboard display component used by both admin and view pages
+- `shared/user-card.md` - User card component used in settings tabs (users, admins) and potentially other user lists
 - Component schemas follow the same format as page schemas but document inputs, display elements, and animations instead of page layout
 
 ## Schema Template

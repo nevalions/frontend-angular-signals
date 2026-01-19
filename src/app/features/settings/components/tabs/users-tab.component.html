@@ -85,51 +85,13 @@
   } @else {
     <div class="users-tab__user-list">
       @for (user of users(); track user.id) {
-        <div
-          class="users-tab__user-card"
-          tuiCardLarge
-          (click)="navigateToUserDetail(user.id)">
-          <div class="users-tab__user-info">
-            <div class="users-tab__user-header">
-              <h3 class="users-tab__username">{{ user.username }}</h3>
-              <tui-badge
-                [appearance]="user.is_online ? 'positive' : 'neutral'"
-                size="s">
-                {{ user.is_online ? 'Online' : 'Offline' }}
-              </tui-badge>
-            </div>
-            <p class="users-tab__user-email">{{ user.email }}</p>
-                <div class="users-tab__user-details">
-                  <div class="users-tab__detail-row">
-                    <span class="users-tab__detail-label">Roles:</span>
-                    <div class="users-tab__roles-list">
-                      @for (role of user.roles; track role) {
-                        <tui-badge appearance="primary" size="s">{{ role }}</tui-badge>
-                      }
-                      @if (!user.roles || user.roles.length === 0) {
-                        <tui-badge appearance="neutral" size="s">No roles</tui-badge>
-                      }
-                    </div>
-                  </div>
-                  <div class="users-tab__detail-row">
-                    <span class="users-tab__detail-label">Account Status:</span>
-                    <tui-badge
-                      [appearance]="user.is_active ? 'positive' : 'warning'"
-                      size="s">
-                      {{ user.is_active ? 'Active' : 'Inactive' }}
-                    </tui-badge>
-                  </div>
-                  <div class="users-tab__detail-row">
-                    <span class="users-tab__detail-label">Member Since:</span>
-                    <span class="users-tab__detail-value">{{ formatDate(user.created) }}</span>
-                  </div>
-                  <div class="users-tab__detail-row">
-                    <span class="users-tab__detail-label">Last Online:</span>
-                    <span class="users-tab__detail-value">{{ formatDate(user.last_online) }}</span>
-                  </div>
-                </div>
-          </div>
-        </div>
+        <app-user-card
+          [user]="user"
+          [showOnlineStatus]="true"
+          [showAccountStatus]="true"
+          [showMemberSince]="true"
+          [showLastOnline]="true"
+          (cardClick)="navigateToUserDetail(user.id)" />
       }
     </div>
   }

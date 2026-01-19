@@ -4,10 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { TuiAlertService, TuiButton, TuiDialogService, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiPagination } from '@taiga-ui/kit';
-import { TuiCardLarge } from '@taiga-ui/layout';
 import { SettingsStoreService } from '../../services/settings-store.service';
 import { UserList, UserListResponse } from '../../models/settings.model';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
+import { UserCardComponent } from '../../../../shared/components/user-card/user-card.component';
 
 @Component({
   selector: 'app-admins-tab',
@@ -16,9 +16,9 @@ import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
   imports: [
     TuiTextfield,
     TuiButton,
-    TuiCardLarge,
     TuiPagination,
     TuiIcon,
+    UserCardComponent,
   ],
   templateUrl: './admins-tab.component.html',
   styleUrl: './admins-tab.component.less',

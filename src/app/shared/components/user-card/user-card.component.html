@@ -1,0 +1,79 @@
+<div
+  class="user-card"
+  tuiCardLarge
+  (click)="onCardClick()">
+  <div class="user-card__info">
+    <div class="user-card__header">
+      <h3 class="user-card__username">{{ user().username }}</h3>
+      @if (showOnlineStatus()) {
+        <tui-badge
+          [appearance]="user().is_online ? 'positive' : 'neutral'"
+          size="s">
+          {{ user().is_online ? 'Online' : 'Offline' }}
+        </tui-badge>
+      }
+    </div>
+    <p class="user-card__email">{{ user().email }}</p>
+    <div class="user-card__details">
+      <div class="user-card__detail-row">
+        <span class="user-card__detail-label">Roles:</span>
+        <div class="user-card__roles-list">
+          @for (role of user().roles; track role) {
+            <tui-badge appearance="primary" size="s">{{ role }}</tui-badge>
+          }
+          @if (!user().roles || user().roles.length === 0) {
+            <tui-badge appearance="neutral" size="s">No roles</tui-badge>
+          }
+        </div>
+      </div>
+      @if (showAccountStatus()) {
+        <div class="user-card__detail-row">
+          <span class="user-card__detail-label">Account Status:</span>
+          <tui-badge
+            [appearance]="user().is_active ? 'positive' : 'warning'"
+            size="s">
+            {{ user().is_active ? 'Active' : 'Inactive' }}
+          </tui-badge>
+        </div>
+      }
+      @if (showMemberSince()) {
+        <div class="user-card__detail-row">
+          <span class="user-card__detail-label">Member Since:</span>
+          <span class="user-card__detail-value">{{ formatDate(user().created) }}</span>
+        </div>
+      }
+      @if (showLastOnline()) {
+        <div class="user-card__detail-row">
+          <span class="user-card__detail-label">Last Online:</span>
+          <span class="user-card__detail-value">{{ formatDate(user().last_online) }}</span>
+        </div>
+      }
+    </div>
+  </div>
+  @if (showEditButton() || showRemoveButton()) {
+    <div class="user-card__actions">
+      @if (showEditButton()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          size="s"
+          (click)="onEditClick($event)"
+          class="user-card__action-button">
+          <tui-icon icon="@tui.edit" />
+        </button>
+      }
+      @if (showRemoveButton()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          size="s"
+          (click)="onRemoveClick($event)"
+          class="user-card__action-button user-card__action-button--danger">
+          <tui-icon icon="@tui.ban" />
+        </button>
+      }
+    </div>
+  }
+</div>

@@ -4,6 +4,82 @@ Reusable UI components used across the application.
 
 ## Components
 
+### UserCardComponent
+
+**Location:** `src/app/shared/components/user-card/`
+
+A reusable card component for displaying user information with configurable visibility options.
+
+**Features:**
+- Configurable display of user information (online status, account status, dates)
+- Optional action buttons (edit/remove)
+- Clickable card navigation
+- Hover effects
+- Signal-based API
+- Built with Taiga UI components
+
+**Usage Example:**
+
+```typescript
+import { UserCardComponent } from '../../../../shared/components/user-card/user-card.component';
+
+@Component({
+  selector: 'app-users-tab',
+  standalone: true,
+  imports: [UserCardComponent],
+  template: `
+    <div class="users-list">
+      @for (user of users(); track user.id) {
+        <app-user-card
+          [user]="user"
+          [showOnlineStatus]="true"
+          [showAccountStatus]="true"
+          [showMemberSince]="true"
+          [showLastOnline]="true"
+          (cardClick)="navigateToUserDetail(user.id)" />
+      }
+    </div>
+  `,
+})
+export class UsersTabComponent {
+  users = signal<UserList[]>([]);
+
+  navigateToUserDetail(userId: number) {
+    this.router.navigate(['/users', userId]);
+  }
+}
+```
+
+**Inputs:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|----------|-------------|
+| `user` | `UserList` | Yes | - | User data object |
+| `showOnlineStatus` | `boolean` | No | `true` | Show/hide online/offline badge |
+| `showAccountStatus` | `boolean` | No | `true` | Show/hide active/inactive badge |
+| `showMemberSince` | `boolean` | No | `true` | Show/hide member since date |
+| `showLastOnline` | `boolean` | No | `true` | Show/hide last online date |
+| `showEditButton` | `boolean` | No | `false` | Show/hide edit action button |
+| `showRemoveButton` | `boolean` | No | `false` | Show/hide remove action button |
+
+**Outputs:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cardClick` | `EventEmitter<number>` | Emitted with user ID when card is clicked |
+| `editClick` | `EventEmitter<UserList>` | Emitted with user object when edit button is clicked |
+| `removeClick` | `EventEmitter<UserList>` | Emitted with user object when remove button is clicked |
+
+**Examples Used In:**
+- Settings - Users tab (full display with navigation)
+- Settings - Admins tab (simplified display with action buttons)
+
+**Best Practices:**
+1. Set `showEditButton` and `showRemoveButton` to `true` when action buttons are needed (e.g., admins tab)
+2. Use `showOnlineStatus`, `showMemberSince`, and `showLastOnline` to control information density
+3. Handle `editClick` and `removeClick` events with `event.stopPropagation()` to prevent card navigation
+4. The component automatically formats dates using `toLocaleDateString()` method
+
 ### NavbarComponent
 
 **Location:** `src/app/shared/components/navbar/`
