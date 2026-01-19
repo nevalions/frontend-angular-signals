@@ -39,17 +39,22 @@ docs/schemas/
  ├── sport-detail.md                # Detail pages with tab links
  ├── sport-edit.md                 # Edit/Create pages
  ├── match-create.md                # Match create page
+ ├── settings.md                   # Settings page (admin)
  ├── user/                         # User-related pages
  │   └── profile.md                # User profile page
  ├── scoreboards/                   # Scoreboard-related pages and components
  │   ├── scoreboard-admin.md         # Scoreboard control/admin page
  │   ├── scoreboard-view.md         # FullHD scoreboard view page (broadcast)
  │   └── scoreboard-display.md       # Shared scoreboard display component
- └── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
-     ├── tournaments.md
-     ├── teams.md
-     ├── players.md              # ⚠️ Complex schema marked
-     └── positions.md
+ ├── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
+ │    ├── tournaments.md
+ │    ├── teams.md
+ │    ├── players.md              # ⚠️ Complex schema marked
+ │    └── positions.md
+ └── settings-tabs/                 # Settings page tabs (no navbar/entity header)
+      ├── users.md                  # Users list tab
+      ├── admins.md                 # Admins list tab
+      └── global-settings.md        # Global settings tab (seasons)
 ```
 
 **Component Schemas:**
