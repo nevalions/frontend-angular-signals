@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { TuiAlertService, TuiButton, TuiDialogService, TuiIcon, TuiTextfield, TuiDataList } from '@taiga-ui/core';
 import { TuiPagination, TuiSelect, TuiSkeleton } from '@taiga-ui/kit';
+import { TuiCardLarge } from '@taiga-ui/layout';
 import { SettingsStoreService } from '../../services/settings-store.service';
 import { UserList, RoleList, UserListResponse, RoleListResponse } from '../../models/settings.model';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
@@ -24,6 +25,7 @@ import { UserCardComponent } from '../../../../shared/components/user-card/user-
     TuiSelect,
     TuiDataList,
     TuiSkeleton,
+    TuiCardLarge,
     UserCardComponent,
   ],
   templateUrl: './roles-tab.component.html',

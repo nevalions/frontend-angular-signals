@@ -36,9 +36,9 @@
   @if (rolesLoading()) {
     <div class="roles-tab__role-list">
       @for (_ of skeletonCount(); track $index) {
-        <div class="roles-tab__role-card">
+        <div class="roles-tab__role-card" tuiCardLarge>
           <div class="roles-tab__role-info">
-            <strong class="roles-tab__role-name" [tuiSkeleton]="true">Role name placeholder</strong>
+            <h3 class="roles-tab__role-name" [tuiSkeleton]="true">Role name placeholder</h3>
             <p class="roles-tab__role-description" [tuiSkeleton]="10">Role description placeholder</p>
           </div>
           <div class="roles-tab__role-actions">
@@ -49,7 +49,7 @@
               size="s"
               class="roles-tab__action-button"
               [tuiSkeleton]="true">
-              Edit
+              <tui-icon icon="@tui.pencil" />
             </button>
             <button
               type="button"
@@ -58,7 +58,7 @@
               size="s"
               class="roles-tab__action-button roles-tab__action-button--delete"
               [tuiSkeleton]="true">
-              Delete
+              <tui-icon icon="@tui.trash" />
             </button>
           </div>
         </div>
@@ -71,9 +71,9 @@
   } @else {
     <div class="roles-tab__role-list">
       @for (role of roles(); track role.id) {
-        <div class="roles-tab__role-card">
+        <div class="roles-tab__role-card" tuiCardLarge>
           <div class="roles-tab__role-info">
-            <strong class="roles-tab__role-name">Role: {{ role.name }}</strong>
+            <h3 class="roles-tab__role-name">{{ role.name }}</h3>
             @if (role.description) {
               <p class="roles-tab__role-description">{{ role.description }}</p>
             }
@@ -87,7 +87,6 @@
               (click)="editRole(role)"
               class="roles-tab__action-button">
               <tui-icon icon="@tui.pencil" />
-              Edit
             </button>
             <button
               type="button"
@@ -97,7 +96,6 @@
               (click)="deleteRole(role)"
               class="roles-tab__action-button roles-tab__action-button--delete">
               <tui-icon icon="@tui.trash" />
-              Delete
             </button>
           </div>
         </div>
