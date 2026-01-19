@@ -20,10 +20,10 @@
       </button>
       <button
         class="settings__tab"
-        [class.settings__tab--active]="activeTab() === 'admins'"
-        (click)="onTabChange('admins')"
+        [class.settings__tab--active]="activeTab() === 'roles'"
+        (click)="onTabChange('roles')"
       >
-        Admins
+        Roles
       </button>
       <button
         class="settings__tab"
@@ -38,8 +38,8 @@
   <div class="settings__content">
     @if (activeTab() === 'users') {
       <app-users-tab />
-    } @else if (activeTab() === 'admins') {
-      <app-admins-tab />
+    } @else if (activeTab() === 'roles') {
+      <app-roles-tab />
     } @else if (activeTab() === 'global-settings') {
       <app-global-settings-tab />
     }

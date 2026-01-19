@@ -1,0 +1,212 @@
+<div class="roles-tab">
+  <div class="roles-tab__section-header">
+    <h3 class="roles-tab__section-title">Roles</h3>
+    <div class="roles-tab__search-container">
+      <tui-textfield iconStart="@tui.search" class="roles-tab__search-input">
+        <label tuiLabel>Search roles</label>
+        <input
+          placeholder="Search by name or description..."
+          [value]="roleSearchQuery()"
+          (input)="onRoleSearchChange($any($event.target).value)" />
+      </tui-textfield>
+      @if (roleSearchQuery()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          size="s"
+          (click)="clearRoleSearch()"
+          class="roles-tab__search-clear">
+          <tui-icon icon="@tui.close" />
+        </button>
+      }
+    </div>
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      iconStart="@tui.plus"
+      (click)="addRole()"
+      class="roles-tab__add-button">
+      Add Role
+    </button>
+  </div>
+
+  @if (rolesLoading()) {
+    <div class="roles-tab__loading">Loading roles...</div>
+  } @else if (rolesError()) {
+    <div class="roles-tab__error">{{ rolesError() }}</div>
+  } @else if (roles().length === 0) {
+    <p class="roles-tab__empty-message">No roles found</p>
+  } @else {
+    <div class="roles-tab__role-list">
+      @for (role of roles(); track role.id) {
+        <div class="roles-tab__role-card">
+          <div class="roles-tab__role-info">
+            <strong class="roles-tab__role-name">Role: {{ role.name }}</strong>
+            @if (role.description) {
+              <p class="roles-tab__role-description">{{ role.description }}</p>
+            }
+          </div>
+          <div class="roles-tab__role-actions">
+            <button
+              type="button"
+              tuiButton
+              appearance="flat"
+              size="s"
+              (click)="editRole(role)"
+              class="roles-tab__action-button">
+              <tui-icon icon="@tui.pencil" />
+              Edit
+            </button>
+            <button
+              type="button"
+              tuiButton
+              appearance="flat"
+              size="s"
+              (click)="deleteRole(role)"
+              class="roles-tab__action-button roles-tab__action-button--delete">
+              <tui-icon icon="@tui.trash" />
+              Delete
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (rolesApiTotalPages > 1) {
+    <div class="roles-tab__pagination-wrapper">
+      <div class="roles-tab__items-per-page">
+        <span>Items per page:</span>
+        @for (option of itemsPerPageOptions; track option) {
+          <button
+            type="button"
+            tuiButton
+            [appearance]="rolesItemsPerPage() === option ? 'primary' : 'outline'"
+            size="xs"
+            class="roles-tab__items-option"
+            (click)="onRolesItemsPerPageChange(option)">
+            {{ option }}
+          </button>
+        }
+      </div>
+      <div class="roles-tab__pagination">
+        <tui-pagination
+          [length]="rolesApiTotalPages"
+          [index]="rolesCurrentPage() - 1"
+          (indexChange)="onRolesPageChange($any($event))" />
+      </div>
+    </div>
+  }
+
+  <div class="roles-tab__section-header roles-tab__section-header--users">
+    <h3 class="roles-tab__section-title">Users</h3>
+    <div class="roles-tab__filters">
+      <tui-textfield iconStart="@tui.search" class="roles-tab__search-input">
+        <label tuiLabel>Search users</label>
+        <input
+          placeholder="Search by name or email..."
+          [value]="userSearchQuery()"
+          (input)="onUserSearchChange($any($event.target).value)" />
+      </tui-textfield>
+      @if (userSearchQuery()) {
+        <button
+          type="button"
+          tuiButton
+          appearance="flat"
+          size="s"
+          (click)="clearUserSearch()"
+          class="roles-tab__search-clear">
+          <tui-icon icon="@tui.close" />
+        </button>
+      }
+      <tui-textfield tuiChevron class="roles-tab__filter-select">
+        <label tuiLabel>Filter by role</label>
+        <input
+          placeholder="All roles"
+          tuiSelect
+          [(ngModel)]="selectedRoleFilter" />
+        <tui-data-list *tuiTextfieldDropdown>
+          @for (role of roles(); track role.id) {
+            <button new tuiOption type="button" [value]="role.name">
+              {{ role.name }}
+            </button>
+          }
+        </tui-data-list>
+      </tui-textfield>
+      <tui-textfield tuiChevron [stringify]="stringifyOnlineFilter" class="roles-tab__filter-select">
+        <label tuiLabel>Filter by status</label>
+        <input
+          placeholder="All"
+          tuiSelect
+          [(ngModel)]="selectedOnlineFilter" />
+        <tui-data-list *tuiTextfieldDropdown>
+          @for (option of onlineFilterOptions; track option.value) {
+            <button new tuiOption type="button" [value]="option.value">
+              {{ option.label }}
+            </button>
+          }
+        </tui-data-list>
+      </tui-textfield>
+    </div>
+  </div>
+
+  @if (usersLoading()) {
+    <div class="roles-tab__loading">Loading users...</div>
+  } @else if (usersError()) {
+    <div class="roles-tab__error">{{ usersError() }}</div>
+  } @else if (users().length === 0) {
+    <p class="roles-tab__empty-message">No users found</p>
+  } @else {
+    <div class="roles-tab__user-list">
+      @for (user of users(); track user.id) {
+        <div class="roles-tab__user-card">
+          <app-user-card
+            [user]="user"
+            [showOnlineStatus]="true"
+            [showAccountStatus]="true"
+            [showMemberSince]="true"
+            [showLastOnline]="true"
+            [showEditButton]="false"
+            [showRemoveButton]="false" />
+          <button
+            type="button"
+            tuiButton
+            appearance="flat"
+            size="s"
+            (click)="addUserRole(user)"
+            class="roles-tab__add-role-button">
+            <tui-icon icon="@tui.plus" />
+            Add Role
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  @if (usersApiTotalPages > 1) {
+    <div class="roles-tab__pagination-wrapper">
+      <div class="roles-tab__items-per-page">
+        <span>Items per page:</span>
+        @for (option of itemsPerPageOptions; track option) {
+          <button
+            type="button"
+            tuiButton
+            [appearance]="usersItemsPerPage() === option ? 'primary' : 'outline'"
+            size="xs"
+            class="roles-tab__items-option"
+            (click)="onUsersItemsPerPageChange(option)">
+            {{ option }}
+          </button>
+        }
+      </div>
+      <div class="roles-tab__pagination">
+        <tui-pagination
+          [length]="usersApiTotalPages"
+          [index]="usersCurrentPage() - 1"
+          (indexChange)="onUsersPageChange($any($event))" />
+      </div>
+    </div>
+  }
+</div>

@@ -252,8 +252,128 @@ export class LoginDialogComponent {
 
 **Key Points:**
 - Always use `this.context.completeWith()` before opening another dialog to prevent dialog stacking
-- Call `completeWith()` on successful operations to close the dialog automatically
+- Call `completeWith()` on successful operations to close dialog automatically
 - Import `TuiDialogContext` and `POLYMORPHEUS_CONTEXT` to access the dialog context
+
+## Taiga UI Select (tuiSelect) Patterns
+
+### Simple Select with String Values
+
+Use `tuiSelect` for dropdowns where values are strings (e.g., role filter):
+
+**Component:**
+```typescript
+import { FormsModule } from '@angular/forms';
+import { TuiSelect, TuiTextfield, TuiDataList } from '@taiga-ui/core';
+
+selectedRoleFilter = signal<string | null>(null);
+
+onRoleFilterChange(roleName: string | null): void {
+  this.selectedRoleFilter.set(roleName);
+  this.usersCurrentPage.set(1); // Reset pagination on filter change
+}
+```
+
+**Template:**
+```html
+<tui-textfield tuiChevron class="filter-select">
+  <label tuiLabel>Filter by role</label>
+  <input
+    placeholder="All roles"
+    tuiSelect
+    [(ngModel)]="selectedRoleFilter" />
+  <tui-data-list *tuiTextfieldDropdown>
+    @for (role of roles(); track role.id) {
+      <button new tuiOption type="button" [value]="role.name">
+        {{ role.name }}
+      </button>
+    }
+  </tui-data-list>
+</tui-textfield>
+```
+
+**Required imports:**
+- `FormsModule` for `[(ngModel)]` binding
+- `TuiSelect`, `TuiTextfield`, `TuiDataList` from `@taiga-ui/core`
+
+### Select with Custom Stringification
+
+Use `[stringify]` to display custom labels when values are objects or need custom display:
+
+**Component:**
+```typescript
+readonly onlineFilterOptions = [
+  { label: 'All', value: 'all' as const },
+  { label: 'Online', value: 'online' as const },
+  { label: 'Offline', value: 'offline' as const },
+];
+
+selectedOnlineFilter = signal<'all' | 'online' | 'offline'>('all');
+
+onOnlineFilterChange(onlineStatus: 'all' | 'online' | 'offline'): void {
+  this.selectedOnlineFilter.set(onlineStatus);
+  this.usersCurrentPage.set(1);
+}
+
+stringifyOnlineFilter(status: 'all' | 'online' | 'offline'): string {
+  if (!status) return '';
+  const option = this.onlineFilterOptions.find(o => o.value === status);
+  return option ? option.label : '';
+}
+```
+
+**Template:**
+```html
+<tui-textfield tuiChevron [stringify]="stringifyOnlineFilter" class="filter-select">
+  <label tuiLabel>Filter by status</label>
+  <input
+    placeholder="All"
+    tuiSelect
+    [(ngModel)]="selectedOnlineFilter" />
+  <tui-data-list *tuiTextfieldDropdown>
+    @for (option of onlineFilterOptions; track option.value) {
+      <button new tuiOption type="button" [value]="option.value">
+        {{ option.label }}
+      </button>
+    }
+  </tui-data-list>
+</tui-textfield>
+```
+
+**Key Points:**
+- Bind `[stringify]` to a method that converts the value to display string
+- Use `as const` for literal union types to maintain type safety
+- The stringify function should handle null/undefined cases
+
+### Signal Integration with Effects
+
+Use `effect()` to trigger data loading when filter values change:
+
+```typescript
+constructor() {
+  this.stringifyOnlineFilter = this.stringifyOnlineFilter.bind(this);
+
+  effect(() => {
+    const roleFilter = this.selectedRoleFilter();
+    if (roleFilter !== undefined) {
+      this.loadUsers(); // Load data when filter changes
+    }
+  });
+
+  effect(() => {
+    const onlineFilter = this.selectedOnlineFilter();
+    if (onlineFilter !== undefined) {
+      this.loadUsers();
+    }
+  });
+}
+```
+
+**Best Practices:**
+- Always reset pagination to page 1 when filters change
+- Use `null` or specific placeholder values to indicate "no filter"
+- Track options by a unique property (`track role.id`, `track option.value`)
+- Import ALL Taiga UI directives used in template to avoid bugs (see above)
 
 ## Related Documentation
 

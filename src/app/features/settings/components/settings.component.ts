@@ -4,7 +4,7 @@ import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EntityHeaderComponent } from '../../../shared/components/entity-header/entity-header.component';
 import { UsersTabComponent } from './tabs/users-tab.component';
-import { AdminsTabComponent } from './tabs/admins-tab.component';
+import { RolesTabComponent } from './tabs/roles-tab.component';
 import { GlobalSettingsTabComponent } from './tabs/global-settings-tab.component';
 
 @Component({
@@ -14,7 +14,7 @@ import { GlobalSettingsTabComponent } from './tabs/global-settings-tab.component
   imports: [
     EntityHeaderComponent,
     UsersTabComponent,
-    AdminsTabComponent,
+    RolesTabComponent,
     GlobalSettingsTabComponent
   ],
   templateUrl: './settings.component.html',

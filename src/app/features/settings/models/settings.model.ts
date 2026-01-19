@@ -10,6 +10,22 @@ export interface UserList {
   is_online: boolean;
 }
 
+export interface RoleList {
+  id: number;
+  name: string;
+  description?: string | null;
+}
+
+export interface RoleListResponse {
+  data: RoleList[];
+  metadata: {
+    total_items: number;
+    total_pages: number;
+    current_page: number;
+    items_per_page: number;
+  };
+}
+
 export interface UserListResponse {
   data: UserList[];
   metadata: {
