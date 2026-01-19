@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, TemplateRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { type TuiDialogContext } from '@taiga-ui/core';
 import { debounceTime, interval, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
@@ -50,6 +51,9 @@ export class RolesTabComponent {
   usersTotalPages = signal(0);
   selectedRoleFilter = signal<string | null>(null);
   selectedOnlineFilter = signal<'all' | 'online' | 'offline'>('all');
+  selectedRoleToAdd = signal<number | null>(null);
+  userToAddRole = signal<UserList | null>(null);
+  selectRoleDialog = viewChild.required<TemplateRef<unknown>>('selectRoleDialog');
 
   readonly itemsPerPageOptions = [10, 20, 50];
   readonly onlineFilterOptions = [
@@ -343,38 +347,40 @@ export class RolesTabComponent {
   }
 
   addUserRole(user: UserList): void {
-    const roleNames = this.roles().map(r => `${r.id}: ${r.name}`).join('\n');
-    const roleIdInput = window.prompt(`Select role by ID:\n${roleNames}`);
-    if (roleIdInput) {
-      const roleId = parseInt(roleIdInput, 10);
-      const role = this.roles().find(r => r.id === roleId);
-      if (role) {
-        this.settingsStore.addUserRole(user.id, roleId).subscribe({
-          next: () => {
-            this.alerts.open(`Role "${role.name}" added to user successfully`, {
-              label: 'Success',
-              appearance: 'positive',
-              autoClose: 3000,
-            }).subscribe();
-            this.loadUsers();
-          },
-          error: (err) => {
-            console.error('Failed to add role:', err);
-            this.alerts.open(`Failed to add role: ${err.message || 'Unknown error'}`, {
-              label: 'Error',
-              appearance: 'negative',
-              autoClose: 0,
-            }).subscribe();
+    this.userToAddRole.set(user);
+    this.selectedRoleToAdd.set(null);
+
+    this.dialogs
+      .open(this.selectRoleDialog(), {
+        label: 'Add Role to User',
+        size: 's',
+        dismissible: true,
+      })
+      .subscribe((roleId: unknown) => {
+        if (typeof roleId === 'number') {
+          const role = this.roles().find(r => r.id === roleId);
+          if (role) {
+            this.settingsStore.addUserRole(user.id, roleId).subscribe({
+              next: () => {
+                this.alerts.open(`Role "${role.name}" added to user successfully`, {
+                  label: 'Success',
+                  appearance: 'positive',
+                  autoClose: 3000,
+                }).subscribe();
+                this.loadUsers();
+              },
+              error: (err) => {
+                console.error('Failed to add role:', err);
+                this.alerts.open(`Failed to add role: ${err.message || 'Unknown error'}`, {
+                  label: 'Error',
+                  appearance: 'negative',
+                  autoClose: 0,
+                }).subscribe();
+              }
+            });
           }
-        });
-      } else {
-        this.alerts.open('Invalid role ID', {
-          label: 'Error',
-          appearance: 'negative',
-          autoClose: 3000,
-        }).subscribe();
-      }
-    }
+        }
+      });
   }
 
   onRoleFilterChange(roleName: string | null): void {

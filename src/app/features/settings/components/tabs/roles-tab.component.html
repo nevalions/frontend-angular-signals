@@ -210,3 +210,34 @@
     </div>
   }
 </div>
+
+<ng-template #selectRoleDialog let-observer>
+  <p class="roles-tab__dialog-title">Select a role to add to <strong>{{ userToAddRole()?.username || userToAddRole()?.email }}</strong></p>
+  <tui-textfield tuiChevron class="roles-tab__role-select">
+    <label tuiLabel>Role</label>
+    <input
+      placeholder="Select role"
+      tuiSelect
+      [(ngModel)]="selectedRoleToAdd" />
+    <tui-data-list *tuiTextfieldDropdown>
+      @for (role of roles(); track role.id) {
+        <button new tuiOption type="button" [value]="role.id">
+          {{ role.name }}
+        </button>
+      }
+    </tui-data-list>
+  </tui-textfield>
+  <div class="roles-tab__dialog-actions">
+    <button type="button" tuiButton appearance="flat" (click)="observer.complete()">
+      Cancel
+    </button>
+    <button
+      type="button"
+      tuiButton
+      appearance="primary"
+      [disabled]="!selectedRoleToAdd()"
+      (click)="observer.next(selectedRoleToAdd())">
+      Add Role
+    </button>
+  </div>
+</ng-template>
