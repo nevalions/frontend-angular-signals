@@ -1,15 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
-import { TuiPagination } from '@taiga-ui/kit';
+import { TuiBadge, TuiPagination } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { SettingsStoreService } from '../../services/settings-store.service';
 import { UserList, UserListResponse } from '../../models/settings.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
-import { buildStaticUrl } from '../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-users-tab',
@@ -21,6 +19,7 @@ import { buildStaticUrl } from '../../../../core/config/api.constants';
     TuiCardLarge,
     TuiPagination,
     TuiIcon,
+    TuiBadge,
   ],
   templateUrl: './users-tab.component.html',
   styleUrl: './users-tab.component.less',
@@ -104,22 +103,12 @@ export class UsersTabComponent {
     return this.usersTotalPages();
   }
 
-  userInitials(user: UserList): string {
-    const firstInitial = user.first_name?.[0] || '';
-    const lastInitial = user.last_name?.[0] || '';
-    return (firstInitial + lastInitial).toUpperCase();
-  }
-
-  userPhotoUrl(user: UserList): string | null {
-    return user.photo_icon_url ? buildStaticUrl(user.photo_icon_url) : null;
-  }
-
   loadUsers(): void {
     this.usersLoading.set(true);
     this.usersError.set(null);
 
     const sortBy = this.usersSortBy();
-    const order_by = sortBy === 'online' ? 'last_online_at' : sortBy;
+    const order_by = sortBy === 'online' ? 'last_online' : sortBy;
 
     this.settingsStore.getUsersPaginated(
       this.usersCurrentPage(),

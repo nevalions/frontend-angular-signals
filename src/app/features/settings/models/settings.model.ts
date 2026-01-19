@@ -2,11 +2,12 @@ export interface UserList {
   id: number;
   username: string;
   email: string;
-  first_name?: string | null;
-  last_name?: string | null;
   roles: string[];
   is_active: boolean;
-  photo_icon_url?: string | null;
+  person_id?: number | null;
+  created: string;
+  last_online?: string | null;
+  is_online: boolean;
 }
 
 export interface UserListResponse {

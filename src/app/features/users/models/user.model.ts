@@ -5,6 +5,9 @@ export interface User {
   is_active: boolean;
   roles: string[];
   person_id?: number | null;
+  created: string;
+  last_online?: string | null;
+  is_online: boolean;
 }
 
 export interface UserEmailUpdate {

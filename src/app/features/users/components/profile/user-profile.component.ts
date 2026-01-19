@@ -152,6 +152,39 @@ export class UserProfileComponent {
     return user?.roles || [];
   });
 
+  userCreated = computed(() => {
+    const user = this.user();
+    if (!user?.created) return 'N/A';
+    const date = new Date(user.created);
+    if (isNaN(date.getTime())) return 'N/A';
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  });
+
+  userLastOnline = computed(() => {
+    const user = this.user();
+    if (!user?.last_online) return 'Never';
+    const date = new Date(user.last_online);
+    if (isNaN(date.getTime())) return 'N/A';
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  });
+
+  userIsOnline = computed(() => {
+    const user = this.user();
+    return user?.is_online ?? false;
+  });
+
   navigateBack(): void {
     this.router.navigate(['/home']);
   }

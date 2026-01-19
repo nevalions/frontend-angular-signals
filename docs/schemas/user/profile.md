@@ -15,10 +15,13 @@
 │  ← Back                Username                         [⋮] │
 └─────────────────────────────────────────────────────────────┘
                                                                 │
-┌─────────────────────────────────────────────────────────────┐
-│  Status: [Active/Inactive]                                  │
-│  Roles: [Admin/User]                                        │
-└─────────────────────────────────────────────────────────────┘
+ ┌─────────────────────────────────────────────────────────────┐
+ │  Status: [Active/Inactive]                                  │
+ │  Roles: [Admin/User]                                        │
+ │  Online Status: [Online/Offline]                             │
+ │  Last Online: Jan 15, 2026 2:30 PM                         │
+ │  Member Since: Jan 10, 2026 10:00 AM                       │
+ └─────────────────────────────────────────────────────────────┘
                                                                 │
 ┌─────────────────────────────────────────────────────────────┐
 │  Email                                                      │
@@ -54,6 +57,11 @@
   - Active: Green indicator
   - Inactive: Red/gray indicator
 - **Roles**: Display user roles (admin, user, etc.) as badges/tags (read-only)
+- **Online Status**: Display user online status (read-only)
+  - Online: Green text
+  - Offline: Gray text
+- **Last Online**: Display date/time of last activity (read-only)
+- **Member Since**: Display account creation date/time (read-only)
 - **Email**: User email with inline edit capability
 
 ### Email Field (Inline Edit)
@@ -81,6 +89,9 @@
 - Is active status
 - User roles (list of role names)
 - Person id (optional, linked person)
+- Created (account creation date/time)
+- Last online (date/time of last activity, null if never)
+- Is online (boolean, true if currently online)
 - [Interface: `User` or `UserInfo`](../../../src/app/features/auth/models/login-response.model.ts)
 - [Backend Schema: `UserSchema`](../../../../statsboards-backend/src/users/schemas.py)
 - **Backend API Endpoints:**

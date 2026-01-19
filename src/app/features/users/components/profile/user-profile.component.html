@@ -31,6 +31,23 @@
           }
         </div>
       </div>
+
+      <div class="info-row">
+        <span class="info-label">Online Status:</span>
+        <span class="info-value" [class.online]="userIsOnline()" [class.offline]="!userIsOnline()">
+          {{ userIsOnline() ? 'Online' : 'Offline' }}
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Last Online:</span>
+        <span class="info-value">{{ userLastOnline() }}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Member Since:</span>
+        <span class="info-value">{{ userCreated() }}</span>
+      </div>
     </div>
 
     @if (canEdit()) {

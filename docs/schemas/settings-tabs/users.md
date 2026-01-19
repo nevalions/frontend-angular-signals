@@ -2,48 +2,45 @@
 
 **Tab**: Users
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│  🔍 Search users                      [⬇⬆ Status] [⬇⬆ Username]  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-                                                               │
-┌─────────────────────────────────────────────────────────────┐
-│  [🟢 Active]                                                │
-│  username                                                  │
-│  email@example.com                                         │
-│  Roles: user                                               │
-│  [View User] [Edit] [Deactivate]                          │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│  [🔴 Inactive]                                              │
-│  username2                                                 │
-│  email2@example.com                                        │
-│  Roles: user, player                                       │
-│  [View User] [Edit] [Activate]                            │
-└─────────────────────────────────────────────────────────────┘
-                                                               │
-                    [< Prev] Page 1 of N [Next >]
-```
+ ```
+ ┌─────────────────────────────────────────────────────────────┐
+ │  username                         [Online] 🟢             │
+ │  email@example.com                                         │
+ │  Roles: user                                               │
+ │  Account Status: Active 🟢                                 │
+ │  Member Since: Jan 10, 2026 10:00 AM                    │
+ │  Last Online: Jan 15, 2026 2:30 PM                        │
+ └─────────────────────────────────────────────────────────────┘
+ ┌─────────────────────────────────────────────────────────────┐
+ │  username2                        [Offline] ⚪            │
+ │  email2@example.com                                        │
+ │  Roles: user, player                                       │
+ │  Account Status: Inactive 🟠                              │
+ │  Member Since: Jan 5, 2026 3:00 PM                       │
+ │  Last Online: Never                                        │
+ └─────────────────────────────────────────────────────────────┘
+                                                                │
+                     [< Prev] Page 1 of N [Next >]
+ ```
 
 ## What's on the page
 
 - Search field for users (filters by username, email, or person name)
 - Sort controls:
-  - Sort by Status (asc/desc) - active users first or inactive first
-  - Sort by Username (asc/desc)
+  - Sort by Name (username) (asc/desc)
+  - Sort by Email (asc/desc)
+  - Sort by Online Status (asc/desc) - sorts by last_online date
 - List of user cards:
-  - Status indicator (🟢 Active / 🔴 Inactive)
   - Username
+  - Online/Offline badge (Taiga UI Badge: positive/neutral)
   - Email
-  - Roles list
-  - Action buttons:
-    - "View User" → Navigate to user detail page (if exists)
-    - "Edit" → Edit user modal (email, is_active)
-    - "Activate" / "Deactivate" → Toggle user active status
+  - Roles list (Taiga UI Badge: primary for each role)
+  - Account Status badge (Taiga UI Badge: positive for active, warning for inactive)
+  - Member Since date
+  - Last Online date (shows "Never" if never online)
+  - Click card to navigate to user profile page
 - Pagination controls
-- Items per page selector
+- Items per page selector (10, 20, 50)
 
 ## What we need from backend
 
@@ -53,13 +50,17 @@
 - Email
 - is_active status
 - Roles list
-- [Interface: `User`](../../../src/app/features/users/models/user.model.ts)
+- Created (account creation date/time)
+- Last online (date/time of last activity, null if never)
+- Is online (boolean, true if currently online)
+- Person id (optional)
+- [Interface: `UserList`](../../../src/app/features/settings/models/settings.model.ts)
 - [Backend Schema: `UserSchema`](../../../../statsboards-backend/src/users/schemas.py)
 - **Backend API Endpoint:** `GET /api/users/search?page={page}&items_per_page={items_per_page}&order_by={order_by}&order_by_two={order_by_two}&ascending={ascending}&search={search}&role_names={role_names}`
 
   - `role_names`: For users tab, filter to exclude "admin" role (e.g., `role_names=user`)
-  - `order_by`: "is_active" or "username"
-  - `order_by_two`: "username" or "id"
+  - `order_by`: "username", "email", or "last_online"
+  - `order_by_two`: "id" (second sort column)
   - `ascending`: true/false
 
 **Pagination metadata:**
