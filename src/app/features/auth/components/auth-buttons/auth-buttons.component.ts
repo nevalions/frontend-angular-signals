@@ -161,7 +161,7 @@ export class AuthButtonsComponent {
     this.closeDropdown();
     const user = this.authService.currentUser();
     if (user?.id) {
-      this.navigationHelper.toUserProfile(user.id);
+      this.navigationHelper.toUserProfile(user.id, false);
     } else {
       this.navigationHelper.toHome();
     }

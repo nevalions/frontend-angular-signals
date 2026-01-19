@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { TuiAlertService, TuiDialogService, TuiIcon, TuiTextfield } from '@taiga-ui/core';
@@ -73,6 +75,14 @@ export class UserProfileComponent {
 
   currentUser = this.authService.currentUser;
   isAuthenticated = this.authService.isAuthenticated;
+
+  fromSettings = toSignal(
+    this.route.queryParamMap.pipe(map((params) => {
+      const val = params.get('fromSettings');
+      return val === 'true';
+    })),
+    { initialValue: false }
+  );
 
   isOwner = computed(() => {
     const current = this.currentUser();
@@ -186,7 +196,11 @@ export class UserProfileComponent {
   });
 
   navigateBack(): void {
-    this.router.navigate(['/home']);
+    if (this.fromSettings()) {
+      this.router.navigate(['/settings'], { queryParams: { tab: 'users' } });
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 
   onCustomItemClick(itemId: string): void {

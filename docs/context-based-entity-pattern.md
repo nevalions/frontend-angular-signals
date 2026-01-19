@@ -200,6 +200,11 @@ This pattern applies to entities that can exist in multiple contexts:
 - **Sport context**: View team's roster across all tournaments
 - **Tournament context**: Edit team's tournament-specific details
 
+### Users
+
+- **Settings context**: User profile accessed from Settings > Users tab, back button returns to settings/users
+- **Home context**: User profile accessed from navbar user menu, back button returns to home
+
 ## API Considerations
 
 ### Sport Context Endpoint

@@ -112,7 +112,8 @@ export class NavigationHelperService {
     this.router.navigate(['/admin', 'settings']);
   }
 
-  toUserProfile(userId: number | string): void {
-    this.router.navigate(['/users', userId]);
+  toUserProfile(userId: number | string, fromSettings?: boolean): void {
+    const queryParams = fromSettings !== undefined ? { queryParams: { fromSettings: fromSettings.toString() } } : {};
+    this.router.navigate(['/users', userId], queryParams);
   }
 }

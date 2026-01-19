@@ -70,7 +70,7 @@ toPersonCreate()
 ### Users
 
 ```typescript
-toUserProfile(userId: number | string)
+toUserProfile(userId: number | string, fromSettings?: boolean)
 ```
 
 ### System

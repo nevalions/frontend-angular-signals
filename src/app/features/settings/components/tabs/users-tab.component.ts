@@ -156,7 +156,7 @@ export class UsersTabComponent {
   }
 
   navigateToUserDetail(userId: number): void {
-    this.navigationHelper.toUserProfile(userId);
+    this.navigationHelper.toUserProfile(userId, true);
   }
 
   navigateToAddUser(): void {
