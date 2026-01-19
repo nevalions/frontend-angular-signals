@@ -207,6 +207,36 @@ Refer to these resources for:
 - Authentication requirements
 - Example requests
 
+## Authentication Endpoints
+
+### Heartbeat
+
+Maintains user's online status by updating `is_online` and `last_online` fields.
+
+```typescript
+// In AuthService
+heartbeat(): Observable<void> {
+  return this.http.post<void>(buildApiUrl('/api/auth/heartbeat'), null).pipe(
+    catchError(() => {
+      return of(undefined);
+    })
+  );
+}
+```
+
+**Implementation Details:**
+- Call this endpoint every 60 seconds while user is logged in
+- Start heartbeat after successful login
+- Stop heartbeat on logout
+- Handle failures silently (no user alerts)
+- Backend marks users offline after 2 minutes of no heartbeat
+
+**Backend Behavior:**
+- Endpoint: `POST /api/auth/heartbeat`
+- Requires: JWT Bearer token (automatically added by AuthInterceptor)
+- Response: `204 No Content`
+- Background task runs every 60 seconds to mark stale users offline (2-minute timeout)
+
 ## Related Documentation
 
 - [Service Patterns](./service-patterns.md) - Service patterns including httpResource vs rxResource

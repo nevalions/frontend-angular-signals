@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { debounceTime, Subject } from 'rxjs';
+import { debounceTime, interval, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
@@ -85,6 +85,12 @@ export class UsersTabComponent {
         this.loadUsers();
       }
     });
+
+    interval(60000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadUsers();
+      });
   }
 
   private setupSearchDebounce(): void {

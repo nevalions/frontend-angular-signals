@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, tap, throwError } from 'rxjs';
+import { Observable, catchError, of, tap, throwError } from 'rxjs';
 import { LoginRequest } from '../models/login.model';
 import { LoginResponse, UserInfo } from '../models/login-response.model';
 import { RegisterRequest, UserResponse } from '../models/register.model';
@@ -18,10 +18,14 @@ export class AuthService {
   readonly isAuthenticated = computed(() => !!this.currentUserSignal());
   readonly currentUser = this.currentUserSignal.asReadonly();
 
+  private heartbeatIntervalId: ReturnType<typeof setInterval> | null = null;
+
   constructor() {
     this.loadFromStorage();
     if (this.isAuthenticated()) {
-      this.fetchCurrentUser();
+      this.fetchCurrentUser().subscribe(() => {
+        this.startHeartbeat();
+      });
     }
   }
 
@@ -37,7 +41,9 @@ export class AuthService {
     return this.http.post<LoginResponse>(buildApiUrl('/api/auth/login'), body.toString(), { headers }).pipe(
       tap((response: LoginResponse) => {
         localStorage.setItem(this.TOKEN_KEY, response.access_token);
-        this.fetchCurrentUser().subscribe();
+        this.fetchCurrentUser().subscribe(() => {
+          this.startHeartbeat();
+        });
       }),
       catchError((error) => {
         return throwError(() => error);
@@ -54,6 +60,7 @@ export class AuthService {
   }
 
   logout(): void {
+    this.stopHeartbeat();
     this.currentUserSignal.set(null);
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
@@ -66,6 +73,28 @@ export class AuthService {
   getAuthHeaders(): { [header: string]: string } {
     const token = this.getToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
+  }
+
+  heartbeat(): Observable<void> {
+    return this.http.post<void>(buildApiUrl('/api/auth/heartbeat'), null).pipe(
+      catchError(() => {
+        return of(undefined);
+      })
+    );
+  }
+
+  private startHeartbeat(): void {
+    this.stopHeartbeat();
+    this.heartbeatIntervalId = setInterval(() => {
+      this.heartbeat().subscribe();
+    }, 60000);
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatIntervalId) {
+      clearInterval(this.heartbeatIntervalId);
+      this.heartbeatIntervalId = null;
+    }
   }
 
   private fetchCurrentUser(): Observable<UserInfo> {

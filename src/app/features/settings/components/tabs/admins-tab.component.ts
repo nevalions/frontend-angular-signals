@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { debounceTime, Subject } from 'rxjs';
+import { debounceTime, interval, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { TuiAlertService, TuiButton, TuiDialogService, TuiIcon, TuiTextfield } from '@taiga-ui/core';
@@ -73,6 +73,12 @@ export class AdminsTabComponent {
         this.loadAdmins();
       }
     });
+
+    interval(60000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadAdmins();
+      });
   }
 
   private setupSearchDebounce(): void {
