@@ -236,7 +236,7 @@
       tuiButton
       appearance="primary"
       [disabled]="!selectedRoleToAdd()"
-      (click)="observer.next(selectedRoleToAdd())">
+      (click)="observer.next(selectedRoleToAdd()); observer.complete()">
       Add Role
     </button>
   </div>

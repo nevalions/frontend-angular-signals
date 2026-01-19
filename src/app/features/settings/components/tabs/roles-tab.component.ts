@@ -357,29 +357,35 @@ export class RolesTabComponent {
         size: 's',
         dismissible: true,
       })
-      .subscribe((roleId: unknown) => {
-        if (typeof roleId === 'number') {
-          const role = this.roles().find(r => r.id === roleId);
-          if (role) {
-            this.settingsStore.addUserRole(user.id, roleId).subscribe({
-              next: () => {
-                this.alerts.open(`Role "${role.name}" added to user successfully`, {
-                  label: 'Success',
-                  appearance: 'positive',
-                  autoClose: 3000,
-                }).subscribe();
-                this.loadUsers();
-              },
-              error: (err) => {
-                console.error('Failed to add role:', err);
-                this.alerts.open(`Failed to add role: ${err.message || 'Unknown error'}`, {
-                  label: 'Error',
-                  appearance: 'negative',
-                  autoClose: 0,
-                }).subscribe();
-              }
-            });
+      .subscribe({
+        next: (roleId: unknown) => {
+          if (typeof roleId === 'number') {
+            const role = this.roles().find(r => r.id === roleId);
+            if (role) {
+              this.settingsStore.addUserRole(user.id, roleId).subscribe({
+                next: () => {
+                  this.alerts.open(`Role "${role.name}" added to user successfully`, {
+                    label: 'Success',
+                    appearance: 'positive',
+                    autoClose: 3000,
+                  }).subscribe();
+                  this.loadUsers();
+                },
+                error: (err) => {
+                  console.error('Failed to add role:', err);
+                  this.alerts.open(`Failed to add role: ${err.message || 'Unknown error'}`, {
+                    label: 'Error',
+                    appearance: 'negative',
+                    autoClose: 0,
+                  }).subscribe();
+                }
+              });
+            }
           }
+        },
+        complete: () => {
+          this.userToAddRole.set(null);
+          this.selectedRoleToAdd.set(null);
         }
       });
   }
