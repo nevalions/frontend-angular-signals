@@ -2,7 +2,7 @@ import { computed, inject, Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Tournament, TournamentCreate, TournamentUpdate } from '../models/tournament.model';
@@ -94,5 +94,10 @@ export class TournamentStoreService {
     return this.http.post<Tournament[]>(buildApiUrl(`/api/tournaments/pars_and_create/season/${eeslSeasonId}`), null, {
       params: { season_id: seasonId, sport_id: sportId }
     }).pipe(tap(() => this.reload()));
+  }
+
+  parseEESLTournamentTeams(eeslTournamentId: number): Observable<Team[]> {
+    return this.http.post<[Team[], unknown]>(buildApiUrl(`/api/teams/pars_and_create/tournament/${eeslTournamentId}`), null)
+      .pipe(map(([teams]) => teams));
   }
 }

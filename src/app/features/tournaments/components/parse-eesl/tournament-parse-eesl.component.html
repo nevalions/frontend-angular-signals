@@ -1,0 +1,61 @@
+<div class="tournament-parse-eesl">
+  <app-entity-header
+    [title]="tournament()?.title || 'Parse EESL Tournament Teams'"
+    [logoUrl]="tournament()?.tournament_logo_icon_url"
+    [showEdit]="false"
+    [showDelete]="false"
+    [showGear]="false"
+    (navigateBack)="navigateBack()"
+  />
+
+  <div class="tournament-parse-eesl__content">
+    <div class="tournament-parse-eesl__form-card">
+      <div class="tournament-parse-eesl__info">
+        <p>Parse and automatically create teams from EESL tournament.</p>
+      </div>
+
+      @if (tournament()?.tournament_eesl_id) {
+        <div class="tournament-parse-eesl__eesl-id">
+          <span class="tournament-parse-eesl__label">EESL Tournament ID:</span>
+          <span class="tournament-parse-eesl__value">{{ tournament()?.tournament_eesl_id }}</span>
+        </div>
+      }
+
+      <div class="tournament-parse-eesl__actions">
+        <button
+          tuiButton
+          type="button"
+          appearance="primary"
+          [disabled]="isParsing() || !tournament()?.tournament_eesl_id"
+          (click)="parseTournamentTeams()"
+        >
+          @if (isParsing()) {
+            Parsing and Creating...
+          } @else {
+            Parse and Create Teams
+          }
+        </button>
+      </div>
+    </div>
+
+    @if (parsedTeams().length > 0) {
+      <div class="tournament-parse-eesl__results">
+        <h2 class="tournament-parse-eesl__results-title">Teams Created</h2>
+
+        @for (team of parsedTeams(); track team.id ?? $index) {
+          <div class="tournament-parse-eesl__team-card">
+            <div class="tournament-parse-eesl__team-content">
+              <tui-icon icon="@tui.users" class="tournament-parse-eesl__team-icon" />
+              <div class="tournament-parse-eesl__team-info">
+                <div class="tournament-parse-eesl__team-title">{{ team.title }}</div>
+                @if (team.team_eesl_id) {
+                  <div class="tournament-parse-eesl__team-id">EESL ID: {{ team.team_eesl_id }}</div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

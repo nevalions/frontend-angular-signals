@@ -8,7 +8,7 @@ import { SeasonStoreService } from '../../../seasons/services/season-store.servi
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
-import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
 import { TournamentMatchesTabComponent } from './tabs/tournament-matches-tab.component';
 import { TournamentTeamsTabComponent } from './tabs/tournament-teams-tab.component';
 import { TournamentPlayersTabComponent } from './tabs/tournament-players-tab.component';
@@ -86,6 +86,19 @@ export class TournamentDetailComponent {
     { initialValue: 'matches' }
   );
 
+  customMenuItems = computed<CustomMenuItem[]>(() => {
+    const tournament = this.tournament();
+    if (!tournament?.tournament_eesl_id) return [];
+
+    return [
+      {
+        id: 'parse-eesl-teams',
+        label: 'Parse EESL Teams',
+        icon: '@tui.users'
+      }
+    ];
+  });
+
   navigateBack(): void {
     const sportId = this.sportId();
     const year = this.year();
@@ -128,5 +141,20 @@ export class TournamentDetailComponent {
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
+  }
+
+  onCustomItemClick(itemId: string): void {
+    if (itemId === 'parse-eesl-teams') {
+      this.navigateToParseEesl();
+    }
+  }
+
+  navigateToParseEesl(): void {
+    const sportId = this.sportId();
+    const year = this.year();
+    const id = this.tournamentId();
+    if (sportId && year && id) {
+      this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', id, 'parse-eesl']);
+    }
   }
 }

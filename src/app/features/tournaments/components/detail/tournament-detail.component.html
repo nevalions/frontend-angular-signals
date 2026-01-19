@@ -3,9 +3,11 @@
     <app-entity-header
       [title]="t.title"
       [logoUrl]="tournamentLogoUrl()"
+      [customMenuItems]="customMenuItems()"
       (navigateBack)="navigateBack()"
       (edit)="navigateToEdit()"
       (delete)="deleteTournament()"
+      (customItemClick)="onCustomItemClick($event)"
     />
 
     <div class="tournament-detail__subnav">
