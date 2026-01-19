@@ -21,6 +21,7 @@ import { PlayerDetailComponent } from './features/players/components/detail/play
 import { HomeComponent } from './features/home/components/home.component';
 import { UserProfileComponent } from './features/users/components/profile/user-profile.component';
 import { SettingsComponent } from './features/settings/components/settings.component';
+import { authGuard, settingsAdminGuard } from './core/guards';
 
 export const routes: Routes = [
   {
@@ -121,10 +122,12 @@ export const routes: Routes = [
   {
     path: 'users/:userId',
     component: UserProfileComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [authGuard, settingsAdminGuard],
   },
   {
     path: 'error404',

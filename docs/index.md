@@ -18,6 +18,10 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 - **[Alert Pattern](./alert-patterns.md)** - Alert helpers for consistent CRUD UX
 - **[Inline Editable Forms Pattern](./inline-editable-forms-pattern.md)** - Inline editing with edit/save/cancel icons
 
+## Security & Access Control
+
+- **[Route Guards & Security Patterns](./route-guards-security.md)** - Authentication, authorization, route guard implementation
+
 ## Style & Conventions
 
 - **[Code Style Guidelines](./code-style-guidelines.md)** - Editor config, TypeScript settings, import order, class organization

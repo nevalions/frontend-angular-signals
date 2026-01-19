@@ -23,6 +23,10 @@ This project uses a modular documentation structure. See the [`docs/`](./docs/) 
 - **[Alert Pattern](./docs/alert-patterns.md)** - User feedback patterns
 - **[Inline Editable Forms Pattern](./docs/inline-editable-forms-pattern.md)** - Inline editing with edit/save/cancel icons
 
+## Security & Access Control
+
+- **[Route Guards & Security Patterns](./docs/route-guards-security.md)** - Route guards, authentication, authorization, and security testing
+
 ## Style & Conventions
 
 - **[Code Style Guidelines](./docs/code-style-guidelines.md)** - Coding conventions
