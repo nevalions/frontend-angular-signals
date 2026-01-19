@@ -85,8 +85,13 @@ export class AuthService {
   }
 
   heartbeat(): Observable<void> {
+    console.log('[AuthService] Sending heartbeat...');
     return this.http.post<void>(buildApiUrl('/api/auth/heartbeat'), null).pipe(
-      catchError(() => {
+      tap(() => {
+        console.log('[AuthService] Heartbeat successful');
+      }),
+      catchError((error) => {
+        console.error('[AuthService] Heartbeat failed:', error);
         return of(undefined);
       })
     );
@@ -111,11 +116,12 @@ export class AuthService {
       headers: this.getAuthHeaders(),
     }).pipe(
       tap((user) => {
+        console.log('[AuthService] Fetched user info:', user);
         this.currentUserSignal.set(user);
         localStorage.setItem(this.USER_KEY, JSON.stringify(user));
       }),
       catchError((error) => {
-        console.error('Failed to fetch user info:', error);
+        console.error('[AuthService] Failed to fetch user info:', error);
         this.logout();
         return throwError(() => error);
       })

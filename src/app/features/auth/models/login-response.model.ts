@@ -10,4 +10,7 @@ export interface UserInfo {
   is_active: boolean;
   person_id: number | null;
   roles: string[];
+  created?: string;
+  last_online?: string | null;
+  is_online?: boolean;
 }
