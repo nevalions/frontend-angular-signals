@@ -80,6 +80,14 @@ export class SportParseEeslComponent {
   showSuccessDialog = signal(false);
   successMessage = signal('');
 
+  private readonly YEAR_TO_EESL_SEASON_ID: Record<number, number> = {
+    2021: 1,
+    2022: 5,
+    2023: 7,
+    2024: 8,
+    2025: 9,
+  };
+
   availableYears = computed(() => {
     const seasons = this.seasonStore.seasons();
     return seasons.map(s => s.year).sort((a, b) => b - a);
@@ -117,13 +125,19 @@ export class SportParseEeslComponent {
       return;
     }
 
-    console.log('Parsing EESL season:', { eeslYear, sportId, seasonId: season.id });
+    const eeslSeasonId = this.YEAR_TO_EESL_SEASON_ID[eeslYear];
+    if (!eeslSeasonId) {
+      alert(`EESL season mapping not found for year ${eeslYear}. Supported years: ${Object.keys(this.YEAR_TO_EESL_SEASON_ID).join(', ')}`);
+      return;
+    }
+
+    console.log('Parsing EESL season:', { eeslYear, eeslSeasonId, sportId, seasonId: season.id });
 
     this.isParsing.set(true);
-    this.tournamentStore.parseAndCreateEESLSeason(eeslYear, season.id, sportId).subscribe({
+    this.tournamentStore.parseAndCreateEESLSeason(eeslSeasonId, season.id, sportId).subscribe({
       next: (tournaments) => {
         this.parsedTournaments.set(tournaments);
-        this.successMessage.set(`Successfully parsed and created ${tournaments.length} tournaments from EESL season ${eeslYear}`);
+        this.successMessage.set(`Successfully parsed and created ${tournaments.length} tournaments from EESL season ${eeslYear} (EESL ID: ${eeslSeasonId})`);
         this.showSuccessDialog.set(true);
         this.isParsing.set(false);
       },

@@ -62,7 +62,7 @@
   - Shows "Parsing and Creating..." while processing
   - Disabled when no year selected
 - Created tournaments list:
-  - Shows each tournament with title, year, and database ID
+  - Shows each tournament with title, EESL year, and EESL ID
   - Only displayed after successful parse
   - No remove/selection controls (all tournaments are created)
 
@@ -70,7 +70,13 @@
 
 **For parsing and creating EESL season:**
 
-- EESL Season Year (used as EESL season ID)
+- EESL Season Year (mapped to EESL season ID)
+  - Year → EESL Season ID mapping:
+    - 2021 → 1
+    - 2022 → 5
+    - 2023 → 7
+    - 2024 → 8
+    - 2025 → 9
 - List of tournament data from EESL API
 - Each tournament contains:
   - tournament_eesl_id
@@ -78,7 +84,7 @@
   - description (optional)
   - start_date (optional)
   - end_date (optional)
-- **Backend API Endpoint:** `GET /api/tournaments/pars/season/{eesl_season_id}` (where eesl_season_id is the year number)
+- **Backend API Endpoint:** `GET /api/tournaments/pars/season/{eesl_season_id}` (where eesl_season_id is EESL's internal season ID, NOT the calendar year)
 
 **For saving parsed tournaments:**
 
@@ -87,7 +93,7 @@
 - Sport ID (from route parameter `:sportId`)
 - List of tournaments to create
 - Returns: List of created tournaments with full Tournament objects (including id)
-- **Backend API Endpoint:** `POST /api/tournaments/pars_and_create/season/{eesl_season_id}?season_id={season_id}&sport_id={sport_id}`
+- **Backend API Endpoint:** `POST /api/tournaments/pars_and_create/season/{eesl_season_id}?season_id={season_id}&sport_id={sport_id}` (where eesl_season_id is EESL's internal season ID, NOT calendar year)
 
 **For sport context:**
 
