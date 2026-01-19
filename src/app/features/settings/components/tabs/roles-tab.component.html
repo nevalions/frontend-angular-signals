@@ -241,3 +241,36 @@
     </button>
   </div>
 </ng-template>
+
+<ng-template #roleDialog let-observer>
+  <form (ngSubmit)="observer.next({ name: roleName(), description: roleDescription() }); observer.complete()">
+    <div class="roles-tab__form-field">
+      <tui-textfield>
+        <label tuiLabel>Role name</label>
+        <input
+          placeholder="Enter role name"
+          tuiTextfield
+          [(ngModel)]="roleName"
+          required />
+      </tui-textfield>
+    </div>
+    <div class="roles-tab__form-field">
+      <tui-textfield>
+        <label tuiLabel>Description (optional)</label>
+        <textarea
+          placeholder="Enter description"
+          tuiTextfield
+          [(ngModel)]="roleDescription"
+          rows="3"></textarea>
+      </tui-textfield>
+    </div>
+    <div class="roles-tab__dialog-actions">
+      <button type="button" tuiButton appearance="flat" (click)="observer.complete()">
+        Cancel
+      </button>
+      <button type="submit" tuiButton appearance="primary" [disabled]="!roleName()">
+        {{ editingRole() ? 'Save' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</ng-template>

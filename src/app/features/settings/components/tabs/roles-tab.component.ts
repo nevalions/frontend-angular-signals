@@ -54,6 +54,10 @@ export class RolesTabComponent {
   selectedRoleToAdd = signal<number | null>(null);
   userToAddRole = signal<UserList | null>(null);
   selectRoleDialog = viewChild.required<TemplateRef<unknown>>('selectRoleDialog');
+  roleName = signal('');
+  roleDescription = signal('');
+  editingRole = signal<RoleList | null>(null);
+  roleDialog = viewChild.required<TemplateRef<unknown>>('roleDialog');
 
   readonly itemsPerPageOptions = [10, 20, 50];
   readonly onlineFilterOptions = [
@@ -284,53 +288,91 @@ export class RolesTabComponent {
   }
 
   addRole(): void {
-    const roleName = window.prompt('Enter role name:');
-    if (roleName) {
-      const description = window.prompt('Enter description (optional):') || undefined;
-      this.settingsStore.createRole(roleName, description).subscribe({
-        next: () => {
-          this.alerts.open('Role created successfully', {
-            label: 'Success',
-            appearance: 'positive',
-            autoClose: 3000,
-          }).subscribe();
-          this.loadRoles();
+    this.editingRole.set(null);
+    this.roleName.set('');
+    this.roleDescription.set('');
+
+    this.dialogs
+      .open(this.roleDialog(), {
+        label: 'Add New Role',
+        size: 's',
+        dismissible: true,
+      })
+      .subscribe({
+        next: (data: unknown) => {
+          if (data && typeof data === 'object' && 'name' in data) {
+            const roleData = data as { name: string; description?: string };
+            this.settingsStore.createRole(roleData.name, roleData.description || undefined).subscribe({
+              next: () => {
+                this.alerts.open('Role created successfully', {
+                  label: 'Success',
+                  appearance: 'positive',
+                  autoClose: 3000,
+                }).subscribe();
+                this.loadRoles();
+              },
+              error: (err) => {
+                console.error('Failed to create role:', err);
+                this.alerts.open(`Failed to create role: ${err.message || 'Unknown error'}`, {
+                  label: 'Error',
+                  appearance: 'negative',
+                  autoClose: 0,
+                }).subscribe();
+              }
+            });
+          }
         },
-        error: (err) => {
-          console.error('Failed to create role:', err);
-          this.alerts.open(`Failed to create role: ${err.message || 'Unknown error'}`, {
-            label: 'Error',
-            appearance: 'negative',
-            autoClose: 0,
-          }).subscribe();
+        complete: () => {
+          this.editingRole.set(null);
+          this.roleName.set('');
+          this.roleDescription.set('');
         }
       });
-    }
   }
 
   editRole(role: RoleList): void {
-    const newName = window.prompt('Edit role name:', role.name);
-    if (newName && newName !== role.name) {
-      const newDescription = window.prompt('Edit description (optional):', role.description || '') || undefined;
-      this.settingsStore.updateRole(role.id, newName, newDescription).subscribe({
-        next: () => {
-          this.alerts.open('Role updated successfully', {
-            label: 'Success',
-            appearance: 'positive',
-            autoClose: 3000,
-          }).subscribe();
-          this.loadRoles();
+    this.editingRole.set(role);
+    this.roleName.set(role.name);
+    this.roleDescription.set(role.description || '');
+
+    this.dialogs
+      .open(this.roleDialog(), {
+        label: 'Edit Role',
+        size: 's',
+        dismissible: true,
+      })
+      .subscribe({
+        next: (data: unknown) => {
+          if (data && typeof data === 'object' && 'name' in data) {
+            const roleData = data as { name: string; description?: string };
+            if (roleData.name !== role.name || roleData.description !== role.description) {
+              this.settingsStore.updateRole(role.id, roleData.name, roleData.description || undefined).subscribe({
+                next: () => {
+                  this.alerts.open('Role updated successfully', {
+                    label: 'Success',
+                    appearance: 'positive',
+                    autoClose: 3000,
+                  }).subscribe();
+                  this.loadRoles();
+                },
+                error: (err) => {
+                  console.error('Failed to update role:', err);
+                  this.alerts.open(`Failed to update role: ${err.message || 'Unknown error'}`, {
+                    label: 'Error',
+                    appearance: 'negative',
+                    autoClose: 0,
+                  }).subscribe();
+                }
+              });
+            }
+          }
         },
-        error: (err) => {
-          console.error('Failed to update role:', err);
-          this.alerts.open(`Failed to update role: ${err.message || 'Unknown error'}`, {
-            label: 'Error',
-            appearance: 'negative',
-            autoClose: 0,
-          }).subscribe();
+        complete: () => {
+          this.editingRole.set(null);
+          this.roleName.set('');
+          this.roleDescription.set('');
         }
       });
-    }
   }
 
   deleteRole(role: RoleList): void {
