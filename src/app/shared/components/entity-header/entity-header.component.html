@@ -7,14 +7,15 @@
       <img [src]="logoUrl() || ''" class="entity-header__logo" alt="Entity logo" />
     }
     <h1 class="entity-header__title">{{ title() | uppercase }}</h1>
-    <div
-      class="entity-header__menu-container"
-      tuiActiveZone
-      (tuiActiveZoneChange)="onMenuActiveZoneChange($event)"
-    >
-      <button type="button" tuiIconButton size="m" appearance="flat" (click)="toggleMenu()">
-        <tui-icon icon="@tui.settings" />
-      </button>
+    @if (showGear()) {
+      <div
+        class="entity-header__menu-container"
+        tuiActiveZone
+        (tuiActiveZoneChange)="onMenuActiveZoneChange($event)"
+      >
+        <button type="button" tuiIconButton size="m" appearance="flat" (click)="toggleMenu()">
+          <tui-icon icon="@tui.settings" />
+        </button>
       @if (menuOpen()) {
         <div class="entity-header__menu-dropdown">
           @if (showEdit()) {
@@ -49,5 +50,6 @@
         </div>
       }
     </div>
+    }
   </div>
 </div>

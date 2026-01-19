@@ -2,8 +2,6 @@
 
 **Route**: `/sports/:sportId/parse-eesl`
 
-**Note**: Parse EESL menu item only shows in gear menu for football/soccer sports (detected by title containing "football" or "soccer")
-
 ```
 ┌─────────────────────────────────────────────────────┐
 │                    ┌─────────────────┐                      │
@@ -11,9 +9,9 @@
 │                    └─────────────────┘                      │
 └─────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────┐
-│  ← Back          SPORT TITLE (or "Parse EESL")     [⚙]    │
-└─────────────────────────────────────────────────────┘
+ ┌─────────────────────────────────────────────────────┐
+  │  ← Back          SPORT TITLE (or "Parse EESL")          │
+  └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
 │                                                             │
@@ -47,10 +45,9 @@
 
 ## What's on the page
 
-- EntityHeader component:
-  - Back button → Navigate to `/sports/:sportId`
-  - Title: Sport title (e.g., "FOOTBALL") with fallback to "Parse EESL Season"
-  - Gear menu button (no actions needed for this page)
+ - EntityHeader component:
+   - Back button → Navigate to `/sports/:sportId`
+   - Title: Sport title (e.g., "FOOTBALL") with fallback to "Parse EESL Season"
 - Description text explaining to feature
 - Form field:
   - Label: "Select EESL season year"

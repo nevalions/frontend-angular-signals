@@ -23,6 +23,7 @@ export class EntityHeaderComponent {
   logoUrl = input<string | null>();
   showEdit = input(true);
   showDelete = input(true);
+  showGear = input(true);
   customMenuItems = input<CustomMenuItem[]>([]);
 
   navigateBack = output<void>();
