@@ -27,6 +27,16 @@ Main application navigation bar with dropdown menus, mobile responsiveness, and 
 - Desktop: Navigation links aligned left after header
 - Mobile: Hamburger menu opens vertical slide-in navigation
 
+**Auth Buttons:**
+- **Not logged in:** Shows Sign Up and Sign In buttons
+- **Logged in:** Shows user avatar + username (clickable)
+  - Opens dropdown menu with Profile and Logout options
+  - Admin users additionally see Settings option
+  - Dropdown closes when clicking outside component
+  - Profile navigates to user's person detail page (or persons list if no person_id)
+  - Settings navigates to `/admin/settings` (admin only)
+  - Logout clears session and redirects to home
+
 **Click-Outside Dropdown Behavior:**
 - Dropdowns automatically close when clicking outside the navbar
 - Uses `@HostListener` to detect document clicks
