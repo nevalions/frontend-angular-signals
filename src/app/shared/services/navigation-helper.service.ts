@@ -107,4 +107,8 @@ export class NavigationHelperService {
     if (tournamentId) queryParams.tournamentId = tournamentId.toString();
     this.router.navigate(['/sports', sportId, 'matches', 'new'], { queryParams });
   }
+
+  toSettings(): void {
+    this.router.navigate(['/admin', 'settings']);
+  }
 }

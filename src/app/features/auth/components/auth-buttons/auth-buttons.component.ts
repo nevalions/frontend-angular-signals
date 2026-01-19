@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, signal, computed } from '@angular/core';
 import { TuiButton, TuiIcon, TuiDialogService } from '@taiga-ui/core';
 import { TuiAvatar } from '@taiga-ui/kit';
 import { tuiDialog } from '@taiga-ui/core';
@@ -73,6 +73,16 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
                 <tui-icon icon="@tui.user"></tui-icon>
                 <span>Profile</span>
               </button>
+              @if (isAdmin()) {
+                <button
+                  type="button"
+                  class="auth-buttons__dropdown-item"
+                  (click)="goToSettings()"
+                >
+                  <tui-icon icon="@tui.settings"></tui-icon>
+                  <span>Settings</span>
+                </button>
+              }
               <button
                 type="button"
                 class="auth-buttons__dropdown-item auth-buttons__dropdown-item--logout"
@@ -107,6 +117,10 @@ export class AuthButtonsComponent {
   });
 
   readonly dropdownOpen = signal(false);
+  readonly isAdmin = computed(() => {
+    const user = this.authService.currentUser();
+    return user?.roles?.includes('admin') ?? false;
+  });
 
   @HostListener('document:click', ['$event.target'])
   onClickOutside(target: EventTarget | null): void {
@@ -151,6 +165,11 @@ export class AuthButtonsComponent {
     } else {
       this.navigationHelper.toPersonsList();
     }
+  }
+
+  goToSettings(): void {
+    this.closeDropdown();
+    this.navigationHelper.toSettings();
   }
 
   logout(): void {
