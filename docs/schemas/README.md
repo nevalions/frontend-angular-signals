@@ -38,12 +38,23 @@ docs/schemas/
 ├── sports-list.md                 # List pages
 ├── sport-detail.md                # Detail pages with tab links
 ├── sport-edit.md                 # Edit/Create pages
+├── match-create.md                # Match create page
+├── scoreboards/                   # Scoreboard-related pages and components
+│   ├── scoreboard-admin.md         # Scoreboard control/admin page
+│   ├── scoreboard-view.md         # FullHD scoreboard view page (broadcast)
+│   └── scoreboard-display.md       # Shared scoreboard display component
 └── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
     ├── tournaments.md
     ├── teams.md
     ├── players.md              # ⚠️ Complex schema marked
     └── positions.md
 ```
+
+**Component Schemas:**
+
+Some schema files document **shared/reusable components** (not full pages):
+- `scoreboards/scoreboard-display.md` - Main scoreboard display component used by both admin and view pages
+- Component schemas follow the same format as page schemas but document inputs, display elements, and animations instead of page layout
 
 ## Schema Template
 
