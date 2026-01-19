@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { debounceTime, interval, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
-import { TuiPagination } from '@taiga-ui/kit';
+import { FormsModule } from '@angular/forms';
+import { TuiButton, TuiIcon, TuiTextfield, TuiDataList } from '@taiga-ui/core';
+import { TuiPagination, TuiSelect } from '@taiga-ui/kit';
 import { SettingsStoreService } from '../../services/settings-store.service';
 import { UserList, UserListResponse } from '../../models/settings.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
@@ -14,10 +15,13 @@ import { UserCardComponent } from '../../../../shared/components/user-card/user-
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormsModule,
     TuiTextfield,
     TuiButton,
     TuiPagination,
     TuiIcon,
+    TuiSelect,
+    TuiDataList,
     UserCardComponent,
   ],
   templateUrl: './users-tab.component.html',
@@ -38,12 +42,19 @@ export class UsersTabComponent {
   usersTotalPages = signal(0);
   usersSortBy = signal<'username' | 'email' | 'online'>('username');
   usersSortAscending = signal(true);
+  selectedOnlineFilter = signal<'all' | 'online' | 'offline'>('all');
 
   readonly itemsPerPageOptions = [10, 20, 50];
+  readonly onlineFilterOptions = [
+    { label: 'All', value: 'all' as const },
+    { label: 'Online', value: 'online' as const },
+    { label: 'Offline', value: 'offline' as const },
+  ];
 
   private searchSubject$ = new Subject<string>();
 
   constructor() {
+    this.stringifyOnlineFilter = this.stringifyOnlineFilter.bind(this);
     this.setupSearchDebounce();
 
     effect(() => {
@@ -85,6 +96,13 @@ export class UsersTabComponent {
       }
     });
 
+    effect(() => {
+      const onlineFilter = this.selectedOnlineFilter();
+      if (onlineFilter !== undefined) {
+        this.loadUsers();
+      }
+    });
+
     interval(60000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -112,27 +130,55 @@ export class UsersTabComponent {
     this.usersLoading.set(true);
     this.usersError.set(null);
 
+    let isOnlineFilter: boolean | undefined;
+    if (this.selectedOnlineFilter() === 'online') {
+      isOnlineFilter = true;
+    } else if (this.selectedOnlineFilter() === 'offline') {
+      isOnlineFilter = false;
+    }
+
     const sortBy = this.usersSortBy();
     const order_by = sortBy === 'online' ? 'last_online' : sortBy;
 
-    this.settingsStore.getUsersPaginated(
-      this.usersCurrentPage(),
-      this.usersItemsPerPage(),
-      this.userSearchQuery() || undefined,
-      order_by,
-      this.usersSortAscending()
-    ).subscribe({
-      next: (response: UserListResponse) => {
-        this.users.set(response.data);
-        this.usersTotalCount.set(response.metadata.total_items);
-        this.usersTotalPages.set(response.metadata.total_pages);
-        this.usersLoading.set(false);
-      },
-      error: () => {
-        this.usersError.set('Failed to load users');
-        this.usersLoading.set(false);
-      }
-    });
+    if (isOnlineFilter !== undefined) {
+      this.settingsStore.getUsersWithFilters(
+        this.usersCurrentPage(),
+        this.usersItemsPerPage(),
+        this.userSearchQuery() || undefined,
+        undefined,
+        isOnlineFilter
+      ).subscribe({
+        next: (response: UserListResponse) => {
+          this.users.set(response.data);
+          this.usersTotalCount.set(response.metadata.total_items);
+          this.usersTotalPages.set(response.metadata.total_pages);
+          this.usersLoading.set(false);
+        },
+        error: () => {
+          this.usersError.set('Failed to load users');
+          this.usersLoading.set(false);
+        }
+      });
+    } else {
+      this.settingsStore.getUsersPaginated(
+        this.usersCurrentPage(),
+        this.usersItemsPerPage(),
+        this.userSearchQuery() || undefined,
+        order_by,
+        this.usersSortAscending()
+      ).subscribe({
+        next: (response: UserListResponse) => {
+          this.users.set(response.data);
+          this.usersTotalCount.set(response.metadata.total_items);
+          this.usersTotalPages.set(response.metadata.total_pages);
+          this.usersLoading.set(false);
+        },
+        error: () => {
+          this.usersError.set('Failed to load users');
+          this.usersLoading.set(false);
+        }
+      });
+    }
   }
 
   onUserSearchChange(query: string): void {
@@ -174,5 +220,16 @@ export class UsersTabComponent {
       this.usersSortBy.set(sortBy);
       this.usersSortAscending.set(true);
     }
+  }
+
+  onOnlineFilterChange(onlineStatus: 'all' | 'online' | 'offline'): void {
+    this.selectedOnlineFilter.set(onlineStatus);
+    this.usersCurrentPage.set(1);
+  }
+
+  stringifyOnlineFilter(status: 'all' | 'online' | 'offline'): string {
+    if (!status) return '';
+    const option = this.onlineFilterOptions.find(o => o.value === status);
+    return option ? option.label : '';
   }
 }

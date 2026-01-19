@@ -20,6 +20,20 @@
           <tui-icon icon="@tui.close" />
         </button>
       }
+      <tui-textfield tuiChevron [stringify]="stringifyOnlineFilter" class="users-tab__filter-select">
+        <label tuiLabel>Filter by status</label>
+        <input
+          placeholder="All"
+          tuiSelect
+          [(ngModel)]="selectedOnlineFilter" />
+        <tui-data-list *tuiTextfieldDropdown>
+          @for (option of onlineFilterOptions; track option.value) {
+            <button new tuiOption type="button" [value]="option.value">
+              {{ option.label }}
+            </button>
+          }
+        </tui-data-list>
+      </tui-textfield>
     </div>
     <button
       type="button"

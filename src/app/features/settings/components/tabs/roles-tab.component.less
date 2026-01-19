@@ -9,23 +9,59 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--tui-border-normal);
 
+    > * {
+      flex-shrink: 0;
+    }
+
     &--users {
       margin-top: 2rem;
+      flex-direction: column;
+      align-items: flex-start;
     }
+
+    &--centered {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  &__header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+
+    .roles-tab__section-title {
+      flex: 0 0 auto;
+    }
+
+    .roles-tab__search-container {
+      flex: 1 1 300px;
+      min-width: 200px;
+      max-width: 500px;
+    }
+  }
+
+  &__section-title-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   &__section-title {
     font-size: 1.25rem;
     font-weight: 500;
     margin: 0;
+    flex-shrink: 0;
   }
 
   &__search-container {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    width: 100%;
-    max-width: 600px;
   }
 
   &__search-input {
@@ -36,6 +72,11 @@
   &__search-clear {
     margin-left: 0.5rem;
     flex-shrink: 0;
+  }
+
+  &__filter-select {
+    flex-shrink: 0;
+    min-width: 180px;
   }
 
   &__add-button {
@@ -49,6 +90,8 @@
     gap: 1rem;
     flex-wrap: wrap;
     width: 100%;
+    max-width: 800px;
+    justify-content: center;
   }
 
   &__role-list {

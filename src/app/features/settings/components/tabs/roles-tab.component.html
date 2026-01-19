@@ -129,27 +129,31 @@
   }
 
   <div class="roles-tab__section-header roles-tab__section-header--users">
-    <h3 class="roles-tab__section-title">Users</h3>
+    <div class="roles-tab__header-top">
+      <h3 class="roles-tab__section-title">Users</h3>
+      <div class="roles-tab__search-container">
+        <tui-textfield iconStart="@tui.search" class="roles-tab__search-input">
+          <label tuiLabel>Search users</label>
+          <input
+            placeholder="Search by name or email..."
+            tuiTextfield
+            [value]="userSearchQuery()"
+            (input)="onUserSearchChange($any($event.target).value)" />
+        </tui-textfield>
+        @if (userSearchQuery()) {
+          <button
+            type="button"
+            tuiButton
+            appearance="flat"
+            size="s"
+            (click)="clearUserSearch()"
+            class="roles-tab__search-clear">
+            <tui-icon icon="@tui.close" />
+          </button>
+        }
+      </div>
+    </div>
     <div class="roles-tab__filters">
-      <tui-textfield iconStart="@tui.search" class="roles-tab__search-input">
-        <label tuiLabel>Search users</label>
-        <input
-          placeholder="Search by name or email..."
-          tuiTextfield
-          [value]="userSearchQuery()"
-          (input)="onUserSearchChange($any($event.target).value)" />
-      </tui-textfield>
-      @if (userSearchQuery()) {
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          size="s"
-          (click)="clearUserSearch()"
-          class="roles-tab__search-clear">
-          <tui-icon icon="@tui.close" />
-        </button>
-      }
       <tui-textfield tuiChevron class="roles-tab__filter-select">
         <label tuiLabel>Filter by role</label>
         <input

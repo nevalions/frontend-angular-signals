@@ -2,30 +2,38 @@
 
 **Tab**: Users
 
- ```
- ┌─────────────────────────────────────────────────────────────┐
- │  username                         [Online] 🟢             │
- │  email@example.com                                         │
- │  Roles: user                                               │
- │  Account Status: Active 🟢                                 │
- │  Member Since: Jan 10, 2026 10:00 AM                    │
- │  Last Online: Jan 15, 2026 2:30 PM                        │
- └─────────────────────────────────────────────────────────────┘
- ┌─────────────────────────────────────────────────────────────┐
- │  username2                        [Offline] ⚪            │
- │  email2@example.com                                        │
- │  Roles: user, player                                       │
- │  Account Status: Inactive 🟠                              │
- │  Member Since: Jan 5, 2026 3:00 PM                       │
- │  Last Online: Never                                        │
- └─────────────────────────────────────────────────────────────┘
-                                                                │
-                     [< Prev] Page 1 of N [Next >]
- ```
+  ```
+  ┌─────────────────────────────────────────────────────────────┐
+  │  Search users [          ]  Filter: [All ▼]  [+ Add User] │
+  │                                                             │
+  │  Sort by: [Name] [Email] [Online Status]                  │
+  │                                                             │
+  └─────────────────────────────────────────────────────────────┘
+  ┌─────────────────────────────────────────────────────────────┐
+  │  username                         [Online] 🟢             │
+  │  email@example.com                                         │
+  │  Roles: user                                               │
+  │  Account Status: Active 🟢                                 │
+  │  Member Since: Jan 10, 2026 10:00 AM                    │
+  │  Last Online: Jan 15, 2026 2:30 PM                        │
+  └─────────────────────────────────────────────────────────────┘
+  ┌─────────────────────────────────────────────────────────────┐
+  │  username2                        [Offline] ⚪            │
+  │  email2@example.com                                        │
+  │  Roles: user, player                                       │
+  │  Account Status: Inactive 🟠                              │
+  │  Member Since: Jan 5, 2026 3:00 PM                       │
+  │  Last Online: Never                                        │
+  └─────────────────────────────────────────────────────────────┘
+                                                                 │
+                      [< Prev] Page 1 of N [Next >]
+  ```
 
 ## What's on the page
 
 - Search field for users (filters by username, email, or person name)
+- Filter by online status dropdown (All/Online/Offline)
+- "Add User" button → Navigate to person creation page
 - Sort controls:
   - Sort by Name (username) (asc/desc)
   - Sort by Email (asc/desc)
@@ -56,9 +64,10 @@
 - Person id (optional)
 - [Interface: `UserList`](../../../src/app/features/settings/models/settings.model.ts)
 - [Backend Schema: `UserSchema`](../../../../statsboards-backend/src/users/schemas.py)
-- **Backend API Endpoint:** `GET /api/users/search?page={page}&items_per_page={items_per_page}&order_by={order_by}&order_by_two={order_by_two}&ascending={ascending}&search={search}&role_names={role_names}`
+- **Backend API Endpoint:** `GET /api/users/search?page={page}&items_per_page={items_per_page}&order_by={order_by}&order_by_two={order_by_two}&ascending={ascending}&search={search}&role_names={role_names}&is_online={is_online}`
 
   - `role_names`: For users tab, filter to exclude "admin" role (e.g., `role_names=user`)
+  - `is_online`: Filter by online status (true/false/null for all)
   - `order_by`: "username", "email", or "last_online"
   - `order_by_two`: "id" (second sort column)
   - `ascending`: true/false
