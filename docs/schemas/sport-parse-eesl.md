@@ -10,61 +10,68 @@
 │                    │    NAVBAR       │                      │
 │                    └─────────────────┘                      │
 └─────────────────────────────────────────────────────┘
-                                                              
+
 ┌─────────────────────────────────────────────────────┐
-│  ← Back          Parse EESL Season            [Cancel]   │
+│  ← Back          SPORT TITLE (or "Parse EESL")     [⚙]    │
 └─────────────────────────────────────────────────────┘
-                                                              
+
 ┌─────────────────────────────────────────────────────┐
 │                                                             │
-│  Select EESL season year to parse and automatically       │
-│  create tournaments in the database.                             │
+│  Select a season year to parse and automatically      │
+│  create tournaments in database.                        │
+│                                                             │
+│  Select EESL season year                                   │
+│  ┌─────────────────────────────────────────────┐         │
+│  │ Select a season ▼                         │         │
+│  └─────────────────────────────────────────────┘         │
+│                                                             │
+│  [Parse and Create]                                         │
 │                                                             │
 └─────────────────────────────────────────────────────┘
-                                                              
+
 ┌─────────────────────────────────────────────────────┐
+│  Tournaments Created                                        │
 │                                                             │
-│  EESL Season Year: ▼                                      │
+│  ┌─────────────────────────────────────────────┐         │
+│  │ 🏆 Tournament Name                           │         │
+│  │    EESL ID: 123                              │         │
+│  └─────────────────────────────────────────────┘         │
 │                                                             │
-│  [📥 Parse and Create]                                     │
-│                                                             │
-└─────────────────────────────────────────────────────┘
-                                                              
-┌─────────────────────────────────────────────────────┐
-│                                                             │
-│  Tournaments Created                                          │
-│                                                             │
-│  🏆 Tournament 1                                          │
-│     Title: EESL Tournament Name                             │
-│     EESL Year: 2024                                          │
-│     ID: 1                                                   │
-│                                                             │
-│  🏆 Tournament 2                                          │
-│     Title: Another EESL Tournament                           │
-│     EESL Year: 2024                                          │
-│     ID: 2                                                   │
+│  ┌─────────────────────────────────────────────┐         │
+│  │ 🏆 Another Tournament Name                   │         │
+│  │    EESL ID: 456                              │         │
+│  └─────────────────────────────────────────────┘         │
 │                                                             │
 └─────────────────────────────────────────────────────┘
 ```
 
 ## What's on the page
 
-- Back button → Navigate to `/sports/:sportId`
-- Page title: "Parse EESL Season"
-- Cancel button → Navigate to `/sports/:sportId`
+- EntityHeader component:
+  - Back button → Navigate to `/sports/:sportId`
+  - Title: Sport title (e.g., "FOOTBALL") with fallback to "Parse EESL Season"
+  - Gear menu button (no actions needed for this page)
 - Description text explaining to feature
 - Form field:
-  - EESL Season Year (dropdown selector, required)
+  - Label: "Select EESL season year"
+  - TuiSelect dropdown (required)
+    - Placeholder: "Select a season"
     - Populated with available years from seasons
     - Years are sorted in ascending order
 - Action button:
+  - TuiButton with `appearance="primary"`
   - "Parse and Create" button → Fetch tournaments from EESL API and create them in database in one step
   - Shows "Parsing and Creating..." while processing
   - Disabled when no year selected
 - Created tournaments list:
   - Shows each tournament with title, EESL year, and EESL ID
+  - TuiIcon (`@tui.trophy`) as tournament icon
   - Only displayed after successful parse
   - No remove/selection controls (all tournaments are created)
+- Success dialog:
+  - TuiDialogService modal shows success message
+  - "Success" label, size 'm'
+  - Auto-navigates back to `/sports/:sportId` on dialog close
 
 ## What we need from backend
 
