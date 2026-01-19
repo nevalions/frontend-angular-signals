@@ -6,6 +6,7 @@
         <label tuiLabel>Search roles</label>
         <input
           placeholder="Search by name or description..."
+          tuiTextfield
           [value]="roleSearchQuery()"
           (input)="onRoleSearchChange($any($event.target).value)" />
       </tui-textfield>
@@ -136,6 +137,7 @@
         <label tuiLabel>Search users</label>
         <input
           placeholder="Search by name or email..."
+          tuiTextfield
           [value]="userSearchQuery()"
           (input)="onUserSearchChange($any($event.target).value)" />
       </tui-textfield>
