@@ -4,6 +4,72 @@ This document covers common mistakes and anti-patterns to avoid.
 
 ## Service Anti-Patterns
 
+### ❌ Don't make HTTP calls in service constructors
+
+**BAD - Circular dependency risk:**
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private http = inject(HttpClient);
+
+  constructor() {
+    // ❌ HTTP request in constructor causes circular dependency
+    // if any interceptor injects this service
+    this.fetchCurrentUser().subscribe();
+  }
+}
+```
+
+**Why this fails:**
+- Constructor runs during service initialization
+- HTTP requests trigger interceptors
+- If interceptor injects `AuthService`, it creates a circular dependency
+- Angular throws: `NG0200: Circular dependency detected`
+
+**✅ GOOD - Use deferred initialization:**
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private http = inject(HttpClient);
+  private initializationDone = false;
+
+  constructor() {
+    // Only load from storage, no HTTP calls
+    this.loadFromStorage();
+  }
+
+  initialize(): void {
+    // Prevent duplicate initialization
+    if (this.initializationDone) return;
+    this.initializationDone = true;
+
+    // Defer HTTP until after DI graph is stable
+    this.fetchCurrentUser().subscribe();
+  }
+}
+```
+
+**In App component:**
+
+```typescript
+export class App {
+  private authService = inject(AuthService);
+
+  constructor() {
+    // Call initialize after DI is fully resolved
+    this.authService.initialize();
+  }
+}
+```
+
+**Key points:**
+- Keep constructors minimal (no HTTP, no complex logic)
+- Use explicit `initialize()` method for startup logic
+- Call `initialize()` in root component (App)
+- Use a flag to prevent duplicate initialization
+
 ### ❌ Don't use toSignal() in services
 
 **BAD - Memory leak risk:**
