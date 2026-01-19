@@ -178,4 +178,43 @@
   &__form-field {
     margin-bottom: 1rem;
   }
+
+  &__skeleton-user-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  &__skeleton-avatar {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  &__skeleton-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__skeleton-username {
+    font-weight: 500;
+  }
+
+  &__skeleton-email {
+    font-size: 0.875rem;
+    color: var(--tui-text-secondary);
+  }
+
+  &__skeleton-details {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  &__skeleton-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--tui-radius-s);
+  }
 }

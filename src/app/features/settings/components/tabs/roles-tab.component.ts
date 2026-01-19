@@ -5,7 +5,7 @@ import { debounceTime, interval, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { TuiAlertService, TuiButton, TuiDialogService, TuiIcon, TuiTextfield, TuiDataList } from '@taiga-ui/core';
-import { TuiPagination, TuiSelect } from '@taiga-ui/kit';
+import { TuiPagination, TuiSelect, TuiSkeleton } from '@taiga-ui/kit';
 import { SettingsStoreService } from '../../services/settings-store.service';
 import { UserList, RoleList, UserListResponse, RoleListResponse } from '../../models/settings.model';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
@@ -23,6 +23,7 @@ import { UserCardComponent } from '../../../../shared/components/user-card/user-
     TuiIcon,
     TuiSelect,
     TuiDataList,
+    TuiSkeleton,
     UserCardComponent,
   ],
   templateUrl: './roles-tab.component.html',
@@ -65,6 +66,8 @@ export class RolesTabComponent {
     { label: 'Online', value: 'online' as const },
     { label: 'Offline', value: 'offline' as const },
   ];
+  readonly skeletonCount = computed(() => Array.from({ length: Math.min(this.rolesItemsPerPage(), 6) }, (_, i) => i));
+  readonly userSkeletonCount = computed(() => Array.from({ length: Math.min(this.usersItemsPerPage(), 3) }, (_, i) => i));
 
   private roleSearchSubject$ = new Subject<string>();
   private userSearchSubject$ = new Subject<string>();

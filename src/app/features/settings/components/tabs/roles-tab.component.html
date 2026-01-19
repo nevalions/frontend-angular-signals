@@ -33,7 +33,36 @@
   </div>
 
   @if (rolesLoading()) {
-    <div class="roles-tab__loading">Loading roles...</div>
+    <div class="roles-tab__role-list">
+      @for (_ of skeletonCount(); track $index) {
+        <div class="roles-tab__role-card">
+          <div class="roles-tab__role-info">
+            <strong class="roles-tab__role-name" [tuiSkeleton]="true">Role name placeholder</strong>
+            <p class="roles-tab__role-description" [tuiSkeleton]="10">Role description placeholder</p>
+          </div>
+          <div class="roles-tab__role-actions">
+            <button
+              type="button"
+              tuiButton
+              appearance="flat"
+              size="s"
+              class="roles-tab__action-button"
+              [tuiSkeleton]="true">
+              Edit
+            </button>
+            <button
+              type="button"
+              tuiButton
+              appearance="flat"
+              size="s"
+              class="roles-tab__action-button roles-tab__action-button--delete"
+              [tuiSkeleton]="true">
+              Delete
+            </button>
+          </div>
+        </div>
+      }
+    </div>
   } @else if (rolesError()) {
     <div class="roles-tab__error">{{ rolesError() }}</div>
   } @else if (roles().length === 0) {
@@ -153,7 +182,33 @@
   </div>
 
   @if (usersLoading()) {
-    <div class="roles-tab__loading">Loading users...</div>
+    <div class="roles-tab__user-list">
+      @for (_ of userSkeletonCount(); track $index) {
+        <div class="roles-tab__user-card">
+          <div class="roles-tab__skeleton-user-card">
+            <div class="roles-tab__skeleton-avatar" [tuiSkeleton]="true"></div>
+            <div class="roles-tab__skeleton-info">
+              <div class="roles-tab__skeleton-username" [tuiSkeleton]="15"></div>
+              <div class="roles-tab__skeleton-email" [tuiSkeleton]="25"></div>
+              <div class="roles-tab__skeleton-details">
+                <div class="roles-tab__skeleton-badge" [tuiSkeleton]="true"></div>
+                <div class="roles-tab__skeleton-badge" [tuiSkeleton]="true"></div>
+                <div class="roles-tab__skeleton-badge" [tuiSkeleton]="true"></div>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            tuiButton
+            appearance="flat"
+            size="s"
+            class="roles-tab__add-role-button"
+            [tuiSkeleton]="true">
+            Add Role
+          </button>
+        </div>
+      }
+    </div>
   } @else if (usersError()) {
     <div class="roles-tab__error">{{ usersError() }}</div>
   } @else if (users().length === 0) {
