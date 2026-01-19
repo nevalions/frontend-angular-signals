@@ -2,120 +2,79 @@
   <h2 class="dashboard-tab__title">📊 Dashboard Overview</h2>
 
   <div class="dashboard-tab__grid">
-    <section class="dashboard-tab__section">
-      <div class="dashboard-tab__section-header">
-        <h3 class="dashboard-tab__section-title">👥 Users Online</h3>
-      </div>
-      <div class="dashboard-tab__section-content">
-        @if (usersOnlineLoading()) {
-          <p>Loading...</p>
-        } @else if (usersOnlineError()) {
-          <p class="dashboard-tab__error">{{ usersOnlineError() }}</p>
-        } @else if (usersOnline().length === 0) {
-          <p class="dashboard-tab__empty">No users online</p>
-        } @else {
-          <div class="dashboard-tab__user-list">
-            @for (user of usersOnline(); track user.id) {
-              <div class="dashboard-tab__user-item">
-                <div class="dashboard-tab__user-info">
-                  <span class="dashboard-tab__user-status dashboard-tab__user-status--online"></span>
-                  <span class="dashboard-tab__username">{{ user.username }}</span>
-                </div>
-                <span class="dashboard-tab__user-activity">
-                  Last activity: {{ formatLastOnline(user.last_online ?? null) }}
-                </span>
-              </div>
-            }
-          </div>
+    <div tuiAppearance="floating" tuiCardLarge>
+      <header tuiHeader>
+        <h2 tuiTitle>👥 Users Online</h2>
+      </header>
+      @if (usersOnlineLoading()) {
+        <tui-loader [overlay]="true"></tui-loader>
+      } @else if (usersOnlineError()) {
+        <p class="dashboard-tab__error">{{ usersOnlineError() }}</p>
+      } @else if (usersOnline().length === 0) {
+        <p class="dashboard-tab__empty">No users online</p>
+      } @else {
+        @for (user of usersOnline(); track user.id) {
+          <button tuiCell type="button">
+            <tui-badge appearance="success" size="s">Online</tui-badge>
+            <div tuiTitle>{{ user.username }}</div>
+          </button>
         }
-      </div>
-      <div class="dashboard-tab__section-footer">
-        <button
-          type="button"
-          tuiButton
-          appearance="outline"
-          size="s"
-          (click)="navigateToUsersTab()">
-          View All Users →
+      }
+      <footer>
+        <button type="button" tuiButton appearance="secondary" size="s" (click)="navigateToUsersTab()">
+          View All Users
         </button>
-      </div>
-    </section>
+      </footer>
+    </div>
 
-    <section class="dashboard-tab__section">
-      <div class="dashboard-tab__section-header">
-        <h3 class="dashboard-tab__section-title">👨‍💼 Admins Online</h3>
-      </div>
-      <div class="dashboard-tab__section-content">
-        @if (adminsOnlineLoading()) {
-          <p>Loading...</p>
-        } @else if (adminsOnlineError()) {
-          <p class="dashboard-tab__error">{{ adminsOnlineError() }}</p>
-        } @else if (adminsOnline().length === 0) {
-          <p class="dashboard-tab__empty">No admins online</p>
-        } @else {
-          <div class="dashboard-tab__user-list">
-            @for (admin of adminsOnline(); track admin.id) {
-              <div class="dashboard-tab__user-item">
-                <div class="dashboard-tab__user-info">
-                  <span class="dashboard-tab__user-status dashboard-tab__user-status--online"></span>
-                  <span class="dashboard-tab__username">{{ admin.username }}</span>
-                </div>
-                <span class="dashboard-tab__user-activity">
-                  Last activity: {{ formatLastOnline(admin.last_online ?? null) }}
-                </span>
-              </div>
-            }
-          </div>
+    <div tuiAppearance="floating" tuiCardLarge>
+      <header tuiHeader>
+        <h2 tuiTitle>👨‍💼 Admins Online</h2>
+      </header>
+      @if (adminsOnlineLoading()) {
+        <tui-loader [overlay]="true"></tui-loader>
+      } @else if (adminsOnlineError()) {
+        <p class="dashboard-tab__error">{{ adminsOnlineError() }}</p>
+      } @else if (adminsOnline().length === 0) {
+        <p class="dashboard-tab__empty">No admins online</p>
+      } @else {
+        @for (admin of adminsOnline(); track admin.id) {
+          <button tuiCell type="button">
+            <tui-badge appearance="success" size="s">Online</tui-badge>
+            <div tuiTitle>{{ admin.username }}</div>
+          </button>
         }
-      </div>
-      <div class="dashboard-tab__section-footer">
-        <button
-          type="button"
-          tuiButton
-          appearance="outline"
-          size="s"
-          (click)="navigateToUsersTab()">
-          View All Admins →
+      }
+      <footer>
+        <button type="button" tuiButton appearance="secondary" size="s" (click)="navigateToUsersTab()">
+          View All Admins
         </button>
-      </div>
-    </section>
+      </footer>
+    </div>
 
-    <section class="dashboard-tab__section">
-      <div class="dashboard-tab__section-header">
-        <h3 class="dashboard-tab__section-title">🆕 Recently Registered Users</h3>
-      </div>
-      <div class="dashboard-tab__section-content">
-        @if (recentlyRegisteredLoading()) {
-          <p>Loading...</p>
-        } @else if (recentlyRegisteredError()) {
-          <p class="dashboard-tab__error">{{ recentlyRegisteredError() }}</p>
-        } @else if (recentlyRegistered().length === 0) {
-          <p class="dashboard-tab__empty">No users found</p>
-        } @else {
-          <div class="dashboard-tab__user-list">
-            @for (user of recentlyRegistered(); track user.id) {
-              <div class="dashboard-tab__user-item">
-                <div class="dashboard-tab__user-info">
-                  <span class="dashboard-tab__username">{{ user.username }}</span>
-                </div>
-                <span class="dashboard-tab__user-joined">
-                  Joined: {{ formatJoinedDate(user.created) }}
-                </span>
-              </div>
-            }
-          </div>
+    <div tuiAppearance="floating" tuiCardLarge>
+      <header tuiHeader>
+        <h2 tuiTitle>🆕 Recently Registered Users</h2>
+      </header>
+      @if (recentlyRegisteredLoading()) {
+        <tui-loader [overlay]="true"></tui-loader>
+      } @else if (recentlyRegisteredError()) {
+        <p class="dashboard-tab__error">{{ recentlyRegisteredError() }}</p>
+      } @else if (recentlyRegistered().length === 0) {
+        <p class="dashboard-tab__empty">No users found</p>
+      } @else {
+        @for (user of recentlyRegistered(); track user.id) {
+          <button tuiCell type="button">
+            <div tuiTitle>{{ user.username }}</div>
+            <div tuiSubtitle>{{ formatJoinedDate(user.created) }}</div>
+          </button>
         }
-      </div>
-      <div class="dashboard-tab__section-footer">
-        <button
-          type="button"
-          tuiButton
-          appearance="outline"
-          size="s"
-          (click)="navigateToUsersTab()">
-          View All Users →
+      }
+      <footer>
+        <button type="button" tuiButton appearance="secondary" size="s" (click)="navigateToUsersTab()">
+          View All Users
         </button>
-      </div>
-    </section>
+      </footer>
+    </div>
   </div>
 </div>

@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { interval } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiAppearance, TuiButton, TuiLoader, TuiTitle } from '@taiga-ui/core';
+import { TuiCardLarge, TuiCell, TuiHeader } from '@taiga-ui/layout';
+import { TuiBadge } from '@taiga-ui/kit';
 import { SettingsStoreService } from '../../services/settings-store.service';
 import { UserList } from '../../models/settings.model';
 import { Router } from '@angular/router';
@@ -12,7 +14,14 @@ import { Router } from '@angular/router';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TuiAppearance,
     TuiButton,
+    TuiLoader,
+    TuiTitle,
+    TuiCardLarge,
+    TuiCell,
+    TuiHeader,
+    TuiBadge,
   ],
   templateUrl: './dashboard-tab.component.html',
   styleUrl: './dashboard-tab.component.less',
