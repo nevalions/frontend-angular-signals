@@ -3,7 +3,7 @@
     <div class="global-settings-tab__loading">Loading settings...</div>
   } @else if (settingsError()) {
     <div class="global-settings-tab__error">{{ settingsError() }}</div>
-  } @else if (settings(); as settings) {
+  } @else {
     <div class="global-settings-tab__sections">
       <div class="global-settings-tab__section">
         <h2 class="global-settings-tab__section-title">General Settings</h2>
@@ -14,14 +14,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.site_name"
+              [ngModel]="getSettingValue('site_name')"
+              (ngModelChange)="updateSetting('site_name', $event)"
               placeholder="Site name" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('site_name', settings.site_name)">
+            (click)="updateSetting('site_name', getSettingValue('site_name'))">
             Save
           </button>
         </div>
@@ -32,7 +33,7 @@
             <tui-textfield tuiChevron>
               <select
                 tuiSelect
-                [(ngModel)]="settings.default_season_id"
+                [ngModel]="getSettingValue('default_season_id')"
                 (ngModelChange)="updateSetting('default_season_id', $event)">
                 @for (season of seasons(); track season.id) {
                   <option [value]="season.id">{{ season.year }}</option>
@@ -55,14 +56,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.timezone"
+              [ngModel]="getSettingValue('timezone')"
+              (ngModelChange)="updateSetting('timezone', $event)"
               placeholder="Timezone" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('timezone', settings.timezone)">
+            (click)="updateSetting('timezone', getSettingValue('timezone'))">
             Save
           </button>
         </div>
@@ -75,8 +77,8 @@
           <label class="global-settings-tab__checkbox-label">
             <input
               type="checkbox"
-              [(ngModel)]="settings.allow_public_registration"
-              (change)="updateSetting('allow_public_registration', settings.allow_public_registration)" />
+              [ngModel]="getSettingValue('allow_public_registration') === 'true'"
+              (change)="onCheckboxChange('allow_public_registration', $event)" />
             <span>Allow Public Registration</span>
           </label>
         </div>
@@ -85,8 +87,8 @@
           <label class="global-settings-tab__checkbox-label">
             <input
               type="checkbox"
-              [(ngModel)]="settings.require_email_verification"
-              (change)="updateSetting('require_email_verification', settings.require_email_verification)" />
+              [ngModel]="getSettingValue('require_email_verification') === 'true'"
+              (change)="onCheckboxChange('require_email_verification', $event)" />
             <span>Require Email Verification</span>
           </label>
         </div>
@@ -97,14 +99,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.default_user_role"
+              [ngModel]="getSettingValue('default_user_role')"
+              (ngModelChange)="updateSetting('default_user_role', $event)"
               placeholder="Default user role" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('default_user_role', settings.default_user_role)">
+            (click)="updateSetting('default_user_role', getSettingValue('default_user_role'))">
             Save
           </button>
         </div>
@@ -119,14 +122,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.smtp_server"
+              [ngModel]="getSettingValue('smtp_server')"
+              (ngModelChange)="updateSetting('smtp_server', $event)"
               placeholder="SMTP server" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('smtp_server', settings.smtp_server)">
+            (click)="updateSetting('smtp_server', getSettingValue('smtp_server'))">
             Save
           </button>
         </div>
@@ -137,14 +141,15 @@
             <input
               type="number"
               tuiTextfield
-              [(ngModel)]="settings.smtp_port"
+              [ngModel]="getSettingValue('smtp_port')"
+              (ngModelChange)="updateSetting('smtp_port', $event)"
               placeholder="SMTP port" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('smtp_port', settings.smtp_port)">
+            (click)="updateSetting('smtp_port', getSettingValue('smtp_port'))">
             Save
           </button>
         </div>
@@ -155,14 +160,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.smtp_username"
+              [ngModel]="getSettingValue('smtp_username')"
+              (ngModelChange)="updateSetting('smtp_username', $event)"
               placeholder="SMTP username" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('smtp_username', settings.smtp_username)">
+            (click)="updateSetting('smtp_username', getSettingValue('smtp_username'))">
             Save
           </button>
         </div>
@@ -173,14 +179,15 @@
             <input
               type="password"
               tuiTextfield
-              [(ngModel)]="settings.smtp_password"
+              [ngModel]="getSettingValue('smtp_password')"
+              (ngModelChange)="updateSetting('smtp_password', $event)"
               placeholder="SMTP password" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('smtp_password', settings.smtp_password)">
+            (click)="updateSetting('smtp_password', getSettingValue('smtp_password'))">
             Save
           </button>
         </div>
@@ -191,14 +198,15 @@
             <input
               type="email"
               tuiTextfield
-              [(ngModel)]="settings.sender_email"
+              [ngModel]="getSettingValue('sender_email')"
+              (ngModelChange)="updateSetting('sender_email', $event)"
               placeholder="Sender email" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('sender_email', settings.sender_email)">
+            (click)="updateSetting('sender_email', getSettingValue('sender_email'))">
             Save
           </button>
         </div>
@@ -209,14 +217,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.sender_name"
+              [ngModel]="getSettingValue('sender_name')"
+              (ngModelChange)="updateSetting('sender_name', $event)"
               placeholder="Sender name" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('sender_name', settings.sender_name)">
+            (click)="updateSetting('sender_name', getSettingValue('sender_name'))">
             Save
           </button>
         </div>
@@ -231,14 +240,15 @@
             <input
               type="number"
               tuiTextfield
-              [(ngModel)]="settings.max_file_upload_size_mb"
+              [ngModel]="getSettingValue('max_file_upload_size_mb')"
+              (ngModelChange)="updateSetting('max_file_upload_size_mb', $event)"
               placeholder="Max upload size" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('max_file_upload_size_mb', settings.max_file_upload_size_mb)">
+            (click)="updateSetting('max_file_upload_size_mb', getSettingValue('max_file_upload_size_mb'))">
             Save
           </button>
         </div>
@@ -249,14 +259,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.allowed_image_formats"
+              [ngModel]="getSettingValue('allowed_image_formats')"
+              (ngModelChange)="updateSetting('allowed_image_formats', $event)"
               placeholder="JPG, PNG, WEBP" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('allowed_image_formats', settings.allowed_image_formats)">
+            (click)="updateSetting('allowed_image_formats', getSettingValue('allowed_image_formats'))">
             Save
           </button>
         </div>
@@ -267,14 +278,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.static_files_path"
+              [ngModel]="getSettingValue('static_files_path')"
+              (ngModelChange)="updateSetting('static_files_path', $event)"
               placeholder="Static files path" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('static_files_path', settings.static_files_path)">
+            (click)="updateSetting('static_files_path', getSettingValue('static_files_path'))">
             Save
           </button>
         </div>
@@ -289,14 +301,15 @@
             <input
               type="number"
               tuiTextfield
-              [(ngModel)]="settings.rate_limit_per_minute"
+              [ngModel]="getSettingValue('rate_limit_per_minute')"
+              (ngModelChange)="updateSetting('rate_limit_per_minute', $event)"
               placeholder="Rate limit" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('rate_limit_per_minute', settings.rate_limit_per_minute)">
+            (click)="updateSetting('rate_limit_per_minute', getSettingValue('rate_limit_per_minute'))">
             Save
           </button>
         </div>
@@ -307,14 +320,15 @@
             <input
               type="text"
               tuiTextfield
-              [(ngModel)]="settings.api_version"
+              [ngModel]="getSettingValue('api_version')"
+              (ngModelChange)="updateSetting('api_version', $event)"
               placeholder="API version" />
           </tui-textfield>
           <button
             type="button"
             tuiButton
             appearance="primary"
-            (click)="updateSetting('api_version', settings.api_version)">
+            (click)="updateSetting('api_version', getSettingValue('api_version'))">
             Save
           </button>
         </div>
@@ -323,8 +337,8 @@
           <label class="global-settings-tab__checkbox-label">
             <input
               type="checkbox"
-              [(ngModel)]="settings.enable_api_documentation"
-              (change)="updateSetting('enable_api_documentation', settings.enable_api_documentation)" />
+              [ngModel]="getSettingValue('enable_api_documentation') === 'true'"
+              (change)="onCheckboxChange('enable_api_documentation', $event)" />
             <span>Enable API Documentation</span>
           </label>
         </div>

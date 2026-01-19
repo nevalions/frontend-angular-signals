@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiAlertService, TuiButton, TuiTextfield } from '@taiga-ui/core';
-import { TuiDataList } from '@taiga-ui/core';
+import { TuiAlertService, TuiButton, TuiDataList, TuiTextfield } from '@taiga-ui/core';
 import { TuiSelect } from '@taiga-ui/kit';
 import { SettingsStoreService } from '../../services/settings-store.service';
-import { GlobalSettings } from '../../models/settings.model';
+import { GlobalSettingsGrouped, GlobalSetting, GlobalSettingUpdate } from '../../models/settings.model';
 import { Season } from '../../../seasons/models/season.model';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 
@@ -17,6 +16,7 @@ import { SeasonStoreService } from '../../../seasons/services/season-store.servi
     TuiTextfield,
     TuiButton,
     TuiDataList,
+    TuiSelect,
   ],
   templateUrl: './global-settings-tab.component.html',
   styleUrl: './global-settings-tab.component.less',
@@ -26,7 +26,7 @@ export class GlobalSettingsTabComponent {
   private seasonStore = inject(SeasonStoreService);
   private readonly alerts = inject(TuiAlertService);
 
-  settings = signal<GlobalSettings | null>(null);
+  settingsMap = signal<Record<string, GlobalSetting>>({});
   settingsLoading = signal(false);
   settingsError = signal<string | null>(null);
 
@@ -50,9 +50,15 @@ export class GlobalSettingsTabComponent {
     this.settingsLoading.set(true);
     this.settingsError.set(null);
 
-    this.settingsStore.getGlobalSettings().subscribe({
-      next: (data: GlobalSettings) => {
-        this.settings.set(data);
+    this.settingsStore.getGlobalSettingsGrouped().subscribe({
+      next: (data: GlobalSettingsGrouped) => {
+        const map: Record<string, GlobalSetting> = {};
+        Object.values(data).forEach((settings) => {
+          settings.forEach((setting) => {
+            map[setting.key] = setting;
+          });
+        });
+        this.settingsMap.set(map);
         this.settingsLoading.set(false);
       },
       error: () => {
@@ -62,18 +68,32 @@ export class GlobalSettingsTabComponent {
     });
   }
 
-  updateSetting(key: keyof GlobalSettings, value: GlobalSettings[keyof GlobalSettings]): void {
-    const currentSettings = this.settings();
+  getSettingValue(key: string): string {
+    const setting = this.settingsMap()[key];
+    return setting?.value || '';
+  }
+
+  updateSetting(key: string, value: string | number | boolean): void {
+    const currentSettings = this.settingsMap()[key];
     if (!currentSettings) return;
 
-    this.settingsStore.updateGlobalSetting(key, value).subscribe({
-      next: (updatedSettings: GlobalSettings) => {
-        this.settings.set(updatedSettings);
+    const updateData: GlobalSettingUpdate = {
+      value: String(value),
+    };
+
+    this.settingsStore.updateGlobalSetting(currentSettings.id, updateData).subscribe({
+      next: () => {
+        this.loadGlobalSettings();
         this.alerts.open('Setting updated successfully', { label: 'Success', appearance: 'positive', autoClose: 3000 });
       },
       error: () => {
         this.alerts.open('Failed to update setting', { label: 'Error', appearance: 'negative' });
       }
     });
+  }
+
+  onCheckboxChange(key: string, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    this.updateSetting(key, checkbox.checked);
   }
 }

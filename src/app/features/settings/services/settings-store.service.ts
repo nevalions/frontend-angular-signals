@@ -2,7 +2,17 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../../core/services/api.service';
-import { UserList, UserListResponse, RoleList, RoleListResponse, GlobalSettings, SettingUpdate } from '../models/settings.model';
+import {
+  UserList,
+  UserListResponse,
+  RoleList,
+  RoleListResponse,
+  GlobalSetting,
+  GlobalSettingValue,
+  GlobalSettingsGrouped,
+  GlobalSettingCreate,
+  GlobalSettingUpdate,
+} from '../models/settings.model';
 import { buildApiUrl } from '../../../core/config/api.constants';
 
 @Injectable({
@@ -22,7 +32,7 @@ export class SettingsStoreService {
   adminsError = signal<string | null>(null);
   adminsMetadata = signal<UserListResponse['metadata'] | null>(null);
 
-  globalSettings = signal<GlobalSettings | null>(null);
+  globalSettings = signal<GlobalSettingsGrouped | null>(null);
   globalSettingsLoading = signal(false);
   globalSettingsError = signal<string | null>(null);
 
@@ -49,12 +59,28 @@ export class SettingsStoreService {
     });
   }
 
-  getGlobalSettings(): Observable<GlobalSettings> {
-    return this.http.get<GlobalSettings>(buildApiUrl('/api/settings/global'));
+  getGlobalSettingsGrouped(): Observable<GlobalSettingsGrouped> {
+    return this.http.get<GlobalSettingsGrouped>(buildApiUrl('/api/settings/grouped'));
   }
 
-  updateGlobalSetting(settingKey: string, value: SettingUpdate[string]): Observable<GlobalSettings> {
-    return this.http.patch<GlobalSettings>(buildApiUrl(`/api/settings/global/${settingKey}`), { value });
+  getGlobalSettingValue(key: string): Observable<GlobalSettingValue> {
+    return this.http.get<GlobalSettingValue>(buildApiUrl(`/api/settings/value/${key}`));
+  }
+
+  getGlobalSettingsByCategory(category: string): Observable<GlobalSetting[]> {
+    return this.http.get<GlobalSetting[]>(buildApiUrl(`/api/settings/category/${category}`));
+  }
+
+  createGlobalSetting(setting: GlobalSettingCreate): Observable<GlobalSetting> {
+    return this.http.post<GlobalSetting>(buildApiUrl('/api/settings/'), setting);
+  }
+
+  updateGlobalSetting(id: number, setting: GlobalSettingUpdate): Observable<GlobalSetting> {
+    return this.http.put<GlobalSetting>(buildApiUrl(`/api/settings/${id}/`), setting);
+  }
+
+  deleteGlobalSetting(id: number): Observable<void> {
+    return this.http.delete<void>(buildApiUrl(`/api/settings/id/${id}`));
   }
 
   makeUserAdmin(userId: number): Observable<void> {
