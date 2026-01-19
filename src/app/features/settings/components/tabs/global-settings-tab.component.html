@@ -363,7 +363,7 @@
           <div class="global-settings-tab__empty">No seasons found</div>
         } @else {
           <div class="global-settings-tab__seasons-list">
-            @for (season of seasons(); track season.id) {
+            @for (season of sortedSeasons(); track season.id) {
               <div class="global-settings-tab__season-item">
                 <div class="global-settings-tab__season-info">
                   <span class="global-settings-tab__season-year">{{ season.year }}</span>

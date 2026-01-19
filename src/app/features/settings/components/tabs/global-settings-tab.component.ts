@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal, viewChild, TemplateRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiAlertService, TuiButton, TuiDataList, TuiTextfield, TuiDialogService, TuiIcon } from '@taiga-ui/core';
 import { TuiSelect } from '@taiga-ui/kit';
@@ -36,6 +36,10 @@ export class GlobalSettingsTabComponent {
   seasons = this.seasonStore.seasons;
   seasonsLoading = this.seasonStore.loading;
   seasonYears = signal<number[]>([]);
+
+  sortedSeasons = computed(() => {
+    return [...this.seasons()].sort((a, b) => b.year - a.year);
+  });
 
   editingSeason = signal<Season | null>(null);
   seasonDialog = viewChild.required<TemplateRef<unknown>>('seasonDialog');
