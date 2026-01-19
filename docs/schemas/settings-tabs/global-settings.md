@@ -4,79 +4,125 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│                    Seasons                                  │
-│                                                             │
-│  [+ Add Season]                                             │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-                                                               │
-┌─────────────────────────────────────────────────────────────┐
-│  📅 2024                                      [Current ✓]   │
-│  Description: Main season 2024                              │
-│  [Edit]                                                     │
+│                    General Settings                        │
+├─────────────────────────────────────────────────────────────┤
+│  Site Name              [Site Name              ] [Save]  │
+│  Default Season        [2024        ▼]                    │
+│  Timezone             [UTC                  ] [Save]      │
 └─────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────┐
-│  📅 2023                                                   │
-│  Description: Previous season 2023                          │
-│  [Edit] [Set as Current]                                   │
+│                    Registration Settings                   │
+├─────────────────────────────────────────────────────────────┤
+│  [✓] Allow Public Registration                          │
+│  [✓] Require Email Verification                          │
+│  Default User Role      [viewer               ] [Save]   │
 └─────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────┐
-│  📅 2025                                                   │
-│  Description: Upcoming season 2025                         │
-│  [Edit] [Set as Current]                                   │
+│                    Email Settings                          │
+├─────────────────────────────────────────────────────────────┤
+│  SMTP Server           [smtp.example.com      ] [Save]  │
+│  SMTP Port            [587                  ] [Save]      │
+│  SMTP Username         [admin                ] [Save]      │
+│  SMTP Password         [••••••••             ] [Save]   │
+│  Sender Email         [noreply@example.com   ] [Save]    │
+│  Sender Name         [Statsboard           ] [Save]       │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    Storage Settings                        │
+├─────────────────────────────────────────────────────────────┤
+│  Max File Upload Size (MB) [10                   ] [Save]│
+│  Allowed Image Formats   [jpg,png,webp         ] [Save]│
+│  Static Files Path       [/var/www/static       ] [Save]   │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    API Settings                           │
+├─────────────────────────────────────────────────────────────┤
+│  Rate Limit (requests/min) [60                   ] [Save]│
+│  API Version               [v1                    ] [Save]│
+│  [✓] Enable API Documentation                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## What's on the page
 
-- Page section: "Seasons"
-- "Add Season" button → Open create season modal
-- List of season cards:
-  - Season year (e.g., 📅 2024)
-  - Season description (optional)
-  - "Current" indicator for the current season
-  - Action buttons:
-    - "Edit" → Edit season modal (year, description, iscurrent)
-    - "Set as Current" → Set season as current (if not current)
-  - Seasons are sorted by year (descending by default)
+**General Settings Section:**
+- Site Name (text input + Save button)
+- Default Season (dropdown with seasons list)
+- Timezone (text input + Save button)
 
-**Add Season Modal:**
-- Year input (number, min 1900, max 2999)
-- Description input (text, optional)
-- "Set as Current" checkbox
-- "Save" button → Create season
-- "Cancel" button → Close modal without saving
+**Registration Settings Section:**
+- Allow Public Registration (checkbox)
+- Require Email Verification (checkbox)
+- Default User Role (text input + Save button)
 
-**Edit Season Modal:**
-- Year input (number, min 1900, max 2999)
-- Description input (text, optional)
-- "Set as Current" checkbox
-- "Save" button → Update season
-- "Cancel" button → Close modal without saving
+**Email Settings Section:**
+- SMTP Server (text input + Save button)
+- SMTP Port (number input + Save button)
+- SMTP Username (text input + Save button)
+- SMTP Password (password input + Save button)
+- Sender Email (email input + Save button)
+- Sender Name (text input + Save button)
+
+**Storage Settings Section:**
+- Max File Upload Size (MB) (number input + Save button)
+- Allowed Image Formats (text input + Save button)
+- Static Files Path (text input + Save button)
+
+**API Settings Section:**
+- Rate Limit (requests/min) (number input + Save button)
+- API Version (text input + Save button)
+- Enable API Documentation (checkbox)
+
+All settings are saved individually via their respective Save buttons.
 
 ## What we need from backend
 
-**For seasons list:**
-- Season id
-- Season year
-- Season description (optional)
-- is_current flag
+**For loading all settings:**
+- All global settings grouped by category
+- [Interface: `GlobalSettingsGrouped`](../../../src/app/features/settings/models/settings.model.ts)
+- [Backend Schema: `GlobalSettingsGroupedSchema`](../../../../statsboards-backend/src/global_settings/schemas.py)
+- **Backend API Endpoint:** `GET /api/settings/grouped`
+
+**For updating a setting:**
+- Setting ID (from URL path)
+- Update data (key, value, value_type, category, description - all optional)
+- [Interface: `GlobalSettingUpdate`](../../../src/app/features/settings/models/settings.model.ts)
+- [Backend Schema: `GlobalSettingSchemaUpdate`](../../../../statsboards-backend/src/global_settings/schemas.py)
+- **Backend API Endpoint:** `PUT /api/settings/{id}/`
+
+**For loading seasons dropdown:**
+- List of all seasons
 - [Interface: `Season`](../../../src/app/features/seasons/models/season.model.ts)
 - [Backend Schema: `SeasonSchema`](../../../../statsboards-backend/src/seasons/schemas.py)
-- **Backend API Endpoint:** `GET /api/seasons/` (returns paginated list, all seasons)
+- **Backend API Endpoint:** `GET /api/seasons/` (all seasons)
 
-**For creating season:**
-- Season year
-- Season description (optional)
-- is_current flag (optional, defaults to false)
-- [Interface: `SeasonSchemaCreate`](../../../../statsboards-backend/src/seasons/schemas.py)
-- **Backend API Endpoint:** `POST /api/seasons/`
+## Setting Keys
 
-**For updating season:**
-- Season id (from URL path)
-- Season year (optional)
-- Season description (optional)
-- is_current flag (optional)
-- [Interface: `SeasonSchemaUpdate`](../../../../statsboards-backend/src/seasons/schemas.py)
-- **Backend API Endpoint:** `PUT /api/seasons/{season_id}/`
+**General:**
+- `site_name` (string) - Site name
+- `default_season_id` (int) - Default season ID
+- `timezone` (string) - Default timezone
+
+**Registration:**
+- `allow_public_registration` (bool) - Allow public user registration
+- `require_email_verification` (bool) - Require email verification
+- `default_user_role` (string) - Default role for new users
+
+**Email:**
+- `smtp_server` (string) - SMTP server hostname
+- `smtp_port` (int) - SMTP server port
+- `smtp_username` (string) - SMTP authentication username
+- `smtp_password` (string) - SMTP authentication password
+- `sender_email` (string) - Default sender email address
+- `sender_name` (string) - Default sender name
+
+**Storage:**
+- `max_file_upload_size_mb` (int) - Maximum file upload size in MB
+- `allowed_image_formats` (json) - Allowed image file formats array
+- `static_files_path` (string) - Static files directory path
+
+**API:**
+- `rate_limit_per_minute` (int) - API rate limit per minute
+- `api_version` (string) - Current API version
+- `enable_api_documentation` (bool) - Enable/disable API docs
+
