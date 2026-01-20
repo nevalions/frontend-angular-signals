@@ -1,0 +1,124 @@
+<div class="match-edit">
+  <header class="match-edit__header">
+    <h1 class="match-edit__title">Edit Match</h1>
+    @if (match()) {
+      <div class="match-edit__context">
+        <span>{{ match()!.team_a?.title }} vs {{ match()!.team_b?.title }}</span>
+      </div>
+    }
+    <div class="match-edit__actions">
+      <button tuiButton type="button" (click)="cancel()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="matchForm.invalid || loading()">Save Changes</button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="match-edit__loading">Loading match...</div>
+  } @else if (error()) {
+    <div class="match-edit__error">{{ error() }}</div>
+  } @else {
+    <form class="match-edit__form" [formGroup]="matchForm">
+      <div class="match-edit__field">
+        <label class="match-edit__label">Team A *</label>
+        <tui-textfield tuiChevron>
+          <input
+            placeholder="Select Team A"
+            tuiSelect
+            formControlName="team_a_id"
+          />
+          <tui-data-list *tuiTextfieldDropdown size="l">
+            @for (team of teams(); track team.id) {
+              <button new tuiOption type="button" [value]="team.id" class="match-edit__team-option">{{ team.title }}</button>
+            }
+          </tui-data-list>
+        </tui-textfield>
+        @if (matchForm.get('team_a_id')?.touched && matchForm.get('team_a_id')?.invalid) {
+          <div class="match-edit__error">Team A is required</div>
+        }
+      </div>
+
+      <div class="match-edit__field">
+        <label class="match-edit__label">Team B *</label>
+        <tui-textfield tuiChevron>
+          <input
+            placeholder="Select Team B"
+            tuiSelect
+            formControlName="team_b_id"
+          />
+          <tui-data-list *tuiTextfieldDropdown size="l">
+            @for (team of teams(); track team.id) {
+              <button new tuiOption type="button" [value]="team.id" class="match-edit__team-option">{{ team.title }}</button>
+            }
+          </tui-data-list>
+        </tui-textfield>
+        @if (matchForm.get('team_b_id')?.touched && matchForm.get('team_b_id')?.invalid) {
+          <div class="match-edit__error">Team B is required</div>
+        }
+      </div>
+
+      <div class="match-edit__field">
+        <label for="match_date" class="match-edit__label">Match Date</label>
+        <input
+          id="match_date"
+          type="datetime-local"
+          formControlName="match_date"
+          class="match-edit__input"
+        />
+      </div>
+
+      <div class="match-edit__field">
+        <label for="week" class="match-edit__label">Week</label>
+        <input
+          id="week"
+          type="number"
+          min="1"
+          formControlName="week"
+          class="match-edit__input"
+          placeholder="Enter week number"
+        />
+      </div>
+
+      <div class="match-edit__field">
+        <label for="match_eesl_id" class="match-edit__label">EESL ID</label>
+        <input
+          id="match_eesl_id"
+          type="number"
+          formControlName="match_eesl_id"
+          class="match-edit__input"
+        />
+      </div>
+
+      <div class="match-edit__field">
+        <label class="match-edit__label">Main Sponsor</label>
+        <tui-textfield tuiChevron>
+          <input
+            placeholder="Select Main Sponsor (optional)"
+            tuiSelect
+            formControlName="main_sponsor_id"
+          />
+          <tui-data-list *tuiTextfieldDropdown size="l">
+            @for (sponsor of sponsors(); track sponsor.id) {
+              <button new tuiOption type="button" [value]="sponsor.id" class="match-edit__sponsor-option">{{ sponsor.title }}</button>
+            }
+          </tui-data-list>
+        </tui-textfield>
+      </div>
+
+      <div class="match-edit__field">
+        <label class="match-edit__label">Sponsor Line</label>
+        <tui-textfield tuiChevron>
+          <input
+            placeholder="Select Sponsor Line (optional)"
+            tuiSelect
+            formControlName="sponsor_line_id"
+          />
+          <tui-data-list *tuiTextfieldDropdown size="l">
+            @for (line of sponsorLines(); track line.id) {
+              <button new tuiOption type="button" [value]="line.id" class="match-edit__sponsor-line-option">{{ line.title }}</button>
+            }
+          </tui-data-list>
+        </tui-textfield>
+      </div>
+    </form>
+  }
+</div>

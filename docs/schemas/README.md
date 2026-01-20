@@ -38,22 +38,27 @@ docs/schemas/
  ├── sports-list.md                 # List pages
  ├── sport-detail.md                # Detail pages with tab links
  ├── sport-edit.md                 # Edit/Create pages
- ├── match-create.md                # Match create page
- ├── settings.md                   # Settings page (admin)
- ├── user/                         # User-related pages
- │   └── profile.md                # User profile page
- ├── scoreboards/                   # Scoreboard-related pages and components
- │   ├── scoreboard-admin.md         # Scoreboard control/admin page
- │   ├── scoreboard-view.md         # FullHD scoreboard view page (broadcast)
- │   └── scoreboard-display.md       # Shared scoreboard display component
- ├── shared/                       # Shared/reusable components
- │   └── user-card.md             # User card component used in multiple places
- ├── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
- │    ├── tournaments.md
- │    ├── teams.md
- │    ├── players.md              # ⚠️ Complex schema marked
- │    └── positions.md
- └── settings-tabs/                 # Settings page tabs (no navbar/entity header)
+  ├── match-create.md                # Match create page
+  ├── match-detail.md               # Match detail page with tabs
+  ├── settings.md                   # Settings page (admin)
+  ├── user/                         # User-related pages
+  │   └── profile.md                # User profile page
+  ├── scoreboards/                   # Scoreboard-related pages and components
+  │   ├── scoreboard-admin.md         # Scoreboard control/admin page
+  │   ├── scoreboard-view.md         # FullHD scoreboard view page (broadcast)
+  │   └── scoreboard-display.md       # Shared scoreboard display component
+  ├── shared/                       # Shared/reusable components
+  │   └── user-card.md             # User card component used in multiple places
+  ├── match-detail-tabs/            # Match detail page tabs (no navbar/entity header)
+  │    ├── match-players.md         # Players in match tab
+  │    ├── events.md                # Match events tab
+  │    └── stats.md                 # Match statistics tab
+  ├── sport-detail-tabs/             # Individual tabs (no navbar/entity header)
+  │    ├── tournaments.md
+  │    ├── teams.md
+  │    ├── players.md              # ⚠️ Complex schema marked
+  │    └── positions.md
+  └── settings-tabs/                 # Settings page tabs (no navbar/entity header)
        ├── dashboard.md              # Dashboard overview tab (default)
        ├── users.md                  # Users list tab
        ├── roles.md                  # Roles management tab

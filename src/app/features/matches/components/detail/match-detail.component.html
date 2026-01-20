@@ -1,0 +1,112 @@
+@if (loading()) {
+  <div class="match-detail__loading">Loading match...</div>
+} @else if (error()) {
+  <div class="match-detail__error">{{ error() }}</div>
+} @else if (match(); as m) {
+  <div class="match-detail">
+    <app-entity-header
+      [title]="matchTitle()"
+      (navigateBack)="navigateBack()"
+      (edit)="navigateToEdit()"
+      (delete)="deleteMatch()"
+    />
+
+    <div class="match-detail__main">
+      <div class="match-detail__scoreboard">
+        <div class="match-detail__team">
+          @if (teamALogoUrl(); as logo) {
+            <img [src]="logo" alt="Team A Logo" class="match-detail__team-logo" />
+          }
+          <div class="match-detail__team-name">{{ m.team_a?.title || 'Team A' }}</div>
+        </div>
+
+        <div class="match-detail__score">
+          {{ scoreDisplay() }}
+        </div>
+
+        <div class="match-detail__team">
+          @if (teamBLogoUrl(); as logo) {
+            <img [src]="logo" alt="Team B Logo" class="match-detail__team-logo" />
+          }
+          <div class="match-detail__team-name">{{ m.team_b?.title || 'Team B' }}</div>
+        </div>
+      </div>
+
+      <div class="match-detail__info">
+        <div class="match-detail__info-item">
+          <span class="match-detail__info-label">Date:</span>
+          <span class="match-detail__info-value">{{ formattedDate() }}</span>
+        </div>
+
+        @if (m.week) {
+          <div class="match-detail__info-item">
+            <span class="match-detail__info-label">Week:</span>
+            <span class="match-detail__info-value">Week {{ m.week }}</span>
+          </div>
+        }
+
+        @if (m.tournament) {
+          <div class="match-detail__info-item">
+            <span class="match-detail__info-label">Tournament:</span>
+            <a class="match-detail__info-link" (click)="navigateToTournament()">
+              @if (tournamentLogoUrl(); as logo) {
+                <img [src]="logo" alt="Tournament Logo" class="match-detail__tournament-logo" />
+              }
+              {{ m.tournament.title }}
+            </a>
+          </div>
+        }
+
+        <div class="match-detail__info-item">
+          <span class="match-detail__info-label">Game Status:</span>
+          <span class="match-detail__info-value">{{ matchData()?.game_status || 'Not Started' }}</span>
+        </div>
+      </div>
+
+      <div class="match-detail__actions">
+        <button tuiButton type="button" (click)="navigateToScoreboardAdmin()">
+          Scoreboard Admin
+        </button>
+        <button tuiButton type="button" (click)="navigateToScoreboardView()">
+          Scoreboard View
+        </button>
+      </div>
+    </div>
+
+    <div class="match-detail__subnav">
+      <nav class="match-detail__tabs">
+        <button
+          class="match-detail__tab"
+          [class.match-detail__tab--active]="activeTab() === 'players'"
+          (click)="onTabChange('players')"
+        >
+          Match Players
+        </button>
+        <button
+          class="match-detail__tab"
+          [class.match-detail__tab--active]="activeTab() === 'events'"
+          (click)="onTabChange('events')"
+        >
+          Events
+        </button>
+        <button
+          class="match-detail__tab"
+          [class.match-detail__tab--active]="activeTab() === 'stats'"
+          (click)="onTabChange('stats')"
+        >
+          Stats
+        </button>
+      </nav>
+    </div>
+
+    @if (activeTab() === 'players') {
+      <app-match-players-tab />
+    } @else if (activeTab() === 'events') {
+      <app-match-events-tab />
+    } @else if (activeTab() === 'stats') {
+      <app-match-stats-tab />
+    }
+  </div>
+} @else {
+  <div class="match-detail__not-found">Match not found</div>
+}

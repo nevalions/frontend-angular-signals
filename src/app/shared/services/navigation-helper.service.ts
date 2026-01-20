@@ -108,6 +108,10 @@ export class NavigationHelperService {
     this.router.navigate(['/sports', sportId, 'matches', 'new'], { queryParams });
   }
 
+  toMatchEdit(sportId: number | string, matchId: number | string): void {
+    this.router.navigate(['/sports', sportId, 'matches', matchId, 'edit']);
+  }
+
   toSettings(): void {
     this.router.navigate(['/settings']);
   }

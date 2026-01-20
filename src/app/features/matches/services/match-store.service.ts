@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { MatchesPaginatedWithDetailsResponse, MatchCreate, Match } from '../models/match.model';
+import { MatchesPaginatedWithDetailsResponse, MatchCreate, Match, MatchUpdate, MatchWithDetails } from '../models/match.model';
+import { MatchData } from '../models/match-data.model';
 import { SortOrder } from '../../../core/models';
 
 interface MatchesResourceParams {
@@ -127,5 +128,21 @@ export class MatchStoreService {
 
   createMatch(data: MatchCreate): Observable<Match> {
     return this.apiService.post<Match>('/api/matches/', data).pipe(tap(() => this.reload()));
+  }
+
+  getMatchById(matchId: number): Observable<MatchWithDetails> {
+    return this.http.get<MatchWithDetails>(buildApiUrl(`/api/matches/id/${matchId}/`));
+  }
+
+  getMatchData(matchId: number): Observable<MatchData> {
+    return this.http.get<MatchData>(buildApiUrl(`/api/matches/${matchId}/match_data/`));
+  }
+
+  deleteMatch(matchId: number): Observable<void> {
+    return this.apiService.delete('/api/matches/', matchId);
+  }
+
+  updateMatch(matchId: number, data: MatchUpdate): Observable<Match> {
+    return this.apiService.put<Match>('/api/matches/', matchId, data);
   }
 }
