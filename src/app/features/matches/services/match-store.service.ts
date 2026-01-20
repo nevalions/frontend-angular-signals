@@ -135,7 +135,7 @@ export class MatchStoreService {
   }
 
   getMatchData(matchId: number): Observable<MatchData> {
-    return this.http.get<MatchData>(buildApiUrl(`/api/matches/${matchId}/match_data/`));
+    return this.http.get<MatchData>(buildApiUrl(`/api/matches/id/${matchId}/match_data/`));
   }
 
   deleteMatch(matchId: number): Observable<void> {
