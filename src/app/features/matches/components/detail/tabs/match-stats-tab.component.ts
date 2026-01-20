@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatchStoreService } from '../../../services/match-store.service';
 import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
 import { MatchStats } from '../../../models/match-stats.model';
-import { TuiBadge, TuiProgress } from '@taiga-ui/kit';
+import { TuiProgress } from '@taiga-ui/kit';
 import { TuiTitle, TuiIcon } from '@taiga-ui/core';
 
 interface StatRow {
@@ -16,7 +16,7 @@ interface StatRow {
   selector: 'app-match-stats-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TuiBadge, TuiProgress, TuiTitle, TuiIcon],
+  imports: [CommonModule, TuiProgress, TuiTitle, TuiIcon],
   template: `
     @if (comprehensiveData()) {
       <div class="match-stats-tab">

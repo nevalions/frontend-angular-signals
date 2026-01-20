@@ -23,7 +23,7 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                 <div class="match-players-tab__player-header">
                   <tui-avatar
                     class="match-players-tab__player-avatar"
-                    [src]="player.person?.photo_url ? playerPhotoUrl(player.person.photo_url) : null"
+                    [src]="getPlayerPhotoUrl(player)"
                     [size]="'l'"
                   >
                     {{ getInitials(player.person?.full_name) }}
@@ -66,7 +66,7 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                 <div class="match-players-tab__player-header">
                   <tui-avatar
                     class="match-players-tab__player-avatar"
-                    [src]="player.person?.photo_url ? playerPhotoUrl(player.person.photo_url) : null"
+                    [src]="getPlayerPhotoUrl(player)"
                     [size]="'l'"
                   >
                     {{ getInitials(player.person?.full_name) }}
@@ -122,6 +122,11 @@ export class MatchPlayersTabComponent {
 
   playerPhotoUrl(photo: string): string {
     return buildStaticUrlUtil(photo);
+  }
+
+  getPlayerPhotoUrl(player: { person?: { photo_url?: string | null } }): string | null {
+    const photoUrl = player.person?.photo_url;
+    return photoUrl ? this.playerPhotoUrl(photoUrl) : null;
   }
 
   getInitials(name: string | null | undefined): string {
