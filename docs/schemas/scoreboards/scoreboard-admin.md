@@ -201,26 +201,26 @@
 **API Endpoints:**
 
 **Match Data:**
-- `GET /api/matches/{match_id}` - Get match details
+- `GET /api/matches/id/{match_id}` - Get match details
 - `PUT /api/matches/{match_id}` - Update match (change teams)
 - [Backend Schema: `MatchSchema`](../../statsboards-backend/src/matches/schemas.py)
 
-- `GET /api/matches/{match_id}/match_data/` - Get match data
+- `GET /api/matches/id/{match_id}/match_data/` - Get match data
 - `PUT /api/matchdata/{id}` - Update match data (key-value or full)
 - `PUT /api/matchdata/id/{id}` - Update match data by id
 - [Backend Schema: `MatchDataSchema`](../../statsboards-backend/src/matchdata/schemas.py)
 
 **Clocks:**
-- `GET /api/matches/{match_id}/gameclock/` - Get game clock
+- `GET /api/matches/id/{match_id}/gameclock/` - Get game clock
 - `PUT /api/gameclock/{id}` - Update game clock
 - [Backend Schema: `GameClockSchema`](../../statsboards-backend/src/gameclocks/schemas.py)
 
-- `GET /api/matches/{match_id}/playclock/` - Get play clock
+- `GET /api/matches/id/{match_id}/playclock/` - Get play clock
 - `PUT /api/playclock/{id}` - Update play clock
 - [Backend Schema: `PlayClockSchema`](../../statsboards-backend/src/playclocks/schemas.py)
 
 **Scoreboard:**
-- `GET /api/matches/{match_id}/scoreboard_data/` - Get scoreboard settings
+- `GET /api/matches/id/{match_id}/scoreboard_data/` - Get scoreboard settings
 - `PUT /api/scoreboards/{id}` - Update scoreboard settings
 - [Backend Schema: `ScoreboardSchema`](../../statsboards-backend/src/scoreboards/schemas.py)
 
@@ -243,7 +243,7 @@
 - [Backend Schema: `SponsorSchema`](../../statsboards-backend/src/sponsors/schemas.py)
 
 **Football Events & Stats:**
-- `GET /api/matches/{match_id}/stats/` - Get match statistics for both teams (team, QB, offense, defense stats)
+- `GET /api/matches/id/{match_id}/stats/` - Get match statistics for both teams (team, QB, offense, defense stats)
 - `GET /api/football_event/match_id/{match_id}/` - Get all football events for a match
 - `GET /api/football_event/matches/{match_id}/events-with-players/` - Get football events with all 17 player references pre-populated
 - `POST /api/football_event/` - Create football event

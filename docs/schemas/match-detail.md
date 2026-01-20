@@ -73,4 +73,4 @@
 - Match Data: score_team_a, score_team_b, qtr, down, distance, timeout_team_a, timeout_team_b, ball_on, game_status
 - [Interface: `MatchData`](../../../src/app/features/matches/models/match-data.model.ts)
 - [Backend Schema: `MatchDataSchema`](../../../../statsboards-backend/src/matchdata/schemas.py)
-- **Backend API Endpoint:** `GET /api/matches/{match_id}/match_data/`
+- **Backend API Endpoint:** `GET /api/matches/id/{match_id}/match_data/`

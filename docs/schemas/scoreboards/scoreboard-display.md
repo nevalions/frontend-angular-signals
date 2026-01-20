@@ -227,12 +227,12 @@ Media queries adjust layout at breakpoints:
 - `FootballEventSchema` (for stats calculation)
 
 **API Endpoints:**
-- `GET /api/matches/{match_id}` - Match details
-- `GET /api/matches/{match_id}/match_data/` - Match data
-- `GET /api/matches/{match_id}/scoreboard_data/` - Scoreboard settings
-- `GET /api/matches/{match_id}/gameclock/` - Game clock
-- `GET /api/matches/{match_id}/playclock/` - Play clock
-- `GET /api/matches/{match_id}/stats/` - Team/QB/Offense stats
+- `GET /api/matches/id/{match_id}` - Match details
+- `GET /api/matches/id/{match_id}/match_data/` - Match data
+- `GET /api/matches/id/{match_id}/scoreboard_data/` - Scoreboard settings
+- `GET /api/matches/id/{match_id}/gameclock/` - Game clock
+- `GET /api/matches/id/{match_id}/playclock/` - Play clock
+- `GET /api/matches/id/{match_id}/stats/` - Team/QB/Offense stats
 - `GET /api/players_match/id/{player_id}/full_data/` - Player full data
 - WebSocket `WS /ws/match/{match_id}` - Real-time updates
 

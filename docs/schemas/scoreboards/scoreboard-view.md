@@ -137,30 +137,30 @@ All scoreboard elements update in real-time via WebSocket connection. Rosters an
 **API Endpoints:**
 
 **Match Data:**
-- `GET /api/matches/{match_id}` - Get match details
-- `GET /api/matches/{match_id}/match_data/` - Get match data
+- `GET /api/matches/id/{match_id}` - Get match details
+- `GET /api/matches/id/{match_id}/match_data/` - Get match data
 - [Backend Schema: `MatchSchema`](../../statsboards-backend/src/matches/schemas.py)
 - [Backend Schema: `MatchDataSchema`](../../statsboards-backend/src/matchdata/schemas.py)
 
 **Clocks:**
-- `GET /api/matches/{match_id}/gameclock/` - Get game clock
+- `GET /api/matches/id/{match_id}/gameclock/` - Get game clock
 - [Backend Schema: `GameClockSchema`](../../statsboards-backend/src/gameclocks/schemas.py)
 
-- `GET /api/matches/{match_id}/playclock/` - Get play clock
+- `GET /api/matches/id/{match_id}/playclock/` - Get play clock
 - [Backend Schema: `PlayClockSchema`](../../statsboards-backend/src/playclocks/schemas.py)
 
 **Scoreboard:**
-- `GET /api/matches/{match_id}/scoreboard_data/` - Get scoreboard settings
+- `GET /api/matches/id/{match_id}/scoreboard_data/` - Get scoreboard settings
 - [Backend Schema: `ScoreboardSchema`](../../statsboards-backend/src/scoreboards/schemas.py)
 
 **Players in Match:**
-- `GET /api/matches/{match_id}/players_with_full_data_optimized` - Get all players with full data in match
+- `GET /api/matches/id/{match_id}/players_with_full_data_optimized` - Get all players with full data in match
 - `GET /api/players_match/` - Get players in match (filter by match_id)
 - `GET /api/players_match/id/{player_id}/full_data/` - Get player full data in match
 - [Backend Schema: `PlayerMatchSchema`](../../statsboards-backend/src/player_match/schemas.py)
 
 **Teams:**
-- `GET /api/matches/{match_id}/teams` - Get both teams for match
+- `GET /api/matches/id/{match_id}/teams` - Get both teams for match
 - [Backend Schema: `TeamSchema`](../../statsboards-backend/src/teams/schemas.py)
 
 **Tournament:**
@@ -172,7 +172,7 @@ All scoreboard elements update in real-time via WebSocket connection. Rosters an
 - [Backend Schema: `SponsorSchema`](../../statsboards-backend/src/sponsors/schemas.py)
 
 **Football Events & Stats (for lower displays):**
-- `GET /api/matches/{match_id}/stats/` - Get match statistics for both teams (team, QB, offense, defense stats)
+- `GET /api/matches/id/{match_id}/stats/` - Get match statistics for both teams (team, QB, offense, defense stats)
 - `GET /api/football_event/matches/{match_id}/events-with-players/` - Get football events with player references
 - [Backend Schema: `FootballEventSchema`](../../statsboards-backend/src/football_events/schemas.py)
 - [Backend Schema: `FootballTeamStats`](../../statsboards-backend/src/matches/schemas.py:88-105)
@@ -180,7 +180,7 @@ All scoreboard elements update in real-time via WebSocket connection. Rosters an
 - [Backend Schema: `FootballOffenseStats`](../../statsboards-backend/src/matches/schemas.py:43-55)
 
 **Context Data (for initialization):**
-- `GET /api/matches/{match_id}/full_context` - Get match with teams, sport, positions
+- `GET /api/matches/id/{match_id}/full_context` - Get match with teams, sport, positions
 - Returns: match with team_a, team_b, tournaments (sport id)
 
 **WebSocket:**
