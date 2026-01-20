@@ -1,8 +1,110 @@
+@import '@taiga-ui/core/styles/taiga-ui-local';
+
 .match-players-tab {
-  &__placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem 0;
+
+  &__team-section {
+    width: 100%;
+  }
+
+  &__team-title {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  &__players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  &__player-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border-radius: 12px;
+    background: var(--tui-background-neutral-1);
+    border: 1px solid var(--tui-border-normal);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--tui-shadow-small);
+    }
+  }
+
+  &__player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  &__player-avatar {
+    flex-shrink: 0;
+  }
+
+  &__player-badges {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &__starting-badge {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__player-number {
+    font-size: 0.875rem;
+    color: var(--tui-text-secondary);
+    font-weight: 500;
+  }
+
+  &__player-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--tui-text-primary);
+  }
+
+  &__position-badge {
+    align-self: flex-start;
+  }
+
+  &__empty {
+    grid-column: 1 / -1;
     text-align: center;
+    padding: 3rem 1rem;
+    color: var(--tui-text-secondary);
+    font-size: 1rem;
+    border-radius: 12px;
+    background: var(--tui-background-neutral-1);
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 4rem 2rem;
     color: var(--tui-text-secondary);
     font-size: 1.125rem;
+  }
+}
+
+@media @tui-mobile {
+  .match-players-tab {
+    &__players-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }
