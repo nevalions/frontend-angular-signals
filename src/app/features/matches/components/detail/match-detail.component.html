@@ -89,11 +89,11 @@
     </div>
 
     @if (activeTab() === 'players') {
-      <app-match-players-tab />
+      <app-match-players-tab [comprehensiveData]="comprehensiveData()" />
     } @else if (activeTab() === 'events') {
-      <app-match-events-tab />
+      <app-match-events-tab [comprehensiveData]="comprehensiveData()" />
     } @else if (activeTab() === 'stats') {
-      <app-match-stats-tab />
+      <app-match-stats-tab [comprehensiveData]="comprehensiveData()" />
     }
   </div>
 } @else {

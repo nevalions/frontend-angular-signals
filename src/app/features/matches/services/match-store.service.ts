@@ -7,6 +7,8 @@ import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { MatchesPaginatedWithDetailsResponse, MatchCreate, Match, MatchUpdate, MatchWithDetails } from '../models/match.model';
 import { MatchData } from '../models/match-data.model';
+import { ComprehensiveMatchData } from '../models/comprehensive-match.model';
+import { MatchStats } from '../models/match-stats.model';
 import { SortOrder } from '../../../core/models';
 
 interface MatchesResourceParams {
@@ -144,5 +146,13 @@ export class MatchStoreService {
 
   updateMatch(matchId: number, data: MatchUpdate): Observable<Match> {
     return this.apiService.put<Match>('/api/matches/', matchId, data);
+  }
+
+  getComprehensiveMatchData(matchId: number): Observable<ComprehensiveMatchData> {
+    return this.http.get<ComprehensiveMatchData>(buildApiUrl(`/api/matches/id/${matchId}/comprehensive/`));
+  }
+
+  getMatchStats(matchId: number): Observable<MatchStats> {
+    return this.http.get<MatchStats>(buildApiUrl(`/api/matches/id/${matchId}/stats/`));
   }
 }

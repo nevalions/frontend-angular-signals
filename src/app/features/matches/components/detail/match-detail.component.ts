@@ -12,6 +12,7 @@ import { MatchEventsTabComponent } from './tabs/match-events-tab.component';
 import { MatchStatsTabComponent } from './tabs/match-stats-tab.component';
 import { MatchWithDetails } from '../../models/match.model';
 import { MatchData } from '../../models/match-data.model';
+import { ComprehensiveMatchData } from '../../models/comprehensive-match.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { DateService } from '../../../../core/services/date.service';
 import { CommonModule } from '@angular/common';
@@ -67,6 +68,7 @@ export class MatchDetailComponent implements OnInit {
 
   match = signal<MatchWithDetails | null>(null);
   matchData = signal<MatchData | null>(null);
+  comprehensiveData = signal<ComprehensiveMatchData | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
 
@@ -126,25 +128,15 @@ export class MatchDetailComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.matchStore.getMatchById(id).subscribe({
-      next: (match) => {
-        this.match.set(match);
-        this.loadMatchData(id);
+    this.matchStore.getComprehensiveMatchData(id).subscribe({
+      next: (data) => {
+        this.match.set(data.match);
+        this.matchData.set(data.match_data);
+        this.comprehensiveData.set(data);
+        this.loading.set(false);
       },
       error: (_err) => {
         this.error.set('Failed to load match');
-        this.loading.set(false);
-      }
-    });
-  }
-
-  loadMatchData(matchId: number): void {
-    this.matchStore.getMatchData(matchId).subscribe({
-      next: (data) => {
-        this.matchData.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
         this.loading.set(false);
       }
     });
