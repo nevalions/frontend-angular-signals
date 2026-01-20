@@ -1,8 +1,155 @@
+@import '@taiga-ui/core/styles/taiga-ui-local';
+
 .match-events-tab {
-  &__placeholder {
-    text-align: center;
+  padding: 1rem 0;
+
+  &__title {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  &__table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    background: var(--tui-background-neutral-1);
+    border: 1px solid var(--tui-border-normal);
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+
+    thead {
+      background: var(--tui-background-neutral-2);
+
+      th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--tui-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--tui-border-normal);
+        white-space: nowrap;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid var(--tui-border-hover);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:hover {
+          background: var(--tui-background-neutral-2);
+        }
+      }
+
+      td {
+        padding: 0.875rem 1rem;
+        font-size: 0.9375rem;
+        color: var(--tui-text-primary);
+      }
+    }
+  }
+
+  &__row {
+    transition: background-color 0.15s ease;
+  }
+
+  &__event-number {
+    font-weight: 600;
+    color: var(--tui-text-primary);
+  }
+
+  &__play-type-badge {
+    text-transform: capitalize;
+  }
+
+  &__result-badge {
+    text-transform: capitalize;
+  }
+
+  &__score {
+    font-weight: 600;
+    color: var(--tui-text-secondary);
+
+    &--positive {
+      color: var(--tui-text-positive);
+    }
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 4rem 2rem;
+    color: var(--tui-text-secondary);
+    font-size: 1rem;
+
+    &-icon {
+      font-size: 3rem;
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
     padding: 4rem 2rem;
     color: var(--tui-text-secondary);
     font-size: 1.125rem;
+
+    &-icon {
+      font-size: 2rem;
+      animation: spin 1s linear infinite;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media @tui-mobile {
+  .match-events-tab {
+    &__table-wrapper {
+      border-radius: 8px;
+    }
+
+    &__table {
+      thead th {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.75rem;
+      }
+
+      tbody td {
+        padding: 0.625rem 0.5rem;
+        font-size: 0.8125rem;
+      }
+    }
   }
 }
