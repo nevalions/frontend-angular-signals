@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Season, SeasonCreate, SeasonUpdate } from '../models/season.model';
@@ -28,6 +29,16 @@ export class SeasonStoreService {
     const map = new Map<number, Season>();
     seasons.forEach((season) => map.set(season.year, season));
     return map;
+  });
+
+  currentSeason = computed(() => {
+    const seasons = this.seasons();
+    const currentFromDb = seasons.find((season) => season.iscurrent);
+    if (currentFromDb) {
+      return currentFromDb;
+    }
+    const fallback = seasons.find((season) => season.id === environment.currentSeasonId);
+    return fallback || null;
   });
 
   reload(): void {

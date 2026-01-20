@@ -93,7 +93,7 @@
 **For saving parsed tournaments:**
 
 - EESL Season Year
-- Season ID (current season or latest season by year if no current is marked)
+ - Season ID (current season with `iscurrent=True`, or `environment.currentSeasonId` as fallback)
 - Sport ID (from route parameter `:sportId`)
 - List of tournaments to create
 - Returns: List of created tournaments with full Tournament objects (including id)
@@ -109,7 +109,7 @@
 
 **For season context:**
 
-- Season ID (current season or latest season by year if no current is marked)
+ - Season ID (current season with `iscurrent=True`, or `environment.currentSeasonId` as fallback)
 - Season year
 - [Interface: `Season`](../../../src/app/features/seasons/models/season.model.ts)
 - [Backend Schema: `SeasonSchema`](../../../../statsboards-backend/src/seasons/schemas.py)

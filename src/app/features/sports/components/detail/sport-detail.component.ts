@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { TuiAlertService, TuiDialogService, TuiTextfield } from '@taiga-ui/core';
 import { TuiSelect } from '@taiga-ui/kit';
 import { TuiDataList } from '@taiga-ui/core';
-import { environment } from '../../../../../environments/environment';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../services/sport-store.service';
 import { PlayerStoreService } from '../../../players/services/player-store.service';
@@ -148,13 +147,12 @@ export class SportDetailComponent {
   }
 
   private setCurrentSeason = effect(() => {
-    const seasons = this.seasons();
     const queryYear = this.queryYear();
 
     if (!this.selectedSeasonYear() && queryYear) {
       this.selectedSeasonYear.set(queryYear);
     } else if (!this.selectedSeasonYear()) {
-      const currentSeason = seasons.find(s => s.id === environment.currentSeasonId);
+      const currentSeason = this.seasonStore.currentSeason();
       if (currentSeason) {
         this.selectedSeasonYear.set(currentSeason.year);
       }
