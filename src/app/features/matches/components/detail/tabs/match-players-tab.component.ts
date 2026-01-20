@@ -124,7 +124,7 @@ export class MatchPlayersTabComponent {
     return buildStaticUrlUtil(photo);
   }
 
-  getPlayerPhotoUrl(player: { person?: { photo_url?: string | null } }): string | null {
+  getPlayerPhotoUrl(player: { person?: { photo_url?: string | null } | null }): string | null {
     const photoUrl = player.person?.photo_url;
     return photoUrl ? this.playerPhotoUrl(photoUrl) : null;
   }
