@@ -287,4 +287,127 @@ interface CustomMenuItem {
    });
    ```
 3. Use `NavigationHelperService` for consistent navigation patterns
-4. For delete operations, use `withDeleteConfirm()` utility for consistent UX
+  4. For delete operations, use `withDeleteConfirm()` utility for consistent UX
+
+### MatchFormComponent
+
+**Location:** `src/app/shared/components/match-form/`
+
+A reusable form component for creating and editing matches. Handles both create and edit modes with proper navigation callbacks.
+
+**Features:**
+- Support for both create and edit modes
+- Dynamic form based on mode (create/update)
+- Team selection with uppercase formatting
+- Sponsor and sponsor line selection
+- Date, week, and EESL ID fields
+- Context-aware cancel navigation
+- Signal-based API with Angular 19+ signals
+- Built with Taiga UI components
+- Proper validation and error handling
+
+**Usage Example:**
+
+```typescript
+import { MatchFormComponent } from '../../../../shared/components/match-form/match-form.component';
+
+@Component({
+  selector: 'app-match-create',
+  standalone: true,
+  imports: [MatchFormComponent],
+  template: `
+    <app-match-form
+      [mode]="mode"
+      [tournamentId]="tournamentId()"
+      [teams]="teams()"
+      [sponsors]="sponsors()"
+      [sponsorLines]="sponsorLines()"
+      [loading]="loading()"
+      (submit)="onSubmit($event)"
+      (cancel)="cancel()"
+    />
+  `,
+})
+export class MatchCreateComponent {
+  mode: MatchFormMode = 'create';
+
+  teams = signal<Team[]>([]);
+  sponsors = this.sponsorStore.sponsors;
+  sponsorLines = this.sponsorStore.sponsorLines;
+  loading = signal(false);
+
+  onSubmit(data: MatchCreate | MatchUpdate): void {
+    if (this.mode === 'create') {
+      this.matchStore.createMatch(data as MatchCreate).subscribe(() => {
+        this.cancel();
+      });
+    }
+  }
+
+  cancel(): void {
+    this.navigationHelper.toTournamentDetail(sportId, year, tournamentId, 'matches');
+  }
+}
+```
+
+**Inputs:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|----------|-------------|
+| `mode` | `'create' \| 'edit'` | Yes | - | Form mode - create new or edit existing |
+| `tournamentId` | `number \| null` | Yes | - | Tournament ID for the match |
+| `teams` | `Team[]` | Yes | - | List of teams to select from |
+| `sponsors` | `{ id: number; title?: string \| null }[]` | Yes | - | List of sponsors to select from |
+| `sponsorLines` | `{ id: number; title?: string \| null }[]` | Yes | - | List of sponsor lines to select from |
+| `match` | `MatchWithDetails \| null` | No | `null` | Match data for edit mode (populates form) |
+| `loading` | `boolean` | No | `false` | Loading state for form |
+
+**Outputs:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `submit` | `EventEmitter<MatchCreate \| MatchUpdate>` | Emitted when form is submitted |
+| `cancel` | `EventEmitter<void>` | Emitted when cancel button is clicked |
+
+**Examples Used In:**
+- Match create page (tournaments → matches → create)
+- Match edit page (matches → edit)
+
+**Mode-Specific Behavior:**
+
+**Create Mode:**
+- Title: "Create New Match"
+- Submit button text: "Create Match"
+- No match data loaded
+- Form validation: all required fields
+
+**Edit Mode:**
+- Title: "Edit Match"
+- Submit button text: "Save Changes"
+- Form pre-populated with match data
+- Context text shows: "TEAM A vs TEAM B"
+- Updates existing match instead of creating new
+
+**Best Practices:**
+1. Parent component should handle navigation based on mode:
+   - Create: Navigate back to tournament with matches tab
+   - Edit: Navigate back to current match detail
+2. Use `NavigationHelperService` for consistent navigation patterns
+3. Team, sponsor, and sponsor line titles are automatically uppercase formatted
+4. Loading state should be set during data fetching (teams loading in parent)
+5. Use alert helpers (`withCreateAlert()`, `withUpdateAlert()`) for API calls
+
+**Navigation Pattern:**
+
+```typescript
+// Cancel for create mode
+cancel(): void {
+  this.navigationHelper.toTournamentDetail(sportId, year, tournamentId, 'matches');
+}
+
+// Cancel for edit mode
+cancel(): void {
+  this.navigationHelper.toMatchDetail(sportId, matchId, year, tournamentId);
+}
+```
+

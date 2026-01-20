@@ -13,6 +13,7 @@ import { MatchStatsTabComponent } from './tabs/match-stats-tab.component';
 import { MatchWithDetails } from '../../models/match.model';
 import { MatchData } from '../../models/match-data.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
+import { DateService } from '../../../../core/services/date.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -30,6 +31,7 @@ export class MatchDetailComponent implements OnInit {
   private navigationHelper = inject(NavigationHelperService);
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
+  private dateService = inject(DateService);
 
   sportId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -83,19 +85,15 @@ export class MatchDetailComponent implements OnInit {
     const md = this.matchData();
     if (md?.score_team_a !== null && md?.score_team_a !== undefined &&
         md?.score_team_b !== null && md?.score_team_b !== undefined) {
-      return `${md.score_team_a}-${md.score_team_b}`;
+      return `${md.score_team_a}:${md.score_team_b}`;
     }
-    return '0-0';
+    return '0:0';
   });
 
   formattedDate = computed(() => {
     const m = this.match();
     if (!m?.match_date) return 'Unknown date';
-    return new Date(m.match_date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+    return this.dateService.formatDateTime(m.match_date);
   });
 
   teamALogoUrl = computed(() => {

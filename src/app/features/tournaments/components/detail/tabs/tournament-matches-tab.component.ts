@@ -6,6 +6,7 @@ import { MatchStoreService } from '../../../../matches/services/match-store.serv
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
 import { MatchWithDetails } from '../../../../matches/models/match.model';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
+import { DateService } from '../../../../../core/services/date.service';
 import { UpperCasePipe } from '@angular/common';
 
 @Component({
@@ -27,6 +28,7 @@ export class TournamentMatchesTabComponent {
   private matchStore = inject(MatchStoreService);
   private navigationHelper = inject(NavigationHelperService);
   private upperCasePipe = new UpperCasePipe();
+  private dateService = inject(DateService);
 
   tournamentId = input.required<number>();
   sportId = input.required<number>();
@@ -139,21 +141,12 @@ export class TournamentMatchesTabComponent {
 
   formatMatchDate(date: string | null | undefined): string {
     if (!date) return 'Unknown date';
-    return new Date(date).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return this.dateService.formatDateTime(date);
   }
 
   formatMatchTime(date: string | null): string {
     if (!date) return '';
-    return new Date(date).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return this.dateService.formatTime(date);
   }
 
   teamLogoUrl(logoPath: string | null): string {

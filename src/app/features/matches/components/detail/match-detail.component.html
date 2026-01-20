@@ -33,21 +33,15 @@
       </div>
 
       <div class="match-detail__info">
-        <div class="match-detail__info-item">
-          <span class="match-detail__info-label">Date:</span>
-          <span class="match-detail__info-value">{{ formattedDate() }}</span>
+        <div class="match-detail__date-week">
+          <span class="match-detail__date-week-text">{{ formattedDate() }}</span>
+          @if (m.week) {
+            <span class="match-detail__date-week-text">Week {{ m.week }}</span>
+          }
         </div>
 
-        @if (m.week) {
-          <div class="match-detail__info-item">
-            <span class="match-detail__info-label">Week:</span>
-            <span class="match-detail__info-value">Week {{ m.week }}</span>
-          </div>
-        }
-
         @if (m.tournament) {
-          <div class="match-detail__info-item">
-            <span class="match-detail__info-label">Tournament:</span>
+          <div class="match-detail__tournament">
             <a class="match-detail__info-link" (click)="navigateToTournament()">
               @if (tournamentLogoUrl(); as logo) {
                 <img [src]="logo" alt="Tournament Logo" class="match-detail__tournament-logo" />
@@ -56,11 +50,6 @@
             </a>
           </div>
         }
-
-        <div class="match-detail__info-item">
-          <span class="match-detail__info-label">Game Status:</span>
-          <span class="match-detail__info-value">{{ matchData()?.game_status || 'Not Started' }}</span>
-        </div>
       </div>
 
       <div class="match-detail__actions">

@@ -1,22 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { TuiAlertService, TuiButton, TuiDataList, TuiTextfield } from '@taiga-ui/core';
-import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
+import { TuiAlertService } from '@taiga-ui/core';
 import { MatchStoreService } from '../../services/match-store.service';
 import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
 import { SponsorStoreService } from '../../../sponsors/services/sponsor-store.service';
-import { MatchCreate } from '../../models/match.model';
-import { Team } from '../../models/match.model';
+import { MatchCreate, MatchUpdate, MatchWithDetails, Team } from '../../models/match.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withCreateAlert } from '../../../../core/utils/alert-helper.util';
+import { MatchFormComponent, MatchFormMode } from '../../../../shared/components/match-form/match-form.component';
 
 @Component({
   selector: 'app-match-create',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, TuiButton, TuiSelect, TuiDataList, TuiTextfield, TuiChevron],
+  imports: [MatchFormComponent],
   templateUrl: './match-create.component.html',
   styleUrl: './match-create.component.less',
 })
@@ -25,19 +22,8 @@ export class MatchCreateComponent {
   private matchStore = inject(MatchStoreService);
   private tournamentStore = inject(TournamentStoreService);
   private sponsorStore = inject(SponsorStoreService);
-  private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
   private route = inject(ActivatedRoute);
-
-  matchForm = this.fb.group({
-    team_a_id: [null as number | null, [Validators.required]],
-    team_b_id: [null as number | null, [Validators.required]],
-    match_date: [null as string | null],
-    week: [null as number | null],
-    match_eesl_id: [null as number | null],
-    main_sponsor_id: [null as number | null],
-    sponsor_line_id: [null as number | null],
-  });
 
   sportId = computed(() => {
     const id = this.route.snapshot.paramMap.get('sportId');
@@ -60,38 +46,33 @@ export class MatchCreateComponent {
   });
 
   teams = signal<Team[]>([]);
-
   sponsors = this.sponsorStore.sponsors;
   sponsorLines = this.sponsorStore.sponsorLines;
+  loading = signal(false);
+
+  mode: MatchFormMode = 'create';
 
   private loadTeamsOnTournamentChange = effect(() => {
     const tournamentId = this.tournamentId();
     if (tournamentId) {
+      this.loading.set(true);
       this.tournamentStore.getTeamsByTournamentId(tournamentId).subscribe({
-        next: (teams) => this.teams.set(teams),
+        next: (teams) => {
+          this.teams.set(teams);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+        }
       });
     }
   });
 
-  onSubmit(): void {
-    const tournamentId = this.tournamentId();
-    if (this.matchForm.valid && tournamentId) {
-      const formData = this.matchForm.value;
-      const data: MatchCreate = {
-        team_a_id: formData.team_a_id as number,
-        team_b_id: formData.team_b_id as number,
-        tournament_id: tournamentId,
-        match_date: formData.match_date || null,
-        week: formData.week || null,
-        match_eesl_id: formData.match_eesl_id || null,
-        main_sponsor_id: formData.main_sponsor_id || null,
-        sponsor_line_id: formData.sponsor_line_id || null,
-        isprivate: false,
-      };
-
+  onSubmit(data: MatchCreate | MatchUpdate): void {
+    if (this.mode === 'create') {
       withCreateAlert(
         this.alerts,
-        () => this.matchStore.createMatch(data),
+        () => this.matchStore.createMatch(data as MatchCreate),
         () => this.onSuccess(),
         'Match'
       );

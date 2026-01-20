@@ -63,19 +63,22 @@
   }
 
   &__score {
-    font-size: 3rem;
-    font-weight: 700;
+    font-size: 4rem;
+    font-weight: 800;
     color: var(--tui-text-primary);
     text-align: center;
-    padding: 1rem 2rem;
-    background: var(--tui-background-elevation-3);
-    border-radius: 1rem;
-    min-width: 150px;
+    padding: 1.5rem 3.5rem;
+    background: linear-gradient(135deg, var(--tui-background-elevation-3) 0%, var(--tui-background-elevation-2) 100%);
+    border-radius: 1.5rem;
+    min-width: 220px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    letter-spacing: 0.15em;
+    border: 2px solid var(--tui-border-normal);
   }
 
   &__info {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 1rem;
     padding: 1.5rem;
     background: var(--tui-background-elevation-2);
@@ -83,21 +86,21 @@
     margin-bottom: 1.5rem;
   }
 
-  &__info-item {
+  &__date-week {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9375rem;
+    justify-content: center;
+    gap: 2rem;
   }
 
-  &__info-label {
-    color: var(--tui-text-secondary);
-    font-weight: 500;
-  }
-
-  &__info-value {
+  &__date-week-text {
+    font-size: 1rem;
     color: var(--tui-text-primary);
     font-weight: 500;
+  }
+
+  &__tournament {
+    display: flex;
+    justify-content: center;
   }
 
   &__info-link {
@@ -186,15 +189,20 @@
     }
 
     &__score {
-      font-size: 2rem;
-      padding: 0.75rem 1.5rem;
-      min-width: 100px;
+      font-size: 2.5rem;
+      padding: 1rem 1.5rem;
+      min-width: 120px;
+      border-radius: 1rem;
     }
 
     &__info {
-      flex-direction: column;
       gap: 0.75rem;
       padding: 1rem;
+    }
+
+    &__date-week {
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     &__subnav {

@@ -17,7 +17,7 @@ export class SponsorStoreService {
   private readonly injector = inject(Injector);
 
   sponsorsResource = httpResource<Sponsor[]>(() => buildApiUrl('/api/sponsors/'), { injector: this.injector });
-  sponsorLinesResource = httpResource<SponsorLine[]>(() => buildApiUrl('/api/sponsor-lines/'), { injector: this.injector });
+  sponsorLinesResource = httpResource<SponsorLine[]>(() => buildApiUrl('/api/sponsor_lines'), { injector: this.injector });
 
   sponsors = computed(() => this.sponsorsResource.value() ?? []);
   sponsorLines = computed(() => this.sponsorLinesResource.value() ?? []);
@@ -45,6 +45,6 @@ export class SponsorStoreService {
   }
 
   createSponsorLine(data: { title?: string | null; is_visible?: boolean | null }): Observable<SponsorLine> {
-    return this.apiService.post<SponsorLine>('/api/sponsor-lines/', data).pipe(tap(() => this.reload()));
+    return this.apiService.post<SponsorLine>('/api/sponsor_lines', data).pipe(tap(() => this.reload()));
   }
 }

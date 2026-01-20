@@ -1,23 +1,21 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TuiAlertService, TuiButton, TuiDataList, TuiTextfield } from '@taiga-ui/core';
-import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
+import { TuiAlertService } from '@taiga-ui/core';
 import { MatchStoreService } from '../../services/match-store.service';
 import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
 import { SponsorStoreService } from '../../../sponsors/services/sponsor-store.service';
 import { MatchUpdate, MatchWithDetails, Team } from '../../models/match.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
+import { MatchFormComponent, MatchFormMode } from '../../../../shared/components/match-form/match-form.component';
 
 @Component({
   selector: 'app-match-edit',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, TuiButton, TuiSelect, TuiDataList, TuiTextfield, TuiChevron],
+  imports: [MatchFormComponent],
   templateUrl: './match-edit.component.html',
   styleUrl: './match-edit.component.less',
 })
@@ -26,19 +24,8 @@ export class MatchEditComponent implements OnInit {
   private matchStore = inject(MatchStoreService);
   private tournamentStore = inject(TournamentStoreService);
   private sponsorStore = inject(SponsorStoreService);
-  private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
   private route = inject(ActivatedRoute);
-
-  matchForm = this.fb.group({
-    team_a_id: [null as number | null, [Validators.required]],
-    team_b_id: [null as number | null, [Validators.required]],
-    match_date: [null as string | null],
-    week: [null as number | null],
-    match_eesl_id: [null as number | null],
-    main_sponsor_id: [null as number | null],
-    sponsor_line_id: [null as number | null],
-  });
 
   sportId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -73,13 +60,13 @@ export class MatchEditComponent implements OnInit {
   );
 
   match = signal<MatchWithDetails | null>(null);
+  teams = signal<Team[]>([]);
+  sponsors = this.sponsorStore.sponsors;
+  sponsorLines = this.sponsorStore.sponsorLines;
   loading = signal(false);
   error = signal<string | null>(null);
 
-  teams = signal<Team[]>([]);
-
-  sponsors = this.sponsorStore.sponsors;
-  sponsorLines = this.sponsorStore.sponsorLines;
+  mode: MatchFormMode = 'edit';
 
   ngOnInit(): void {
     this.loadMatch();
@@ -95,7 +82,6 @@ export class MatchEditComponent implements OnInit {
     this.matchStore.getMatchById(matchId).subscribe({
       next: (match) => {
         this.match.set(match);
-        this.populateForm(match);
         this.loadTeams(match.tournament_id);
         this.loading.set(false);
       },
@@ -106,40 +92,24 @@ export class MatchEditComponent implements OnInit {
     });
   }
 
-  populateForm(match: MatchWithDetails): void {
-    this.matchForm.patchValue({
-      team_a_id: match.team_a_id,
-      team_b_id: match.team_b_id,
-      match_date: match.match_date,
-      week: match.week,
-      match_eesl_id: match.match_eesl_id,
-      main_sponsor_id: match.main_sponsor_id,
-      sponsor_line_id: match.sponsor_line_id,
-    });
-  }
-
   loadTeams(tournamentId: number | null | undefined): void {
     if (tournamentId) {
+      this.loading.set(true);
       this.tournamentStore.getTeamsByTournamentId(tournamentId).subscribe({
-        next: (teams) => this.teams.set(teams),
+        next: (teams) => {
+          this.teams.set(teams);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+        }
       });
     }
   }
 
-  onSubmit(): void {
+  onSubmit(data: MatchUpdate): void {
     const matchId = this.matchId();
-    if (this.matchForm.valid && matchId) {
-      const formData = this.matchForm.value;
-      const data: MatchUpdate = {
-        team_a_id: formData.team_a_id ?? undefined,
-        team_b_id: formData.team_b_id ?? undefined,
-        match_date: formData.match_date ?? undefined,
-        week: formData.week ?? undefined,
-        match_eesl_id: formData.match_eesl_id ?? undefined,
-        main_sponsor_id: formData.main_sponsor_id ?? undefined,
-        sponsor_line_id: formData.sponsor_line_id ?? undefined,
-      };
-
+    if (matchId) {
       withUpdateAlert(
         this.alerts,
         () => this.matchStore.updateMatch(matchId, data),

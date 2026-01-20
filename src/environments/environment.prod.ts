@@ -15,4 +15,5 @@ export const environment = {
   wsProtocol: 'wss',
   apiUrl: apiUrl,
   backendUrl: protocol + '://' + apiUrl,
+  timeFormat: '24h',
 };
