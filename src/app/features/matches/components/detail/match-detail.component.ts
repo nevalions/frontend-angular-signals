@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TuiAlertService, TuiDialogService, TuiButton } from '@taiga-ui/core';
+import { TuiAlertService, TuiDialogService, TuiButton, TuiIcon } from '@taiga-ui/core';
+import { TuiSegmented } from '@taiga-ui/kit';
 import { MatchStoreService } from '../../services/match-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
@@ -21,7 +22,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-match-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, EntityHeaderComponent, MatchPlayersTabComponent, MatchEventsTabComponent, MatchStatsTabComponent, TuiButton],
+  imports: [CommonModule, EntityHeaderComponent, MatchPlayersTabComponent, MatchEventsTabComponent, MatchStatsTabComponent, TuiButton, TuiIcon, TuiSegmented],
   templateUrl: './match-detail.component.html',
   styleUrl: './match-detail.component.less',
 })
@@ -97,6 +98,18 @@ export class MatchDetailComponent implements OnInit {
     if (!m?.match_date) return 'Unknown date';
     return this.dateService.formatDateTime(m.match_date);
   });
+
+  activeTabIndex = computed(() => {
+    const tab = this.activeTab();
+    const tabs = ['players', 'events', 'stats'];
+    return tabs.indexOf(tab);
+  });
+
+  readonly tabs = [
+    { label: 'Players', value: 'players', icon: '@tui.user' },
+    { label: 'Events', value: 'events', icon: '@tui.calendar' },
+    { label: 'Stats', value: 'stats', icon: '@tui.chart-bar' },
+  ];
 
   teamALogoUrl = computed(() => {
     const m = this.match();
@@ -203,7 +216,8 @@ export class MatchDetailComponent implements OnInit {
     }
   }
 
-  onTabChange(tab: string): void {
+  onTabChange(index: number): void {
+    const tab = this.tabs[index].value;
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },

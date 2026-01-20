@@ -63,29 +63,20 @@
     </div>
 
     <div class="match-detail__subnav">
-      <nav class="match-detail__tabs">
-        <button
-          class="match-detail__tab"
-          [class.match-detail__tab--active]="activeTab() === 'players'"
-          (click)="onTabChange('players')"
-        >
-          Match Players
+      <tui-segmented class="match-detail__tabs" [activeItemIndex]="activeTabIndex()" size="l">
+        <button type="button" (click)="onTabChange(0)">
+          <tui-icon [icon]="tabs[0].icon" />
+          {{ tabs[0].label }}
         </button>
-        <button
-          class="match-detail__tab"
-          [class.match-detail__tab--active]="activeTab() === 'events'"
-          (click)="onTabChange('events')"
-        >
-          Events
+        <button type="button" (click)="onTabChange(1)">
+          <tui-icon [icon]="tabs[1].icon" />
+          {{ tabs[1].label }}
         </button>
-        <button
-          class="match-detail__tab"
-          [class.match-detail__tab--active]="activeTab() === 'stats'"
-          (click)="onTabChange('stats')"
-        >
-          Stats
+        <button type="button" (click)="onTabChange(2)">
+          <tui-icon [icon]="tabs[2].icon" />
+          {{ tabs[2].label }}
         </button>
-      </nav>
+      </tui-segmented>
     </div>
 
     @if (activeTab() === 'players') {
