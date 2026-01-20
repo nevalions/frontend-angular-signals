@@ -48,19 +48,6 @@
       <label tuiLabel>Search persons</label>
       <input placeholder="Search by name..." tuiTextfield [formControl]="searchControl" />
     </tui-textfield>
-      @if (searchControl.value) {
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          icon="@tui.close"
-          size="s"
-          (click)="clearSearch()"
-          class="search-clear-button"
-        >
-          <tui-icon [icon]="'@tui.close'" />
-        </button>
-      }
   </div>
 
   @if (loading()) {

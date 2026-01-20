@@ -10,17 +10,6 @@
           (input)="onMatchesSearchChange($any($event.target).value)"
         />
       </tui-textfield>
-      @if (matchesSearch()) {
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          iconStart="@tui.close"
-          size="s"
-          (click)="clearMatchesSearch()"
-          class="tournament-matches-tab__search-clear">
-        </button>
-      }
     </div>
     <div class="tournament-matches-tab__week-container">
       <tui-textfield iconStart="@tui.calendar">
@@ -34,17 +23,6 @@
           (input)="onMatchesWeekInputChange($any($event.target).value)"
         />
       </tui-textfield>
-      @if (matchesWeek()) {
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          iconStart="@tui.close"
-          size="s"
-          (click)="clearWeekFilter()"
-          class="tournament-matches-tab__week-clear">
-        </button>
-      }
     </div>
     <button
       type="button"

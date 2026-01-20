@@ -10,17 +10,6 @@
           [value]="roleSearchQuery()"
           (input)="onRoleSearchChange($any($event.target).value)" />
       </tui-textfield>
-      @if (roleSearchQuery()) {
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          size="s"
-          (click)="clearRoleSearch()"
-          class="roles-tab__search-clear">
-          <tui-icon icon="@tui.close" />
-        </button>
-      }
     </div>
     <button
       type="button"
@@ -140,17 +129,6 @@
             [value]="userSearchQuery()"
             (input)="onUserSearchChange($any($event.target).value)" />
         </tui-textfield>
-        @if (userSearchQuery()) {
-          <button
-            type="button"
-            tuiButton
-            appearance="flat"
-            size="s"
-            (click)="clearUserSearch()"
-            class="roles-tab__search-clear">
-            <tui-icon icon="@tui.close" />
-          </button>
-        }
       </div>
     </div>
     <div class="roles-tab__filters">

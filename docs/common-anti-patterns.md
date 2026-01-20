@@ -175,9 +175,47 @@ season = computed(() => this.store.seasons().find((s) => s.id === this.seasonId(
 }
 ```
 
-## CSS Anti-Patterns
+## Template Anti-Patterns
 
-### ❌ Don't use global display:none for responsive design
+### ❌ Don't add manual clear buttons to tuiTextfield
+
+**BAD - Manual clear button with @tui.close (doesn't exist):**
+
+```html
+<tui-textfield iconStart="@tui.search">
+  <label tuiLabel>Search</label>
+  <input placeholder="Search..." tuiTextfield [value]="searchQuery()" (input)="onSearchChange($any($event.target).value)" />
+</tui-textfield>
+@if (searchQuery()) {
+  <button type="button" tuiButton appearance="flat" icon="@tui.close" size="s" (click)="clearSearch()">
+    <tui-icon icon="@tui.close" />
+  </button>
+}
+```
+
+**Why this fails:**
+- `@tui.close` icon doesn't exist in Taiga UI's Lucide icon set
+- Causes 404 errors for `/assets/taiga-ui/icons/close.svg`
+- Adds unnecessary code duplication
+
+**✅ GOOD - Use built-in tuiTextfieldCleaner:**
+
+```html
+<tui-textfield iconStart="@tui.search">
+  <label tuiLabel>Search</label>
+  <input placeholder="Search..." tuiTextfield [value]="searchQuery()" (input)="onSearchChange($any($event.target).value)" />
+</tui-textfield>
+```
+
+**Key points:**
+- Taiga UI's `tuiTextfield` has built-in clear functionality
+- The cleaner appears automatically when the field has value
+- No need to manually track search/filter values or add clear buttons
+- Cleaner is already styled and accessible by default
+
+**Note:** For cancel buttons in forms/dialogs, use `@tui.x` icon instead of `@tui.close`.
+
+### ❌ Don't use *ngIf with async pipes
 
 **BAD - Hides element everywhere:**
 

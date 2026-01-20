@@ -10,17 +10,6 @@
           (input)="onTeamSearchChange($any($event.target).value)"
         />
       </tui-textfield>
-      @if (teamSearchQuery()) {
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          iconStart="@tui.close"
-          size="s"
-          (click)="clearTeamSearch()"
-          class="sport-teams-tab__search-clear"
-        ></button>
-      }
     </div>
     <button
       type="button"

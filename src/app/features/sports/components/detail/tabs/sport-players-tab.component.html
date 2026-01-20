@@ -9,17 +9,6 @@
           [value]="playersSearch()"
           (input)="onPlayersSearchChange($any($event.target).value)" />
       </tui-textfield>
-      @if (playersSearch()) {
-        <button
-          type="button"
-          tuiButton
-          appearance="flat"
-          iconStart="@tui.close"
-          size="s"
-          (click)="clearPlayersSearch()"
-          class="sport-players-tab__search-clear">
-        </button>
-      }
     </div>
     <button
       type="button"
