@@ -148,7 +148,7 @@ export class MatchDetailComponent implements OnInit {
     const year = this.year();
 
     if (sportId && tournamentId && year) {
-      this.navigationHelper.toTournamentsList(sportId, year);
+      this.navigationHelper.toTournamentDetail(sportId, year, tournamentId, 'matches');
     } else if (sportId && year) {
       this.navigationHelper.toSportDetail(sportId, year);
     } else {

@@ -37,10 +37,10 @@
 ## What's on the page
 
 - Entity header with:
-  - Back button → Navigate to matches list (from tournament or sport context)
+  - Back button → Navigate to tournament detail with matches tab (if tournament context), otherwise sport detail or home
   - Match title (e.g., "Team A vs Team B")
   - Edit button → Navigate to `/matches/:id/edit`
-  - Delete button → Confirm and delete match, navigate to matches list
+  - Delete button → Confirm and delete match, navigate to tournament detail with matches tab
 
 - Main match data section:
   - Team A logo and name
