@@ -3,105 +3,148 @@ import { CommonModule } from '@angular/common';
 import { MatchStoreService } from '../../../services/match-store.service';
 import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
 import { MatchStats } from '../../../models/match-stats.model';
+import { TuiBadge, TuiProgress } from '@taiga-ui/kit';
+import { TuiTitle, TuiIcon } from '@taiga-ui/core';
+
+interface StatRow {
+  label: string;
+  teamA: number;
+  teamB: number;
+}
 
 @Component({
   selector: 'app-match-stats-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, TuiBadge, TuiProgress, TuiTitle, TuiIcon],
   template: `
     @if (comprehensiveData()) {
       <div class="match-stats-tab">
         <div class="match-stats-tab__section">
-          <h3 class="match-stats-tab__title">Team Statistics</h3>
-          <table class="match-stats-tab__table">
-            <thead>
-              <tr>
-                <th>Stat</th>
-                <th>{{ teamATitle() }}</th>
-                <th>{{ teamBTitle() }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (stat of teamStats(); track stat.label) {
-                <tr>
-                  <td class="match-stats-tab__label">{{ stat.label }}</td>
-                  <td>{{ stat.teamA }}</td>
-                  <td>{{ stat.teamB }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
+          <h3 tuiTitle class="match-stats-tab__title">Team Statistics</h3>
+          <div class="match-stats-tab__stats-container">
+            @for (stat of teamStats(); track stat.label) {
+              <div class="match-stats-tab__stat-row">
+                <span class="match-stats-tab__stat-value match-stats-tab__stat-value--team-a">
+                  {{ stat.teamA }}
+                </span>
+                <div class="match-stats-tab__stat-label">
+                  <span>{{ stat.label }}</span>
+                  @if (showProgressBar()) {
+                    <div class="match-stats-tab__progress">
+                      <progress
+                        tuiProgressBar
+                        [max]="stat.teamA + stat.teamB"
+                        [value]="stat.teamA"
+                        class="match-stats-tab__progress-bar"
+                        [color]="getProgressColor(stat.teamA, stat.teamB)"
+                      ></progress>
+                    </div>
+                  }
+                </div>
+                <span class="match-stats-tab__stat-value match-stats-tab__stat-value--team-b">
+                  {{ stat.teamB }}
+                </span>
+              </div>
+            }
+          </div>
         </div>
 
         <div class="match-stats-tab__section">
-          <h3 class="match-stats-tab__title">Offense Statistics</h3>
-          <table class="match-stats-tab__table">
-            <thead>
-              <tr>
-                <th>Stat</th>
-                <th>{{ teamATitle() }}</th>
-                <th>{{ teamBTitle() }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (stat of offenseStats(); track stat.label) {
-                <tr>
-                  <td class="match-stats-tab__label">{{ stat.label }}</td>
-                  <td>{{ stat.teamA }}</td>
-                  <td>{{ stat.teamB }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
+          <h3 tuiTitle class="match-stats-tab__title">Offense Statistics</h3>
+          <div class="match-stats-tab__stats-container">
+            @for (stat of offenseStats(); track stat.label) {
+              <div class="match-stats-tab__stat-row">
+                <span class="match-stats-tab__stat-value match-stats-tab__stat-value--team-a">
+                  {{ stat.teamA }}
+                </span>
+                <div class="match-stats-tab__stat-label">
+                  <span>{{ stat.label }}</span>
+                  @if (showProgressBar()) {
+                    <div class="match-stats-tab__progress">
+                      <progress
+                        tuiProgressBar
+                        [max]="stat.teamA + stat.teamB"
+                        [value]="stat.teamA"
+                        class="match-stats-tab__progress-bar"
+                        [color]="getProgressColor(stat.teamA, stat.teamB)"
+                      ></progress>
+                    </div>
+                  }
+                </div>
+                <span class="match-stats-tab__stat-value match-stats-tab__stat-value--team-b">
+                  {{ stat.teamB }}
+                </span>
+              </div>
+            }
+          </div>
         </div>
 
         <div class="match-stats-tab__section">
-          <h3 class="match-stats-tab__title">Quarterback Statistics</h3>
-          <table class="match-stats-tab__table">
-            <thead>
-              <tr>
-                <th>Stat</th>
-                <th>{{ teamATitle() }}</th>
-                <th>{{ teamBTitle() }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (stat of qbStats(); track stat.label) {
-                <tr>
-                  <td class="match-stats-tab__label">{{ stat.label }}</td>
-                  <td>{{ stat.teamA }}</td>
-                  <td>{{ stat.teamB }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
+          <h3 tuiTitle class="match-stats-tab__title">Quarterback Statistics</h3>
+          <div class="match-stats-tab__stats-container">
+            @for (stat of qbStats(); track stat.label) {
+              <div class="match-stats-tab__stat-row">
+                <span class="match-stats-tab__stat-value match-stats-tab__stat-value--team-a">
+                  {{ stat.teamA }}
+                </span>
+                <div class="match-stats-tab__stat-label">
+                  <span>{{ stat.label }}</span>
+                  @if (showProgressBar()) {
+                    <div class="match-stats-tab__progress">
+                      <progress
+                        tuiProgressBar
+                        [max]="stat.teamA + stat.teamB"
+                        [value]="stat.teamA"
+                        class="match-stats-tab__progress-bar"
+                        [color]="getProgressColor(stat.teamA, stat.teamB)"
+                      ></progress>
+                    </div>
+                  }
+                </div>
+                <span class="match-stats-tab__stat-value match-stats-tab__stat-value--team-b">
+                  {{ stat.teamB }}
+                </span>
+              </div>
+            }
+          </div>
         </div>
 
         <div class="match-stats-tab__section">
-          <h3 class="match-stats-tab__title">Defense Statistics</h3>
-          <table class="match-stats-tab__table">
-            <thead>
-              <tr>
-                <th>Stat</th>
-                <th>{{ teamATitle() }}</th>
-                <th>{{ teamBTitle() }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (stat of defenseStats(); track stat.label) {
-                <tr>
-                  <td class="match-stats-tab__label">{{ stat.label }}</td>
-                  <td>{{ stat.teamA }}</td>
-                  <td>{{ stat.teamB }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
+          <h3 tuiTitle class="match-stats-tab__title">Defense Statistics</h3>
+          <div class="match-stats-tab__stats-container">
+            @for (stat of defenseStats(); track stat.label) {
+              <div class="match-stats-tab__stat-row">
+                <span class="match-stats-tab__stat-value match-stats-tab__stat-value--team-a">
+                  {{ stat.teamA }}
+                </span>
+                <div class="match-stats-tab__stat-label">
+                  <span>{{ stat.label }}</span>
+                  @if (showProgressBar()) {
+                    <div class="match-stats-tab__progress">
+                      <progress
+                        tuiProgressBar
+                        [max]="stat.teamA + stat.teamB"
+                        [value]="stat.teamA"
+                        class="match-stats-tab__progress-bar"
+                        [color]="getProgressColor(stat.teamA, stat.teamB)"
+                      ></progress>
+                    </div>
+                  }
+                </div>
+                <span class="match-stats-tab__stat-value match-stats-tab__stat-value--team-b">
+                  {{ stat.teamB }}
+                </span>
+              </div>
+            }
+          </div>
         </div>
       </div>
     } @else {
-      <div class="match-stats-tab__loading">Loading statistics...</div>
+      <div class="match-stats-tab__loading">
+        <tui-icon icon="@tui.refresh" class="match-stats-tab__loading-icon" />
+        <p>Loading statistics...</p>
+      </div>
     }
   `,
   styleUrl: './match-stats-tab.component.less',
@@ -111,11 +154,12 @@ export class MatchStatsTabComponent implements OnInit {
   private matchStore = inject(MatchStoreService);
 
   stats = signal<MatchStats | null>(null);
+  showProgressBar = signal(true);
 
   teamATitle = computed(() => this.comprehensiveData()?.teams.team_a.title || 'Team A');
   teamBTitle = computed(() => this.comprehensiveData()?.teams.team_b.title || 'Team B');
 
-  teamStats = computed(() => {
+  teamStats = computed<StatRow[]>(() => {
     const stats = this.stats();
     if (!stats) return [];
     const teamA = stats.team_a.team_stats;
@@ -138,7 +182,7 @@ export class MatchStatsTabComponent implements OnInit {
     ];
   });
 
-  offenseStats = computed(() => {
+  offenseStats = computed<StatRow[]>(() => {
     const stats = this.stats();
     if (!stats) return [];
     const teamA = stats.team_a.offense_stats;
@@ -156,7 +200,7 @@ export class MatchStatsTabComponent implements OnInit {
     ];
   });
 
-  qbStats = computed(() => {
+  qbStats = computed<StatRow[]>(() => {
     const stats = this.stats();
     if (!stats) return [];
     const teamA = stats.team_a.qb_stats;
@@ -177,7 +221,7 @@ export class MatchStatsTabComponent implements OnInit {
     ];
   });
 
-  defenseStats = computed(() => {
+  defenseStats = computed<StatRow[]>(() => {
     const stats = this.stats();
     if (!stats) return [];
     const teamA = stats.team_a.defense_stats;
@@ -204,5 +248,14 @@ export class MatchStatsTabComponent implements OnInit {
         }
       });
     }
+  }
+
+  getProgressColor(teamA: number, teamB: number): string {
+    const total = teamA + teamB;
+    if (total === 0) return 'var(--tui-chart-categorical-01)';
+    const ratio = teamA / total;
+    if (ratio > 0.6) return 'var(--tui-chart-categorical-01)';
+    if (ratio < 0.4) return 'var(--tui-chart-categorical-08)';
+    return 'var(--tui-chart-categorical-03)';
   }
 }
