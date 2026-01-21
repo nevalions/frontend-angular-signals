@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal, Injector } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -7,6 +7,7 @@ import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Person, PersonCreate, PersonUpdate, PersonSortBy, PersonsPaginatedResponse, PhotoUploadResponse } from '../models/person.model';
 import { SortOrder } from '../../../core/models';
+import { buildPaginationParams, createPaginationState } from '../../../core/utils/pagination-helper.util';
 
 @Injectable({
   providedIn: 'root',
@@ -15,13 +16,14 @@ export class PersonStoreService {
   private http = inject(HttpClient);
   private apiService = inject(ApiService);
   private readonly injector = inject(Injector);
+  private pagination = createPaginationState();
 
-  page = signal<number>(1);
-  itemsPerPage = signal<number>(10);
+  page = this.pagination.page;
+  itemsPerPage = this.pagination.itemsPerPage;
   sortBy = signal<PersonSortBy>('second_name');
   sortByTwo = signal<PersonSortBy>('id');
-  sortOrder = signal<SortOrder>('asc');
-  search = signal<string>('');
+  sortOrder = this.pagination.sortOrder;
+  search = this.pagination.search;
 
   personsResource = rxResource({
     params: computed(() => ({
@@ -33,16 +35,14 @@ export class PersonStoreService {
       search: this.search(),
     })),
     stream: ({ params }) => {
-      let httpParams = new HttpParams()
-        .set('page', params.page.toString())
-        .set('items_per_page', params.itemsPerPage.toString())
+      const httpParams = buildPaginationParams({
+        page: params.page,
+        itemsPerPage: params.itemsPerPage,
+        sortOrder: params.sortOrder,
+        search: params.search,
+      })
         .set('order_by', params.sortBy)
-        .set('order_by_two', params.sortByTwo)
-        .set('ascending', (params.sortOrder === 'asc').toString());
-
-      if (params.search) {
-        httpParams = httpParams.set('search', params.search);
-      }
+        .set('order_by_two', params.sortByTwo);
 
       return this.http.get<PersonsPaginatedResponse>(buildApiUrl('/api/persons/paginated'), { params: httpParams });
     },
@@ -57,23 +57,20 @@ export class PersonStoreService {
   totalPages = computed(() => this.personsResource.value()?.metadata.total_pages ?? 0);
 
   setPage(page: number): void {
-    this.page.set(page);
+    this.pagination.setPage(page);
   }
 
   setItemsPerPage(size: number): void {
-    this.itemsPerPage.set(size);
-    this.page.set(1);
+    this.pagination.setItemsPerPage(size);
   }
 
   setSort(sortBy: PersonSortBy, sortOrder: SortOrder): void {
     this.sortBy.set(sortBy);
-    this.sortOrder.set(sortOrder);
-    this.page.set(1);
+    this.pagination.setSortOrder(sortOrder);
   }
 
   setSearch(query: string): void {
-    this.search.set(query);
-    this.page.set(1);
+    this.pagination.setSearch(query);
   }
 
   reload(): void {

@@ -10,6 +10,7 @@ import { MatchData } from '../models/match-data.model';
 import { ComprehensiveMatchData } from '../models/comprehensive-match.model';
 import { MatchStats } from '../models/match-stats.model';
 import { SortOrder } from '../../../core/models';
+import { buildPaginationParams, createPaginationState } from '../../../core/utils/pagination-helper.util';
 
 interface MatchesResourceParams {
   tournamentId: number | null;
@@ -26,12 +27,13 @@ export class MatchStoreService {
   private http = inject(HttpClient);
   private apiService = inject(ApiService);
   private readonly injector = inject(Injector);
+  private pagination = createPaginationState();
 
   tournamentId = signal<number | null>(null);
-  page = signal<number>(1);
-  itemsPerPage = signal<number>(10);
-  sortOrder = signal<SortOrder>('asc');
-  search = signal<string>('');
+  page = this.pagination.page;
+  itemsPerPage = this.pagination.itemsPerPage;
+  sortOrder = this.pagination.sortOrder;
+  search = this.pagination.search;
 
   matchesResource = rxResource<MatchesPaginatedWithDetailsResponse, MatchesResourceParams>({
     params: computed(() => ({
@@ -49,17 +51,15 @@ export class MatchStoreService {
         });
       }
 
-      let httpParams = new HttpParams()
-        .set('page', params.page.toString())
-        .set('items_per_page', params.itemsPerPage.toString())
+      const httpParams = buildPaginationParams({
+        page: params.page,
+        itemsPerPage: params.itemsPerPage,
+        sortOrder: params.sortOrder,
+        search: params.search,
+      })
         .set('order_by', 'week')
         .set('order_by_two', 'match_date')
-        .set('ascending', (params.sortOrder === 'asc').toString())
         .set('tournament_id', params.tournamentId.toString());
-
-      if (params.search) {
-        httpParams = httpParams.set('search', params.search);
-      }
 
       return this.http.get<MatchesPaginatedWithDetailsResponse>(buildApiUrl('/api/matches/with-details/paginated'), { params: httpParams });
     },
@@ -79,22 +79,19 @@ export class MatchStoreService {
   }
 
   setPage(page: number): void {
-    this.page.set(page);
+    this.pagination.setPage(page);
   }
 
   setItemsPerPage(size: number): void {
-    this.itemsPerPage.set(size);
-    this.page.set(1);
+    this.pagination.setItemsPerPage(size);
   }
 
   setSort(sortOrder: SortOrder): void {
-    this.sortOrder.set(sortOrder);
-    this.page.set(1);
+    this.pagination.setSortOrder(sortOrder);
   }
 
   setSearch(query: string): void {
-    this.search.set(query);
-    this.page.set(1);
+    this.pagination.setSearch(query);
   }
 
   reload(): void {

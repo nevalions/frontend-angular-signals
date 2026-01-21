@@ -8,6 +8,7 @@ import { buildApiUrl } from '../../../core/config/api.constants';
 import { Player, PlayerAddToSport, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsAndPhotosResponse, PlayerWithPerson, PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse, PlayerCareer } from '../models/player.model';
 import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
+import { buildPaginationParams, createPaginationState } from '../../../core/utils/pagination-helper.util';
 
 interface PlayersResourceParams {
   sportId: number | null;
@@ -35,13 +36,14 @@ export class PlayerStoreService {
   private http = inject(HttpClient);
   private apiService = inject(ApiService);
   private readonly injector = inject(Injector);
+  private pagination = createPaginationState();
 
   sportId = signal<number | null>(null);
   teamId = signal<number | null>(null);
-  page = signal<number>(1);
-  itemsPerPage = signal<number>(10);
-  sortOrder = signal<SortOrder>('asc');
-  search = signal<string>('');
+  page = this.pagination.page;
+  itemsPerPage = this.pagination.itemsPerPage;
+  sortOrder = this.pagination.sortOrder;
+  search = this.pagination.search;
 
   playersResource = rxResource<PaginatedPlayerWithDetailsAndPhotosResponse, PlayersResourceParams>({
     params: computed(() => ({
@@ -60,11 +62,12 @@ export class PlayerStoreService {
         });
       }
 
-      let httpParams = new HttpParams()
-        .set('sport_id', params.sportId.toString())
-        .set('page', params.page.toString())
-        .set('items_per_page', params.itemsPerPage.toString())
-        .set('ascending', (params.sortOrder === 'asc').toString());
+      let httpParams = buildPaginationParams({
+        page: params.page,
+        itemsPerPage: params.itemsPerPage,
+        sortOrder: params.sortOrder,
+        search: params.search,
+      }).set('sport_id', params.sportId.toString());
 
       if (params.teamId) {
         httpParams = httpParams.set('team_id', params.teamId.toString());
@@ -97,22 +100,19 @@ export class PlayerStoreService {
   }
 
   setPage(page: number): void {
-    this.page.set(page);
+    this.pagination.setPage(page);
   }
 
   setItemsPerPage(size: number): void {
-    this.itemsPerPage.set(size);
-    this.page.set(1);
+    this.pagination.setItemsPerPage(size);
   }
 
   setSort(sortOrder: SortOrder): void {
-    this.sortOrder.set(sortOrder);
-    this.page.set(1);
+    this.pagination.setSortOrder(sortOrder);
   }
 
   setSearch(query: string): void {
-    this.search.set(query);
-    this.page.set(1);
+    this.pagination.setSearch(query);
   }
 
   reload(): void {
