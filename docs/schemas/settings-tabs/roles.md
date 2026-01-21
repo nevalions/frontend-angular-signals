@@ -1,6 +1,7 @@
 # Settings - Roles Tab
 
 **Tab**: Roles
+**Parent**: [Settings](../settings.md)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -47,7 +48,7 @@
 [Items per page: 10 20 50]           [< 1 2 3 >]
 ```
 
-## What's on the page
+## What's on the tab
 
 ### Roles Section (Top)
 - Search field for roles by name or description

@@ -1,6 +1,7 @@
 # Settings - Global Settings Tab
 
 **Tab**: Global Settings
+**Parent**: [Settings](../settings.md)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -43,7 +44,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## What's on the page
+## What's on the tab
 
 **General Settings Section:**
 - Site Name (text input + Save button)

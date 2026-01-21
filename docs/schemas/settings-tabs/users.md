@@ -1,6 +1,7 @@
 # Settings - Users Tab
 
 **Tab**: Users
+**Parent**: [Settings](../settings.md)
 
   ```
   ┌─────────────────────────────────────────────────────────────┐
@@ -29,7 +30,7 @@
                       [< Prev] Page 1 of N [Next >]
   ```
 
-## What's on the page
+## What's on the tab
 
 - Search field for users (filters by username, email, or person name)
 - Filter by online status dropdown (All/Online/Offline)

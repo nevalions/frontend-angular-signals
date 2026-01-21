@@ -1,6 +1,7 @@
 # Sport Detail - Tournaments Tab
 
 **Tab**: Tournaments
+**Parent**: [Sport Detail](../sport-detail.md)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -23,7 +24,7 @@
 [Items per page: 10 20 50]           [< 1 2 3 >]
 ```
 
-## What's on the page
+## What's on the tab
 
 - Search field for tournaments
 - "Add Tournament" button → Navigate to [Tournament Create](../tournament-create.md)

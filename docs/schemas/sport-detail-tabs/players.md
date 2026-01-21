@@ -1,6 +1,7 @@
 # Sport Detail - Players Tab
 
 **Tab**: Players
+**Parent**: [Sport Detail](../sport-detail.md)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -27,7 +28,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## What's on the page
+## What's on the tab
 
 - Search field for players
 - "Add Player" button → Open add player form

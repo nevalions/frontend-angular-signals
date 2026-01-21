@@ -1,6 +1,7 @@
 # Sport Detail - Teams Tab
 
 **Tab**: Teams
+**Parent**: [Sport Detail](../sport-detail.md)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -22,7 +23,7 @@
 [Items per page: 10 20 50]           [< 1 2 3 >]
 ```
 
-## What's on the page
+## What's on the tab
 
 - Search field for teams
 - "Add Team" button → Navigate to [Team Create](../../team-create.md)

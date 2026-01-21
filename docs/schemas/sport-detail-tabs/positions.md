@@ -1,6 +1,7 @@
 # Sport Detail - Positions Tab
 
 **Tab**: Positions
+**Parent**: [Sport Detail](../sport-detail.md)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -32,7 +33,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## What's on the page
+## What's on the tab
 
 - Search field for positions
 - "Add Position" button → Open add position form modal
