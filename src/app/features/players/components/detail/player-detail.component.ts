@@ -19,6 +19,7 @@ import { PositionStoreService } from '../../../sports/services/position-store.se
 import { Team, Position } from '../../../../shared/types';
 import { withDeleteConfirm, withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { capitalizeName as capitalizeNameUtil } from '../../../../core/utils/string-helper.util';
+import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
 
 @Component({
   selector: 'app-player-detail',
@@ -48,21 +49,9 @@ export class PlayerDetailComponent {
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
 
-  playerId = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('playerId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  playerId = createNumberParamSignal(this.route, 'playerId');
 
-  sportId = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('sportId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  sportId = createNumberParamSignal(this.route, 'sportId');
 
   fromSport = toSignal(
     this.route.queryParamMap.pipe(map((params) => {
@@ -72,21 +61,9 @@ export class PlayerDetailComponent {
     { initialValue: false }
   );
 
-  fromTournamentId = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('tournamentId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  fromTournamentId = createNumberParamSignal(this.route, 'tournamentId', { source: 'queryParamMap' });
 
-  fromYear = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('year');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  fromYear = createNumberParamSignal(this.route, 'year', { source: 'queryParamMap' });
 
   isInSportContext = computed(() => this.fromSport() === true);
   isInTournamentContext = computed(() => this.fromTournamentId() !== null);

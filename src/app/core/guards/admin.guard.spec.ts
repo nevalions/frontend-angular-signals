@@ -36,8 +36,8 @@ describe('adminGuard', () => {
   describe('Unauthenticated access', () => {
     it('should redirect unauthenticated user to home', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => null) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => false) },
+        currentUser: vi.fn(() => null),
+        isAuthenticated: vi.fn(() => false),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -45,7 +45,7 @@ describe('adminGuard', () => {
       const router = TestBed.inject(Router);
       const navigateSpy = vi.spyOn(router, 'createUrlTree');
 
-      const result = adminGuard(null as any, null as any);
+      const result = TestBed.runInInjectionContext(() => adminGuard(null as any, null as any));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -55,8 +55,8 @@ describe('adminGuard', () => {
   describe('Non-admin user access', () => {
     it('should redirect regular user to home', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockRegularUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockRegularUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -64,7 +64,7 @@ describe('adminGuard', () => {
       const router = TestBed.inject(Router);
       const navigateSpy = vi.spyOn(router, 'createUrlTree');
 
-      const result = adminGuard(null as any, null as any);
+      const result = TestBed.runInInjectionContext(() => adminGuard(null as any, null as any));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -74,13 +74,13 @@ describe('adminGuard', () => {
   describe('Admin user access', () => {
     it('should allow access for admin user', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockAdminUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockAdminUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
 
-      const result = adminGuard(null as any, null as any);
+      const result = TestBed.runInInjectionContext(() => adminGuard(null as any, null as any));
 
       expect(result).toBe(true);
     });

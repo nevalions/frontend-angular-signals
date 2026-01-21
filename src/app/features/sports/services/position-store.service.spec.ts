@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { afterEach, describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -32,6 +32,12 @@ describe('PositionStoreService', () => {
 
     service = TestBed.inject(PositionStoreService);
     httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    const pending = httpMock.match(() => true);
+    pending.forEach((req) => req.flush([]));
+    httpMock.verify();
   });
 
   describe('CRUD operations', () => {
@@ -80,4 +86,3 @@ describe('PositionStoreService', () => {
     });
   });
 });
-

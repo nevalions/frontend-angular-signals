@@ -17,7 +17,7 @@ describe('SportDetailComponent', () => {
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
   let routeMock: { paramMap: Observable<{ get: (_key: string) => string | null }>; queryParamMap: Observable<{ get: () => string | null }> };
   let sportStoreMock: { sports: ReturnType<typeof vi.fn>; deleteSport: ReturnType<typeof vi.fn> };
-  let seasonStoreMock: { seasons: ReturnType<typeof vi.fn>; seasonByYear: ReturnType<typeof vi.fn> };
+  let seasonStoreMock: { seasons: ReturnType<typeof vi.fn>; seasonByYear: ReturnType<typeof vi.fn>; currentSeason: ReturnType<typeof vi.fn> };
   let playerStoreMock: { setSportId: ReturnType<typeof vi.fn> };
   let navHelperMock: { toSportsList: ReturnType<typeof vi.fn>; toSportEdit: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
@@ -63,6 +63,7 @@ describe('SportDetailComponent', () => {
         season2025,
       ]),
       seasonByYear: vi.fn().mockReturnValue(seasonMap),
+      currentSeason: vi.fn().mockReturnValue(season2024),
     };
 
     playerStoreMock = {
@@ -147,7 +148,7 @@ describe('SportDetailComponent', () => {
     expect(dialogsMock.open).toHaveBeenCalled();
   });
 
-  it('should return 0 when sportId is null (Number() conversion)', () => {
+  it('should return null when sportId is null', () => {
     const nullRouteMock = {
       paramMap: of({ get: (_key: string) => null }),
       queryParamMap: of({ get: () => null }),
@@ -170,7 +171,7 @@ describe('SportDetailComponent', () => {
     const newFixture = TestBed.createComponent(SportDetailComponent);
     const newComponent = newFixture.componentInstance;
 
-    expect(newComponent.sportId()).toBe(0);
+    expect(newComponent.sportId()).toBeNull();
     expect(newComponent.sport()).toBe(null);
   });
 

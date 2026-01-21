@@ -1,9 +1,17 @@
 import { defineConfig } from 'vitest/config';
+import { ResourceLoader } from 'jsdom';
 
 export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        resources: new ResourceLoader({
+          fetch: async () => Buffer.from(''),
+        }),
+      },
+    },
     setupFiles: ['./src/test-setup.ts'],
     include: ['src/**/*.spec.ts'],
     coverage: {

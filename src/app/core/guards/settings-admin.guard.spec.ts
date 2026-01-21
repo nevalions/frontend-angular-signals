@@ -36,8 +36,8 @@ describe('settingsAdminGuard', () => {
   describe('Unauthenticated access', () => {
     it('should redirect unauthenticated user to home (any tab)', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => null) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => false) },
+        currentUser: vi.fn(() => null),
+        isAuthenticated: vi.fn(() => false),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -49,7 +49,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'dashboard']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -59,8 +59,8 @@ describe('settingsAdminGuard', () => {
   describe('Non-admin user accessing sensitive tabs', () => {
     it('should redirect non-admin from users tab', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockRegularUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockRegularUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -72,7 +72,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'users']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -80,8 +80,8 @@ describe('settingsAdminGuard', () => {
 
     it('should redirect non-admin from roles tab', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockRegularUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockRegularUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -93,7 +93,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'roles']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -101,8 +101,8 @@ describe('settingsAdminGuard', () => {
 
     it('should redirect non-admin from global-settings tab', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockRegularUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockRegularUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -114,7 +114,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'global-settings']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -124,8 +124,8 @@ describe('settingsAdminGuard', () => {
   describe('Non-admin user accessing non-sensitive tabs', () => {
     it('should allow non-admin user to access dashboard tab', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockRegularUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockRegularUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -134,15 +134,15 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'dashboard']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(result).toBe(true);
     });
 
     it('should allow non-admin user when no tab specified (defaults to dashboard)', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockRegularUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockRegularUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -151,7 +151,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map(),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(result).toBe(true);
     });
@@ -160,8 +160,8 @@ describe('settingsAdminGuard', () => {
   describe('Admin user accessing any tab', () => {
     it('should allow admin to access users tab', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockAdminUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockAdminUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -170,15 +170,15 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'users']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(result).toBe(true);
     });
 
     it('should allow admin to access roles tab', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockAdminUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockAdminUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -187,15 +187,15 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'roles']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(result).toBe(true);
     });
 
     it('should allow admin to access global-settings tab', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockAdminUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockAdminUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -204,15 +204,15 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'global-settings']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(result).toBe(true);
     });
 
     it('should allow admin to access dashboard tab', () => {
       const authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockAdminUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockAdminUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
@@ -221,7 +221,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'dashboard']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = settingsAdminGuard(mockRoute, null as any);
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
 
       expect(result).toBe(true);
     });

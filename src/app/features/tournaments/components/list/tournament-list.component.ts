@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TuiButton } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
@@ -11,6 +9,7 @@ import { SeasonStoreService } from '../../../seasons/services/season-store.servi
 import { SportStoreService } from '../../../sports/services/sport-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { Season } from '../../../seasons/models/season.model';
+import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
 
 
 @Component({
@@ -29,21 +28,9 @@ export class TournamentListComponent {
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
 
-  sportId = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('sportId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  sportId = createNumberParamSignal(this.route, 'sportId');
 
-  initialYear = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('year');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  initialYear = createNumberParamSignal(this.route, 'year');
 
   seasons = this.seasonStore.seasons;
 

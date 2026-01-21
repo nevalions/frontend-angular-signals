@@ -1,5 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { TestBed } from '@angular/core/testing';
+import { afterEach, describe, it, expect, beforeEach, vi } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
@@ -11,11 +13,13 @@ import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 
 describe('UserProfileComponent - Security Tests', () => {
   let component: UserProfileComponent;
+  let fixture: ComponentFixture<UserProfileComponent>;
   let router: { navigate: ReturnType<typeof vi.fn>; url: string; navigateByUrl: ReturnType<typeof vi.fn> };
-  let authServiceMock: { currentUser: { __v_isRef: boolean; __v_isReadonly: boolean; call: ReturnType<typeof vi.fn> }; isAuthenticated: { __v_isRef: boolean; call: ReturnType<typeof vi.fn> } };
+  let authServiceMock: { currentUser: ReturnType<typeof vi.fn>; isAuthenticated: ReturnType<typeof vi.fn> };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
   let dialogsMock: { open: ReturnType<typeof vi.fn> };
   let userStoreMock: { updateUserEmail: ReturnType<typeof vi.fn>; changePassword: ReturnType<typeof vi.fn>; deleteUser: ReturnType<typeof vi.fn> };
+  let httpMock: HttpTestingController;
 
   const mockAdminUser: UserInfo = {
     id: 1,
@@ -59,6 +63,8 @@ describe('UserProfileComponent - Security Tests', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: Router, useValue: router },
         { provide: TuiAlertService, useValue: alertsMock },
         { provide: TuiDialogService, useValue: dialogsMock },
@@ -69,27 +75,31 @@ describe('UserProfileComponent - Security Tests', () => {
     localStorage.clear();
   });
 
+  afterEach(() => {
+    const pending = httpMock.match(() => true);
+    pending.forEach((req) => req.flush({}));
+    httpMock.verify();
+  });
+
   describe('Unauthenticated access', () => {
     beforeEach(() => {
       authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => null) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => false) },
+        currentUser: vi.fn(() => null),
+        isAuthenticated: vi.fn(() => false),
       };
 
-      TestBed.configureTestingModule({
-        providers: [
-          { provide: AuthService, useValue: authServiceMock },
-          {
-            provide: ActivatedRoute,
-            useValue: {
-              snapshot: { paramMap: { get: (_key: string) => '1' } },
-              queryParamMap: of({ get: (_key: string) => null }),
-            },
-          },
-        ],
+      TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
+      TestBed.overrideProvider(ActivatedRoute, {
+        useValue: {
+          snapshot: { paramMap: { get: (_key: string) => '1' } },
+          queryParamMap: of({ get: (_key: string) => null }),
+        },
       });
 
-      component = TestBed.createComponent(UserProfileComponent).componentInstance;
+      httpMock = TestBed.inject(HttpTestingController);
+      fixture = TestBed.createComponent(UserProfileComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
     });
 
     it('should redirect unauthenticated user to home', () => {
@@ -107,24 +117,22 @@ describe('UserProfileComponent - Security Tests', () => {
   describe('Non-admin user access to other profiles', () => {
     beforeEach(() => {
       authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockRegularUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockRegularUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
-      TestBed.configureTestingModule({
-        providers: [
-          { provide: AuthService, useValue: authServiceMock },
-          {
-            provide: ActivatedRoute,
-            useValue: {
-              snapshot: { paramMap: { get: (_key: string) => '3' } },
-              queryParamMap: of({ get: (_key: string) => null }),
-            },
-          },
-        ],
+      TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
+      TestBed.overrideProvider(ActivatedRoute, {
+        useValue: {
+          snapshot: { paramMap: { get: (_key: string) => '3' } },
+          queryParamMap: of({ get: (_key: string) => null }),
+        },
       });
 
-      component = TestBed.createComponent(UserProfileComponent).componentInstance;
+      httpMock = TestBed.inject(HttpTestingController);
+      fixture = TestBed.createComponent(UserProfileComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
     });
 
     it('should redirect non-admin user viewing other user profile', () => {
@@ -149,24 +157,22 @@ describe('UserProfileComponent - Security Tests', () => {
   describe('Admin user access to any profile', () => {
     beforeEach(() => {
       authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockAdminUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockAdminUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
-      TestBed.configureTestingModule({
-        providers: [
-          { provide: AuthService, useValue: authServiceMock },
-          {
-            provide: ActivatedRoute,
-            useValue: {
-              snapshot: { paramMap: { get: (_key: string) => '3' } },
-              queryParamMap: of({ get: (_key: string) => null }),
-            },
-          },
-        ],
+      TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
+      TestBed.overrideProvider(ActivatedRoute, {
+        useValue: {
+          snapshot: { paramMap: { get: (_key: string) => '3' } },
+          queryParamMap: of({ get: (_key: string) => null }),
+        },
       });
 
-      component = TestBed.createComponent(UserProfileComponent).componentInstance;
+      httpMock = TestBed.inject(HttpTestingController);
+      fixture = TestBed.createComponent(UserProfileComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
     });
 
     it('should allow admin to view any user profile', () => {
@@ -192,24 +198,22 @@ describe('UserProfileComponent - Security Tests', () => {
   describe('Regular user viewing own profile', () => {
     beforeEach(() => {
       authServiceMock = {
-        currentUser: { __v_isRef: true, __v_isReadonly: true, call: vi.fn(() => mockRegularUser) },
-        isAuthenticated: { __v_isRef: true, call: vi.fn(() => true) },
+        currentUser: vi.fn(() => mockRegularUser),
+        isAuthenticated: vi.fn(() => true),
       };
 
-      TestBed.configureTestingModule({
-        providers: [
-          { provide: AuthService, useValue: authServiceMock },
-          {
-            provide: ActivatedRoute,
-            useValue: {
-              snapshot: { paramMap: { get: (_key: string) => '2' } },
-              queryParamMap: of({ get: (_key: string) => null }),
-            },
-          },
-        ],
+      TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
+      TestBed.overrideProvider(ActivatedRoute, {
+        useValue: {
+          snapshot: { paramMap: { get: (_key: string) => '2' } },
+          queryParamMap: of({ get: (_key: string) => null }),
+        },
       });
 
-      component = TestBed.createComponent(UserProfileComponent).componentInstance;
+      httpMock = TestBed.inject(HttpTestingController);
+      fixture = TestBed.createComponent(UserProfileComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
     });
 
     it('should allow user to view own profile', () => {

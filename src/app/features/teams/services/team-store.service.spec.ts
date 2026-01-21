@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TeamStoreService } from './team-store.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { Team, TeamCreate, TeamUpdate } from '../models/team.model';
@@ -21,6 +21,12 @@ describe('TeamStoreService', () => {
 
     service = TestBed.inject(TeamStoreService);
     httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    const pending = httpMock.match(() => true);
+    pending.forEach((req) => req.flush([]));
+    httpMock.verify();
   });
 
   it('should have teams signal', () => {

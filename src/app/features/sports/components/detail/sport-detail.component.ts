@@ -12,12 +12,13 @@ import { PlayerStoreService } from '../../../players/services/player-store.servi
 import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
-  import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
-  import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
-  import { SportTournamentsTabComponent } from './tabs/sport-tournaments-tab.component';
-  import { SportTeamsTabComponent } from './tabs/sport-teams-tab.component';
-  import { SportPlayersTabComponent } from './tabs/sport-players-tab.component';
-  import { SportPositionsTabComponent } from './tabs/sport-positions-tab.component';
+import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
+import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
+import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
+import { SportTournamentsTabComponent } from './tabs/sport-tournaments-tab.component';
+import { SportTeamsTabComponent } from './tabs/sport-teams-tab.component';
+import { SportPlayersTabComponent } from './tabs/sport-players-tab.component';
+import { SportPositionsTabComponent } from './tabs/sport-positions-tab.component';
 
 @Component({
   selector: 'app-sport-detail',
@@ -47,34 +48,19 @@ export class SportDetailComponent {
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
 
-  sportId = toSignal(
-    this.route.paramMap.pipe(map((params) => Number(params.get('id')))),
-    { initialValue: null }
-  );
+  sportId = createNumberParamSignal(this.route, 'id');
 
-  queryYear = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('year');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  queryYear = createNumberParamSignal(this.route, 'year', { source: 'queryParamMap' });
 
-  playersPage = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('players_page');
-      return val ? Number(val) : 1;
-    })),
-    { initialValue: 1 }
-  );
+  playersPage = createNumberParamSignal(this.route, 'players_page', {
+    source: 'queryParamMap',
+    defaultValue: 1,
+  });
 
-  playersPerPage = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('players_per_page');
-      return val ? Number(val) : 10;
-    })),
-    { initialValue: 10 }
-  );
+  playersPerPage = createNumberParamSignal(this.route, 'players_per_page', {
+    source: 'queryParamMap',
+    defaultValue: 10,
+  });
 
   sport = computed(() => {
     const id = this.sportId();

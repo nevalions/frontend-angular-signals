@@ -93,7 +93,11 @@ export class UserProfileComponent {
   canView = computed(() => {
     const userId = this.userId();
     const current = this.currentUser();
-    return userId === current?.id || current?.roles?.includes('admin');
+    if (userId === null || !current) {
+      return false;
+    }
+
+    return userId === current.id || current.roles?.includes('admin') === true;
   });
 
   private checkAccess = effect(() => {
