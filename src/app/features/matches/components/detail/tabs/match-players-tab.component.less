@@ -1,110 +1,306 @@
 @import '@taiga-ui/core/styles/taiga-ui-local';
 
 .match-players-tab {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  padding: 1rem 0;
+  padding: 1.5rem 0;
 
-  &__team-section {
-    width: 100%;
-  }
-
-  &__team-title {
-    margin: 0 0 1rem;
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
-
-  &__players-grid {
+  &__comparison {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  &__team-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 4rem;
+  }
+
+  &__vs-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--tui-text-tertiary);
+    background: var(--tui-background-neutral-1);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  &__team-card {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  &__team-header {
+    display: flex;
+    align-items: center;
     gap: 1rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--tui-border-normal);
+  }
+
+  &__team-avatar {
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &__roster-section {
+    margin-top: 1.25rem;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+  }
+
+  &__section-icon {
+    font-size: 1.125rem;
+    color: var(--tui-text-secondary);
+
+    &--starter {
+      color: var(--tui-status-positive);
+    }
+  }
+
+  &__section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--tui-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex: 1;
+  }
+
+  &__players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+
+    &--bench {
+      gap: 0.5rem;
+    }
   }
 
   &__player-card {
     display: flex;
-    flex-direction: column;
-    padding: 1rem;
+    align-items: center;
+    padding: 0.875rem 1rem;
     border-radius: 12px;
-    background: var(--tui-background-neutral-1);
-    border: 1px solid var(--tui-border-normal);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.2s ease;
+    cursor: default;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--tui-shadow-small);
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    &--bench {
+      padding: 0.625rem 0.875rem;
+      background: transparent;
+
+      &:hover {
+        background: var(--tui-background-neutral-1);
+        transform: translateX(2px);
+        box-shadow: none;
+      }
     }
   }
 
-  &__player-header {
+  &__player-main {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.75rem;
+    align-items: center;
+    gap: 0.875rem;
+    width: 100%;
+  }
+
+  &__player-number-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    background: linear-gradient(135deg, var(--tui-background-accent-1) 0%, var(--tui-background-accent-2) 100%);
+    color: var(--tui-text-primary-on-accent-1);
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+    &--bench {
+      width: 1.75rem;
+      height: 1.75rem;
+      font-size: 0.75rem;
+      background: var(--tui-background-neutral-2);
+      color: var(--tui-text-secondary);
+      box-shadow: none;
+    }
   }
 
   &__player-avatar {
     flex-shrink: 0;
+    border: 2px solid var(--tui-background-base);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  &__player-badges {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  &__starting-badge {
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  &__player-info {
+  &__player-details {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  &__player-number {
-    font-size: 0.875rem;
-    color: var(--tui-text-secondary);
-    font-weight: 500;
+    gap: 0.25rem;
+    min-width: 0;
+    flex: 1;
   }
 
   &__player-name {
-    margin: 0;
-    font-size: 1.125rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     color: var(--tui-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--bench {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
   }
 
-  &__position-badge {
+  &__position-chip {
     align-self: flex-start;
   }
 
-  &__empty {
-    grid-column: 1 / -1;
+  &__position-text {
+    font-size: 0.75rem;
+    color: var(--tui-text-tertiary);
+  }
+
+  &__empty-roster {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 3rem 1.5rem;
+    color: var(--tui-text-tertiary);
     text-align: center;
-    padding: 3rem 1rem;
-    color: var(--tui-text-secondary);
-    font-size: 1rem;
-    border-radius: 12px;
-    background: var(--tui-background-neutral-1);
+  }
+
+  &__empty-icon {
+    font-size: 2.5rem;
+    opacity: 0.4;
   }
 
   &__loading {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 4rem 2rem;
+    min-height: 300px;
+  }
+
+  &__loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
     color: var(--tui-text-secondary);
-    font-size: 1.125rem;
+  }
+
+  &__loading-icon {
+    font-size: 2rem;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
 @media @tui-mobile {
   .match-players-tab {
-    &__players-grid {
+    padding: 1rem 0;
+
+    &__comparison {
       grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    &__vs-divider {
+      padding: 0.5rem 0;
+    }
+
+    &__vs-text {
+      font-size: 1rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    &__team-card {
+      border-radius: 16px;
+    }
+
+    &__team-header {
+      gap: 0.75rem;
+      padding-bottom: 1rem;
+    }
+
+    &__section-header {
+      margin-bottom: 0.75rem;
+    }
+
+    &__players-list {
+      gap: 0.5rem;
+    }
+
+    &__player-card {
+      padding: 0.75rem;
+      border-radius: 10px;
+
+      &:hover {
+        transform: none;
+      }
+    }
+
+    &__player-main {
+      gap: 0.625rem;
+    }
+
+    &__player-number-badge {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.75rem;
+
+      &--bench {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.6875rem;
+      }
+    }
+
+    &__player-name {
+      font-size: 0.875rem;
+
+      &--bench {
+        font-size: 0.8125rem;
+      }
     }
   }
 }
