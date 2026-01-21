@@ -1,0 +1,42 @@
+<div class="input-number-with-buttons" [class.disabled]="disabled()">
+  @if (label()) {
+    <label class="label">{{ label() }}</label>
+  }
+
+  <div class="controls">
+    <button
+      tuiButton
+      type="button"
+      appearance="secondary"
+      size="s"
+      class="control-button"
+      [disabled]="!canDecrement()"
+      (click)="decrement()"
+    >
+      <tui-icon icon="@tui.minus" />
+    </button>
+
+    <tui-textfield class="number-input">
+      <input
+        tuiInputNumber
+        [ngModel]="value()"
+        [min]="min()"
+        [max]="max()"
+        [disabled]="disabled()"
+        (ngModelChange)="onValueChange($event)"
+      />
+    </tui-textfield>
+
+    <button
+      tuiButton
+      type="button"
+      appearance="secondary"
+      size="s"
+      class="control-button"
+      [disabled]="!canIncrement()"
+      (click)="increment()"
+    >
+      <tui-icon icon="@tui.plus" />
+    </button>
+  </div>
+</div>

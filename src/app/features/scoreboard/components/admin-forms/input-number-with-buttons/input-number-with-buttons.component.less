@@ -1,0 +1,37 @@
+.input-number-with-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--tui-text-secondary);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.control-button {
+  flex-shrink: 0;
+  min-width: 2rem;
+  padding: 0;
+}
+
+.number-input {
+  width: 5rem;
+  text-align: center;
+
+  input {
+    text-align: center;
+  }
+}
