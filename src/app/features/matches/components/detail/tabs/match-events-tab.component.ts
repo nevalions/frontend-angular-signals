@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, computed, signal } from '@an
 import { CommonModule } from '@angular/common';
 import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
 import { TuiBadge, TuiChip, TuiStatus, TuiSegmented } from '@taiga-ui/kit';
-import { TuiIcon, TuiTitle, TuiAppearance, TuiSurface, TuiButton } from '@taiga-ui/core';
+import { TuiIcon, TuiTitle, TuiAppearance, TuiSurface } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { FormsModule } from '@angular/forms';
 
@@ -32,7 +32,6 @@ interface MatchEvent {
     TuiTitle,
     TuiAppearance,
     TuiSurface,
-    TuiButton,
     TuiCardLarge,
     TuiHeader,
   ],

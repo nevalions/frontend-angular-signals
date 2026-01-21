@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatchStoreService } from '../../../services/match-store.service';
 import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
 import { MatchStats } from '../../../models/match-stats.model';
-import { TuiProgress, TuiBadge, TuiAvatar, TuiChip } from '@taiga-ui/kit';
+import { TuiProgress, TuiAvatar } from '@taiga-ui/kit';
 import { TuiTitle, TuiIcon, TuiAppearance, TuiSurface } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config/api.constants';
@@ -30,9 +30,7 @@ interface StatCategory {
   imports: [
     CommonModule,
     TuiProgress,
-    TuiBadge,
     TuiAvatar,
-    TuiChip,
     TuiTitle,
     TuiIcon,
     TuiAppearance,
@@ -287,8 +285,8 @@ export class MatchStatsTabComponent implements OnInit {
     }
   }
 
-  getTeamLogo(team: { logo_url?: string | null }): string | null {
-    return team.logo_url ? buildStaticUrlUtil(team.logo_url) : null;
+  getTeamLogo(team: { team_logo_url?: string | null }): string | null {
+    return team.team_logo_url ? buildStaticUrlUtil(team.team_logo_url) : null;
   }
 
   getInitials(name: string | null | undefined): string {

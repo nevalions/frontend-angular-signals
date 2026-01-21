@@ -1,9 +1,5 @@
 @import '@taiga-ui/core/styles/taiga-ui-local';
 
-// Team color variables
-@team-a-color: var(--tui-chart-categorical-01);
-@team-b-color: var(--tui-chart-categorical-08);
-
 .match-stats-tab {
   padding: 1.5rem 0;
   display: flex;
@@ -30,15 +26,15 @@
 
     &--a {
       .match-stats-tab__team-logo {
-        border: 3px solid @team-a-color;
-        box-shadow: 0 4px 12px fade(@team-a-color, 30%);
+        border: 3px solid var(--tui-chart-categorical-01);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
       }
     }
 
     &--b {
       .match-stats-tab__team-logo {
-        border: 3px solid @team-b-color;
-        box-shadow: 0 4px 12px fade(@team-b-color, 30%);
+        border: 3px solid var(--tui-chart-categorical-08);
+        box-shadow: 0 4px 12px rgba(245, 108, 108, 0.3);
       }
     }
   }
@@ -102,11 +98,11 @@
     border-radius: 3px;
 
     &--a {
-      background: @team-a-color;
+      background: var(--tui-chart-categorical-01);
     }
 
     &--b {
-      background: @team-b-color;
+      background: var(--tui-chart-categorical-08);
     }
   }
 
@@ -183,12 +179,12 @@
     min-width: 2px;
 
     &--a {
-      background: @team-a-color;
+      background: var(--tui-chart-categorical-01);
       opacity: 0.5;
     }
 
     &--b {
-      background: @team-b-color;
+      background: var(--tui-chart-categorical-08);
       opacity: 0.5;
     }
 
@@ -208,7 +204,7 @@
       color: var(--tui-text-secondary);
 
       &.match-stats-tab__value--winner {
-        color: @team-a-color;
+        color: var(--tui-chart-categorical-01);
       }
     }
 
@@ -216,7 +212,7 @@
       color: var(--tui-text-secondary);
 
       &.match-stats-tab__value--winner {
-        color: @team-b-color;
+        color: var(--tui-chart-categorical-08);
       }
     }
   }

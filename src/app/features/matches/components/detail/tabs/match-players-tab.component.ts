@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
 import { TuiAvatar, TuiBadge, TuiChip, TuiStatus } from '@taiga-ui/kit';
 import { TuiAppearance, TuiIcon, TuiSurface, TuiTitle } from '@taiga-ui/core';
-import { TuiCardLarge, TuiCardMedium, TuiCell, TuiHeader } from '@taiga-ui/layout';
+import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config/api.constants';
 
 @Component({
@@ -21,8 +21,6 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
     TuiAppearance,
     TuiSurface,
     TuiCardLarge,
-    TuiCardMedium,
-    TuiCell,
     TuiHeader,
   ],
   template: `
@@ -292,8 +290,8 @@ export class MatchPlayersTabComponent {
     return photoUrl ? this.playerPhotoUrl(photoUrl) : null;
   }
 
-  getTeamLogo(team: { logo_url?: string | null }): string | null {
-    return team.logo_url ? buildStaticUrlUtil(team.logo_url) : null;
+  getTeamLogo(team: { team_logo_url?: string | null }): string | null {
+    return team.team_logo_url ? buildStaticUrlUtil(team.team_logo_url) : null;
   }
 
   getInitials(name: string | null | undefined): string {
