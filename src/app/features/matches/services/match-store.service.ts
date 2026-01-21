@@ -168,4 +168,8 @@ export class MatchStoreService {
   addPlayerToMatch(data: PlayerMatchCreate): Observable<PlayerMatch> {
     return this.apiService.post<PlayerMatch>('/api/players_match/', data);
   }
+
+  deletePlayerMatch(playerMatchId: number): Observable<void> {
+    return this.apiService.delete('/api/players_match', playerMatchId);
+  }
 }

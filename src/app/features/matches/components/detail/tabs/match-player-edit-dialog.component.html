@@ -1,0 +1,64 @@
+<div class="match-player-dialog">
+  <header class="match-player-dialog__header">
+    <div>
+      <h2 class="match-player-dialog__title">
+        {{ (player().person?.second_name || '') + ' ' + (player().person?.first_name || '') | uppercase }}
+      </h2>
+      <p class="match-player-dialog__subtitle">Edit match player</p>
+    </div>
+  </header>
+
+  <div class="match-player-dialog__content">
+    <div class="match-player-dialog__field">
+      <label class="match-player-dialog__label">Match number</label>
+      <tui-textfield>
+        <input
+          tuiTextfield
+          type="text"
+          placeholder="Enter number"
+          [ngModel]="playerNumber()"
+          (ngModelChange)="playerNumber.set($event)" />
+      </tui-textfield>
+    </div>
+
+    <div class="match-player-dialog__field">
+      <label class="match-player-dialog__label">Position</label>
+      <tui-textfield tuiChevron [stringify]="stringifyPositionId">
+        <input
+          tuiSelect
+          placeholder="Select position"
+          [ngModel]="selectedPositionId()"
+          (ngModelChange)="selectedPositionId.set($event)"
+          [disabled]="positionsLoading()" />
+        <tui-data-list *tuiTextfieldDropdown size="l">
+          <button new tuiOption type="button" [value]="null">No position</button>
+          @for (position of positions(); track position.id) {
+            <button new tuiOption type="button" [value]="position.id">
+              {{ position.title }}
+            </button>
+          }
+        </tui-data-list>
+      </tui-textfield>
+      @if (positionsLoading()) {
+        <div class="match-player-dialog__hint">Loading positions...</div>
+      } @else if (positionsError()) {
+        <div class="match-player-dialog__error">{{ positionsError() }}</div>
+      }
+    </div>
+  </div>
+
+  <div class="match-player-dialog__actions">
+    <button
+      type="button"
+      tuiButton
+      appearance="flat"
+      class="match-player-dialog__delete"
+      (click)="delete()">
+      Remove from match
+    </button>
+    <div class="match-player-dialog__actions-right">
+      <button type="button" tuiButton appearance="flat" (click)="close()">Close</button>
+      <button type="button" tuiButton appearance="primary" (click)="save()">Save</button>
+    </div>
+  </div>
+</div>

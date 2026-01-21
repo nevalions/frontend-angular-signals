@@ -227,7 +227,7 @@
     padding: 0.875rem 1rem;
     border-radius: 12px;
     transition: all 0.2s ease;
-    cursor: default;
+    cursor: pointer;
 
     &:hover {
       transform: translateX(4px);
@@ -258,6 +258,14 @@
     align-items: flex-start;
     gap: 0.25rem;
     min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  &__name-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
   }
 
   &__player-switch {
@@ -322,6 +330,39 @@
     &--bench {
       gap: 0.2rem;
     }
+  }
+
+  &__number-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+    min-width: 3.7rem;
+
+    &--bench {
+      min-width: 3.1rem;
+    }
+  }
+
+  &__duplicate-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.05rem;
+    height: 1.05rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    padding: 0;
+    border-radius: 999px;
+    background: var(--tui-background-accent-2);
+    color: var(--tui-text-primary-on-accent-2);
+  }
+
+  &__player-number-badge--duplicate {
+    background: var(--tui-background-accent-2);
+    color: var(--tui-text-primary-on-accent-2);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   }
 
   &__position-text--under-number {

@@ -60,9 +60,10 @@
    - Only shown if team has starters
    - Green positive badge showing starter count
    - Larger player cards
-   - Player number badge (visible)
-   - Player name (full name)
-   - Position chip with accent styling
+- Player number badge (visible)
+- Player name (full name)
+- Position chip with accent styling
+- Duplicate number badge (if same match number exists)
 
 - Bench section (👥 icon with users)
    - Only shown if team has bench players
@@ -70,7 +71,16 @@
    - Smaller, more compact player cards
    - Player number badge (smaller)
    - Player name (smaller text)
-   - Position as plain text
+- Position as plain text
+
+### Player Edit Dialog
+- Click player card to open dialog
+- Inputs:
+  - Player number (match number)
+  - Position (select from sport positions)
+- Actions:
+  - Save changes
+  - Delete from match (with confirmation)
 
 ### Empty State
 - No players registered message when team has no players
@@ -98,6 +108,18 @@
 - Includes teams data (team_a, team_b) with logos and names
 - [Interface: `ComprehensiveMatchData`](../../../../src/app/features/matches/models/comprehensive-match.model.ts)
 - See [Match Detail Schema](../match-detail.md) for full API endpoint details
+
+**For edit dialog:**
+
+- Match player id
+- Match number (match_number)
+- Match position id (match_position_id)
+- [Backend API Endpoint] `PUT /api/players_match/{player_match_id}/`
+- [Backend API Endpoint] `DELETE /api/players_match/{player_match_id}/`
+
+**For position select:**
+
+- [Backend API Endpoint] `GET /api/sports/id/{sport_id}/positions`
 
 **For available players per team:**
 

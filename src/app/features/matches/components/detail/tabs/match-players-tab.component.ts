@@ -3,14 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ComprehensiveMatchData, PlayerMatchWithDetails } from '../../../models/comprehensive-match.model';
 import { MatchStoreService } from '../../../services/match-store.service';
-import { TuiAvatar, TuiBadge, TuiChip, TuiStatus, TuiSwitch, TuiChevron, TuiComboBox, TuiFilterByInputPipe } from '@taiga-ui/kit';
-import { TuiAppearance, TuiIcon, TuiSurface, TuiTitle, TuiAlertService, TuiButton, TuiTextfield, TuiDataList } from '@taiga-ui/core';
+import { TuiAvatar, TuiBadge, TuiStatus, TuiSwitch, TuiChevron, TuiComboBox, TuiFilterByInputPipe } from '@taiga-ui/kit';
+import { TuiAppearance, TuiIcon, TuiSurface, TuiTitle, TuiAlertService, TuiButton, TuiTextfield, TuiDataList, tuiDialog } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config/api.constants';
 import { PlayerMatchCreate, PlayerMatchUpdate } from '../../../models/player-match.model';
 import { MatchAvailablePlayer } from '../../../models/available-player.model';
 import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
 import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
+import { MatchPlayerEditDialogComponent, MatchPlayerEditDialogResult, MatchPlayerEditDialogData } from './match-player-edit-dialog.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-match-players-tab',
@@ -21,7 +23,6 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
     CommonModule,
     TuiAvatar,
     TuiBadge,
-    TuiChip,
     TuiStatus,
     TuiTitle,
     TuiIcon,
@@ -169,11 +170,18 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                   </div>
                   <div class="match-players-tab__players-list">
                     @for (player of teamAStarters(); track player.id) {
-                        <div tuiSurface="neutral" class="match-players-tab__player-card">
+                        <div
+                          tuiSurface="neutral"
+                          class="match-players-tab__player-card"
+                          (click)="openPlayerDialog(player)">
                           <div class="match-players-tab__player-main">
                           <div class="match-players-tab__player-meta">
-                            <div class="match-players-tab__player-number-badge">
-                              {{ player.player_team_tournament?.player_number || '-' }}
+                            <div class="match-players-tab__number-row">
+                              <div
+                                class="match-players-tab__player-number-badge"
+                                [class.match-players-tab__player-number-badge--duplicate]="hasDuplicateNumber(player, 'A')">
+                                {{ getPlayerNumber(player) }}
+                              </div>
                             </div>
                             @if (player.position) {
                               <span class="match-players-tab__position-text match-players-tab__position-text--under-number">
@@ -182,23 +190,29 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             }
                           </div>
                           <div class="match-players-tab__player-details">
-                            <span class="match-players-tab__player-name">
-                              {{ getFullName(player.person).toUpperCase() }}
-                            </span>
-                            <div class="match-players-tab__player-switch">
-                              <input
-                                type="checkbox"
-                                tuiSwitch
-                                [ngModel]="player.is_starting || false"
-                                (ngModelChange)="togglePlayerStarting(player.id, $event)"
-                                class="match-players-tab__switch" 
-                              />
-                              <span class="match-players-tab__player-switch-label">
-                                {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
+                            <div class="match-players-tab__name-row">
+                              <span class="match-players-tab__player-name">
+                                {{ getFullName(player.person).toUpperCase() }}
                               </span>
+                              @if (hasDuplicateNumber(player, 'A')) {
+                                <tui-badge appearance="warning" size="s" class="match-players-tab__duplicate-badge">!</tui-badge>
+                              }
                             </div>
+                          <div class="match-players-tab__player-switch">
+                            <input
+                              type="checkbox"
+                              tuiSwitch
+                              [ngModel]="player.is_starting || false"
+                              (ngModelChange)="togglePlayerStarting(player.id, $event)"
+                              (click)="$event.stopPropagation()"
+                              class="match-players-tab__switch" 
+                            />
+                            <span class="match-players-tab__player-switch-label">
+                              {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
+                            </span>
                           </div>
                         </div>
+                      </div>
                       </div>
                     }
                   </div>
@@ -217,11 +231,18 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                   </div>
                   <div class="match-players-tab__players-list match-players-tab__players-list--bench">
                     @for (player of teamABench(); track player.id) {
-                      <div tuiSurface class="match-players-tab__player-card match-players-tab__player-card--bench">
+                      <div
+                        tuiSurface
+                        class="match-players-tab__player-card match-players-tab__player-card--bench"
+                        (click)="openPlayerDialog(player)">
                         <div class="match-players-tab__player-main">
                           <div class="match-players-tab__player-meta match-players-tab__player-meta--bench">
-                            <div class="match-players-tab__player-number-badge match-players-tab__player-number-badge--bench">
-                              {{ player.player_team_tournament?.player_number || '-' }}
+                            <div class="match-players-tab__number-row match-players-tab__number-row--bench">
+                              <div
+                                class="match-players-tab__player-number-badge match-players-tab__player-number-badge--bench"
+                                [class.match-players-tab__player-number-badge--duplicate]="hasDuplicateNumber(player, 'A')">
+                                {{ getPlayerNumber(player) }}
+                              </div>
                             </div>
                             @if (player.position) {
                               <span class="match-players-tab__position-text match-players-tab__position-text--under-number">
@@ -230,23 +251,29 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             }
                           </div>
                           <div class="match-players-tab__player-details">
-                            <span class="match-players-tab__player-name match-players-tab__player-name--bench">
-                              {{ getFullName(player.person).toUpperCase() }}
-                            </span>
-                            <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
-                              <input
-                                type="checkbox"
-                                tuiSwitch
-                                [ngModel]="player.is_starting || false"
-                                (ngModelChange)="togglePlayerStarting(player.id, $event)"
-                                class="match-players-tab__switch"
-                              />
-                              <span class="match-players-tab__player-switch-label">
-                                {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
+                            <div class="match-players-tab__name-row">
+                              <span class="match-players-tab__player-name match-players-tab__player-name--bench">
+                                {{ getFullName(player.person).toUpperCase() }}
                               </span>
+                              @if (hasDuplicateNumber(player, 'A')) {
+                                <tui-badge appearance="warning" size="s" class="match-players-tab__duplicate-badge">!</tui-badge>
+                              }
                             </div>
+                          <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
+                            <input
+                              type="checkbox"
+                              tuiSwitch
+                              [ngModel]="player.is_starting || false"
+                              (ngModelChange)="togglePlayerStarting(player.id, $event)"
+                              (click)="$event.stopPropagation()"
+                              class="match-players-tab__switch"
+                            />
+                            <span class="match-players-tab__player-switch-label">
+                              {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
+                            </span>
                           </div>
                         </div>
+                      </div>
                       </div>
                     }
                   </div>
@@ -394,11 +421,18 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                   </div>
                   <div class="match-players-tab__players-list">
                     @for (player of teamBStarters(); track player.id) {
-                        <div tuiSurface="neutral" class="match-players-tab__player-card">
+                        <div
+                          tuiSurface="neutral"
+                          class="match-players-tab__player-card"
+                          (click)="openPlayerDialog(player)">
                           <div class="match-players-tab__player-main">
                           <div class="match-players-tab__player-meta">
-                            <div class="match-players-tab__player-number-badge">
-                              {{ player.player_team_tournament?.player_number || '-' }}
+                            <div class="match-players-tab__number-row">
+                              <div
+                                class="match-players-tab__player-number-badge"
+                                [class.match-players-tab__player-number-badge--duplicate]="hasDuplicateNumber(player, 'B')">
+                                {{ getPlayerNumber(player) }}
+                              </div>
                             </div>
                             @if (player.position) {
                               <span class="match-players-tab__position-text match-players-tab__position-text--under-number">
@@ -407,23 +441,29 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             }
                           </div>
                           <div class="match-players-tab__player-details">
-                            <span class="match-players-tab__player-name">
-                              {{ getFullName(player.person).toUpperCase() }}
-                            </span>
-                            <div class="match-players-tab__player-switch">
-                              <input
-                                type="checkbox"
-                                tuiSwitch
-                                [ngModel]="player.is_starting || false"
-                                (ngModelChange)="togglePlayerStarting(player.id, $event)"
-                                class="match-players-tab__switch"
-                              />
-                              <span class="match-players-tab__player-switch-label">
-                                {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
+                            <div class="match-players-tab__name-row">
+                              <span class="match-players-tab__player-name">
+                                {{ getFullName(player.person).toUpperCase() }}
                               </span>
+                              @if (hasDuplicateNumber(player, 'B')) {
+                                <tui-badge appearance="warning" size="s" class="match-players-tab__duplicate-badge">!</tui-badge>
+                              }
                             </div>
+                          <div class="match-players-tab__player-switch">
+                            <input
+                              type="checkbox"
+                              tuiSwitch
+                              [ngModel]="player.is_starting || false"
+                              (ngModelChange)="togglePlayerStarting(player.id, $event)"
+                              (click)="$event.stopPropagation()"
+                              class="match-players-tab__switch"
+                            />
+                            <span class="match-players-tab__player-switch-label">
+                              {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
+                            </span>
                           </div>
                         </div>
+                      </div>
                       </div>
                     }
                   </div>
@@ -442,11 +482,18 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                   </div>
                   <div class="match-players-tab__players-list match-players-tab__players-list--bench">
                     @for (player of teamBBench(); track player.id) {
-                      <div tuiSurface class="match-players-tab__player-card match-players-tab__player-card--bench">
+                      <div
+                        tuiSurface
+                        class="match-players-tab__player-card match-players-tab__player-card--bench"
+                        (click)="openPlayerDialog(player)">
                         <div class="match-players-tab__player-main">
                           <div class="match-players-tab__player-meta match-players-tab__player-meta--bench">
-                            <div class="match-players-tab__player-number-badge match-players-tab__player-number-badge--bench">
-                              {{ player.player_team_tournament?.player_number || '-' }}
+                            <div class="match-players-tab__number-row match-players-tab__number-row--bench">
+                              <div
+                                class="match-players-tab__player-number-badge match-players-tab__player-number-badge--bench"
+                                [class.match-players-tab__player-number-badge--duplicate]="hasDuplicateNumber(player, 'B')">
+                                {{ getPlayerNumber(player) }}
+                              </div>
                             </div>
                             @if (player.position) {
                               <span class="match-players-tab__position-text match-players-tab__position-text--under-number">
@@ -455,23 +502,29 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             }
                           </div>
                           <div class="match-players-tab__player-details">
-                            <span class="match-players-tab__player-name match-players-tab__player-name--bench">
-                              {{ getFullName(player.person).toUpperCase() }}
-                            </span>
-                            <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
-                              <input
-                                type="checkbox"
-                                tuiSwitch
-                                [ngModel]="player.is_starting || false"
-                                (ngModelChange)="togglePlayerStarting(player.id, $event)"
-                                class="match-players-tab__switch"
-                              />
-                              <span class="match-players-tab__player-switch-label">
-                                {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
+                            <div class="match-players-tab__name-row">
+                              <span class="match-players-tab__player-name match-players-tab__player-name--bench">
+                                {{ getFullName(player.person).toUpperCase() }}
                               </span>
+                              @if (hasDuplicateNumber(player, 'B')) {
+                                <tui-badge appearance="warning" size="s" class="match-players-tab__duplicate-badge">!</tui-badge>
+                              }
                             </div>
+                          <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
+                            <input
+                              type="checkbox"
+                              tuiSwitch
+                              [ngModel]="player.is_starting || false"
+                              (ngModelChange)="togglePlayerStarting(player.id, $event)"
+                              (click)="$event.stopPropagation()"
+                              class="match-players-tab__switch"
+                            />
+                            <span class="match-players-tab__player-switch-label">
+                              {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
+                            </span>
                           </div>
                         </div>
+                      </div>
                       </div>
                     }
                   </div>
@@ -503,6 +556,12 @@ export class MatchPlayersTabComponent {
   comprehensiveData = input<ComprehensiveMatchData | null>(null);
   private matchStore = inject(MatchStoreService);
   private readonly alerts = inject(TuiAlertService);
+
+  private readonly editPlayerDialog = tuiDialog(MatchPlayerEditDialogComponent, {
+    size: 'm',
+    dismissible: true,
+    label: 'Edit match player',
+  }) as unknown as (data: MatchPlayerEditDialogData) => Observable<MatchPlayerEditDialogResult>;
 
   // Local state for players to support optimistic updates
   private localPlayersData = signal<PlayerMatchWithDetails[]>([]);
@@ -573,9 +632,9 @@ export class MatchPlayersTabComponent {
     return fullName || 'Unknown';
   }
 
-  compareByPlayerNumber(a: any, b: any): number {
-    const numA = a.player_team_tournament?.player_number || null;
-    const numB = b.player_team_tournament?.player_number || null;
+  compareByPlayerNumber(a: PlayerMatchWithDetails, b: PlayerMatchWithDetails): number {
+    const numA = this.getPlayerNumberValue(a);
+    const numB = this.getPlayerNumberValue(b);
 
     if (numA === null && numB === null) return 0;
     if (numA === null) return 1;
@@ -585,6 +644,14 @@ export class MatchPlayersTabComponent {
     const numberB = parseInt(numB.toString(), 10);
 
     return numberA - numberB;
+  }
+
+  getPlayerNumber(player: PlayerMatchWithDetails): string {
+    return player.match_number || player.player_team_tournament?.player_number || '-';
+  }
+
+  private getPlayerNumberValue(player: PlayerMatchWithDetails): string | null {
+    return player.match_number || player.player_team_tournament?.player_number || null;
   }
 
   compareByPlayerName(a: PlayerMatchWithDetails, b: PlayerMatchWithDetails): number {
@@ -599,6 +666,40 @@ export class MatchPlayersTabComponent {
     } else {
       this.teamBSort.set(sort);
     }
+  }
+
+  openPlayerDialog(player: PlayerMatchWithDetails): void {
+    const sportId = this.getSportId();
+    if (!sportId) {
+      this.alerts.open('Sport is not available for this match', { label: 'Error', appearance: 'negative' }).subscribe();
+      return;
+    }
+
+    const teamPlayers = this.getTeamPlayersFor(player);
+    this.editPlayerDialog({ player, sportId, teamPlayers }).subscribe((result: MatchPlayerEditDialogResult | void) => {
+      if (result?.updated || result?.deleted) {
+        this.refreshMatchPlayers();
+        this.loadAvailablePlayers('A');
+        this.loadAvailablePlayers('B');
+      }
+    });
+  }
+
+  hasDuplicateNumber(player: PlayerMatchWithDetails, team: 'A' | 'B'): boolean {
+    const number = this.getPlayerNumberValue(player);
+    if (!number) return false;
+    const players = team === 'A' ? this.teamAPlayers() : this.teamBPlayers();
+    const matches = players.filter(p => this.getPlayerNumberValue(p) === number);
+    return matches.length > 1;
+  }
+
+  private getTeamPlayersFor(player: PlayerMatchWithDetails): PlayerMatchWithDetails[] {
+    const teamId = player.team_id ?? player.player_team_tournament?.team_id ?? null;
+    const data = this.comprehensiveData();
+    if (!data || !teamId) return [];
+    if (teamId === data.teams.team_a.id) return this.teamAPlayers();
+    if (teamId === data.teams.team_b.id) return this.teamBPlayers();
+    return [];
   }
 
   private sortTeamPlayers(players: PlayerMatchWithDetails[], sort: 'number' | 'name'): PlayerMatchWithDetails[] {
@@ -706,6 +807,17 @@ export class MatchPlayersTabComponent {
 
   private getMatchId(): number | null {
     return this.comprehensiveData()?.match?.id ?? null;
+  }
+
+  private getSportId(): number | null {
+    const data = this.comprehensiveData();
+    if (!data) return null;
+    return (
+      data.match?.tournament?.sport_id ??
+      data.teams.team_a?.sport_id ??
+      data.teams.team_b?.sport_id ??
+      null
+    );
   }
 
   private getTeamId(team: 'A' | 'B'): number | null {
