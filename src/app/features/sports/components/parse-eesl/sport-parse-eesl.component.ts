@@ -11,7 +11,6 @@ import { SportStoreService } from '../../services/sport-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { Tournament } from '../../../tournaments/models/tournament.model';
 import { Sport } from '../../models/sport.model';
-import { Season } from '../../../seasons/models/season.model';
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 
 @Component({

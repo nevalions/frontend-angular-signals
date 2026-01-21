@@ -8,11 +8,16 @@ import { LoginDialogComponent } from './login-dialog.component';
 import { AuthService } from '../../services/auth.service';
 import { LoginResponse } from '../../models/login-response.model';
 
+interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
 describe('LoginDialogComponent', () => {
   let component: LoginDialogComponent;
   let fixture: ComponentFixture<LoginDialogComponent>;
   let authServiceMock: {
-    login: (credentials: any) => Observable<LoginResponse>;
+    login: (credentials: LoginCredentials) => Observable<LoginResponse>;
   };
   let alertsMock: { open: ReturnType<typeof vi.fn> };
   let dialogsMock: { open: ReturnType<typeof vi.fn> };
@@ -20,12 +25,12 @@ describe('LoginDialogComponent', () => {
 
   beforeEach(() => {
     authServiceMock = {
-      login: vi.fn((credentials: any) =>
+      login: vi.fn(() =>
         new Observable<LoginResponse>(subscriber => {
           subscriber.next({ access_token: 'test-token-123', token_type: 'bearer' });
           subscriber.complete();
         })
-      ) as any,
+      ) as typeof authServiceMock.login,
     };
 
     alertsMock = {

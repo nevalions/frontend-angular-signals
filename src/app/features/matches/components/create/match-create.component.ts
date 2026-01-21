@@ -4,7 +4,7 @@ import { TuiAlertService } from '@taiga-ui/core';
 import { MatchStoreService } from '../../services/match-store.service';
 import { TournamentStoreService } from '../../../tournaments/services/tournament-store.service';
 import { SponsorStoreService } from '../../../sponsors/services/sponsor-store.service';
-import { MatchCreate, MatchUpdate, MatchWithDetails, Team } from '../../models/match.model';
+import { MatchCreate, MatchUpdate, Team } from '../../models/match.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withCreateAlert } from '../../../../core/utils/alert-helper.util';
 import { MatchFormComponent, MatchFormMode } from '../../../../shared/components/match-form/match-form.component';

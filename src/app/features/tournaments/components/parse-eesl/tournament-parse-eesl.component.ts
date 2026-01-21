@@ -9,7 +9,6 @@ import { SportStoreService } from '../../../sports/services/sport-store.service'
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { Tournament } from '../../models/tournament.model';
 import { Sport } from '../../../sports/models/sport.model';
-import { Season } from '../../../seasons/models/season.model';
 import { Team } from '../../../teams/models/team.model';
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
 

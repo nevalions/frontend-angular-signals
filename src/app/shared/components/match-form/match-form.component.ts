@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, model, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { type TuiStringHandler } from '@taiga-ui/cdk';
 import { TuiButton, TuiDataList, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
-import { MatchCreate, MatchUpdate, MatchWithDetails, Team, Tournament } from '../../../features/matches/models/match.model';
+import { MatchCreate, MatchUpdate, MatchWithDetails, Team } from '../../../features/matches/models/match.model';
 
 export type MatchFormMode = 'create' | 'edit';
 
@@ -18,8 +18,8 @@ export interface MatchFormInputs {
 }
 
 export interface MatchFormOutputs {
-  submit: (data: MatchCreate | MatchUpdate) => void;
-  cancel: () => void;
+  submitted: (data: MatchCreate | MatchUpdate) => void;
+  cancelled: () => void;
 }
 
 @Component({
@@ -41,8 +41,8 @@ export class MatchFormComponent {
   match = input<MatchWithDetails | null>(null);
   loading = input(false);
 
-  submit = output<MatchCreate | MatchUpdate>();
-  cancel = output<void>();
+  submitted = output<MatchCreate | MatchUpdate>();
+  cancelled = output<void>();
 
   matchForm = this.fb.group({
     team_a_id: [null as number | null, [Validators.required]],
@@ -137,7 +137,7 @@ export class MatchFormComponent {
           sponsor_line_id: formData.sponsor_line_id || null,
           isprivate: false,
         };
-        this.submit.emit(data);
+        this.submitted.emit(data);
       } else {
         const data: MatchUpdate = {
           team_a_id: formData.team_a_id ?? undefined,
@@ -148,12 +148,12 @@ export class MatchFormComponent {
           main_sponsor_id: formData.main_sponsor_id ?? undefined,
           sponsor_line_id: formData.sponsor_line_id ?? undefined,
         };
-        this.submit.emit(data);
+        this.submitted.emit(data);
       }
     }
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.cancelled.emit();
   }
 }

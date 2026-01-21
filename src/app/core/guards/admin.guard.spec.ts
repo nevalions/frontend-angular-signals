@@ -4,6 +4,7 @@ import { provideRouter, Router } from '@angular/router';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { UserInfo } from '../../features/auth/models/login-response.model';
 import { adminGuard } from './admin.guard';
+import type { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 describe('adminGuard', () => {
   const mockAdminUser: UserInfo = {
@@ -45,7 +46,7 @@ describe('adminGuard', () => {
       const router = TestBed.inject(Router);
       const navigateSpy = vi.spyOn(router, 'createUrlTree');
 
-      const result = TestBed.runInInjectionContext(() => adminGuard(null as any, null as any));
+      const result = TestBed.runInInjectionContext(() => adminGuard(undefined as unknown as ActivatedRouteSnapshot, undefined as unknown as RouterStateSnapshot));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -64,7 +65,7 @@ describe('adminGuard', () => {
       const router = TestBed.inject(Router);
       const navigateSpy = vi.spyOn(router, 'createUrlTree');
 
-      const result = TestBed.runInInjectionContext(() => adminGuard(null as any, null as any));
+      const result = TestBed.runInInjectionContext(() => adminGuard(undefined as unknown as ActivatedRouteSnapshot, undefined as unknown as RouterStateSnapshot));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -80,7 +81,7 @@ describe('adminGuard', () => {
 
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
 
-      const result = TestBed.runInInjectionContext(() => adminGuard(null as any, null as any));
+      const result = TestBed.runInInjectionContext(() => adminGuard(undefined as unknown as ActivatedRouteSnapshot, undefined as unknown as RouterStateSnapshot));
 
       expect(result).toBe(true);
     });

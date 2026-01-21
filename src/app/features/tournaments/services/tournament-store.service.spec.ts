@@ -88,7 +88,7 @@ describe('TournamentStoreService', () => {
 
       service.updateTournament(2, tournamentData).subscribe();
 
-      const req = httpMock.expectOne(buildApiUrl('/api/tournaments/2'));
+      const req = httpMock.expectOne(buildApiUrl('/api/tournaments/2/'));
       req.flush({ id: 2, title: 'Updated Tournament', season_id: 1, sport_id: 1, isprivate: false } as Tournament);
 
       expect(req.request.method).toBe('PUT');
@@ -104,7 +104,7 @@ describe('TournamentStoreService', () => {
         error: (err) => expect(err).toBeTruthy(),
       });
 
-      const req = httpMock.expectOne(buildApiUrl('/api/tournaments/2'));
+      const req = httpMock.expectOne(buildApiUrl('/api/tournaments/2/'));
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 
       expect(req.request.method).toBe('PUT');

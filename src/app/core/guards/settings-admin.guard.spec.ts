@@ -4,6 +4,7 @@ import { provideRouter, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { UserInfo } from '../../features/auth/models/login-response.model';
 import { settingsAdminGuard } from './settings-admin.guard';
+import type { RouterStateSnapshot } from '@angular/router';
 
 describe('settingsAdminGuard', () => {
   const mockAdminUser: UserInfo = {
@@ -49,7 +50,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'dashboard']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -72,7 +73,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'users']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -93,7 +94,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'roles']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -114,7 +115,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'global-settings']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(navigateSpy).toHaveBeenCalledWith(['/home']);
       expect(result).toEqual(router.createUrlTree(['/home']));
@@ -134,7 +135,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'dashboard']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(result).toBe(true);
     });
@@ -148,10 +149,10 @@ describe('settingsAdminGuard', () => {
       TestBed.overrideProvider(AuthService, { useValue: authServiceMock });
 
       const mockRoute = {
-        queryParamMap: new Map(),
+        queryParamMap: new Map([['tab', 'dashboard']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(result).toBe(true);
     });
@@ -170,7 +171,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'users']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(result).toBe(true);
     });
@@ -187,7 +188,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'roles']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(result).toBe(true);
     });
@@ -204,7 +205,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'global-settings']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(result).toBe(true);
     });
@@ -221,7 +222,7 @@ describe('settingsAdminGuard', () => {
         queryParamMap: new Map([['tab', 'dashboard']]),
       } as unknown as ActivatedRouteSnapshot;
 
-      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, null as any));
+      const result = TestBed.runInInjectionContext(() => settingsAdminGuard(mockRoute, undefined as unknown as RouterStateSnapshot));
 
       expect(result).toBe(true);
     });

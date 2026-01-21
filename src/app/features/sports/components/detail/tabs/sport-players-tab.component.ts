@@ -61,7 +61,7 @@ export class SportPlayersTabComponent {
     return capitalizeNameUtil(name);
   }
 
-  playerPhotoIconUrl(player: any): string | null {
+  playerPhotoIconUrl(player: { person_photo_icon_url?: string | null }): string | null {
     const url = player.person_photo_icon_url;
     return url ? buildStaticUrl(url) : null;
   }
