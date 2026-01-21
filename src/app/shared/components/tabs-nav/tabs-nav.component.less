@@ -1,0 +1,128 @@
+.tabs-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  &__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--tui-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  &__label {
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  &__icon {
+    font-size: 1rem;
+    margin-right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &--pills {
+    .tabs-nav__tab {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+
+      &:hover {
+        background: var(--tui-background-hover);
+        color: var(--tui-text-primary);
+      }
+    }
+
+    .tabs-nav__tab--active {
+      background: var(--tui-background-elevation-3);
+      color: var(--tui-text-primary);
+      font-weight: 600;
+    }
+  }
+
+  &--underline {
+    border-bottom: 1px solid var(--tui-border-normal);
+    gap: 0.25rem;
+
+    .tabs-nav__tab {
+      padding: 0.75rem 1.5rem;
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+
+      &:hover {
+        color: var(--tui-text-primary);
+        background: var(--tui-background-neutral-1);
+      }
+    }
+
+    .tabs-nav__tab--active {
+      color: var(--tui-text-primary);
+      border-bottom-color: var(--tui-primary);
+      font-weight: 600;
+    }
+  }
+
+  &--segmented {
+    width: 100%;
+    justify-content: center;
+  }
+
+  &__segmented {
+    width: 100%;
+  }
+
+  :host ::ng-deep &__segmented {
+    overflow: visible;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+  }
+
+  &__segmented-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    width: 100%;
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 768px) {
+  .tabs-nav {
+    font-size: 0.875rem;
+  }
+
+  .tabs-nav--pills {
+    .tabs-nav__tab {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      flex: 1;
+      min-width: 80px;
+      justify-content: center;
+    }
+  }
+
+  .tabs-nav--segmented {
+    justify-content: flex-start;
+  }
+
+  .tabs-nav__segmented {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .tabs-nav__segmented-button {
+    width: 100%;
+    font-size: 0.875rem;
+  }
+}

@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TuiAlertService, TuiDialogService, TuiButton, TuiIcon } from '@taiga-ui/core';
-import { TuiSegmented } from '@taiga-ui/kit';
+import { TuiAlertService, TuiDialogService, TuiButton } from '@taiga-ui/core';
 import { MatchStoreService } from '../../services/match-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
@@ -16,12 +15,13 @@ import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { DateService } from '../../../../core/services/date.service';
 import { CommonModule } from '@angular/common';
 import { createNumberParamSignal, createStringParamSignal } from '../../../../core/utils/route-param-helper.util';
+import { TabsNavComponent, TabsNavItem } from '../../../../shared/components/tabs-nav/tabs-nav.component';
 
 @Component({
   selector: 'app-match-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, EntityHeaderComponent, MatchPlayersTabComponent, MatchEventsTabComponent, MatchStatsTabComponent, TuiButton, TuiIcon, TuiSegmented],
+  imports: [CommonModule, EntityHeaderComponent, TabsNavComponent, MatchPlayersTabComponent, MatchEventsTabComponent, MatchStatsTabComponent, TuiButton],
   templateUrl: './match-detail.component.html',
   styleUrl: './match-detail.component.less',
 })
@@ -74,13 +74,7 @@ export class MatchDetailComponent implements OnInit {
     return this.dateService.formatDateTime(m.match_date);
   });
 
-  activeTabIndex = computed(() => {
-    const tab = this.activeTab();
-    const tabs = ['players', 'events', 'stats'];
-    return tab !== null ? tabs.indexOf(tab) : 0;
-  });
-
-  readonly tabs = [
+  readonly tabs: TabsNavItem[] = [
     { label: 'Players', value: 'players', icon: '@tui.user' },
     { label: 'Events', value: 'events', icon: '@tui.calendar' },
     { label: 'Stats', value: 'stats', icon: '@tui.chart-bar' },
@@ -191,8 +185,7 @@ export class MatchDetailComponent implements OnInit {
     }
   }
 
-  onTabChange(index: number): void {
-    const tab = this.tabs[index].value;
+  onTabChange(tab: string): void {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },

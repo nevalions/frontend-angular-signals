@@ -10,36 +10,14 @@
   </div>
 
   <div class="settings__tabs">
-    <nav class="settings__tab-nav">
-      <button
-        class="settings__tab"
-        [class.settings__tab--active]="activeTab() === 'dashboard'"
-        (click)="onTabChange('dashboard')"
-      >
-        Dashboard
-      </button>
-      <button
-        class="settings__tab"
-        [class.settings__tab--active]="activeTab() === 'users'"
-        (click)="onTabChange('users')"
-      >
-        Users
-      </button>
-      <button
-        class="settings__tab"
-        [class.settings__tab--active]="activeTab() === 'roles'"
-        (click)="onTabChange('roles')"
-      >
-        Roles
-      </button>
-      <button
-        class="settings__tab"
-        [class.settings__tab--active]="activeTab() === 'global-settings'"
-        (click)="onTabChange('global-settings')"
-      >
-        Global Settings
-      </button>
-    </nav>
+    <app-tabs-nav
+      class="settings__tab-nav"
+      [tabs]="tabs"
+      [activeTab]="activeTab()"
+      appearance="segmented"
+      segmentedSize="l"
+      (tabChange)="onTabChange($event)"
+    />
   </div>
 
   <div class="settings__content">

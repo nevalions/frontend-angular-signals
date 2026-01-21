@@ -11,29 +11,14 @@
     />
 
     <div class="tournament-detail__subnav">
-      <nav class="tournament-detail__tabs">
-        <button
-          class="tournament-detail__tab"
-          [class.tournament-detail__tab--active]="activeTab() === 'matches'"
-          (click)="onTabChange('matches')"
-        >
-          Matches
-        </button>
-        <button
-          class="tournament-detail__tab"
-          [class.tournament-detail__tab--active]="activeTab() === 'teams'"
-          (click)="onTabChange('teams')"
-        >
-          Teams
-        </button>
-        <button
-          class="tournament-detail__tab"
-          [class.tournament-detail__tab--active]="activeTab() === 'players'"
-          (click)="onTabChange('players')"
-        >
-          Players
-        </button>
-      </nav>
+      <app-tabs-nav
+        class="tournament-detail__tabs"
+        [tabs]="tabs"
+        [activeTab]="activeTab()"
+        appearance="segmented"
+        segmentedSize="l"
+        (tabChange)="onTabChange($event)"
+      />
     </div>
 
     @if (activeTab() === 'matches') {

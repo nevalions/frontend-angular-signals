@@ -1,0 +1,41 @@
+@if (appearance() === 'segmented') {
+  <div class="tabs-nav tabs-nav--segmented">
+    <tui-segmented
+      class="tabs-nav__segmented"
+      [activeItemIndex]="activeIndex()"
+      [size]="segmentedSize()"
+    >
+      @for (tab of tabs(); track tab.value) {
+        <button type="button" class="tabs-nav__segmented-button" (click)="selectTab(tab.value)">
+          @if (tab.icon) {
+            <tui-icon class="tabs-nav__icon" [icon]="tab.icon" />
+          }
+          <span class="tabs-nav__label">{{ tab.label }}</span>
+        </button>
+      }
+    </tui-segmented>
+  </div>
+} @else {
+  <nav
+    class="tabs-nav"
+    [class.tabs-nav--pills]="appearance() === 'pills'"
+    [class.tabs-nav--underline]="appearance() === 'underline'"
+    role="tablist"
+  >
+    @for (tab of tabs(); track tab.value) {
+      <button
+        type="button"
+        role="tab"
+        class="tabs-nav__tab"
+        [class.tabs-nav__tab--active]="activeValue() === tab.value"
+        [attr.aria-selected]="activeValue() === tab.value"
+        (click)="selectTab(tab.value)"
+      >
+        @if (tab.icon) {
+          <tui-icon class="tabs-nav__icon" [icon]="tab.icon" />
+        }
+        <span class="tabs-nav__label">{{ tab.label }}</span>
+      </button>
+    }
+  </nav>
+}

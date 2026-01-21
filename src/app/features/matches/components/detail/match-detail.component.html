@@ -63,20 +63,14 @@
     </div>
 
     <div class="match-detail__subnav">
-      <tui-segmented class="match-detail__tabs" [activeItemIndex]="activeTabIndex()" size="l">
-        <button type="button" (click)="onTabChange(0)">
-          <tui-icon [icon]="tabs[0].icon" />
-          {{ tabs[0].label }}
-        </button>
-        <button type="button" (click)="onTabChange(1)">
-          <tui-icon [icon]="tabs[1].icon" />
-          {{ tabs[1].label }}
-        </button>
-        <button type="button" (click)="onTabChange(2)">
-          <tui-icon [icon]="tabs[2].icon" />
-          {{ tabs[2].label }}
-        </button>
-      </tui-segmented>
+      <app-tabs-nav
+        class="match-detail__tabs"
+        [tabs]="tabs"
+        [activeTab]="activeTab()"
+        appearance="segmented"
+        segmentedSize="l"
+        (tabChange)="onTabChange($event)"
+      />
     </div>
 
     @if (activeTab() === 'players') {

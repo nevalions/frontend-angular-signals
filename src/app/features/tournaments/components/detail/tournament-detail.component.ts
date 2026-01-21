@@ -7,6 +7,7 @@ import { SportStoreService } from '../../../sports/services/sport-store.service'
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
+import { TabsNavComponent, TabsNavItem } from '../../../../shared/components/tabs-nav/tabs-nav.component';
 import { TournamentMatchesTabComponent } from './tabs/tournament-matches-tab.component';
 import { TournamentTeamsTabComponent } from './tabs/tournament-teams-tab.component';
 import { TournamentPlayersTabComponent } from './tabs/tournament-players-tab.component';
@@ -17,7 +18,7 @@ import { createNumberParamSignal, createStringParamSignal } from '../../../../co
   selector: 'app-tournament-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EntityHeaderComponent, TournamentMatchesTabComponent, TournamentTeamsTabComponent, TournamentPlayersTabComponent],
+  imports: [EntityHeaderComponent, TabsNavComponent, TournamentMatchesTabComponent, TournamentTeamsTabComponent, TournamentPlayersTabComponent],
   templateUrl: './tournament-detail.component.html',
   styleUrl: './tournament-detail.component.less',
 })
@@ -66,6 +67,12 @@ export class TournamentDetailComponent {
     source: 'queryParamMap',
     defaultValue: 'matches',
   });
+
+  readonly tabs: TabsNavItem[] = [
+    { label: 'Matches', value: 'matches', icon: '@tui.calendar' },
+    { label: 'Teams', value: 'teams', icon: '@tui.users' },
+    { label: 'Players', value: 'players', icon: '@tui.user' },
+  ];
 
   customMenuItems = computed<CustomMenuItem[]>(() => {
     const tournament = this.tournament();

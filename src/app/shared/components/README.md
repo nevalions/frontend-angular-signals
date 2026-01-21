@@ -4,6 +4,111 @@ Reusable UI components used across the application.
 
 ## Components
 
+### TabsNavComponent
+
+**Location:** `src/app/shared/components/tabs-nav/`
+
+A reusable tab navigation component with three visual variants (pills, underline, segmented) used across detail pages, settings, and other tab-based layouts.
+
+**Features:**
+- Three appearance variants: pills, underline, segmented
+- Configurable tab size (s, m, l) for segmented variant
+- Tab icons support (optional)
+- Active tab tracking via string value
+- Responsive design with mobile-friendly stacked layout
+- Signal-based API
+- Accessible tab semantics with `role="tablist"` and `role="tab"`
+
+**Layout Structure:**
+- Segmented variant: Centered with max-width 500px, full-width on mobile with stacked buttons
+- Pills variant: Flex-wrap with gap, compact padding
+- Underline variant: Horizontal row with bottom border indicating active state
+
+**Usage Example:**
+
+```typescript
+import { TabsNavComponent, TabsNavItem } from '../../../../shared/components/tabs-nav/tabs-nav.component';
+
+@Component({
+  selector: 'app-my-detail',
+  standalone: true,
+  imports: [TabsNavComponent],
+  template: `
+    <app-tabs-nav
+      [tabs]="tabs"
+      [activeTab]="activeTab()"
+      appearance="segmented"
+      segmentedSize="l"
+      (tabChange)="onTabChange($event)"
+    />
+  `,
+})
+export class MyDetailComponent {
+  readonly tabs: TabsNavItem[] = [
+    { label: 'Overview', value: 'overview', icon: '@tui.info' },
+    { label: 'Details', value: 'details', icon: '@tui.list' },
+    { label: 'Settings', value: 'settings', icon: '@tui.settings' },
+  ];
+
+  activeTab = signal('overview');
+
+  onTabChange(tab: string): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+    });
+  }
+}
+```
+
+**Inputs:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|----------|-------------|
+| `tabs` | `TabsNavItem[]` | Yes | - | Array of tab definitions |
+| `activeTab` | `string \| null` | Yes | - | Currently active tab value |
+| `appearance` | `'pills' \| 'underline' \| 'segmented'` | No | `'pills'` | Visual variant to render |
+| `segmentedSize` | `'s' \| 'm' \| 'l'` | No | `'l'` | Size for segmented variant (ignored for pills/underline) |
+
+**Outputs:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tabChange` | `EventEmitter<string>` | Emits selected tab value when clicked |
+
+**TabsNavItem Interface:**
+
+```typescript
+export interface TabsNavItem {
+  label: string;                                              // Visible tab label
+  value: string;                                              // Tab identifier used in routing/state
+  icon?: string;                                              // Optional Taiga UI icon name
+}
+```
+
+**Examples Used In:**
+- Sport detail page (Tournaments, Teams, Players, Positions)
+- Tournament detail page (Matches, Teams, Players)
+- Match detail page (Players, Events, Stats)
+- Settings page (Dashboard, Users, Roles, Global Settings)
+
+**Responsive Behavior:**
+- Desktop (768px+): Horizontal layout; segmented variant centered with max-width
+- Mobile (< 768px): Smaller font (14px); segmented variant stacks vertically (one tab per line)
+
+**Best Practices:**
+1. Use `segmentedSize="l"` for better touch targets on detail pages
+2. Wrap tab state management in route params for bookmarkable URLs:
+   ```typescript
+   activeTab = createStringParamSignal(this.route, 'tab', {
+     source: 'queryParamMap',
+     defaultValue: 'overview',
+   });
+   ```
+3. Use `NavigationHelperService` for consistent navigation patterns
+4. For tab icons, use standard Taiga UI icons (`@tui.*`)
+5. Seged tabs automatically handle overflow and stacking on mobile via CSS
+
 ### UserCardComponent
 
 **Location:** `src/app/shared/components/user-card/`

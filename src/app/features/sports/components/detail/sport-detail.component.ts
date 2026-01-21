@@ -13,6 +13,7 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { createNumberParamSignal, createStringParamSignal } from '../../../../core/utils/route-param-helper.util';
 import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
+import { TabsNavComponent, TabsNavItem } from '../../../../shared/components/tabs-nav/tabs-nav.component';
 import { SportTournamentsTabComponent } from './tabs/sport-tournaments-tab.component';
 import { SportTeamsTabComponent } from './tabs/sport-teams-tab.component';
 import { SportPlayersTabComponent } from './tabs/sport-players-tab.component';
@@ -28,6 +29,7 @@ import { SportPositionsTabComponent } from './tabs/sport-positions-tab.component
     TuiSelect,
     TuiDataList,
     EntityHeaderComponent,
+    TabsNavComponent,
     SportTournamentsTabComponent,
     SportTeamsTabComponent,
     SportPlayersTabComponent,
@@ -86,6 +88,13 @@ export class SportDetailComponent {
     source: 'queryParamMap',
     defaultValue: 'tournaments',
   });
+
+  readonly tabs: TabsNavItem[] = [
+    { label: 'Tournaments', value: 'tournaments', icon: '@tui.trophy' },
+    { label: 'Teams', value: 'teams', icon: '@tui.users' },
+    { label: 'Players', value: 'players', icon: '@tui.user' },
+    { label: 'Positions', value: 'positions', icon: '@tui.list' },
+  ];
 
   selectedSeasonYear = signal<number | null>(null);
 

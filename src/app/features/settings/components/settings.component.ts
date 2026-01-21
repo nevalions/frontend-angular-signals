@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityHeaderComponent } from '../../../shared/components/entity-header/entity-header.component';
+import { TabsNavComponent, TabsNavItem } from '../../../shared/components/tabs-nav/tabs-nav.component';
 import { DashboardTabComponent } from './tabs/dashboard-tab.component';
 import { UsersTabComponent } from './tabs/users-tab.component';
 import { RolesTabComponent } from './tabs/roles-tab.component';
@@ -13,6 +14,7 @@ import { createStringParamSignal } from '../../../core/utils/route-param-helper.
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     EntityHeaderComponent,
+    TabsNavComponent,
     DashboardTabComponent,
     UsersTabComponent,
     RolesTabComponent,
@@ -29,6 +31,13 @@ export class SettingsComponent {
     source: 'queryParamMap',
     defaultValue: 'dashboard',
   });
+
+  readonly tabs: TabsNavItem[] = [
+    { label: 'Dashboard', value: 'dashboard', icon: '@tui.dashboard' },
+    { label: 'Users', value: 'users', icon: '@tui.user' },
+    { label: 'Roles', value: 'roles', icon: '@tui.users' },
+    { label: 'Global Settings', value: 'global-settings', icon: '@tui.settings' },
+  ];
 
   onTabChange(tab: string): void {
     this.router.navigate([], {

@@ -12,36 +12,14 @@
     </div>
 
     <div class="sport-detail__subnav">
-      <nav class="sport-detail__tabs">
-        <button
-          class="sport-detail__tab"
-          [class.sport-detail__tab--active]="activeTab() === 'tournaments'"
-          (click)="onTabChange('tournaments')"
-        >
-          Tournaments
-        </button>
-        <button
-          class="sport-detail__tab"
-          [class.sport-detail__tab--active]="activeTab() === 'teams'"
-          (click)="onTabChange('teams')"
-        >
-          Teams
-        </button>
-        <button
-          class="sport-detail__tab"
-          [class.sport-detail__tab--active]="activeTab() === 'players'"
-          (click)="onTabChange('players')"
-        >
-          Players
-        </button>
-        <button
-          class="sport-detail__tab"
-          [class.sport-detail__tab--active]="activeTab() === 'positions'"
-          (click)="onTabChange('positions')"
-        >
-          Positions
-        </button>
-      </nav>
+      <app-tabs-nav
+        class="sport-detail__tabs"
+        [tabs]="tabs"
+        [activeTab]="activeTab()"
+        appearance="segmented"
+        segmentedSize="l"
+        (tabChange)="onTabChange($event)"
+      />
 
       <div class="sport-detail__season-selector">
         <tui-textfield tuiChevron tuiTextfieldSize="s">
