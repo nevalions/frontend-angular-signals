@@ -51,6 +51,9 @@
 - Team avatar (logo or initials)
 - Team name (UPPERCASE)
 - Total player count badge
+- Add Player button (per team)
+- Add Player combobox (search + select) with: number, full name, position
+- Add action button per team
 
 ### Player Sections (per team)
 - Starting Lineup section (⭐ icon with star)
@@ -95,6 +98,22 @@
 - Includes teams data (team_a, team_b) with logos and names
 - [Interface: `ComprehensiveMatchData`](../../../../src/app/features/matches/models/comprehensive-match.model.ts)
 - See [Match Detail Schema](../match-detail.md) for full API endpoint details
+
+**For available players per team:**
+
+- Match id
+- Team id
+- Player team tournament id
+- Player number
+- Person full name
+- Position title
+- [Backend API Endpoint] `GET /api/matches/id/{match_id}/team/{team_id}/available-players/`
+
+**For adding player to match:**
+
+- [Interface: `PlayerMatchCreate`](../../../../src/app/features/matches/models/player-match.model.ts)
+- [Backend Schema: `PlayerMatchSchemaCreate`](../../../../../statsboards-backend/src/player_match/schemas.py)
+- [Backend API Endpoint] `POST /api/players_match/`
 
 **For static assets:**
 

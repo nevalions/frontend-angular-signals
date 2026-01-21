@@ -9,7 +9,8 @@ import { MatchesPaginatedWithDetailsResponse, MatchCreate, Match, MatchUpdate, M
 import { MatchData } from '../models/match-data.model';
 import { ComprehensiveMatchData } from '../models/comprehensive-match.model';
 import { MatchStats } from '../models/match-stats.model';
-import { PlayerMatch, PlayerMatchUpdate } from '../models/player-match.model';
+import { PlayerMatch, PlayerMatchCreate, PlayerMatchUpdate } from '../models/player-match.model';
+import { MatchAvailablePlayer } from '../models/available-player.model';
 import { SortOrder } from '../../../core/models';
 import { buildPaginationParams, createPaginationState } from '../../../core/utils/pagination-helper.util';
 
@@ -156,5 +157,15 @@ export class MatchStoreService {
 
   updatePlayerMatch(playerMatchId: number, data: PlayerMatchUpdate): Observable<PlayerMatch> {
     return this.http.put<PlayerMatch>(buildApiUrl(`/api/players_match/${playerMatchId}/`), data);
+  }
+
+  getAvailablePlayersForTeamInMatch(matchId: number, teamId: number): Observable<MatchAvailablePlayer[]> {
+    return this.http.get<MatchAvailablePlayer[]>(
+      buildApiUrl(`/api/matches/id/${matchId}/team/${teamId}/available-players/`)
+    );
+  }
+
+  addPlayerToMatch(data: PlayerMatchCreate): Observable<PlayerMatch> {
+    return this.apiService.post<PlayerMatch>('/api/players_match/', data);
   }
 }
