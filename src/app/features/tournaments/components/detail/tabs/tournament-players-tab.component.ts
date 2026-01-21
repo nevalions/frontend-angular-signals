@@ -7,7 +7,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { PlayerStoreService } from '../../../../players/services/player-store.service';
 import { NavigationHelperService } from '../../../../../shared/services/navigation-helper.service';
-import { PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsAndPhotos, PlayerWithPerson } from '../../../../players/models/player.model';
+import { PlayerTeamTournamentWithDetailsAndPhotos, PlayerWithPerson } from '../../../../players/models/player.model';
 import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
 
@@ -73,13 +73,13 @@ export class TournamentPlayersTabComponent {
     this.playersLoading.set(true);
     this.playersError.set(null);
 
-    this.playerStore.getTournamentPlayersPaginatedWithPhotos(
-      tournamentId,
-      this.playersCurrentPage(),
-      this.playersItemsPerPage(),
-      this.playersSortOrder() === 'asc',
-      this.playersSearch()
-    ).subscribe({
+    this.playerStore.getTournamentPlayersPaginated(tournamentId, {
+      page: this.playersCurrentPage(),
+      itemsPerPage: this.playersItemsPerPage(),
+      ascending: this.playersSortOrder() === 'asc',
+      search: this.playersSearch(),
+      includePhotos: true,
+    }).subscribe({
       next: (response) => {
         this.players.set(response.data || []);
         this.playersTotalCount.set(response.metadata?.total_items || 0);

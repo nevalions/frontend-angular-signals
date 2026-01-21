@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Player, PlayerAddToSport, PlayersPaginatedResponse, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsResponse, PaginatedPlayerWithDetailsAndPhotosResponse, PlayerWithPerson, PlayerWithDetailsAndPhotos, PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse, PlayerCareer } from '../models/player.model';
+import { Player, PlayerAddToSport, PlayerTeamTournament, PlayerTeamTournamentWithDetails, PlayerTeamTournamentWithDetailsPaginatedResponse, RemovePersonFromSportResponse, PaginatedPlayerWithDetailsAndPhotosResponse, PlayerWithPerson, PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse, PlayerCareer } from '../models/player.model';
 import { Person } from '../../persons/models/person.model';
 import { SortOrder } from '../../../core/models';
 
@@ -16,6 +16,16 @@ interface PlayersResourceParams {
   itemsPerPage: number;
   sortOrder: SortOrder;
   search: string;
+}
+
+interface TournamentPlayersPaginatedOptions {
+  page: number;
+  itemsPerPage: number;
+  ascending?: boolean;
+  search?: string;
+  orderBy?: string;
+  orderByTwo?: string;
+  includePhotos?: boolean;
 }
 
 @Injectable({
@@ -131,13 +141,26 @@ export class PlayerStoreService {
 
   getTournamentPlayersPaginated(
     tournamentId: number,
-    page: number,
-    itemsPerPage: number,
-    ascending: boolean = true,
-    search: string = ''
-  ): Observable<PlayerTeamTournamentWithDetailsPaginatedResponse> {
+    options: TournamentPlayersPaginatedOptions & { includePhotos: true }
+  ): Observable<PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse>;
+  getTournamentPlayersPaginated(
+    tournamentId: number,
+    options: TournamentPlayersPaginatedOptions & { includePhotos?: false }
+  ): Observable<PlayerTeamTournamentWithDetailsPaginatedResponse>;
+  getTournamentPlayersPaginated(
+    tournamentId: number,
+    options: TournamentPlayersPaginatedOptions
+  ): Observable<PlayerTeamTournamentWithDetailsPaginatedResponse | PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse> {
+    const {
+      page,
+      itemsPerPage,
+      ascending = true,
+      search = '',
+      orderBy = 'second_name',
+      orderByTwo,
+      includePhotos = false,
+    } = options;
     let httpParams = new HttpParams()
-      .set('tournament_id', tournamentId.toString())
       .set('page', page.toString())
       .set('items_per_page', itemsPerPage.toString())
       .set('ascending', ascending.toString());
@@ -146,69 +169,26 @@ export class PlayerStoreService {
       httpParams = httpParams.set('search', search);
     }
 
-    return this.http.get<PlayerTeamTournamentWithDetailsPaginatedResponse>(
-      buildApiUrl(`/api/players_team_tournament/tournament/${tournamentId}/players/paginated/details`),
-      { params: httpParams }
-    );
-  }
-
-  getAvailablePlayersForTournament(tournamentId: number): Observable<PlayerWithPerson[]> {
-    return this.http.get<PlayerWithPerson[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/available`));
-  }
-
-  getTournamentPlayersPaginatedV2(
-    tournamentId: number,
-    page: number,
-    itemsPerPage: number,
-    ascending: boolean = true,
-    search: string = '',
-    orderBy: string = 'second_name',
-    orderByTwo: string = 'id'
-  ): Observable<PaginatedPlayerWithDetailsResponse> {
-    let httpParams = new HttpParams()
-      .set('page', page.toString())
-      .set('items_per_page', itemsPerPage.toString())
-      .set('ascending', ascending.toString())
-      .set('order_by', orderBy)
-      .set('order_by_two', orderByTwo);
-
-    if (search) {
-      httpParams = httpParams.set('search', search);
-    }
-
-    return this.http.get<PaginatedPlayerWithDetailsResponse>(
-      buildApiUrl(`/api/tournaments/id/${tournamentId}/players/paginated`),
-      { params: httpParams }
-    );
-  }
-
-  getTournamentPlayersPaginatedWithPhotos(
-    tournamentId: number,
-    page: number,
-    itemsPerPage: number,
-    ascending: boolean = true,
-    search: string = '',
-    orderBy: string = 'second_name',
-    orderByTwo?: string
-  ): Observable<PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse> {
-    let httpParams = new HttpParams()
-      .set('page', page.toString())
-      .set('items_per_page', itemsPerPage.toString())
-      .set('ascending', ascending.toString())
-      .set('order_by', orderBy);
-
-    if (search) {
-      httpParams = httpParams.set('search', search);
+    if (orderBy) {
+      httpParams = httpParams.set('order_by', orderBy);
     }
 
     if (orderByTwo) {
       httpParams = httpParams.set('order_by_two', orderByTwo);
     }
 
-    return this.http.get<PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse>(
-      buildApiUrl(`/api/players_team_tournament/tournament/${tournamentId}/players/paginated/details-with-photos`),
+    const endpoint = includePhotos
+      ? `/api/players_team_tournament/tournament/${tournamentId}/players/paginated/details-with-photos`
+      : `/api/players_team_tournament/tournament/${tournamentId}/players/paginated/details`;
+
+    return this.http.get<PlayerTeamTournamentWithDetailsPaginatedResponse | PaginatedPlayerTeamTournamentWithDetailsAndPhotosResponse>(
+      buildApiUrl(endpoint),
       { params: httpParams }
     );
+  }
+
+  getAvailablePlayersForTournament(tournamentId: number): Observable<PlayerWithPerson[]> {
+    return this.http.get<PlayerWithPerson[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/available`));
   }
 
   getTournamentPlayersWithoutTeam(tournamentId: number): Observable<Player[]> {
