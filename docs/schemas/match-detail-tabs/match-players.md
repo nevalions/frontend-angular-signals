@@ -5,81 +5,102 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  🔍 Search players         [+ Add Player]    [✏️ Edit]    │
-└─────────────────────────────────────────────────────────────┘
-                                                                │
-┌─────────────────────────────────────────────────────────────┐
-│  [Team A]                                                    │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │  #99  QB        John Smith    [✏️] [🗑️]        │    │
-│  │  #84  WR        Mike Johnson   [✏️] [🗑️]        │    │
-│  │  #75  TE        Chris Williams [✏️] [🗑️]        │    │
-│  └────────────────────────────────────────────────────┘    │
+│  ┌─────────────────┐              VS              ┌─────────────────┐  │
+│  │                 │                               │                 │  │
+│  │  [TEAM A LOGO]  │                               │  [TEAM B LOGO]  │  │
+│  │                 │                               │                 │  │
+│  │   TEAM A        │                               │   TEAM B        │  │
+│  │   12 players    │                               │   11 players    │  │
+│  │                 │                               │                 │  │
+│  └─────────────────┘                               └─────────────────┘  │
 │                                                              │
-│  [Team B]                                                    │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │  #7   QB        Alex Brown     [✏️] [🗑️]        │    │
-│  │  #11  WR        Tom Davis      [✏️] [🗑️]        │    │
-│  │  #88  TE        Jake Miller    [✏️] [🗑️]        │    │
-│  └────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
+├──────────────────────────────┬───────────────────────────────┤
+│  ⭐ Starting Lineup        │   ⭐ Starting Lineup           │
+│  ✓ 3 players               │   ✓ 2 players                  │
+├──────────────────────────────┼───────────────────────────────┤
+│  [99]                      │   [7]                          │
+│   [👤]  John Smith         │    [👤]  Alex Brown            │
+│       QB                    │        QB                     │
+│                                                              │
+│  [84]                      │   [11]                         │
+│   [👤]  Mike Johnson        │    [👤]  Tom Davis             │
+│       WR                    │        WR                     │
+│                                                              │
+│  [75]                      │                                │
+│   [👤]  Chris Williams      │                                │
+│       TE                    │                                │
+│                                                              │
+├──────────────────────────────┼───────────────────────────────┤
+│  👥 Bench                  │   👥 Bench                     │
+│  9 players                 │   9 players                    │
+├──────────────────────────────┼───────────────────────────────┤
+│  [23]  Jane Doe  RB        │   [44]  Bob Wilson  TE         │
+│  [12]  Mike Lee  FB        │   [32]  Sam Jones  RB          │
+│  ...                       │   ...                          │
+└──────────────────────────────┴───────────────────────────────┘
 ```
 
 ## What's on the tab
 
-- Search input → Filter players by name or number
-- "Add Player" button → Show form to add player to match
-- "Edit" button → Toggle inline edit mode for all players
-- Players grouped by team (Team A and Team B)
-- Each player card shows:
-  - Player number
-  - Position
-  - Player name
-  - Edit button → Open player edit dialog
-  - Delete button → Confirm and remove player from match
-- Click on player → Navigate to player detail
+### Layout
+- Side-by-side team comparison view
+- Central "VS" divider between teams
+- Each team column has its own header and player roster
+
+### Team Header
+- Team avatar (logo or initials)
+- Team name (uppercase)
+- Player count badge
+- Green status badge for starter count
+
+### Player Sections (per team)
+- Starting Lineup section (⭐ icon with star)
+  - Only shown if team has starters
+  - Green positive badge showing starter count
+  - Larger player cards with photos
+  - Player number badge (visible)
+  - Player avatar (photo or initials)
+  - Player name (full name)
+  - Position chip with accent styling
+
+- Bench section (👥 icon with users)
+  - Only shown if team has bench players
+  - Neutral badge showing bench count
+  - Smaller, more compact player cards
+  - Player number badge (smaller)
+  - Player avatar (smaller photo or initials)
+  - Player name (smaller text)
+  - Position as plain text
+
+### Empty State
+- No players registered message when team has no players
 
 ## What we need from backend
 
 **For players in match list:**
 
+- Player id
 - Player match id
-- Player (id, person_id, player number, position)
+- Person id
+- Person full name
+- Person photo URL
+- Player number (from player_team_tournament)
+- Position id
+- Position title
 - Team id
-- Match id
-- Starting status (is_starter)
+- Is starting status (is_starting)
 - [Interface: `PlayerMatch`](../../../../src/app/features/matches/models/player-match.model.ts)
 - [Backend Schema: `PlayerMatchSchema`](../../../../../statsboards-backend/src/player_match/schemas.py)
-- **Backend API Endpoint:** `GET /api/players_match/` (filter by match_id)
+- **Backend API Endpoint:** Players are part of `ComprehensiveMatchData` loaded via match detail endpoint
 
-**For adding player to match:**
+**For match data:**
 
-- Player id
-- Team id
-- Match id
-- Player number
-- Position
-- Starting status
-- [Interface: `PlayerMatchCreate`](../../../../src/app/features/matches/models/player-match.model.ts)
-- [Backend Schema: `PlayerMatchSchemaCreate`](../../../../../statsboards-backend/src/player_match/schemas.py)
-- **Backend API Endpoint:** `POST /api/players_match/`
+- Match data is loaded as part of `ComprehensiveMatchData` from parent component
+- Includes teams data (team_a, team_b) with logos and names
+- [Interface: `ComprehensiveMatchData`](../../../../src/app/features/matches/models/comprehensive-match.model.ts)
+- See [Match Detail Schema](../match-detail.md) for full API endpoint details
 
-**For updating player in match:**
+**For static assets:**
 
-- Player match id
-- Updated player number, position, starting status
-- [Interface: `PlayerMatchUpdate`](../../../../src/app/features/matches/models/player-match.model.ts)
-- [Backend Schema: `PlayerMatchSchemaUpdate`](../../../../../statsboards-backend/src/player_match/schemas.py)
-- **Backend API Endpoint:** `PUT /api/players_match/id/{player_match_id}/`
-
-**For deleting player from match:**
-
-- Player match id
-- **Backend API Endpoint:** `DELETE /api/players_match/id/{player_match_id}/`
-
-**For player details:**
-
-- Player (id, person_id, player number, position)
-- Person (id, first_name, last_name)
-- Team (id, title)
-- **Backend API Endpoint:** `GET /api/players_match/id/{player_match_id}/full_data/`
+- Team logo URLs (buildStaticUrl)
+- Player photo URLs (buildStaticUrl)
