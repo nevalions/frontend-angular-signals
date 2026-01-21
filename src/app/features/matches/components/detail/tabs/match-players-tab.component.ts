@@ -59,20 +59,22 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
               </header>
 
               <div class="match-players-tab__team-actions">
-                <button
-                  type="button"
-                  tuiButton
-                  appearance="primary"
-                  size="s"
-                  [iconStart]="addPlayerTeamAOpen() ? '@tui.x' : '@tui.plus'"
-                  class="match-players-tab__add-button"
-                  (click)="toggleAddPlayerForm('A')">
-                  @if (addPlayerTeamAOpen()) {
-                    Cancel
-                  } @else {
-                    Add Player
-                  }
-                </button>
+                <div class="match-players-tab__team-controls">
+                  <button
+                    type="button"
+                    tuiButton
+                    appearance="primary"
+                    size="s"
+                    [iconStart]="addPlayerTeamAOpen() ? '@tui.x' : '@tui.plus'"
+                    class="match-players-tab__add-button"
+                    (click)="toggleAddPlayerForm('A')">
+                    @if (addPlayerTeamAOpen()) {
+                      Cancel
+                    } @else {
+                      Add Player
+                    }
+                  </button>
+                </div>
                 <tui-badge appearance="neutral" size="s" class="match-players-tab__team-count">
                   Available: {{ availablePlayersTeamA().length }}
                 </tui-badge>
@@ -129,6 +131,32 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                 </div>
               }
 
+              <div class="match-players-tab__sort-bar">
+                <span class="match-players-tab__sort-label">Sort:</span>
+                <div class="match-players-tab__sort-group">
+                  <button
+                    type="button"
+                    tuiButton
+                    appearance="flat"
+                    size="s"
+                    class="match-players-tab__sort-button"
+                    [class.match-players-tab__sort-button--active]="teamASort() === 'number'"
+                    (click)="setTeamSort('A', 'number')">
+                    Number
+                  </button>
+                  <button
+                    type="button"
+                    tuiButton
+                    appearance="flat"
+                    size="s"
+                    class="match-players-tab__sort-button"
+                    [class.match-players-tab__sort-button--active]="teamASort() === 'name'"
+                    (click)="setTeamSort('A', 'name')">
+                    Name
+                  </button>
+                </div>
+              </div>
+
               <!-- Starters Section -->
               @if (teamAStarters().length > 0) {
                 <div class="match-players-tab__roster-section">
@@ -157,7 +185,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             <span class="match-players-tab__player-name">
                               {{ getFullName(player.person).toUpperCase() }}
                             </span>
-                            <label class="match-players-tab__player-switch">
+                            <div class="match-players-tab__player-switch">
                               <input
                                 type="checkbox"
                                 tuiSwitch
@@ -168,7 +196,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                               <span class="match-players-tab__player-switch-label">
                                 {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
                               </span>
-                            </label>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -205,7 +233,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             <span class="match-players-tab__player-name match-players-tab__player-name--bench">
                               {{ getFullName(player.person).toUpperCase() }}
                             </span>
-                            <label class="match-players-tab__player-switch match-players-tab__player-switch--bench">
+                            <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
                               <input
                                 type="checkbox"
                                 tuiSwitch
@@ -216,7 +244,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                               <span class="match-players-tab__player-switch-label">
                                 {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
                               </span>
-                            </label>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -256,20 +284,22 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
               </header>
 
               <div class="match-players-tab__team-actions">
-                <button
-                  type="button"
-                  tuiButton
-                  appearance="primary"
-                  size="s"
-                  [iconStart]="addPlayerTeamBOpen() ? '@tui.x' : '@tui.plus'"
-                  class="match-players-tab__add-button"
-                  (click)="toggleAddPlayerForm('B')">
-                  @if (addPlayerTeamBOpen()) {
-                    Cancel
-                  } @else {
-                    Add Player
-                  }
-                </button>
+                <div class="match-players-tab__team-controls">
+                  <button
+                    type="button"
+                    tuiButton
+                    appearance="primary"
+                    size="s"
+                    [iconStart]="addPlayerTeamBOpen() ? '@tui.x' : '@tui.plus'"
+                    class="match-players-tab__add-button"
+                    (click)="toggleAddPlayerForm('B')">
+                    @if (addPlayerTeamBOpen()) {
+                      Cancel
+                    } @else {
+                      Add Player
+                    }
+                  </button>
+                </div>
                 <tui-badge appearance="neutral" size="s" class="match-players-tab__team-count">
                   Available: {{ availablePlayersTeamB().length }}
                 </tui-badge>
@@ -326,6 +356,32 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                 </div>
               }
 
+              <div class="match-players-tab__sort-bar">
+                <span class="match-players-tab__sort-label">Sort:</span>
+                <div class="match-players-tab__sort-group">
+                  <button
+                    type="button"
+                    tuiButton
+                    appearance="flat"
+                    size="s"
+                    class="match-players-tab__sort-button"
+                    [class.match-players-tab__sort-button--active]="teamBSort() === 'number'"
+                    (click)="setTeamSort('B', 'number')">
+                    Number
+                  </button>
+                  <button
+                    type="button"
+                    tuiButton
+                    appearance="flat"
+                    size="s"
+                    class="match-players-tab__sort-button"
+                    [class.match-players-tab__sort-button--active]="teamBSort() === 'name'"
+                    (click)="setTeamSort('B', 'name')">
+                    Name
+                  </button>
+                </div>
+              </div>
+
               <!-- Starters Section -->
               @if (teamBStarters().length > 0) {
                 <div class="match-players-tab__roster-section">
@@ -354,7 +410,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             <span class="match-players-tab__player-name">
                               {{ getFullName(player.person).toUpperCase() }}
                             </span>
-                            <label class="match-players-tab__player-switch">
+                            <div class="match-players-tab__player-switch">
                               <input
                                 type="checkbox"
                                 tuiSwitch
@@ -365,7 +421,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                               <span class="match-players-tab__player-switch-label">
                                 {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
                               </span>
-                            </label>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -402,7 +458,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             <span class="match-players-tab__player-name match-players-tab__player-name--bench">
                               {{ getFullName(player.person).toUpperCase() }}
                             </span>
-                            <label class="match-players-tab__player-switch match-players-tab__player-switch--bench">
+                            <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
                               <input
                                 type="checkbox"
                                 tuiSwitch
@@ -413,7 +469,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                               <span class="match-players-tab__player-switch-label">
                                 {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
                               </span>
-                            </label>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -461,6 +517,8 @@ export class MatchPlayersTabComponent {
   availablePlayersErrorTeamB = signal<string | null>(null);
   selectedAvailablePlayerTeamA = signal<MatchAvailablePlayer | null>(null);
   selectedAvailablePlayerTeamB = signal<MatchAvailablePlayer | null>(null);
+  teamASort = signal<'number' | 'name'>('number');
+  teamBSort = signal<'number' | 'name'>('number');
 
   // Sync local players when comprehensiveData input changes
   private syncEffect = effect(() => {
@@ -483,24 +541,28 @@ export class MatchPlayersTabComponent {
   });
 
   teamAStarters = computed(() =>
-    this.teamAPlayers()
-      .filter(p => p.is_starting)
-      .sort((a, b) => this.compareByPlayerNumber(a, b))
+    this.sortTeamPlayers(
+      this.teamAPlayers().filter(p => p.is_starting),
+      this.teamASort()
+    )
   );
   teamABench = computed(() =>
-    this.teamAPlayers()
-      .filter(p => !p.is_starting)
-      .sort((a, b) => this.compareByPlayerNumber(a, b))
+    this.sortTeamPlayers(
+      this.teamAPlayers().filter(p => !p.is_starting),
+      this.teamASort()
+    )
   );
   teamBStarters = computed(() =>
-    this.teamBPlayers()
-      .filter(p => p.is_starting)
-      .sort((a, b) => this.compareByPlayerNumber(a, b))
+    this.sortTeamPlayers(
+      this.teamBPlayers().filter(p => p.is_starting),
+      this.teamBSort()
+    )
   );
   teamBBench = computed(() =>
-    this.teamBPlayers()
-      .filter(p => !p.is_starting)
-      .sort((a, b) => this.compareByPlayerNumber(a, b))
+    this.sortTeamPlayers(
+      this.teamBPlayers().filter(p => !p.is_starting),
+      this.teamBSort()
+    )
   );
 
   getFullName(person: { first_name?: string | null; second_name?: string | null } | null | undefined): string {
@@ -523,6 +585,30 @@ export class MatchPlayersTabComponent {
     const numberB = parseInt(numB.toString(), 10);
 
     return numberA - numberB;
+  }
+
+  compareByPlayerName(a: PlayerMatchWithDetails, b: PlayerMatchWithDetails): number {
+    const lastNameCompare = (a.person?.second_name || '').localeCompare(b.person?.second_name || '');
+    if (lastNameCompare !== 0) return lastNameCompare;
+    return (a.person?.first_name || '').localeCompare(b.person?.first_name || '');
+  }
+
+  setTeamSort(team: 'A' | 'B', sort: 'number' | 'name'): void {
+    if (team === 'A') {
+      this.teamASort.set(sort);
+    } else {
+      this.teamBSort.set(sort);
+    }
+  }
+
+  private sortTeamPlayers(players: PlayerMatchWithDetails[], sort: 'number' | 'name'): PlayerMatchWithDetails[] {
+    const sorted = [...players];
+    if (sort === 'name') {
+      sorted.sort((a, b) => this.compareByPlayerName(a, b));
+    } else {
+      sorted.sort((a, b) => this.compareByPlayerNumber(a, b));
+    }
+    return sorted;
   }
 
   stringifyAvailablePlayer(player: MatchAvailablePlayer | null): string {
