@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
+import { ComprehensiveMatchData, PlayerMatchWithDetails } from '../../../models/comprehensive-match.model';
 import { MatchStoreService } from '../../../services/match-store.service';
 import { TuiAvatar, TuiBadge, TuiChip, TuiStatus, TuiSwitch } from '@taiga-ui/kit';
 import { TuiAppearance, TuiIcon, TuiSurface, TuiTitle, TuiAlertService } from '@taiga-ui/core';
@@ -270,16 +270,27 @@ export class MatchPlayersTabComponent {
   private matchStore = inject(MatchStoreService);
   private readonly alerts = inject(TuiAlertService);
 
+  // Local state for players to support optimistic updates
+  private localPlayersData = signal<PlayerMatchWithDetails[]>([]);
+
+  // Sync local players when comprehensiveData input changes
+  private syncEffect = effect(() => {
+    const data = this.comprehensiveData();
+    if (data) {
+      this.localPlayersData.set([...data.players]);
+    }
+  });
+
   teamAPlayers = computed(() => {
     const data = this.comprehensiveData();
     if (!data) return [];
-    return data.players.filter(p => p.team_id === data.teams.team_a.id);
+    return this.localPlayersData().filter(p => p.team_id === data.teams.team_a.id);
   });
 
   teamBPlayers = computed(() => {
     const data = this.comprehensiveData();
     if (!data) return [];
-    return data.players.filter(p => p.team_id === data.teams.team_b.id);
+    return this.localPlayersData().filter(p => p.team_id === data.teams.team_b.id);
   });
 
   teamAStarters = computed(() =>
@@ -327,6 +338,14 @@ export class MatchPlayersTabComponent {
 
   togglePlayerStarting(playerId: number, isStarting: boolean): void {
     const data: PlayerMatchUpdate = { is_starting: isStarting };
+
+    // Optimistic update: update local data immediately
+    const currentPlayers = this.localPlayersData();
+    const updatedPlayers = currentPlayers.map(p =>
+      p.id === playerId ? { ...p, is_starting: isStarting } : p
+    );
+    this.localPlayersData.set(updatedPlayers);
+
     this.matchStore.updatePlayerMatch(playerId, data).subscribe({
       next: () => {
         this.alerts.open(
@@ -335,6 +354,8 @@ export class MatchPlayersTabComponent {
         ).subscribe();
       },
       error: () => {
+        // Revert optimistic update on error
+        this.localPlayersData.set(currentPlayers);
         this.alerts.open('Failed to update player status', { label: 'Error', appearance: 'error' }).subscribe();
       }
     });
