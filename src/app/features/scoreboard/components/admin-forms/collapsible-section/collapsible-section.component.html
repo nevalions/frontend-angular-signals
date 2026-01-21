@@ -1,0 +1,27 @@
+<section class="collapsible-section" [class.is-expanded]="expanded()">
+  <header class="section-header">
+    <h3 class="section-title">{{ title() }}</h3>
+    <button
+      tuiButton
+      type="button"
+      appearance="secondary"
+      size="s"
+      class="toggle-button"
+      [attr.aria-expanded]="expanded()"
+      [attr.aria-label]="toggleLabel()"
+      (click)="toggle()"
+    >
+      <tui-icon [icon]="toggleIcon()" />
+    </button>
+  </header>
+
+  <div class="section-body" [class.is-expanded]="expanded()">
+    <div class="section-content">
+      @if (contentTemplate()) {
+        <ng-container [ngTemplateOutlet]="contentTemplate()" />
+      } @else {
+        <ng-content />
+      }
+    </div>
+  </div>
+</section>
