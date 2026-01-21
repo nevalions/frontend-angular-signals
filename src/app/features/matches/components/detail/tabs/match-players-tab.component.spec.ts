@@ -201,7 +201,7 @@ describe('MatchPlayersTabComponent', () => {
 
     it('should display starting lineup section', () => {
       const sectionHeaders = fixture.debugElement.queryAll(By.css('.match-players-tab__section-title'));
-      const startingHeaders = sectionHeaders.filter(el => 
+      const startingHeaders = sectionHeaders.filter(el =>
         el.nativeElement.textContent.includes('Starting Lineup')
       );
       expect(startingHeaders.length).toBeGreaterThan(0);
@@ -209,7 +209,7 @@ describe('MatchPlayersTabComponent', () => {
 
     it('should display bench section', () => {
       const sectionHeaders = fixture.debugElement.queryAll(By.css('.match-players-tab__section-title'));
-      const benchHeaders = sectionHeaders.filter(el => 
+      const benchHeaders = sectionHeaders.filter(el =>
         el.nativeElement.textContent.includes('Bench')
       );
       expect(benchHeaders.length).toBeGreaterThan(0);
@@ -227,14 +227,12 @@ describe('MatchPlayersTabComponent', () => {
     });
 
     it('should display player toggle switches', () => {
-      fixture.detectChanges();
-      const toggles = fixture.debugElement.queryAll(By.css('.match-players-tab__player-toggle'));
+      const toggles = fixture.debugElement.queryAll(By.css('input[type="checkbox"][tuiSwitch]'));
       expect(toggles.length).toBe(4);
     });
 
     it('should call updatePlayerMatch when toggle changes', () => {
-      fixture.detectChanges();
-      const toggleInputs = fixture.debugElement.queryAll(By.css('.match-players-tab__player-toggle input[type="checkbox"]'));
+      const toggleInputs = fixture.debugElement.queryAll(By.css('input[type="checkbox"][tuiSwitch]'));
       const matchStore = TestBed.inject(MatchStoreService);
 
       (toggleInputs[0].nativeElement as HTMLInputElement).click();

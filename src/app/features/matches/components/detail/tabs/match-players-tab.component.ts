@@ -73,14 +73,12 @@ import { PlayerMatchUpdate } from '../../../models/player-match.model';
                               </tui-chip>
                             }
                           </div>
-                          <label class="match-players-tab__player-toggle">
-                            <input
-                              type="checkbox"
-                              [checked]="player.is_starting || false"
-                              (change)="togglePlayerStarting(player.id, $event.target.checked)"
-                              tuiSwitch
-                            />
-                          </label>
+                          <input
+                            type="checkbox"
+                            [checked]="player.is_starting || false"
+                            (change)="togglePlayerStarting(player.id, $event.target.checked)"
+                            tuiSwitch
+                          />
                         </div>
                       </div>
                     }
@@ -187,14 +185,12 @@ import { PlayerMatchUpdate } from '../../../models/player-match.model';
                               </tui-chip>
                             }
                           </div>
-                          <label class="match-players-tab__player-toggle">
-                            <input
-                              type="checkbox"
-                              [checked]="player.is_starting || false"
-                              (change)="togglePlayerStarting(player.id, $event.target.checked)"
-                              tuiSwitch
-                            />
-                          </label>
+                          <input
+                            type="checkbox"
+                            [checked]="player.is_starting || false"
+                            (change)="togglePlayerStarting(player.id, $event.target.checked)"
+                            tuiSwitch
+                          />
                         </div>
                       </div>
                     }
