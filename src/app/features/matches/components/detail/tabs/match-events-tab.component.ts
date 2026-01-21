@@ -275,7 +275,8 @@ export class MatchEventsTabComponent {
     const score = event.score_result?.toLowerCase() || '';
     return result.includes('touchdown') || result.includes('td') ||
            result.includes('field goal') || result.includes('fg') ||
-           score.includes('touchdown') || score.includes('field goal');
+           score.includes('touchdown') || score.includes('td') ||
+           score.includes('field goal') || score.includes('fg');
   }
 
   isTurnover(event: MatchEvent): boolean {
