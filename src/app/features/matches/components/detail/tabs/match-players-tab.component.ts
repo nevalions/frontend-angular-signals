@@ -64,7 +64,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                   tuiButton
                   appearance="primary"
                   size="s"
-                  iconStart="@tui.plus"
+                  [iconStart]="addPlayerTeamAOpen() ? '@tui.x' : '@tui.plus'"
                   class="match-players-tab__add-button"
                   (click)="toggleAddPlayerForm('A')">
                   @if (addPlayerTeamAOpen()) {
@@ -73,6 +73,9 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                     Add Player
                   }
                 </button>
+                <tui-badge appearance="neutral" size="s" class="match-players-tab__team-count">
+                  Available: {{ availablePlayersTeamA().length }}
+                </tui-badge>
               </div>
 
               @if (addPlayerTeamAOpen()) {
@@ -116,18 +119,11 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                       type="button"
                       tuiButton
                       appearance="primary"
+                      class="match-players-tab__add-submit"
                       size="s"
                       [disabled]="!selectedAvailablePlayerTeamA()"
                       (click)="addPlayerToMatch('A')">
                       Add to Match
-                    </button>
-                    <button
-                      type="button"
-                      tuiButton
-                      appearance="flat"
-                      size="s"
-                      (click)="cancelAddPlayer('A')">
-                      Cancel
                     </button>
                   </div>
                 </div>
@@ -265,7 +261,7 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                   tuiButton
                   appearance="primary"
                   size="s"
-                  iconStart="@tui.plus"
+                  [iconStart]="addPlayerTeamBOpen() ? '@tui.x' : '@tui.plus'"
                   class="match-players-tab__add-button"
                   (click)="toggleAddPlayerForm('B')">
                   @if (addPlayerTeamBOpen()) {
@@ -274,6 +270,9 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                     Add Player
                   }
                 </button>
+                <tui-badge appearance="neutral" size="s" class="match-players-tab__team-count">
+                  Available: {{ availablePlayersTeamB().length }}
+                </tui-badge>
               </div>
 
               @if (addPlayerTeamBOpen()) {
@@ -317,18 +316,11 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                       type="button"
                       tuiButton
                       appearance="primary"
+                      class="match-players-tab__add-submit"
                       size="s"
                       [disabled]="!selectedAvailablePlayerTeamB()"
                       (click)="addPlayerToMatch('B')">
                       Add to Match
-                    </button>
-                    <button
-                      type="button"
-                      tuiButton
-                      appearance="flat"
-                      size="s"
-                      (click)="cancelAddPlayer('B')">
-                      Cancel
                     </button>
                   </div>
                 </div>
@@ -609,9 +601,11 @@ export class MatchPlayersTabComponent {
 
     this.matchStore.getAvailablePlayersForTeamInMatch(matchId, teamId).subscribe({
       next: (players) => {
-        const sortedPlayers = [...players].sort((a, b) =>
-          (a.person?.second_name || '').localeCompare(b.person?.second_name || '')
-        );
+        const sortedPlayers = [...players].sort((a, b) => {
+          const lastNameCompare = (a.person?.second_name || '').localeCompare(b.person?.second_name || '');
+          if (lastNameCompare !== 0) return lastNameCompare;
+          return (a.person?.first_name || '').localeCompare(b.person?.first_name || '');
+        });
         this.setAvailablePlayers(team, sortedPlayers);
         this.setAvailablePlayersLoading(team, false);
       },
