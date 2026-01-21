@@ -1,0 +1,167 @@
+.tournament-assignment {
+  background: var(--tui-background-base);
+  border-radius: var(--tui-radius-m);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--tui-shadow-small);
+}
+
+.tournament-assignment__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--tui-text-primary);
+  margin: 0 0 1.5rem 0;
+}
+
+.tournament-assignment__content {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.tournament-assignment__form-section {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tournament-assignment__form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  tui-textfield {
+    width: 100%;
+  }
+}
+
+.tournament-assignment__field-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--tui-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tournament-assignment__field-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-s);
+  background: var(--tui-background-base);
+  transition: border-color var(--tui-duration);
+  min-height: 2.25rem;
+
+  &:hover {
+    border-color: var(--tui-border-hover);
+  }
+}
+
+.tournament-assignment__value {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--tui-text-primary);
+}
+
+.tournament-assignment__edit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border: none;
+  background: transparent;
+  border-radius: var(--tui-radius-xs);
+  cursor: pointer;
+  color: var(--tui-text-secondary);
+  transition: all var(--tui-duration);
+
+  tui-icon {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background: var(--tui-background-neutral-2);
+    color: var(--tui-text-primary);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.tournament-assignment__field-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tournament-assignment__field-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-start;
+}
+
+.tournament-assignment__action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: var(--tui-radius-xs);
+  cursor: pointer;
+  transition: all var(--tui-duration);
+
+  tui-icon {
+    font-size: 1rem;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.tournament-assignment__save-button {
+  background: var(--tui-background-accent-1);
+  color: var(--tui-text-on-accent);
+
+  &:hover {
+    background: var(--tui-background-accent-1-hover);
+  }
+}
+
+.tournament-assignment__cancel-button {
+  background: var(--tui-background-neutral-2);
+  color: var(--tui-text-secondary);
+
+  &:hover {
+    background: var(--tui-background-neutral-3);
+    color: var(--tui-text-primary);
+  }
+}
+
+.tournament-assignment__dropdown-loading,
+.tournament-assignment__dropdown-error,
+.tournament-assignment__dropdown-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--tui-text-secondary);
+}
+
+.tournament-assignment__dropdown-error {
+  color: var(--tui-text-negative);
+}
+
+.tournament-assignment__option {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+}

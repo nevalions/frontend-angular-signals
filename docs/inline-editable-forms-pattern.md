@@ -400,11 +400,27 @@ Show edit icon on hover for cleaner UI:
 
 ## Complete Example
 
-See the player detail component for a complete implementation:
+### Refactored Player Detail (current structure)
 
-- `src/app/features/players/components/detail/player-detail.component.ts`
-- `src/app/features/players/components/detail/player-detail.component.html`
-- `src/app/features/players/components/detail/player-detail.component.less`
+The player detail component has been refactored to use smaller, focused components:
+
+- `src/app/features/players/components/detail/player-detail.component.ts` - Parent component
+- `src/app/features/players/components/detail/player-detail.component.html` - Template
+- `src/app/features/players/components/detail/player-detail.component.less` - Styles
+- `src/app/features/players/components/detail/player-display.util.ts` - Type-safe player data helpers
+- `src/app/features/players/components/detail/tournament-assignment/tournament-assignment.component.ts` - Inline-edit UI component
+- `src/app/features/players/components/detail/tournament-assignment/tournament-assignment.component.html` - Template
+- `src/app/features/players/components/detail/tournament-assignment/tournament-assignment.component.less` - Styles
+
+### TournamentAssignmentComponent
+
+The `TournamentAssignmentComponent` demonstrates the inline editable forms pattern:
+
+- Team dropdown with inline edit/save/cancel
+- Player number text field with inline edit/save/cancel
+- Position dropdown with inline edit/save/cancel
+- Uses `@Input()` with `init()` method for parent-child communication
+- Loads tournament teams and sport positions via store services
 
 ## Related Documentation
 

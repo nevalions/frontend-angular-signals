@@ -4,6 +4,26 @@
   margin: 0 auto;
 }
 
+.player-detail__assignment-photo-wrapper {
+  background: var(--tui-background-base);
+  border-radius: var(--tui-radius-m);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--tui-shadow-small);
+}
+
+.player-detail__photo-section {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  @media (min-width: 769px) {
+    width: 280px;
+  }
+}
+
 .player-detail__loading,
 .player-detail__not-found,
 .player-detail__error {
