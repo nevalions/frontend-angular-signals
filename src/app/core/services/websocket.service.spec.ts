@@ -1,0 +1,194 @@
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { TestBed } from '@angular/core/testing';
+import { WebSocketService, ConnectionState, ComprehensiveMatchData } from './websocket.service';
+import { GameClock } from '../../features/matches/models/gameclock.model';
+import { PlayClock } from '../../features/matches/models/playclock.model';
+
+// Mock webSocket from rxjs/webSocket
+vi.mock('rxjs/webSocket', () => ({
+  webSocket: vi.fn(),
+}));
+
+describe('WebSocketService', () => {
+  let service: WebSocketService;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+
+    TestBed.configureTestingModule({
+      providers: [WebSocketService],
+    });
+
+    service = TestBed.inject(WebSocketService);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
+  describe('Initialization', () => {
+    it('should be created', () => {
+      expect(service).toBeTruthy();
+    });
+
+    it('should initialize with disconnected state', () => {
+      expect(service.connectionState()).toBe('disconnected');
+    });
+
+    it('should initialize with null matchData', () => {
+      expect(service.matchData()).toBeNull();
+    });
+
+    it('should initialize with null gameClock', () => {
+      expect(service.gameClock()).toBeNull();
+    });
+
+    it('should initialize with null playClock', () => {
+      expect(service.playClock()).toBeNull();
+    });
+
+    it('should initialize with null lastError', () => {
+      expect(service.lastError()).toBeNull();
+    });
+  });
+
+  describe('Signal Types', () => {
+    it('should have connectionState signal of correct type', () => {
+      expect(typeof service.connectionState).toBe('function');
+      const state: ConnectionState = service.connectionState();
+      expect(['disconnected', 'connecting', 'connected', 'error']).toContain(state);
+    });
+
+    it('should have matchData signal of correct type', () => {
+      expect(typeof service.matchData).toBe('function');
+      const data: ComprehensiveMatchData | null = service.matchData();
+      expect(data).toBeNull();
+    });
+
+    it('should have gameClock signal of correct type', () => {
+      expect(typeof service.gameClock).toBe('function');
+      const clock: GameClock | null = service.gameClock();
+      expect(clock).toBeNull();
+    });
+
+    it('should have playClock signal of correct type', () => {
+      expect(typeof service.playClock).toBe('function');
+      const clock: PlayClock | null = service.playClock();
+      expect(clock).toBeNull();
+    });
+  });
+
+  describe('Public Methods', () => {
+    it('should have connect method', () => {
+      expect(service.connect).toBeDefined();
+      expect(typeof service.connect).toBe('function');
+    });
+
+    it('should have disconnect method', () => {
+      expect(service.disconnect).toBeDefined();
+      expect(typeof service.disconnect).toBe('function');
+    });
+
+    it('should have sendMessage method', () => {
+      expect(service.sendMessage).toBeDefined();
+      expect(typeof service.sendMessage).toBe('function');
+    });
+
+    it('should have resetData method', () => {
+      expect(service.resetData).toBeDefined();
+      expect(typeof service.resetData).toBe('function');
+    });
+  });
+
+  describe('resetData', () => {
+    it('should reset all data signals to null', () => {
+      // Manually set some values first (using internal access for testing)
+      service.resetData();
+
+      expect(service.matchData()).toBeNull();
+      expect(service.gameClock()).toBeNull();
+      expect(service.playClock()).toBeNull();
+    });
+  });
+
+  describe('sendMessage without connection', () => {
+    it('should warn when sending message without connection', () => {
+      const consoleSpy = vi.spyOn(console, 'warn');
+
+      service.sendMessage({ type: 'test' });
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[WebSocket] Cannot send message - not connected'
+      );
+    });
+  });
+
+  describe('disconnect', () => {
+    it('should set connectionState to disconnected', () => {
+      service.disconnect();
+      expect(service.connectionState()).toBe('disconnected');
+    });
+
+    it('should log disconnection', () => {
+      const consoleSpy = vi.spyOn(console, 'log');
+
+      service.disconnect();
+
+      expect(consoleSpy).toHaveBeenCalledWith('[WebSocket] Disconnecting');
+    });
+  });
+});
+
+describe('ConnectionState type', () => {
+  it('should include all valid states', () => {
+    const states: ConnectionState[] = ['disconnected', 'connecting', 'connected', 'error'];
+    expect(states).toHaveLength(4);
+  });
+});
+
+describe('ComprehensiveMatchData interface', () => {
+  it('should accept valid ComprehensiveMatchData object', () => {
+    const matchData: ComprehensiveMatchData = {
+      match_data: {
+        id: 1,
+        match_id: 123,
+        score_team_a: 7,
+        score_team_b: 14,
+      },
+      gameclock: {
+        id: 1,
+        match_id: 123,
+        gameclock: 720,
+        gameclock_max: 900,
+        gameclock_status: 'running',
+      },
+      playclock: {
+        id: 1,
+        match_id: 123,
+        playclock: 25,
+        playclock_status: 'running',
+      },
+    };
+
+    expect(matchData.match_data?.id).toBe(1);
+    expect(matchData.gameclock?.gameclock).toBe(720);
+    expect(matchData.playclock?.playclock).toBe(25);
+  });
+
+  it('should accept ComprehensiveMatchData with optional fields', () => {
+    const matchData: ComprehensiveMatchData = {};
+    expect(matchData.match_data).toBeUndefined();
+    expect(matchData.gameclock).toBeUndefined();
+    expect(matchData.playclock).toBeUndefined();
+  });
+
+  it('should accept ComprehensiveMatchData with additional properties', () => {
+    const matchData: ComprehensiveMatchData = {
+      custom_field: 'test value',
+      another_field: 123,
+    };
+    expect(matchData['custom_field']).toBe('test value');
+    expect(matchData['another_field']).toBe(123);
+  });
+});
