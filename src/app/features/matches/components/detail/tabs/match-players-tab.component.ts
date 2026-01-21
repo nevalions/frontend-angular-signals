@@ -161,18 +161,18 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             <span class="match-players-tab__player-name">
                               {{ getFullName(player.person).toUpperCase() }}
                             </span>
-                            <div class="match-players-tab__player-switch">
+                            <label class="match-players-tab__player-switch">
                               <input
                                 type="checkbox"
-                                [checked]="player.is_starting || false"
-                                (change)="togglePlayerStarting(player.id, $event.target.checked)"
                                 tuiSwitch
-                                class="match-players-tab__switch"
+                                [ngModel]="player.is_starting || false"
+                                (ngModelChange)="togglePlayerStarting(player.id, $event)"
+                                class="match-players-tab__switch" 
                               />
                               <span class="match-players-tab__player-switch-label">
                                 {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
                               </span>
-                            </div>
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -209,18 +209,18 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             <span class="match-players-tab__player-name match-players-tab__player-name--bench">
                               {{ getFullName(player.person).toUpperCase() }}
                             </span>
-                            <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
+                            <label class="match-players-tab__player-switch match-players-tab__player-switch--bench">
                               <input
                                 type="checkbox"
-                                [checked]="player.is_starting || false"
-                                (change)="togglePlayerStarting(player.id, $event.target.checked)"
                                 tuiSwitch
+                                [ngModel]="player.is_starting || false"
+                                (ngModelChange)="togglePlayerStarting(player.id, $event)"
                                 class="match-players-tab__switch"
                               />
                               <span class="match-players-tab__player-switch-label">
                                 {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
                               </span>
-                            </div>
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -362,18 +362,18 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             <span class="match-players-tab__player-name">
                               {{ getFullName(player.person).toUpperCase() }}
                             </span>
-                            <div class="match-players-tab__player-switch">
+                            <label class="match-players-tab__player-switch">
                               <input
                                 type="checkbox"
-                                [checked]="player.is_starting || false"
-                                (change)="togglePlayerStarting(player.id, $event.target.checked)"
                                 tuiSwitch
+                                [ngModel]="player.is_starting || false"
+                                (ngModelChange)="togglePlayerStarting(player.id, $event)"
                                 class="match-players-tab__switch"
                               />
                               <span class="match-players-tab__player-switch-label">
                                 {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
                               </span>
-                            </div>
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -410,18 +410,18 @@ import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
                             <span class="match-players-tab__player-name match-players-tab__player-name--bench">
                               {{ getFullName(player.person).toUpperCase() }}
                             </span>
-                            <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
+                            <label class="match-players-tab__player-switch match-players-tab__player-switch--bench">
                               <input
                                 type="checkbox"
-                                [checked]="player.is_starting || false"
-                                (change)="togglePlayerStarting(player.id, $event.target.checked)"
                                 tuiSwitch
+                                [ngModel]="player.is_starting || false"
+                                (ngModelChange)="togglePlayerStarting(player.id, $event)"
                                 class="match-players-tab__switch"
                               />
                               <span class="match-players-tab__player-switch-label">
                                 {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
                               </span>
-                            </div>
+                            </label>
                           </div>
                         </div>
                       </div>
