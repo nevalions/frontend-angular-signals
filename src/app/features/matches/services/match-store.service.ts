@@ -9,6 +9,7 @@ import { MatchesPaginatedWithDetailsResponse, MatchCreate, Match, MatchUpdate, M
 import { MatchData } from '../models/match-data.model';
 import { ComprehensiveMatchData } from '../models/comprehensive-match.model';
 import { MatchStats } from '../models/match-stats.model';
+import { PlayerMatch, PlayerMatchUpdate } from '../models/player-match.model';
 import { SortOrder } from '../../../core/models';
 import { buildPaginationParams, createPaginationState } from '../../../core/utils/pagination-helper.util';
 
@@ -151,5 +152,9 @@ export class MatchStoreService {
 
   getMatchStats(matchId: number): Observable<MatchStats> {
     return this.http.get<MatchStats>(buildApiUrl(`/api/matches/id/${matchId}/stats/`));
+  }
+
+  updatePlayerMatch(playerMatchId: number, data: PlayerMatchUpdate): Observable<PlayerMatch> {
+    return this.http.put<PlayerMatch>(buildApiUrl(`/api/players_match/${playerMatchId}/`), data);
   }
 }

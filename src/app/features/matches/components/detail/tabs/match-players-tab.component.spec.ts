@@ -1,8 +1,13 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchPlayersTabComponent } from './match-players-tab.component';
 import { By } from '@angular/platform-browser';
 import { ComponentRef } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { of } from 'rxjs';
+import { PlayerMatch } from '../../../models/player-match.model';
+import { MatchStoreService } from '../../../services/match-store.service';
 
 const mockComprehensiveData = {
   match: { id: 1, date: '2024-01-01' },
@@ -53,8 +58,17 @@ describe('MatchPlayersTabComponent', () => {
   let componentRef: ComponentRef<MatchPlayersTabComponent>;
 
   beforeEach(async () => {
+    const mockMatchStore = {
+      updatePlayerMatch: vi.fn(() => of({} as PlayerMatch))
+    } as unknown as MatchStoreService;
+
     await TestBed.configureTestingModule({
-      imports: [MatchPlayersTabComponent]
+      imports: [MatchPlayersTabComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: MatchStoreService, useValue: mockMatchStore }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MatchPlayersTabComponent);
@@ -210,6 +224,23 @@ describe('MatchPlayersTabComponent', () => {
       const numberBadges = fixture.debugElement.queryAll(By.css('.match-players-tab__player-number-badge'));
       expect(numberBadges.length).toBe(4);
       expect(numberBadges[0].nativeElement.textContent.trim()).toBe('12');
+    });
+
+    it('should display player toggle switches', () => {
+      fixture.detectChanges();
+      const toggles = fixture.debugElement.queryAll(By.css('.match-players-tab__player-toggle'));
+      expect(toggles.length).toBe(4);
+    });
+
+    it('should call updatePlayerMatch when toggle changes', () => {
+      fixture.detectChanges();
+      const toggleInputs = fixture.debugElement.queryAll(By.css('.match-players-tab__player-toggle input[type="checkbox"]'));
+      const matchStore = TestBed.inject(MatchStoreService);
+
+      (toggleInputs[0].nativeElement as HTMLInputElement).click();
+      fixture.detectChanges();
+
+      expect(matchStore.updatePlayerMatch).toHaveBeenCalledWith(1, { is_starting: false });
     });
   });
 });

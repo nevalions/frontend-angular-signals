@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
-import { TuiAvatar, TuiBadge, TuiChip, TuiStatus } from '@taiga-ui/kit';
-import { TuiAppearance, TuiIcon, TuiSurface, TuiTitle } from '@taiga-ui/core';
+import { MatchStoreService } from '../../../services/match-store.service';
+import { TuiAvatar, TuiBadge, TuiChip, TuiStatus, TuiSwitch } from '@taiga-ui/kit';
+import { TuiAppearance, TuiIcon, TuiSurface, TuiTitle, TuiAlertService } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config/api.constants';
+import { PlayerMatchUpdate } from '../../../models/player-match.model';
 
 @Component({
   selector: 'app-match-players-tab',
@@ -71,6 +73,14 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                               </tui-chip>
                             }
                           </div>
+                          <label class="match-players-tab__player-toggle">
+                            <input
+                              type="checkbox"
+                              [checked]="player.is_starting || false"
+                              (change)="togglePlayerStarting(player.id, $event.target.checked)"
+                              tuiSwitch
+                            />
+                          </label>
                         </div>
                       </div>
                     }
@@ -105,6 +115,14 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                               </span>
                             }
                           </div>
+                          <label class="match-players-tab__player-toggle match-players-tab__player-toggle--bench">
+                            <input
+                              type="checkbox"
+                              [checked]="player.is_starting || false"
+                              (change)="togglePlayerStarting(player.id, $event.target.checked)"
+                              tuiSwitch
+                            />
+                          </label>
                         </div>
                       </div>
                     }
@@ -169,6 +187,14 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                               </tui-chip>
                             }
                           </div>
+                          <label class="match-players-tab__player-toggle">
+                            <input
+                              type="checkbox"
+                              [checked]="player.is_starting || false"
+                              (change)="togglePlayerStarting(player.id, $event.target.checked)"
+                              tuiSwitch
+                            />
+                          </label>
                         </div>
                       </div>
                     }
@@ -203,6 +229,14 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                               </span>
                             }
                           </div>
+                          <label class="match-players-tab__player-toggle match-players-tab__player-toggle--bench">
+                            <input
+                              type="checkbox"
+                              [checked]="player.is_starting || false"
+                              (change)="togglePlayerStarting(player.id, $event.target.checked)"
+                              tuiSwitch
+                            />
+                          </label>
                         </div>
                       </div>
                     }
@@ -233,6 +267,8 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
 })
 export class MatchPlayersTabComponent {
   comprehensiveData = input<ComprehensiveMatchData | null>(null);
+  private matchStore = inject(MatchStoreService);
+  private readonly alerts = inject(TuiAlertService);
 
   teamAPlayers = computed(() => {
     const data = this.comprehensiveData();
@@ -287,6 +323,21 @@ export class MatchPlayersTabComponent {
     const numberB = parseInt(numB.toString(), 10);
 
     return numberA - numberB;
+  }
+
+  togglePlayerStarting(playerId: number, isStarting: boolean): void {
+    const data: PlayerMatchUpdate = { is_starting: isStarting };
+    this.matchStore.updatePlayerMatch(playerId, data).subscribe({
+      next: () => {
+        this.alerts.open(
+          isStarting ? 'Player marked as starter' : 'Player moved to bench',
+          { label: 'Success', appearance: 'success' }
+        ).subscribe();
+      },
+      error: () => {
+        this.alerts.open('Failed to update player status', { label: 'Error', appearance: 'error' }).subscribe();
+      }
+    });
   }
 
   getTeamLogo(team: { team_logo_url?: string | null }): string | null {
