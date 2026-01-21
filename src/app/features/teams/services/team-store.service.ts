@@ -58,11 +58,11 @@ export class TeamStoreService {
   }
 
   getTeamsByTournamentId(tournamentId: number): Observable<Team[]> {
-    return this.http.get<Team[]>(buildApiUrl(`/api/team_in_tournament/tournament/id/${tournamentId}/teams`));
+    return this.apiService.customGet<Team[]>(buildApiUrl(`/api/team_in_tournament/tournament/id/${tournamentId}/teams`));
   }
 
   getAvailableTeamsForTournament(tournamentId: number): Observable<Team[]> {
-    return this.http.get<Team[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/teams/available`));
+    return this.apiService.customGet<Team[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/teams/available`));
   }
 
   addTeamToTournament(tournamentId: number, teamId: number): Observable<TeamTournament> {

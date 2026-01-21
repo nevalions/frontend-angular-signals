@@ -103,13 +103,15 @@ createItem(item: Item) {
 }
 ```
 
-**✅ GOOD - Use HttpClient for mutations:**
+**✅ GOOD - Use ApiService for mutations:**
 
 ```typescript
 createItem(item: Item): Observable<Item> {
-  return this.http.post<Item>('/items', item);
+  return this.apiService.post<Item>('/items', item);
 }
 ```
+
+**Note:** Use `HttpClient` only when needed for custom headers, query parameters, or streaming.
 
 ## Mutation Anti-Patterns
 

@@ -132,11 +132,11 @@ export class PlayerStoreService {
   }
 
   getAvailablePersonsForSport(sportId: number): Observable<Person[]> {
-    return this.http.get<Person[]>(buildApiUrl(`/api/persons/not-in-sport/${sportId}/all`));
+    return this.apiService.customGet<Person[]>(buildApiUrl(`/api/persons/not-in-sport/${sportId}/all`));
   }
 
   getPlayersByTournamentId(tournamentId: number): Observable<PlayerTeamTournamentWithDetails[]> {
-    return this.http.get<PlayerTeamTournamentWithDetails[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/`));
+    return this.apiService.customGet<PlayerTeamTournamentWithDetails[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/`));
   }
 
   getTournamentPlayersPaginated(
@@ -188,11 +188,11 @@ export class PlayerStoreService {
   }
 
   getAvailablePlayersForTournament(tournamentId: number): Observable<PlayerWithPerson[]> {
-    return this.http.get<PlayerWithPerson[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/available`));
+    return this.apiService.customGet<PlayerWithPerson[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/available`));
   }
 
   getTournamentPlayersWithoutTeam(tournamentId: number): Observable<Player[]> {
-    return this.http.get<Player[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/without-team/all`));
+    return this.apiService.customGet<Player[]>(buildApiUrl(`/api/tournaments/id/${tournamentId}/players/without-team/all`));
   }
 
   addPlayerToTournament(tournamentId: number, playerId: number): Observable<PlayerTeamTournament> {
@@ -203,7 +203,7 @@ export class PlayerStoreService {
   }
 
   addPersonToSport(data: PlayerAddToSport): Observable<Player> {
-    return this.http.post<Player>(buildApiUrl('/api/players/add-person-to-sport'), data).pipe(
+    return this.apiService.post<Player>('/api/players/add-person-to-sport', data).pipe(
       tap(() => this.playersResource.reload())
     );
   }
@@ -221,6 +221,6 @@ export class PlayerStoreService {
   }
 
   getPlayerCareer(playerId: number): Observable<PlayerCareer> {
-    return this.http.get<PlayerCareer>(buildApiUrl(`/api/players/id/${playerId}/career`));
+    return this.apiService.customGet<PlayerCareer>(buildApiUrl(`/api/players/id/${playerId}/career`));
   }
 }

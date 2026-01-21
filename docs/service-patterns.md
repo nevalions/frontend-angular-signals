@@ -124,31 +124,37 @@ export class SeasonStoreService {
 
 ### Mutation Methods
 
-For mutations (POST, PUT, DELETE), use `HttpClient` directly:
+For standard CRUD operations (POST, PUT, DELETE), prefer `ApiService`:
 
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class SeasonStoreService {
-  private http = inject(HttpClient);
+  private apiService = inject(ApiService);
 
   createSeason(data: SeasonCreate): Observable<Season> {
-    return this.http.post<Season>(buildApiUrl('/api/seasons/'), data).pipe(
+    return this.apiService.post<Season>('/api/seasons/', data).pipe(
       tap(() => this.seasonsResource.reload())
     );
   }
 
   updateSeason(id: number, data: SeasonUpdate): Observable<Season> {
-    return this.http.put<Season>(buildApiUrl(`/api/seasons/${id}`), data).pipe(
+    return this.apiService.put<Season>('/api/seasons/', id, data, true).pipe(
       tap(() => this.seasonsResource.reload())
     );
   }
 
   deleteSeason(id: number): Observable<void> {
-    return this.http.delete<void>(buildApiUrl(`/api/seasons/${id}`)).pipe(
+    return this.apiService.delete('/api/seasons', id).pipe(
       tap(() => this.seasonsResource.reload())
     );
   }
 }
+```
+
+**Keep `HttpClient` only when necessary:**
+- Custom query parameters (pagination, search, filters)
+- Custom headers or authentication tokens
+- Streaming or custom request/response handling
 ```
 
 ## Mixed Schemas Pattern
