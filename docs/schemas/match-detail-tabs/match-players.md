@@ -17,18 +17,18 @@
 ├──────────────────────────────┬───────────────────────────────┤
 │  ⭐ Starting Lineup        │   ⭐ Starting Lineup           │
 │  ✓ 3 players               │   ✓ 2 players                  │
-├──────────────────────────────┼───────────────────────────────┤
-│  [99]                      │   [7]                          │
-│   [👤]  John Smith         │    [👤]  Alex Brown            │
-│       QB                    │        QB                     │
-│                                                              │
-│  [84]                      │   [11]                         │
-│   [👤]  Mike Johnson        │    [👤]  Tom Davis             │
-│       WR                    │        WR                     │
-│                                                              │
-│  [75]                      │                                │
-│   [👤]  Chris Williams      │                                │
-│       TE                    │                                │
+ ├──────────────────────────────┼───────────────────────────────┤
+ │  [99]                      │   [7]                          │
+ │       John Smith            │       Alex Brown               │
+ │       QB                    │        QB                     │
+ │                                                              │
+ │  [84]                      │   [11]                         │
+ │       Mike Johnson          │       Tom Davis                │
+ │       WR                    │        WR                     │
+ │                                                              │
+ │  [75]                      │                                │
+ │       Chris Williams        │                                │
+ │       TE                    │                                │
 │                                                              │
 ├──────────────────────────────┼───────────────────────────────┤
 │  👥 Bench                  │   👥 Bench                     │
@@ -49,28 +49,25 @@
 
 ### Team Header
 - Team avatar (logo or initials)
-- Team name (uppercase)
-- Player count badge
-- Green status badge for starter count
+- Team name (UPPERCASE)
+- Total player count badge
 
 ### Player Sections (per team)
 - Starting Lineup section (⭐ icon with star)
-  - Only shown if team has starters
-  - Green positive badge showing starter count
-  - Larger player cards with photos
-  - Player number badge (visible)
-  - Player avatar (photo or initials)
-  - Player name (full name)
-  - Position chip with accent styling
+   - Only shown if team has starters
+   - Green positive badge showing starter count
+   - Larger player cards
+   - Player number badge (visible)
+   - Player name (full name)
+   - Position chip with accent styling
 
 - Bench section (👥 icon with users)
-  - Only shown if team has bench players
-  - Neutral badge showing bench count
-  - Smaller, more compact player cards
-  - Player number badge (smaller)
-  - Player avatar (smaller photo or initials)
-  - Player name (smaller text)
-  - Position as plain text
+   - Only shown if team has bench players
+   - Neutral badge showing bench count
+   - Smaller, more compact player cards
+   - Player number badge (smaller)
+   - Player name (smaller text)
+   - Position as plain text
 
 ### Empty State
 - No players registered message when team has no players
@@ -83,7 +80,6 @@
 - Player match id
 - Person id
 - Person full name
-- Person photo URL
 - Player number (from player_team_tournament)
 - Position id
 - Position title
@@ -103,4 +99,3 @@
 **For static assets:**
 
 - Team logo URLs (buildStaticUrl)
-- Player photo URLs (buildStaticUrl)

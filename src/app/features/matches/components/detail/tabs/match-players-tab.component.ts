@@ -40,8 +40,7 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                   {{ getInitials(comprehensiveData()!.teams.team_a.title) }}
                 </tui-avatar>
                 <hgroup tuiTitle>
-                  <h3>{{ comprehensiveData()!.teams.team_a.title }}</h3>
-                  <p tuiSubtitle>{{ teamAPlayers().length }} players</p>
+                  <h3>{{ comprehensiveData()!.teams.team_a.title.toUpperCase() }}</h3>
                 </hgroup>
               </header>
 
@@ -62,16 +61,9 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                           <div class="match-players-tab__player-number-badge">
                             {{ player.player_team_tournament?.player_number || '-' }}
                           </div>
-                          <tui-avatar
-                            [src]="getPlayerPhotoUrl(player)"
-                            size="m"
-                            class="match-players-tab__player-avatar"
-                          >
-                            {{ getInitials(player.person?.full_name) }}
-                          </tui-avatar>
                           <div class="match-players-tab__player-details">
                             <span class="match-players-tab__player-name">
-                              {{ player.person?.full_name || 'Unknown' }}
+                              {{ getFullName(player.person).toUpperCase() }}
                             </span>
                             @if (player.position) {
                               <tui-chip size="xs" class="match-players-tab__position-chip">
@@ -103,16 +95,9 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                           <div class="match-players-tab__player-number-badge match-players-tab__player-number-badge--bench">
                             {{ player.player_team_tournament?.player_number || '-' }}
                           </div>
-                          <tui-avatar
-                            [src]="getPlayerPhotoUrl(player)"
-                            size="s"
-                            class="match-players-tab__player-avatar"
-                          >
-                            {{ getInitials(player.person?.full_name) }}
-                          </tui-avatar>
                           <div class="match-players-tab__player-details">
                             <span class="match-players-tab__player-name match-players-tab__player-name--bench">
-                              {{ player.person?.full_name || 'Unknown' }}
+                              {{ getFullName(player.person).toUpperCase() }}
                             </span>
                             @if (player.position) {
                               <span class="match-players-tab__position-text">
@@ -153,8 +138,7 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                   {{ getInitials(comprehensiveData()!.teams.team_b.title) }}
                 </tui-avatar>
                 <hgroup tuiTitle>
-                  <h3>{{ comprehensiveData()!.teams.team_b.title }}</h3>
-                  <p tuiSubtitle>{{ teamBPlayers().length }} players</p>
+                  <h3>{{ comprehensiveData()!.teams.team_b.title.toUpperCase() }}</h3>
                 </hgroup>
               </header>
 
@@ -175,16 +159,9 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                           <div class="match-players-tab__player-number-badge">
                             {{ player.player_team_tournament?.player_number || '-' }}
                           </div>
-                          <tui-avatar
-                            [src]="getPlayerPhotoUrl(player)"
-                            size="m"
-                            class="match-players-tab__player-avatar"
-                          >
-                            {{ getInitials(player.person?.full_name) }}
-                          </tui-avatar>
                           <div class="match-players-tab__player-details">
                             <span class="match-players-tab__player-name">
-                              {{ player.person?.full_name || 'Unknown' }}
+                              {{ getFullName(player.person).toUpperCase() }}
                             </span>
                             @if (player.position) {
                               <tui-chip size="xs" class="match-players-tab__position-chip">
@@ -216,16 +193,9 @@ import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config
                           <div class="match-players-tab__player-number-badge match-players-tab__player-number-badge--bench">
                             {{ player.player_team_tournament?.player_number || '-' }}
                           </div>
-                          <tui-avatar
-                            [src]="getPlayerPhotoUrl(player)"
-                            size="s"
-                            class="match-players-tab__player-avatar"
-                          >
-                            {{ getInitials(player.person?.full_name) }}
-                          </tui-avatar>
                           <div class="match-players-tab__player-details">
                             <span class="match-players-tab__player-name match-players-tab__player-name--bench">
-                              {{ player.person?.full_name || 'Unknown' }}
+                              {{ getFullName(player.person).toUpperCase() }}
                             </span>
                             @if (player.position) {
                               <span class="match-players-tab__position-text">
@@ -276,18 +246,47 @@ export class MatchPlayersTabComponent {
     return data.players.filter(p => p.team_id === data.teams.team_b.id);
   });
 
-  teamAStarters = computed(() => this.teamAPlayers().filter(p => p.is_starting));
-  teamABench = computed(() => this.teamAPlayers().filter(p => !p.is_starting));
-  teamBStarters = computed(() => this.teamBPlayers().filter(p => p.is_starting));
-  teamBBench = computed(() => this.teamBPlayers().filter(p => !p.is_starting));
+  teamAStarters = computed(() =>
+    this.teamAPlayers()
+      .filter(p => p.is_starting)
+      .sort((a, b) => this.compareByPlayerNumber(a, b))
+  );
+  teamABench = computed(() =>
+    this.teamAPlayers()
+      .filter(p => !p.is_starting)
+      .sort((a, b) => this.compareByPlayerNumber(a, b))
+  );
+  teamBStarters = computed(() =>
+    this.teamBPlayers()
+      .filter(p => p.is_starting)
+      .sort((a, b) => this.compareByPlayerNumber(a, b))
+  );
+  teamBBench = computed(() =>
+    this.teamBPlayers()
+      .filter(p => !p.is_starting)
+      .sort((a, b) => this.compareByPlayerNumber(a, b))
+  );
 
-  playerPhotoUrl(photo: string): string {
-    return buildStaticUrlUtil(photo);
+  getFullName(person: { first_name?: string | null; second_name?: string | null } | null | undefined): string {
+    if (!person) return 'Unknown';
+    const firstName = person.first_name || '';
+    const secondName = person.second_name || '';
+    const fullName = `${firstName} ${secondName}`.trim();
+    return fullName || 'Unknown';
   }
 
-  getPlayerPhotoUrl(player: { person?: { photo_url?: string | null } | null }): string | null {
-    const photoUrl = player.person?.photo_url;
-    return photoUrl ? this.playerPhotoUrl(photoUrl) : null;
+  compareByPlayerNumber(a: any, b: any): number {
+    const numA = a.player_team_tournament?.player_number || null;
+    const numB = b.player_team_tournament?.player_number || null;
+
+    if (numA === null && numB === null) return 0;
+    if (numA === null) return 1;
+    if (numB === null) return -1;
+
+    const numberA = parseInt(numA.toString(), 10);
+    const numberB = parseInt(numB.toString(), 10);
+
+    return numberA - numberB;
   }
 
   getTeamLogo(team: { team_logo_url?: string | null }): string | null {

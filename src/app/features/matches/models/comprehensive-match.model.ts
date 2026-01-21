@@ -53,8 +53,7 @@ export interface PlayerMatchWithDetails extends PlayerMatch {
   person?: {
     id: number;
     first_name: string;
-    last_name: string;
-    full_name: string;
+    second_name: string;
     person_eesl_id?: number | null;
     photo_url?: string | null;
   } | null;

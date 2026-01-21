@@ -15,7 +15,7 @@ const mockComprehensiveData = {
       id: 1,
       team_id: 1,
       is_starting: true,
-      person: { full_name: 'John Doe', photo_url: null },
+      person: { first_name: 'John', second_name: 'Doe', photo_url: null },
       position: { title: 'Quarterback' },
       player_team_tournament: { player_number: 12 }
     },
@@ -23,7 +23,7 @@ const mockComprehensiveData = {
       id: 2,
       team_id: 1,
       is_starting: false,
-      person: { full_name: 'Jane Smith', photo_url: 'jane.jpg' },
+      person: { first_name: 'Jane', second_name: 'Smith', photo_url: 'jane.jpg' },
       position: { title: 'Wide Receiver' },
       player_team_tournament: { player_number: 88 }
     },
@@ -31,7 +31,7 @@ const mockComprehensiveData = {
       id: 3,
       team_id: 2,
       is_starting: true,
-      person: { full_name: 'Bob Johnson', photo_url: null },
+      person: { first_name: 'Bob', second_name: 'Johnson', photo_url: null },
       position: { title: 'Running Back' },
       player_team_tournament: { player_number: 24 }
     },
@@ -39,7 +39,7 @@ const mockComprehensiveData = {
       id: 4,
       team_id: 2,
       is_starting: false,
-      person: { full_name: 'Alice Brown', photo_url: null },
+      person: { first_name: 'Alice', second_name: 'Brown', photo_url: null },
       position: null,
       player_team_tournament: { player_number: null }
     }
@@ -91,24 +91,6 @@ describe('MatchPlayersTabComponent', () => {
 
     it('should handle empty string', () => {
       expect(component.getInitials('')).toBe('??');
-    });
-  });
-
-  describe('Player photo URL', () => {
-    it('should build static URL correctly', () => {
-      const result = component.playerPhotoUrl('player.jpg');
-      expect(result).toContain('player.jpg');
-    });
-
-    it('should return null when player has no photo', () => {
-      const player = { person: { photo_url: null } };
-      expect(component.getPlayerPhotoUrl(player)).toBeNull();
-    });
-
-    it('should return URL when player has photo', () => {
-      const player = { person: { photo_url: 'test.jpg' } };
-      const result = component.getPlayerPhotoUrl(player);
-      expect(result).toContain('test.jpg');
     });
   });
 
@@ -164,16 +146,20 @@ describe('MatchPlayersTabComponent', () => {
 
     it('should separate starters from bench for team A', () => {
       expect(component.teamAStarters()).toHaveLength(1);
-      expect(component.teamAStarters()[0].person?.full_name).toBe('John Doe');
+      expect(component.teamAStarters()[0].person?.first_name).toBe('John');
+      expect(component.teamAStarters()[0].person?.second_name).toBe('Doe');
       expect(component.teamABench()).toHaveLength(1);
-      expect(component.teamABench()[0].person?.full_name).toBe('Jane Smith');
+      expect(component.teamABench()[0].person?.first_name).toBe('Jane');
+      expect(component.teamABench()[0].person?.second_name).toBe('Smith');
     });
 
     it('should separate starters from bench for team B', () => {
       expect(component.teamBStarters()).toHaveLength(1);
-      expect(component.teamBStarters()[0].person?.full_name).toBe('Bob Johnson');
+      expect(component.teamBStarters()[0].person?.first_name).toBe('Bob');
+      expect(component.teamBStarters()[0].person?.second_name).toBe('Johnson');
       expect(component.teamBBench()).toHaveLength(1);
-      expect(component.teamBBench()[0].person?.full_name).toBe('Alice Brown');
+      expect(component.teamBBench()[0].person?.first_name).toBe('Alice');
+      expect(component.teamBBench()[0].person?.second_name).toBe('Brown');
     });
   });
 
