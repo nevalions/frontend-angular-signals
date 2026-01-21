@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiAlertService, TuiDialogService, TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiSegmented } from '@taiga-ui/kit';
 import { MatchStoreService } from '../../services/match-store.service';
@@ -17,6 +15,7 @@ import { ComprehensiveMatchData } from '../../models/comprehensive-match.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { DateService } from '../../../../core/services/date.service';
 import { CommonModule } from '@angular/common';
+import { createNumberParamSignal, createStringParamSignal } from '../../../../core/utils/route-param-helper.util';
 
 @Component({
   selector: 'app-match-detail',
@@ -35,37 +34,13 @@ export class MatchDetailComponent implements OnInit {
   private readonly dialogs = inject(TuiDialogService);
   private dateService = inject(DateService);
 
-  sportId = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('sportId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  sportId = createNumberParamSignal(this.route, 'sportId');
 
-  matchId = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('id');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  matchId = createNumberParamSignal(this.route, 'id');
 
-  year = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('year');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  year = createNumberParamSignal(this.route, 'year', { source: 'queryParamMap' });
 
-  tournamentId = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('tournamentId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  tournamentId = createNumberParamSignal(this.route, 'tournamentId', { source: 'queryParamMap' });
 
   match = signal<MatchWithDetails | null>(null);
   matchData = signal<MatchData | null>(null);
@@ -73,10 +48,10 @@ export class MatchDetailComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
 
-  activeTab = toSignal(
-    this.route.queryParamMap.pipe(map((params) => params.get('tab') || 'players')),
-    { initialValue: 'players' }
-  );
+  activeTab = createStringParamSignal(this.route, 'tab', {
+    source: 'queryParamMap',
+    defaultValue: 'players',
+  });
 
   matchTitle = computed(() => {
     const m = this.match();
@@ -102,7 +77,7 @@ export class MatchDetailComponent implements OnInit {
   activeTabIndex = computed(() => {
     const tab = this.activeTab();
     const tabs = ['players', 'events', 'stats'];
-    return tabs.indexOf(tab);
+    return tab !== null ? tabs.indexOf(tab) : 0;
   });
 
   readonly tabs = [

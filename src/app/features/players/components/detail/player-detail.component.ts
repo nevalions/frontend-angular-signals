@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +17,7 @@ import { PositionStoreService } from '../../../sports/services/position-store.se
 import { Team, Position } from '../../../../shared/types';
 import { withDeleteConfirm, withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { capitalizeName as capitalizeNameUtil } from '../../../../core/utils/string-helper.util';
-import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
+import { createNumberParamSignal, createBooleanParamSignal } from '../../../../core/utils/route-param-helper.util';
 
 @Component({
   selector: 'app-player-detail',
@@ -53,13 +51,9 @@ export class PlayerDetailComponent {
 
   sportId = createNumberParamSignal(this.route, 'sportId');
 
-  fromSport = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('fromSport');
-      return val === 'true';
-    })),
-    { initialValue: false }
-  );
+  fromSport = createBooleanParamSignal(this.route, 'fromSport', {
+    source: 'queryParamMap',
+  });
 
   fromTournamentId = createNumberParamSignal(this.route, 'tournamentId', { source: 'queryParamMap' });
 

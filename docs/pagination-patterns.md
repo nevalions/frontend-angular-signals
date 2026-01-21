@@ -259,19 +259,15 @@ export class PaginatedStoreService {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  currentPage = toSignal(
-    this.route.queryParamMap.pipe(
-      map(params => Number(params.get('page')) || 1)
-    ),
-    { initialValue: 1 }
-  );
+  currentPage = createNumberParamSignal(this.route, 'page', {
+    source: 'queryParamMap',
+    defaultValue: 1,
+  });
 
-  itemsPerPage = toSignal(
-    this.route.queryParamMap.pipe(
-      map(params => Number(params.get('items_per_page')) || 10)
-    ),
-    { initialValue: 10 }
-  );
+  itemsPerPage = createNumberParamSignal(this.route, 'items_per_page', {
+    source: 'queryParamMap',
+    defaultValue: 10,
+  });
 
   itemsResource = httpResource<PaginatedResponse<Item>>(() =>
     buildApiUrl(`/api/items?page=${this.currentPage()}&items_per_page=${this.itemsPerPage()}`),

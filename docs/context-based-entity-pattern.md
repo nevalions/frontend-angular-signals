@@ -28,26 +28,17 @@ toPlayerDetail(sportId, playerId, fromSport=false, tournamentId, year)
 @Component({ ... })
 export class PlayerDetailComponent {
   // Query parameters
-  fromSport = toSignal(
-    this.route.queryParamMap.pipe(map((params) => params.get('fromSport') === 'true')),
-    { initialValue: false }
-  );
+  fromSport = createBooleanParamSignal(this.route, 'fromSport', {
+    source: 'queryParamMap',
+  });
 
-  fromTournamentId = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('tournamentId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  fromTournamentId = createNumberParamSignal(this.route, 'tournamentId', {
+    source: 'queryParamMap',
+  });
 
-  fromYear = toSignal(
-    this.route.queryParamMap.pipe(map((params) => {
-      const val = params.get('year');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  fromYear = createNumberParamSignal(this.route, 'year', {
+    source: 'queryParamMap',
+  });
 
   // Context signals
   isInSportContext = computed(() => this.fromSport() === true);

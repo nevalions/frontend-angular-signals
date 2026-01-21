@@ -613,16 +613,10 @@ it('should return null when tournamentId is null', () => {
 });
 ```
 
-**Why it's wrong:** While `Number(null)` returns 0, `toSignal()` with `initialValue: null` will return null when the Observable emits null. The component explicitly returns null when params are missing:
+**Why it's wrong:** While `Number(null)` returns 0, the helper function `createNumberParamSignal()` already handles null values correctly by returning null:
 
 ```typescript
-tournamentId = toSignal(
-  this.route.paramMap.pipe(map((params) => {
-    const val = params.get('id');
-    return val ? Number(val) : null;  // Explicit null check
-  })),
-  { initialValue: null }
-);
+tournamentId = createNumberParamSignal(this.route, 'id');
 ```
 
 **✅ Correct:**

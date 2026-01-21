@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiAlertService, TuiDialogService } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
@@ -13,6 +11,7 @@ import { TournamentMatchesTabComponent } from './tabs/tournament-matches-tab.com
 import { TournamentTeamsTabComponent } from './tabs/tournament-teams-tab.component';
 import { TournamentPlayersTabComponent } from './tabs/tournament-players-tab.component';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
+import { createNumberParamSignal, createStringParamSignal } from '../../../../core/utils/route-param-helper.util';
 
 @Component({
   selector: 'app-tournament-detail',
@@ -32,29 +31,11 @@ export class TournamentDetailComponent {
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
 
-  sportId = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('sportId');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  sportId = createNumberParamSignal(this.route, 'sportId');
 
-  year = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('year');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  year = createNumberParamSignal(this.route, 'year');
 
-  tournamentId = toSignal(
-    this.route.paramMap.pipe(map((params) => {
-      const val = params.get('id');
-      return val ? Number(val) : null;
-    })),
-    { initialValue: null }
-  );
+  tournamentId = createNumberParamSignal(this.route, 'id');
 
   sport = computed(() => {
     const id = this.sportId();
@@ -81,10 +62,10 @@ export class TournamentDetailComponent {
     return t?.tournament_logo_icon_url ? buildStaticUrl(t.tournament_logo_icon_url) : null;
   });
 
-  activeTab = toSignal(
-    this.route.queryParamMap.pipe(map((params) => params.get('tab') || 'matches')),
-    { initialValue: 'matches' }
-  );
+  activeTab = createStringParamSignal(this.route, 'tab', {
+    source: 'queryParamMap',
+    defaultValue: 'matches',
+  });
 
   customMenuItems = computed<CustomMenuItem[]>(() => {
     const tournament = this.tournament();

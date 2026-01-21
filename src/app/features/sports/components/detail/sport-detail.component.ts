@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TuiAlertService, TuiDialogService, TuiTextfield } from '@taiga-ui/core';
 import { TuiSelect } from '@taiga-ui/kit';
@@ -13,7 +11,7 @@ import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
-import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
+import { createNumberParamSignal, createStringParamSignal } from '../../../../core/utils/route-param-helper.util';
 import { EntityHeaderComponent, CustomMenuItem } from '../../../../shared/components/entity-header/entity-header.component';
 import { SportTournamentsTabComponent } from './tabs/sport-tournaments-tab.component';
 import { SportTeamsTabComponent } from './tabs/sport-teams-tab.component';
@@ -84,10 +82,10 @@ export class SportDetailComponent {
     ];
   });
 
-  activeTab = toSignal(
-    this.route.queryParamMap.pipe(map((params) => params.get('tab') || 'tournaments')),
-    { initialValue: 'tournaments' }
-  );
+  activeTab = createStringParamSignal(this.route, 'tab', {
+    source: 'queryParamMap',
+    defaultValue: 'tournaments',
+  });
 
   selectedSeasonYear = signal<number | null>(null);
 

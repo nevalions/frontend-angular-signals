@@ -32,9 +32,24 @@ All components MUST use `ChangeDetectionStrategy.OnPush`:
 ### 3. Reactive Route Params
 
 ```typescript
-// GOOD - Reactive route params as signal
-import { toSignal } from '@angular/core/rxjs-interop';
+// GOOD - Use helper functions for route params
+import { createNumberParamSignal, createStringParamSignal, createBooleanParamSignal } from '../../core/utils/route-param-helper.util';
 
+// Number param from URL path
+seasonId = createNumberParamSignal(this.route, 'id');
+
+// String param with default value
+activeTab = createStringParamSignal(this.route, 'tab', {
+  source: 'queryParamMap',
+  defaultValue: 'defaultTab',
+});
+
+// Boolean param
+fromSport = createBooleanParamSignal(this.route, 'fromSport', {
+  source: 'queryParamMap',
+});
+
+// BAD - Manual param parsing
 seasonId = toSignal(
   this.route.paramMap.pipe(map(params => Number(params.get('id')))),
   { initialValue: null }
@@ -194,18 +209,17 @@ Tab state MUST be managed via URL query parameters to enable:
 ```typescript
 // ✅ GOOD - Query parameter-based tab state
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { createStringParamSignal } from '../../core/utils/route-param-helper.util';
 
 export class DetailComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   // Reactive tab state from query params
-  activeTab = toSignal(
-    this.route.queryParamMap.pipe(map(params => params.get('tab') || 'defaultTab')),
-    { initialValue: 'defaultTab' }
-  );
+  activeTab = createStringParamSignal(this.route, 'tab', {
+    source: 'queryParamMap',
+    defaultValue: 'defaultTab',
+  });
 
   // Tab change handler updates URL
   onTabChange(tab: string): void {
