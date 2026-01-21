@@ -1,0 +1,15 @@
+export {
+  scoreChangeAnimation,
+  fadeInOutAnimation,
+  breathingAnimation,
+  dissolveAnimation,
+  slideInLeftAnimation,
+  slideInRightAnimation,
+  staggeredListAnimation,
+  listItemAnimation,
+  clockWarningAnimation,
+  clockFlashAnimation,
+  slideUpAnimation,
+  slideDownAnimation,
+  SCOREBOARD_ANIMATIONS,
+} from './scoreboard.animations';
