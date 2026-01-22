@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
 import { ScoreboardStoreService } from '../../services/scoreboard-store.service';
@@ -12,6 +12,7 @@ import { MatchStats, TeamStats } from '../../../matches/models/match-stats.model
 import { PlayerMatchLowerDisplayComponent } from '../../components/lower-display/player-match-lower-display/player-match-lower-display.component';
 import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-display/football-qb-lower-stats-display/football-qb-lower-stats-display.component';
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 
 @Component({
   selector: 'app-scoreboard-view',
@@ -30,6 +31,7 @@ export class ScoreboardViewComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private scoreboardStore = inject(ScoreboardStoreService);
   private matchStore = inject(MatchStoreService);
+  private wsService = inject(WebSocketService);
 
   matchId = createNumberParamSignal(this.route, 'matchId');
 
@@ -139,7 +141,7 @@ export class ScoreboardViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
-    // TODO: Setup WebSocket connection for real-time updates
+    this.connectWebSocket();
   }
 
   private loadData(): void {
@@ -181,6 +183,43 @@ export class ScoreboardViewComponent implements OnInit {
     this.matchStore.getMatchStats(id).subscribe({
       next: (stats) => this.matchStats.set(stats),
       error: () => console.error('Failed to load match stats'),
+    });
+  }
+
+  private connectWebSocket(): void {
+    const id = this.matchId();
+    if (!id) {
+      return;
+    }
+
+    this.wsService.connect(id);
+
+    effect(() => {
+      const message = this.wsService.matchData();
+      const current = this.data();
+      if (!message || !current) {
+        return;
+      }
+
+      this.data.set({
+        ...current,
+        match_data: message.match_data ?? current.match_data,
+        scoreboard: (message.scoreboard as ComprehensiveMatchData['scoreboard']) ?? current.scoreboard,
+      });
+    });
+
+    effect(() => {
+      const clock = this.wsService.gameClock();
+      if (clock) {
+        this.gameClock.set(clock);
+      }
+    });
+
+    effect(() => {
+      const clock = this.wsService.playClock();
+      if (clock) {
+        this.playClock.set(clock);
+      }
     });
   }
 
