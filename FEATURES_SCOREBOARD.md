@@ -144,7 +144,6 @@ Real-time updates for match data, game clock, play clock, scoreboard settings, a
   - Timeout management (use/restore/reset)
   - Team selection dropdowns
   - Scoreboard display settings (visibility toggles, team colors, logo scaling)
-  - Roster management (home/away rosters)
   - Football events tracking and statistics
 
 #### Scoreboard View Page (`ScoreboardViewComponent`)

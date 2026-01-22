@@ -105,13 +105,6 @@
               (scoreboardChange)="onScoreboardSettingsChange($event)"
             />
 
-            <app-roster-forms
-              [scoreboard]="scoreboard()"
-              [players]="data()?.players ?? []"
-              (scoreboardChange)="onScoreboardSettingsChange($event)"
-              (playerUpdate)="onPlayerUpdate($event)"
-            />
-
             <app-events-forms
               [matchStats]="matchStats()"
               [events]="events()"

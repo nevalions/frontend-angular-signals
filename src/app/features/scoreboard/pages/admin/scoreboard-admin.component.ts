@@ -17,7 +17,6 @@ import { QtrFormsComponent } from '../../components/admin-forms/qtr-forms/qtr-fo
 import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../components/admin-forms/down-distance-forms/down-distance-forms.component';
 import { TimeoutFormsComponent, TimeoutChangeEvent } from '../../components/admin-forms/timeout-forms/timeout-forms.component';
 import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
-import { RosterFormsComponent } from '../../components/admin-forms/roster-forms/roster-forms.component';
 import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
 
 @Component({
@@ -33,7 +32,6 @@ import { EventsFormsComponent } from '../../components/admin-forms/events-forms/
     DownDistanceFormsComponent,
     TimeoutFormsComponent,
     ScoreboardSettingsFormsComponent,
-    RosterFormsComponent,
     EventsFormsComponent,
   ],
   templateUrl: './scoreboard-admin.component.html',
