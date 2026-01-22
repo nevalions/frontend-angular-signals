@@ -102,6 +102,13 @@
               [scoreboard]="scoreboard()"
               (scoreboardChange)="onScoreboardSettingsChange($event)"
             />
+
+            <app-roster-forms
+              [scoreboard]="scoreboard()"
+              [players]="data()?.players ?? []"
+              (scoreboardChange)="onScoreboardSettingsChange($event)"
+              (playerUpdate)="onPlayerUpdate($event)"
+            />
           </div>
         }
       </section>

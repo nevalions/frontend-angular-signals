@@ -7,6 +7,7 @@ import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-ma
 import { GameClock } from '../../../matches/models/gameclock.model';
 import { PlayClock } from '../../../matches/models/playclock.model';
 import { Scoreboard, ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
+import { PlayerMatchUpdate } from '../../../matches/models/player-match.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
 import { ScoreFormsComponent, ScoreChangeEvent } from '../../components/admin-forms/score-forms/score-forms.component';
 import { TimeFormsComponent, GameClockActionEvent, PlayClockActionEvent } from '../../components/admin-forms/time-forms/time-forms.component';
@@ -14,6 +15,7 @@ import { QtrFormsComponent } from '../../components/admin-forms/qtr-forms/qtr-fo
 import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../components/admin-forms/down-distance-forms/down-distance-forms.component';
 import { TimeoutFormsComponent, TimeoutChangeEvent } from '../../components/admin-forms/timeout-forms/timeout-forms.component';
 import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
+import { RosterFormsComponent } from '../../components/admin-forms/roster-forms/roster-forms.component';
 
 @Component({
   selector: 'app-scoreboard-admin',
@@ -28,6 +30,7 @@ import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/s
     DownDistanceFormsComponent,
     TimeoutFormsComponent,
     ScoreboardSettingsFormsComponent,
+    RosterFormsComponent,
   ],
   templateUrl: './scoreboard-admin.component.html',
   styleUrl: './scoreboard-admin.component.less',
@@ -236,6 +239,26 @@ export class ScoreboardAdminComponent implements OnInit {
     this.scoreboardStore.updateScoreboard(sb.id, update).subscribe({
       next: (updated) => this.scoreboard.set(updated),
       error: (err) => console.error('Failed to update scoreboard settings', err),
+    });
+  }
+
+  onPlayerUpdate(update: PlayerMatchUpdate): void {
+    const playerId = update.id;
+    const currentData = this.data();
+    if (!playerId || !currentData) return;
+
+    const { id: _id, ...payload } = update;
+    const updatedPlayers = currentData.players.map((player) =>
+      player.id === playerId ? { ...player, ...payload } : player
+    );
+
+    this.data.set({ ...currentData, players: updatedPlayers });
+
+    this.scoreboardStore.updatePlayerMatch(playerId, payload).subscribe({
+      error: (err) => {
+        console.error('Failed to update player', err);
+        this.loadData();
+      },
     });
   }
 

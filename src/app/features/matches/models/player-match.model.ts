@@ -24,6 +24,7 @@ export interface PlayerMatchCreate {
 }
 
 export interface PlayerMatchUpdate {
+  id?: number;
   player_match_eesl_id?: number | null;
   player_team_tournament_id?: number | null;
   team_id?: number;

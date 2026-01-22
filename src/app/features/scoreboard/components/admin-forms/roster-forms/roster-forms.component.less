@@ -1,0 +1,161 @@
+.roster-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--tui-background-neutral-1);
+  border-radius: 8px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+  text-transform: uppercase;
+}
+
+.toggles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--tui-text-primary);
+  }
+}
+
+.team-starters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.team-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.team-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+}
+
+.starter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--tui-border-normal);
+  background: var(--tui-background-base);
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.group-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+  text-transform: uppercase;
+}
+
+.player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: auto minmax(32px, 48px) minmax(120px, 1fr) minmax(80px, 120px);
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--tui-text-primary);
+}
+
+.player-number {
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+  text-align: center;
+}
+
+.player-name {
+  font-weight: 500;
+}
+
+.player-position {
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--tui-text-secondary);
+}
+
+.empty-state {
+  margin: 0;
+  font-size: 13px;
+  color: var(--tui-text-secondary);
+}
+
+.lower-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.lower-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .player-row {
+    grid-template-columns: auto minmax(28px, 36px) minmax(100px, 1fr);
+    row-gap: 4px;
+  }
+
+  .player-position {
+    grid-column: 2 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .toggles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-starters {
+    grid-template-columns: 1fr;
+  }
+
+  .lower-controls {
+    grid-template-columns: 1fr;
+  }
+}

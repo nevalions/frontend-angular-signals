@@ -1,0 +1,288 @@
+<app-collapsible-section title="Roster Forms" sectionKey="roster-forms">
+  <ng-template>
+    <div class="roster-forms">
+      <div class="settings-section">
+        <h4 class="section-title">Roster Visibility</h4>
+        <div class="toggles-grid">
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showHomeOffenseRoster()"
+              (change)="onToggleScoreboard('is_team_a_start_offense', $any($event.target).checked)"
+            />
+            Show {{ homeTeam().label }} Offense Roster
+          </label>
+
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showHomeDefenseRoster()"
+              (change)="onToggleScoreboard('is_team_a_start_defense', $any($event.target).checked)"
+            />
+            Show {{ homeTeam().label }} Defense Roster
+          </label>
+
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showAwayOffenseRoster()"
+              (change)="onToggleScoreboard('is_team_b_start_offense', $any($event.target).checked)"
+            />
+            Show {{ awayTeam().label }} Offense Roster
+          </label>
+
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showAwayDefenseRoster()"
+              (change)="onToggleScoreboard('is_team_b_start_defense', $any($event.target).checked)"
+            />
+            Show {{ awayTeam().label }} Defense Roster
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h4 class="section-title">Starting Lineups</h4>
+        <div class="team-starters">
+          <div class="team-column">
+            <div class="team-header">
+              <h5 class="team-label">{{ homeTeam().label }}</h5>
+            </div>
+
+            <div class="starter-group">
+              <div class="group-header">
+                <h6 class="group-title">Offense Starters</h6>
+                <button
+                  tuiButton
+                  type="button"
+                  appearance="secondary"
+                  size="s"
+                  [disabled]="!homeTeam().players.length"
+                  (click)="selectAllStarters('home', 'offense')"
+                >
+                  Select All
+                </button>
+              </div>
+              @if (homeTeam().players.length) {
+                <div class="player-list">
+                  @for (player of homeTeam().players; track player.id) {
+                    <label class="player-row" tuiLabel>
+                      <input
+                        tuiCheckbox
+                        type="checkbox"
+                        [checked]="isStarter(player, 'offense')"
+                        (change)="toggleStarter(player, 'offense', $any($event.target).checked)"
+                      />
+                      <span class="player-number">{{ getPlayerNumber(player) || '—' }}</span>
+                      <span class="player-name">{{ getPlayerName(player) }}</span>
+                      <span class="player-position">{{ getPlayerPosition(player) || '—' }}</span>
+                    </label>
+                  }
+                </div>
+              } @else {
+                <p class="empty-state">No home players available.</p>
+              }
+            </div>
+
+            <div class="starter-group">
+              <div class="group-header">
+                <h6 class="group-title">Defense Starters</h6>
+                <button
+                  tuiButton
+                  type="button"
+                  appearance="secondary"
+                  size="s"
+                  [disabled]="!homeTeam().players.length"
+                  (click)="selectAllStarters('home', 'defense')"
+                >
+                  Select All
+                </button>
+              </div>
+              @if (homeTeam().players.length) {
+                <div class="player-list">
+                  @for (player of homeTeam().players; track player.id) {
+                    <label class="player-row" tuiLabel>
+                      <input
+                        tuiCheckbox
+                        type="checkbox"
+                        [checked]="isStarter(player, 'defense')"
+                        (change)="toggleStarter(player, 'defense', $any($event.target).checked)"
+                      />
+                      <span class="player-number">{{ getPlayerNumber(player) || '—' }}</span>
+                      <span class="player-name">{{ getPlayerName(player) }}</span>
+                      <span class="player-position">{{ getPlayerPosition(player) || '—' }}</span>
+                    </label>
+                  }
+                </div>
+              } @else {
+                <p class="empty-state">No home players available.</p>
+              }
+            </div>
+          </div>
+
+          <div class="team-column">
+            <div class="team-header">
+              <h5 class="team-label">{{ awayTeam().label }}</h5>
+            </div>
+
+            <div class="starter-group">
+              <div class="group-header">
+                <h6 class="group-title">Offense Starters</h6>
+                <button
+                  tuiButton
+                  type="button"
+                  appearance="secondary"
+                  size="s"
+                  [disabled]="!awayTeam().players.length"
+                  (click)="selectAllStarters('away', 'offense')"
+                >
+                  Select All
+                </button>
+              </div>
+              @if (awayTeam().players.length) {
+                <div class="player-list">
+                  @for (player of awayTeam().players; track player.id) {
+                    <label class="player-row" tuiLabel>
+                      <input
+                        tuiCheckbox
+                        type="checkbox"
+                        [checked]="isStarter(player, 'offense')"
+                        (change)="toggleStarter(player, 'offense', $any($event.target).checked)"
+                      />
+                      <span class="player-number">{{ getPlayerNumber(player) || '—' }}</span>
+                      <span class="player-name">{{ getPlayerName(player) }}</span>
+                      <span class="player-position">{{ getPlayerPosition(player) || '—' }}</span>
+                    </label>
+                  }
+                </div>
+              } @else {
+                <p class="empty-state">No away players available.</p>
+              }
+            </div>
+
+            <div class="starter-group">
+              <div class="group-header">
+                <h6 class="group-title">Defense Starters</h6>
+                <button
+                  tuiButton
+                  type="button"
+                  appearance="secondary"
+                  size="s"
+                  [disabled]="!awayTeam().players.length"
+                  (click)="selectAllStarters('away', 'defense')"
+                >
+                  Select All
+                </button>
+              </div>
+              @if (awayTeam().players.length) {
+                <div class="player-list">
+                  @for (player of awayTeam().players; track player.id) {
+                    <label class="player-row" tuiLabel>
+                      <input
+                        tuiCheckbox
+                        type="checkbox"
+                        [checked]="isStarter(player, 'defense')"
+                        (change)="toggleStarter(player, 'defense', $any($event.target).checked)"
+                      />
+                      <span class="player-number">{{ getPlayerNumber(player) || '—' }}</span>
+                      <span class="player-name">{{ getPlayerName(player) }}</span>
+                      <span class="player-position">{{ getPlayerPosition(player) || '—' }}</span>
+                    </label>
+                  }
+                </div>
+              } @else {
+                <p class="empty-state">No away players available.</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h4 class="section-title">Lower Display Controls</h4>
+        <div class="lower-controls">
+          <div class="lower-toggle">
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="showPlayerLower()"
+                (change)="onToggleScoreboard('is_match_player_lower', $any($event.target).checked)"
+              />
+              Show Player Lower Third
+            </label>
+            <tui-textfield tuiChevron [stringify]="playerStringify">
+              <input
+                placeholder="Select player"
+                tuiSelect
+                [ngModel]="playerLowerId()"
+                (ngModelChange)="onPlayerLowerSelect($event)"
+              />
+              <tui-data-list *tuiTextfieldDropdown size="l">
+                <button new tuiOption type="button" [value]="null">None</button>
+                @for (option of playerOptions(); track option.id) {
+                  <button new tuiOption type="button" [value]="option.id">{{ option.label }}</button>
+                }
+              </tui-data-list>
+            </tui-textfield>
+          </div>
+
+          <div class="lower-toggle">
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="showQbLower()"
+                (change)="onToggleScoreboard('is_football_qb_full_stats_lower', $any($event.target).checked)"
+              />
+              Show QB Stats Lower Third
+            </label>
+            <tui-textfield tuiChevron [stringify]="qbStringify">
+              <input
+                placeholder="Select QB"
+                tuiSelect
+                [ngModel]="qbLowerId()"
+                (ngModelChange)="onQbLowerSelect($event)"
+              />
+              <tui-data-list *tuiTextfieldDropdown size="l">
+                <button new tuiOption type="button" [value]="null">None</button>
+                @for (option of qbOptions(); track option.id) {
+                  <button new tuiOption type="button" [value]="option.id">{{ option.label }}</button>
+                }
+              </tui-data-list>
+            </tui-textfield>
+          </div>
+
+          <div class="lower-toggle">
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="showHomeTeamLower()"
+                (change)="onToggleScoreboard('is_home_match_team_lower', $any($event.target).checked)"
+              />
+              Show {{ homeTeam().label }} Team Stats Lower
+            </label>
+          </div>
+
+          <div class="lower-toggle">
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="showAwayTeamLower()"
+                (change)="onToggleScoreboard('is_away_match_team_lower', $any($event.target).checked)"
+              />
+              Show {{ awayTeam().label }} Team Stats Lower
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</app-collapsible-section>

@@ -7,6 +7,7 @@ import { Scoreboard, ScoreboardUpdate } from '../../matches/models/scoreboard.mo
 import { GameClock, GameClockUpdate } from '../../matches/models/gameclock.model';
 import { PlayClock, PlayClockUpdate } from '../../matches/models/playclock.model';
 import { MatchData, MatchDataUpdate } from '../../matches/models/match-data.model';
+import { PlayerMatch, PlayerMatchUpdate } from '../../matches/models/player-match.model';
 
 @Injectable({
   providedIn: 'root',
@@ -73,5 +74,9 @@ export class ScoreboardStoreService {
 
   updateMatchDataKeyValue(id: number, key: string, value: unknown): Observable<MatchData> {
     return this.http.put<MatchData>(buildApiUrl(`/api/matchdata/${id}/`), { [key]: value });
+  }
+
+  updatePlayerMatch(playerMatchId: number, data: PlayerMatchUpdate): Observable<PlayerMatch> {
+    return this.http.put<PlayerMatch>(buildApiUrl(`/api/players_match/${playerMatchId}/`), data);
   }
 }
