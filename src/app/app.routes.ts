@@ -153,6 +153,7 @@ export const routes: Routes = [
       import('./features/scoreboard/pages/view/scoreboard-view.component').then(
         (m) => m.ScoreboardViewComponent
       ),
+    data: { hideNavbar: true, fullscreen: true },
     // No auth guard - public view for broadcast
   },
   {

@@ -12,7 +12,7 @@ export let urlWithProtocol = serverProtocol + '://' + apiUrl;
 
 export const API_BASE_URL = urlWithProtocolAndPort;
 export const WS_PROTOCOL = wsProtocol;
-export const WS_BASE_URL = `${wsProtocol}://${serverIP}${serverPort}/ws`;
+export const WS_BASE_URL = `${wsProtocol}://${serverIP}${serverPort}`;
 
 export function buildApiUrl(endpoint: string): string {
   return `${API_BASE_URL}${endpoint}`;

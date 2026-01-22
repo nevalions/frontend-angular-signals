@@ -1,0 +1,403 @@
+<app-collapsible-section title="Events & Stats" sectionKey="events-forms" [initiallyExpanded]="false">
+  <ng-template>
+    <div class="events-forms">
+      <!-- Team Stats Section -->
+      <div class="stats-section">
+        <h4 class="section-title">Team Stats</h4>
+        <div class="stats-grid two-column">
+          <!-- Home Team Stats -->
+          <div class="stats-column">
+            <h5 class="column-title">Home Team</h5>
+            @if (homeTeamStats()) {
+              <div class="stat-rows">
+                <div class="stat-row">
+                  <span class="stat-label">Offense Yards</span>
+                  <span class="stat-value">{{ formatStat(homeTeamStats()?.offence_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Pass Attempts</span>
+                  <span class="stat-value">{{ formatStat(homeTeamStats()?.pass_att) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Pass Yards</span>
+                  <span class="stat-value">{{ formatStat(homeTeamStats()?.pass_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Run Attempts</span>
+                  <span class="stat-value">{{ formatStat(homeTeamStats()?.run_att) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Run Yards</span>
+                  <span class="stat-value">{{ formatStat(homeTeamStats()?.run_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Avg Yards/Att</span>
+                  <span class="stat-value">{{ formatDecimal(homeTeamStats()?.avg_yards_per_att) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">3rd Down</span>
+                  <span class="stat-value">
+                    {{ formatStat(homeTeamStats()?.third_down_conversions) }}/{{ formatStat(homeTeamStats()?.third_down_attempts) }}
+                  </span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">4th Down</span>
+                  <span class="stat-value">
+                    {{ formatStat(homeTeamStats()?.fourth_down_conversions) }}/{{ formatStat(homeTeamStats()?.fourth_down_attempts) }}
+                  </span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">First Downs</span>
+                  <span class="stat-value">{{ formatStat(homeTeamStats()?.first_down_gained) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Turnovers</span>
+                  <span class="stat-value">{{ formatStat(homeTeamStats()?.turnovers) }}</span>
+                </div>
+              </div>
+            } @else {
+              <p class="empty-state">No stats available</p>
+            }
+          </div>
+
+          <!-- Away Team Stats -->
+          <div class="stats-column">
+            <h5 class="column-title">Away Team</h5>
+            @if (awayTeamStats()) {
+              <div class="stat-rows">
+                <div class="stat-row">
+                  <span class="stat-label">Offense Yards</span>
+                  <span class="stat-value">{{ formatStat(awayTeamStats()?.offence_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Pass Attempts</span>
+                  <span class="stat-value">{{ formatStat(awayTeamStats()?.pass_att) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Pass Yards</span>
+                  <span class="stat-value">{{ formatStat(awayTeamStats()?.pass_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Run Attempts</span>
+                  <span class="stat-value">{{ formatStat(awayTeamStats()?.run_att) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Run Yards</span>
+                  <span class="stat-value">{{ formatStat(awayTeamStats()?.run_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Avg Yards/Att</span>
+                  <span class="stat-value">{{ formatDecimal(awayTeamStats()?.avg_yards_per_att) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">3rd Down</span>
+                  <span class="stat-value">
+                    {{ formatStat(awayTeamStats()?.third_down_conversions) }}/{{ formatStat(awayTeamStats()?.third_down_attempts) }}
+                  </span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">4th Down</span>
+                  <span class="stat-value">
+                    {{ formatStat(awayTeamStats()?.fourth_down_conversions) }}/{{ formatStat(awayTeamStats()?.fourth_down_attempts) }}
+                  </span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">First Downs</span>
+                  <span class="stat-value">{{ formatStat(awayTeamStats()?.first_down_gained) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Turnovers</span>
+                  <span class="stat-value">{{ formatStat(awayTeamStats()?.turnovers) }}</span>
+                </div>
+              </div>
+            } @else {
+              <p class="empty-state">No stats available</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- QB Stats Section -->
+      <div class="stats-section">
+        <h4 class="section-title">QB Stats</h4>
+        <div class="stats-grid two-column">
+          <!-- Home QB Stats -->
+          <div class="stats-column">
+            <h5 class="column-title">Home QB</h5>
+            @if (homeQbStats()) {
+              <div class="stat-rows">
+                <div class="stat-row">
+                  <span class="stat-label">Passes</span>
+                  <span class="stat-value">
+                    {{ formatStat(homeQbStats()?.passes_completed) }}/{{ formatStat(homeQbStats()?.passes) }}
+                  </span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Pass Yards</span>
+                  <span class="stat-value">{{ formatStat(homeQbStats()?.pass_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Pass TD</span>
+                  <span class="stat-value">{{ formatStat(homeQbStats()?.pass_td) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Rush Attempts</span>
+                  <span class="stat-value">{{ formatStat(homeQbStats()?.run_attempts) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Rush Yards</span>
+                  <span class="stat-value">{{ formatStat(homeQbStats()?.run_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Rush TD</span>
+                  <span class="stat-value">{{ formatStat(homeQbStats()?.run_td) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Interceptions</span>
+                  <span class="stat-value">{{ formatStat(homeQbStats()?.interception) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">QB Rating</span>
+                  <span class="stat-value">{{ formatDecimal(homeQbStats()?.qb_rating) }}</span>
+                </div>
+              </div>
+            } @else {
+              <p class="empty-state">No QB stats available</p>
+            }
+          </div>
+
+          <!-- Away QB Stats -->
+          <div class="stats-column">
+            <h5 class="column-title">Away QB</h5>
+            @if (awayQbStats()) {
+              <div class="stat-rows">
+                <div class="stat-row">
+                  <span class="stat-label">Passes</span>
+                  <span class="stat-value">
+                    {{ formatStat(awayQbStats()?.passes_completed) }}/{{ formatStat(awayQbStats()?.passes) }}
+                  </span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Pass Yards</span>
+                  <span class="stat-value">{{ formatStat(awayQbStats()?.pass_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Pass TD</span>
+                  <span class="stat-value">{{ formatStat(awayQbStats()?.pass_td) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Rush Attempts</span>
+                  <span class="stat-value">{{ formatStat(awayQbStats()?.run_attempts) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Rush Yards</span>
+                  <span class="stat-value">{{ formatStat(awayQbStats()?.run_yards) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Rush TD</span>
+                  <span class="stat-value">{{ formatStat(awayQbStats()?.run_td) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Interceptions</span>
+                  <span class="stat-value">{{ formatStat(awayQbStats()?.interception) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">QB Rating</span>
+                  <span class="stat-value">{{ formatDecimal(awayQbStats()?.qb_rating) }}</span>
+                </div>
+              </div>
+            } @else {
+              <p class="empty-state">No QB stats available</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Field Settings -->
+      <div class="settings-section">
+        <h4 class="section-title">Field Settings</h4>
+        <div class="field-settings">
+          <label class="field-label">
+            Field Length (yards)
+            <tui-textfield class="field-input">
+              <input
+                tuiInputNumber
+                [ngModel]="fieldLength()"
+                (ngModelChange)="onFieldLengthChange($event ?? 100)"
+              />
+            </tui-textfield>
+          </label>
+        </div>
+      </div>
+
+      <!-- Events Table -->
+      <div class="events-section">
+        <div class="section-header">
+          <h4 class="section-title">Football Events</h4>
+          <button
+            tuiButton
+            type="button"
+            appearance="primary"
+            size="s"
+            [disabled]="newEventForm() !== null"
+            (click)="startNewEvent()"
+          >
+            <tui-icon icon="@tui.plus" />
+            Add Event
+          </button>
+        </div>
+
+        <!-- New Event Form -->
+        @if (newEventForm()) {
+          <div class="new-event-form">
+            <div class="form-row">
+              <label class="field-label">
+                #
+                <tui-textfield class="small-input">
+                  <input
+                    tuiInputNumber
+                    [ngModel]="newEventForm()?.event_number"
+                    (ngModelChange)="updateNewEventField('event_number', $event)"
+                  />
+                </tui-textfield>
+              </label>
+              <label class="field-label">
+                Qtr
+                <tui-textfield class="small-input">
+                  <input
+                    tuiInputNumber
+                    [ngModel]="newEventForm()?.event_qtr"
+                    (ngModelChange)="updateNewEventField('event_qtr', $event)"
+                  />
+                </tui-textfield>
+              </label>
+              <label class="field-label">
+                Down
+                <tui-textfield class="small-input">
+                  <input
+                    tuiInputNumber
+                    [ngModel]="newEventForm()?.event_down"
+                    (ngModelChange)="updateNewEventField('event_down', $event)"
+                  />
+                </tui-textfield>
+              </label>
+              <label class="field-label">
+                Distance
+                <tui-textfield class="small-input">
+                  <input
+                    tuiInputNumber
+                    [ngModel]="newEventForm()?.event_distance"
+                    (ngModelChange)="updateNewEventField('event_distance', $event)"
+                  />
+                </tui-textfield>
+              </label>
+            </div>
+            <div class="form-row">
+              <tui-textfield tuiChevron>
+                <label tuiLabel>Play Type</label>
+                <input
+                  tuiSelect
+                  placeholder="Select play type"
+                  [ngModel]="newEventForm()?.play_type"
+                  (ngModelChange)="updateNewEventField('play_type', $event)"
+                />
+                <tui-data-list *tuiTextfieldDropdown>
+                  @for (type of playTypes; track type) {
+                    <button new tuiOption type="button" [value]="type">{{ type }}</button>
+                  }
+                </tui-data-list>
+              </tui-textfield>
+              <tui-textfield tuiChevron>
+                <label tuiLabel>Result</label>
+                <input
+                  tuiSelect
+                  placeholder="Select result"
+                  [ngModel]="newEventForm()?.play_result"
+                  (ngModelChange)="updateNewEventField('play_result', $event)"
+                />
+                <tui-data-list *tuiTextfieldDropdown>
+                  @for (result of playResults; track result) {
+                    <button new tuiOption type="button" [value]="result">{{ result }}</button>
+                  }
+                </tui-data-list>
+              </tui-textfield>
+            </div>
+            <div class="form-actions">
+              <button
+                tuiButton
+                type="button"
+                appearance="secondary"
+                size="s"
+                (click)="cancelNewEvent()"
+              >
+                Cancel
+              </button>
+              <button
+                tuiButton
+                type="button"
+                appearance="primary"
+                size="s"
+                (click)="saveNewEvent()"
+              >
+                Save Event
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Events Table -->
+        <div class="events-table-wrapper">
+          <table class="events-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Qtr</th>
+                <th>Down</th>
+                <th>Play Type</th>
+                <th>Result</th>
+                <th>Players</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of eventRows(); track row.event.id) {
+                <tr [class.editing]="editingEventId() === row.event.id">
+                  <td>{{ row.event.event_number ?? '-' }}</td>
+                  <td>{{ row.qtr }}</td>
+                  <td>{{ row.down }}</td>
+                  <td>{{ row.playType }}</td>
+                  <td>{{ row.result }}</td>
+                  <td>{{ row.players }}</td>
+                  <td class="actions-cell">
+                    <button
+                      tuiButton
+                      type="button"
+                      appearance="flat"
+                      size="s"
+                      (click)="editEvent(row.event)"
+                    >
+                      <tui-icon icon="@tui.pencil" />
+                    </button>
+                    <button
+                      tuiButton
+                      type="button"
+                      appearance="flat"
+                      size="s"
+                      (click)="confirmDeleteEvent(row.event)"
+                    >
+                      <tui-icon icon="@tui.trash-2" />
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="empty-row">No events recorded yet.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</app-collapsible-section>

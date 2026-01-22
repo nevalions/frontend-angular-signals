@@ -56,5 +56,14 @@
       [tournamentSponsorLogo]="tournamentSponsorLogo()"
       displayClass="fullhd-scoreboard"
     />
+    <!-- Sponsor lines -->
+    <div class="sponsor-layer">
+      @if (showMainSponsor() && mainSponsor()) {
+        <app-sponsor-line
+          [sponsor]="mainSponsor()"
+          label="Tournament Sponsor"
+        />
+      }
+    </div>
   }
 </div>
