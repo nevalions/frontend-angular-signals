@@ -3,6 +3,7 @@ import { MatchData } from './match-data.model';
 import { PlayerMatch } from './player-match.model';
 import { FootballEvent } from './football-event.model';
 import { Team } from './match.model';
+import { Scoreboard } from './scoreboard.model';
 
 export interface ComprehensiveMatchData {
   match: MatchWithDetails;
@@ -13,18 +14,7 @@ export interface ComprehensiveMatchData {
   };
   players: PlayerMatchWithDetails[];
   events: FootballEvent[];
-  scoreboard: {
-    id: number;
-    match_id: number;
-    scale_tournament_logo: number;
-    scale_main_sponsor: number;
-    scale_logo_a: number;
-    scale_logo_b: number;
-    team_a_game_color: string;
-    team_b_game_color: string;
-    team_a_game_title: string;
-    team_b_game_title: string;
-  } | null;
+  scoreboard: Scoreboard | null;
 }
 
 export interface PlayerMatchWithDetails extends PlayerMatch {

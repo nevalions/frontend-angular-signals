@@ -1,4 +1,5 @@
 import { PaginatedResponse } from '../../../core/models';
+import { Sponsor, SponsorLine } from '../../../shared/types';
 
 export interface Match {
   id: number;
@@ -10,6 +11,8 @@ export interface Match {
   tournament_id?: number | null;
   main_sponsor_id?: number | null;
   sponsor_line_id?: number | null;
+  main_sponsor?: Sponsor | null;
+  sponsor_line?: SponsorLine | null;
   isprivate: boolean;
   user_id?: number | null;
 }
@@ -71,6 +74,8 @@ export interface Tournament {
   tournament_logo_web_url?: string | null;
   main_sponsor_id?: number | null;
   sponsor_line_id?: number | null;
+  main_sponsor?: Sponsor | null;
+  sponsor_line?: SponsorLine | null;
   isprivate: boolean;
   user_id?: number | null;
 }

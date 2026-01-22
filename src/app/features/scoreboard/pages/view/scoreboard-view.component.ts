@@ -37,6 +37,11 @@ export class ScoreboardViewComponent implements OnInit {
     return d?.match?.tournament?.tournament_logo_web_url || null;
   });
 
+  protected readonly tournamentSponsorLogo = computed(() => {
+    const d = this.data();
+    return d?.match?.tournament?.main_sponsor?.logo_url || null;
+  });
+
   ngOnInit(): void {
     this.loadData();
     // TODO: Setup WebSocket connection for real-time updates

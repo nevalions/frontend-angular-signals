@@ -1,0 +1,11 @@
+@if (isVisible() && hasContent()) {
+  <div class="sponsor-line">
+    @if (lineTitle()) {
+      <span class="line-title">{{ lineTitle() }}</span>
+    }
+    <app-sponsor-display-flat
+      [sponsor]="sponsor()"
+      [scale]="scale()"
+    />
+  </div>
+}

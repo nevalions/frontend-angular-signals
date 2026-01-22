@@ -162,4 +162,24 @@
       </div>
     }
   </div>
+
+  @if (showSponsorLine() || showMatchSponsorLine()) {
+    <div class="sponsor-lines">
+      @if (showSponsorLine()) {
+        <app-sponsor-line
+          [line]="sponsorLine()"
+          [sponsor]="tournamentSponsor()"
+          [scale]="sponsorLineScale()"
+        />
+      }
+
+      @if (showMatchSponsorLine()) {
+        <app-match-sponsor-line-display-flat
+          [line]="matchSponsorLine()"
+          [sponsor]="matchSponsor()"
+          [scale]="matchSponsorLineScale()"
+        />
+      }
+    </div>
+  }
 </div>

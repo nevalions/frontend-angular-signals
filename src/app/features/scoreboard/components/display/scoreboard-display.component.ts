@@ -10,6 +10,8 @@ import { TuiAvatar } from '@taiga-ui/kit';
 import { ComprehensiveMatchData, PlayerMatchWithDetails } from '../../../matches/models/comprehensive-match.model';
 import { Scoreboard } from '../../../matches/models/scoreboard.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
+import { SponsorLineComponent } from '../sponsor-display/sponsor-line.component';
+import { MatchSponsorLineDisplayFlatComponent } from '../sponsor-display/match-sponsor-line-display-flat.component';
 import {
   breathingAnimation,
   fadeInOutAnimation,
@@ -21,7 +23,7 @@ export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
 @Component({
   selector: 'app-scoreboard-display',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiAvatar],
+  imports: [TuiAvatar, SponsorLineComponent, MatchSponsorLineDisplayFlatComponent],
   templateUrl: './scoreboard-display.component.html',
   styleUrl: './scoreboard-display.component.less',
   animations: [scoreChangeAnimation, fadeInOutAnimation, breathingAnimation],
@@ -60,25 +62,27 @@ export class ScoreboardDisplayComponent {
     const d = this.data();
     if (!d?.scoreboard) return null;
 
+    const scoreboard = d.scoreboard;
+
     // Map comprehensive match scoreboard to full Scoreboard interface
     return {
-      id: d.scoreboard.id,
-      match_id: d.scoreboard.match_id,
-      is_qtr: true,
-      is_time: true,
-      is_playclock: true,
-      is_downdistance: true,
-      is_tournament_logo: true,
-      is_main_sponsor: true,
-      is_sponsor_line: false,
-      team_a_game_color: d.scoreboard.team_a_game_color ?? '#1a1a1a',
-      team_b_game_color: d.scoreboard.team_b_game_color ?? '#1a1a1a',
-      team_a_game_title: d.scoreboard.team_a_game_title ?? null,
-      team_b_game_title: d.scoreboard.team_b_game_title ?? null,
-      scale_tournament_logo: d.scoreboard.scale_tournament_logo ?? 1,
-      scale_main_sponsor: d.scoreboard.scale_main_sponsor ?? 1,
-      scale_logo_a: d.scoreboard.scale_logo_a ?? 1,
-      scale_logo_b: d.scoreboard.scale_logo_b ?? 1,
+      ...scoreboard,
+      is_qtr: scoreboard.is_qtr ?? true,
+      is_time: scoreboard.is_time ?? true,
+      is_playclock: scoreboard.is_playclock ?? true,
+      is_downdistance: scoreboard.is_downdistance ?? true,
+      is_tournament_logo: scoreboard.is_tournament_logo ?? true,
+      is_main_sponsor: scoreboard.is_main_sponsor ?? true,
+      is_sponsor_line: scoreboard.is_sponsor_line ?? false,
+      is_match_sponsor_line: scoreboard.is_match_sponsor_line ?? false,
+      team_a_game_color: scoreboard.team_a_game_color ?? '#1a1a1a',
+      team_b_game_color: scoreboard.team_b_game_color ?? '#1a1a1a',
+      team_a_game_title: scoreboard.team_a_game_title ?? null,
+      team_b_game_title: scoreboard.team_b_game_title ?? null,
+      scale_tournament_logo: scoreboard.scale_tournament_logo ?? 1,
+      scale_main_sponsor: scoreboard.scale_main_sponsor ?? 1,
+      scale_logo_a: scoreboard.scale_logo_a ?? 1,
+      scale_logo_b: scoreboard.scale_logo_b ?? 1,
     };
   });
 
@@ -204,15 +208,22 @@ export class ScoreboardDisplayComponent {
   protected readonly showGoalTeamB = computed(() => this.scoreboard()?.is_goal_team_b ?? false);
   protected readonly showTimeoutTeamA = computed(() => this.scoreboard()?.is_timeout_team_a ?? false);
   protected readonly showTimeoutTeamB = computed(() => this.scoreboard()?.is_timeout_team_b ?? false);
+  protected readonly showSponsorLine = computed(() => this.scoreboard()?.is_sponsor_line ?? false);
+  protected readonly showMatchSponsorLine = computed(() => this.scoreboard()?.is_match_sponsor_line ?? false);
+
+  protected readonly sponsorLine = computed(() => this.data()?.match?.tournament?.sponsor_line ?? null);
+  protected readonly matchSponsorLine = computed(() => this.data()?.match?.sponsor_line ?? null);
+  protected readonly tournamentSponsor = computed(() => this.data()?.match?.tournament?.main_sponsor ?? null);
+  protected readonly matchSponsor = computed(() => this.data()?.match?.main_sponsor ?? null);
 
   // Logo URLs
   protected readonly tournamentLogoUrl = computed(() => {
-    const logo = this.tournamentLogo();
+    const logo = this.tournamentLogo() ?? this.data()?.match?.tournament?.tournament_logo_web_url ?? null;
     return logo ? buildStaticUrl(logo) : null;
   });
 
   protected readonly sponsorLogoUrl = computed(() => {
-    const logo = this.tournamentSponsorLogo();
+    const logo = this.tournamentSponsorLogo() ?? this.tournamentSponsor()?.logo_url ?? null;
     return logo ? buildStaticUrl(logo) : null;
   });
 
@@ -226,6 +237,9 @@ export class ScoreboardDisplayComponent {
     const sb = this.scoreboard();
     return sb?.scale_main_sponsor ?? 1;
   });
+
+  protected readonly sponsorLineScale = computed(() => this.scoreboard()?.scale_main_sponsor ?? null);
+  protected readonly matchSponsorLineScale = computed(() => this.scoreboard()?.scale_main_sponsor ?? null);
 
   protected readonly teamALogoScale = computed(() => {
     const sb = this.scoreboard();
