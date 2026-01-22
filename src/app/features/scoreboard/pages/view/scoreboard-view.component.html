@@ -1,0 +1,19 @@
+<div class="scoreboard-view-page">
+  @if (loading()) {
+    <div class="loading-state">
+      <p>Loading scoreboard...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <p>{{ error() }}</p>
+    </div>
+  } @else {
+    <app-scoreboard-display
+      [data]="data()"
+      [gameClock]="gameClockSeconds()"
+      [playClock]="playClockSeconds()"
+      [tournamentLogo]="tournamentLogo()"
+      displayClass="fullhd-scoreboard"
+    />
+  }
+</div>

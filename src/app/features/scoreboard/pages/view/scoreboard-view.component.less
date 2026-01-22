@@ -1,0 +1,25 @@
+.scoreboard-view-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #000;
+  overflow: hidden;
+}
+
+.loading-state,
+.error-state {
+  color: #fff;
+  font-size: 24px;
+  text-align: center;
+}
+
+// Full HD optimized - position scoreboard at bottom of screen
+app-scoreboard-display {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1920px;
+}

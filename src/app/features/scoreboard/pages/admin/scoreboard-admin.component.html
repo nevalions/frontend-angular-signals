@@ -1,0 +1,85 @@
+<div class="scoreboard-admin-page">
+  <header class="page-header">
+    <div class="header-left">
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        size="s"
+        (click)="navigateBack()"
+      >
+        <tui-icon icon="@tui.arrow-left" />
+        Back
+      </button>
+      <h1 class="page-title">Scoreboard Admin</h1>
+    </div>
+    <div class="header-right">
+      <span class="match-title">{{ matchTitle() }}</span>
+      <button
+        tuiButton
+        type="button"
+        appearance="primary"
+        size="s"
+        (click)="openHdView()"
+      >
+        <tui-icon icon="@tui.external-link" />
+        Open HD View
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <p>Loading scoreboard data...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <p>{{ error() }}</p>
+      <button tuiButton appearance="secondary" (click)="navigateBack()">
+        Go Back
+      </button>
+    </div>
+  } @else {
+    <div class="admin-content">
+      <!-- Scoreboard Preview -->
+      <section class="preview-section">
+        <h2 class="section-title">Preview</h2>
+        <app-scoreboard-display
+          [data]="data()"
+          [gameClock]="gameClockSeconds()"
+          [playClock]="playClockSeconds()"
+          displayClass="scoreboard"
+        />
+      </section>
+
+      <!-- Admin Forms -->
+      <section class="forms-section">
+        <div class="forms-grid">
+          <app-score-forms
+            [matchData]="data()?.match_data ?? null"
+            (scoreChange)="onScoreChange($event)"
+          />
+
+          <app-qtr-forms
+            [currentQtr]="data()?.match_data?.qtr ?? null"
+            (qtrChange)="onQtrChange($event)"
+          />
+
+          <app-time-forms
+            [gameClock]="gameClock()"
+            [playClock]="playClock()"
+            (gameClockAction)="onGameClockAction($event)"
+            (playClockAction)="onPlayClockAction($event)"
+          />
+
+          <app-down-distance-forms
+            [matchData]="data()?.match_data ?? null"
+            [scoreboard]="scoreboard()"
+            (downDistanceChange)="onDownDistanceChange($event)"
+            (flagToggle)="onFlagToggle($event)"
+          />
+        </div>
+      </section>
+    </div>
+  }
+</div>

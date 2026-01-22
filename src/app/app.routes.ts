@@ -140,6 +140,22 @@ export const routes: Routes = [
     canActivate: [authGuard, settingsAdminGuard],
   },
   {
+    path: 'scoreboard/match/:matchId/admin',
+    loadComponent: () =>
+      import('./features/scoreboard/pages/admin/scoreboard-admin.component').then(
+        (m) => m.ScoreboardAdminComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'scoreboard/match/:matchId/hd',
+    loadComponent: () =>
+      import('./features/scoreboard/pages/view/scoreboard-view.component').then(
+        (m) => m.ScoreboardViewComponent
+      ),
+    // No auth guard - public view for broadcast
+  },
+  {
     path: 'error404',
     component: Error404Component,
   },
