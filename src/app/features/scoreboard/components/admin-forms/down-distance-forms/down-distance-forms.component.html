@@ -1,0 +1,74 @@
+<app-collapsible-section title="Down & Distance" sectionKey="scoreboard-down-distance">
+  <ng-template>
+    <div class="down-distance-forms">
+      <!-- Down Selection -->
+      <div class="form-section">
+        <label class="section-label">Down</label>
+        <div class="down-buttons">
+          @for (option of downOptions; track option.value) {
+            <button
+              tuiButton
+              type="button"
+              [appearance]="isDownSelected(option.value) ? 'primary' : 'secondary'"
+              size="m"
+              (click)="onDownSelect(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Distance Input -->
+      <div class="form-section">
+        <label class="section-label">Distance</label>
+        <div class="distance-controls">
+          <app-input-number-with-buttons
+            [value]="currentDistance()"
+            [min]="1"
+            [max]="99"
+            (valueChange)="onDistanceChange($event)"
+          />
+          <div class="distance-presets">
+            @for (preset of distancePresets; track preset.value) {
+              <button
+                tuiButton
+                type="button"
+                [appearance]="isDistancePresetSelected(preset.value) ? 'primary' : 'secondary'"
+                size="s"
+                (click)="onDistancePreset(preset.value)"
+              >
+                {{ preset.label }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Ball On Input -->
+      <div class="form-section">
+        <label class="section-label">Ball On (Yard Line)</label>
+        <app-input-number-with-buttons
+          [value]="currentBallOn()"
+          [min]="1"
+          [max]="50"
+          (valueChange)="onBallOnChange($event)"
+        />
+      </div>
+
+      <!-- Flag Toggle -->
+      <div class="form-section flag-section">
+        <button
+          tuiButton
+          type="button"
+          [appearance]="isFlagActive() ? 'destructive' : 'secondary'"
+          size="m"
+          (click)="onFlagToggle()"
+        >
+          <tui-icon icon="@tui.flag" />
+          {{ isFlagActive() ? 'Hide Flag' : 'Show Flag' }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</app-collapsible-section>
