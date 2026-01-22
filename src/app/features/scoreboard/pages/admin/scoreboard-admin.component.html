@@ -54,31 +54,56 @@
 
       <!-- Admin Forms -->
       <section class="forms-section">
-        <div class="forms-grid">
-          <app-score-forms
-            [matchData]="data()?.match_data ?? null"
-            (scoreChange)="onScoreChange($event)"
-          />
-
-          <app-qtr-forms
-            [currentQtr]="data()?.match_data?.qtr ?? null"
-            (qtrChange)="onQtrChange($event)"
-          />
-
-          <app-time-forms
-            [gameClock]="gameClock()"
-            [playClock]="playClock()"
-            (gameClockAction)="onGameClockAction($event)"
-            (playClockAction)="onPlayClockAction($event)"
-          />
-
-          <app-down-distance-forms
-            [matchData]="data()?.match_data ?? null"
-            [scoreboard]="scoreboard()"
-            (downDistanceChange)="onDownDistanceChange($event)"
-            (flagToggle)="onFlagToggle($event)"
-          />
+        <div class="forms-header">
+          <button
+            tuiButton
+            type="button"
+            appearance="secondary"
+            size="s"
+            (click)="toggleHideAllForms()"
+          >
+            <tui-icon [icon]="hideAllForms() ? '@tui.eye' : '@tui.eye-off'" />
+            {{ hideAllForms() ? 'Show All Forms' : 'Hide All Forms' }}
+          </button>
         </div>
+
+        @if (!hideAllForms()) {
+          <div class="forms-grid">
+            <app-score-forms
+              [matchData]="data()?.match_data ?? null"
+              (scoreChange)="onScoreChange($event)"
+            />
+
+            <app-qtr-forms
+              [currentQtr]="data()?.match_data?.qtr ?? null"
+              (qtrChange)="onQtrChange($event)"
+            />
+
+            <app-time-forms
+              [gameClock]="gameClock()"
+              [playClock]="playClock()"
+              (gameClockAction)="onGameClockAction($event)"
+              (playClockAction)="onPlayClockAction($event)"
+            />
+
+            <app-down-distance-forms
+              [matchData]="data()?.match_data ?? null"
+              [scoreboard]="scoreboard()"
+              (downDistanceChange)="onDownDistanceChange($event)"
+              (flagToggle)="onFlagToggle($event)"
+            />
+
+            <app-timeout-forms
+              [matchData]="data()?.match_data ?? null"
+              (timeoutChange)="onTimeoutChange($event)"
+            />
+
+            <app-scoreboard-settings-forms
+              [scoreboard]="scoreboard()"
+              (scoreboardChange)="onScoreboardSettingsChange($event)"
+            />
+          </div>
+        }
       </section>
     </div>
   }

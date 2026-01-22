@@ -6,12 +6,14 @@ import { ScoreboardStoreService } from '../../services/scoreboard-store.service'
 import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-match.model';
 import { GameClock } from '../../../matches/models/gameclock.model';
 import { PlayClock } from '../../../matches/models/playclock.model';
-import { Scoreboard } from '../../../matches/models/scoreboard.model';
+import { Scoreboard, ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
 import { ScoreFormsComponent, ScoreChangeEvent } from '../../components/admin-forms/score-forms/score-forms.component';
 import { TimeFormsComponent, GameClockActionEvent, PlayClockActionEvent } from '../../components/admin-forms/time-forms/time-forms.component';
 import { QtrFormsComponent } from '../../components/admin-forms/qtr-forms/qtr-forms.component';
 import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../components/admin-forms/down-distance-forms/down-distance-forms.component';
+import { TimeoutFormsComponent, TimeoutChangeEvent } from '../../components/admin-forms/timeout-forms/timeout-forms.component';
+import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
 
 @Component({
   selector: 'app-scoreboard-admin',
@@ -24,6 +26,8 @@ import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../compo
     TimeFormsComponent,
     QtrFormsComponent,
     DownDistanceFormsComponent,
+    TimeoutFormsComponent,
+    ScoreboardSettingsFormsComponent,
   ],
   templateUrl: './scoreboard-admin.component.html',
   styleUrl: './scoreboard-admin.component.less',
@@ -42,6 +46,9 @@ export class ScoreboardAdminComponent implements OnInit {
   protected readonly scoreboard = signal<Scoreboard | null>(null);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
+
+  // UI state
+  protected readonly hideAllForms = signal(false);
 
   // Computed values
   protected readonly matchTitle = computed(() => {
@@ -206,5 +213,33 @@ export class ScoreboardAdminComponent implements OnInit {
         });
         break;
     }
+  }
+
+  onTimeoutChange(event: TimeoutChangeEvent): void {
+    const matchData = this.data()?.match_data;
+    if (!matchData) return;
+
+    const update = event.team === 'a'
+      ? { timeout_team_a: event.timeouts }
+      : { timeout_team_b: event.timeouts };
+
+    this.scoreboardStore.updateMatchData(matchData.id, update).subscribe({
+      next: () => this.loadData(),
+      error: (err) => console.error('Failed to update timeout', err),
+    });
+  }
+
+  onScoreboardSettingsChange(update: Partial<ScoreboardUpdate>): void {
+    const sb = this.scoreboard();
+    if (!sb) return;
+
+    this.scoreboardStore.updateScoreboard(sb.id, update).subscribe({
+      next: (updated) => this.scoreboard.set(updated),
+      error: (err) => console.error('Failed to update scoreboard settings', err),
+    });
+  }
+
+  toggleHideAllForms(): void {
+    this.hideAllForms.update((v) => !v);
   }
 }
