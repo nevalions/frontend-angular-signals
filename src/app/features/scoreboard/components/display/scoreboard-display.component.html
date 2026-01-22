@@ -29,21 +29,6 @@
       [style.background-color]="teamAColor()"
       [style.--team-opacity]="'0.8'"
     >
-      <!-- Lower Stats Overlay for Team A -->
-      @if (showPlayerLower() && playerLowerData()?.team?.id === data()?.teams?.team_a?.id) {
-        <div class="lower-stats-overlay" [@fadeInOut]="true">
-          <tui-avatar
-            [src]="getPlayerPhoto(playerLowerData())"
-            size="xl"
-          />
-          <div class="player-info">
-            <span class="player-number">{{ getPlayerNumber(playerLowerData()) }}</span>
-            <span class="player-name">{{ getPlayerName(playerLowerData()) }}</span>
-            <span class="player-position">{{ getPlayerPosition(playerLowerData()) }}</span>
-          </div>
-        </div>
-      }
-
       <div class="team-info">
         <div class="team-name-block">
           @if (showGoalTeamA()) {
@@ -83,21 +68,6 @@
       [style.background-color]="teamBColor()"
       [style.--team-opacity]="'0.8'"
     >
-      <!-- Lower Stats Overlay for Team B -->
-      @if (showPlayerLower() && playerLowerData()?.team?.id === data()?.teams?.team_b?.id) {
-        <div class="lower-stats-overlay" [@fadeInOut]="true">
-          <tui-avatar
-            [src]="getPlayerPhoto(playerLowerData())"
-            size="xl"
-          />
-          <div class="player-info">
-            <span class="player-number">{{ getPlayerNumber(playerLowerData()) }}</span>
-            <span class="player-name">{{ getPlayerName(playerLowerData()) }}</span>
-            <span class="player-position">{{ getPlayerPosition(playerLowerData()) }}</span>
-          </div>
-        </div>
-      }
-
       <div class="team-info">
         <div class="team-name-block">
           @if (showGoalTeamB()) {

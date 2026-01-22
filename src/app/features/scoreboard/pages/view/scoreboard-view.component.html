@@ -13,6 +13,41 @@
       [scoreboard]="data()?.scoreboard ?? null"
       [teams]="data()?.teams ?? null"
     />
+    <div class="lower-display-layer">
+      @if (showHomeTeamLower() && homeTeamStats()?.team_stats) {
+        <app-team-match-lower-football-stats-display
+          [teamName]="teamAName()"
+          [teamColor]="teamAColor()"
+          [alignment]="'home'"
+          [stats]="homeTeamStats()?.team_stats ?? null"
+        />
+      }
+      @if (showAwayTeamLower() && awayTeamStats()?.team_stats) {
+        <app-team-match-lower-football-stats-display
+          [teamName]="teamBName()"
+          [teamColor]="teamBColor()"
+          [alignment]="'away'"
+          [stats]="awayTeamStats()?.team_stats ?? null"
+        />
+      }
+      @if (showQbLower() && qbLowerData()) {
+        <app-football-qb-lower-stats-display
+          [player]="qbLowerData()"
+          [teamName]="qbLowerAlignment() === 'away' ? teamBName() : teamAName()"
+          [teamColor]="qbLowerAlignment() === 'away' ? teamBColor() : teamAColor()"
+          [alignment]="qbLowerAlignment()"
+          [stats]="qbTeamStats()?.qb_stats ?? null"
+        />
+      }
+      @if (showPlayerLower() && playerLowerData()) {
+        <app-player-match-lower-display
+          [player]="playerLowerData()"
+          [teamName]="playerLowerAlignment() === 'away' ? teamBName() : teamAName()"
+          [teamColor]="playerLowerAlignment() === 'away' ? teamBColor() : teamAColor()"
+          [alignment]="playerLowerAlignment()"
+        />
+      }
+    </div>
     <app-scoreboard-display
       [data]="data()"
       [gameClock]="gameClockSeconds()"

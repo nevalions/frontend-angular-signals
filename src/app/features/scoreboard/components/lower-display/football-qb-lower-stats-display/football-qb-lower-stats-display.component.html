@@ -1,0 +1,63 @@
+@if (player()) {
+  <section
+    class="lower-third qb-lower"
+    [class.away]="alignment() === 'away'"
+    [style.--accent-color]="teamColor()"
+    [@fadeInOut]="true"
+  >
+    <div class="player-side">
+      <div class="avatar">
+        @if (photoUrl()) {
+          <img
+            [ngSrc]="photoUrl()"
+            width="80"
+            height="80"
+            alt="Quarterback avatar"
+          />
+        } @else {
+          <div class="avatar-fallback">{{ initials() }}</div>
+        }
+      </div>
+      <div class="player-details">
+        @if (playerNumber()) {
+          <span class="player-number">#{{ playerNumber() }}</span>
+        }
+        <span class="player-name">{{ playerName() }}</span>
+        <span class="player-position">{{ playerPosition() }}</span>
+        <span class="team-name">{{ teamName() }}</span>
+      </div>
+    </div>
+    <div class="stats-side">
+      <div class="stat">
+        <span class="label">COMP/ATT</span>
+        <span class="value">
+          {{ formatStat(stats()?.passes_completed) }}/{{ formatStat(stats()?.passes) }}
+        </span>
+      </div>
+      <div class="stat">
+        <span class="label">PASS YDS</span>
+        <span class="value">{{ formatStat(stats()?.pass_yards) }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">PASS TD</span>
+        <span class="value">{{ formatStat(stats()?.pass_td) }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">RUSH YDS</span>
+        <span class="value">{{ formatStat(stats()?.run_yards) }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">RUSH ATT</span>
+        <span class="value">{{ formatStat(stats()?.run_attempts) }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">RUSH TD</span>
+        <span class="value">{{ formatStat(stats()?.run_td) }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">QB RTG</span>
+        <span class="value">{{ formatStat(stats()?.qb_rating) }}</span>
+      </div>
+    </div>
+  </section>
+}

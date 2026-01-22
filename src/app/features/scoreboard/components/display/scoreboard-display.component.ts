@@ -6,8 +6,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { TuiAvatar } from '@taiga-ui/kit';
-import { ComprehensiveMatchData, PlayerMatchWithDetails } from '../../../matches/models/comprehensive-match.model';
+import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-match.model';
 import { Scoreboard } from '../../../matches/models/scoreboard.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { SponsorLineComponent } from '../sponsor-display/sponsor-line.component';
@@ -23,7 +22,7 @@ export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
 @Component({
   selector: 'app-scoreboard-display',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiAvatar, SponsorLineComponent, MatchSponsorLineDisplayFlatComponent],
+  imports: [SponsorLineComponent, MatchSponsorLineDisplayFlatComponent],
   templateUrl: './scoreboard-display.component.html',
   styleUrl: './scoreboard-display.component.less',
   animations: [scoreChangeAnimation, fadeInOutAnimation, breathingAnimation],
@@ -46,12 +45,6 @@ export class ScoreboardDisplayComponent {
 
   /** Tournament logo URL */
   tournamentLogo = input<string | null>(null);
-
-  /** Player ID for lower third display */
-  playerLowerId = input<number | null>(null);
-
-  /** QB player ID for QB stats lower third display */
-  footballQbLowerId = input<number | null>(null);
 
   // Track previous scores for animation triggers
   private previousScoreA = signal<number>(0);
@@ -265,38 +258,6 @@ export class ScoreboardDisplayComponent {
     return this.parseTimeoutString(this.timeoutTeamB());
   });
 
-  // Player lower third data
-  protected readonly playerLowerData = computed<PlayerMatchWithDetails | null>(() => {
-    const d = this.data();
-    const playerId = this.playerLowerId();
-    if (!d?.players || !playerId) return null;
-    return d.players.find(p => p.id === playerId) || null;
-  });
-
-  protected readonly qbLowerData = computed<PlayerMatchWithDetails | null>(() => {
-    const d = this.data();
-    const qbId = this.footballQbLowerId();
-    if (!d?.players || !qbId) return null;
-    return d.players.find(p => p.id === qbId) || null;
-  });
-
-  // Show lower displays based on scoreboard settings
-  protected readonly showPlayerLower = computed(() => {
-    return this.scoreboard()?.is_match_player_lower && this.playerLowerData() !== null;
-  });
-
-  protected readonly showQbLower = computed(() => {
-    return this.scoreboard()?.is_football_qb_full_stats_lower && this.qbLowerData() !== null;
-  });
-
-  protected readonly showHomeTeamLower = computed(() => {
-    return this.scoreboard()?.is_home_match_team_lower ?? false;
-  });
-
-  protected readonly showAwayTeamLower = computed(() => {
-    return this.scoreboard()?.is_away_match_team_lower ?? false;
-  });
-
   constructor() {
     // Track score changes for animation
     effect(() => {
@@ -330,33 +291,5 @@ export class ScoreboardDisplayComponent {
     return result;
   }
 
-  /**
-   * Get player display name from player data
-   */
-  protected getPlayerName(player: PlayerMatchWithDetails | null): string {
-    if (!player?.person) return '';
-    return `${player.person.first_name} ${player.person.second_name}`.toUpperCase();
-  }
-
-  /**
-   * Get player photo URL
-   */
-  protected getPlayerPhoto(player: PlayerMatchWithDetails | null): string {
-    if (!player?.person?.photo_url) return '';
-    return buildStaticUrl(player.person.photo_url);
-  }
-
-  /**
-   * Get player position title
-   */
-  protected getPlayerPosition(player: PlayerMatchWithDetails | null): string {
-    return player?.position?.title || '';
-  }
-
-  /**
-   * Get player number
-   */
-  protected getPlayerNumber(player: PlayerMatchWithDetails | null): string {
-    return player?.match_number?.toString() || '';
-  }
+  // Lower display data is handled by dedicated lower display components in the view.
 }
