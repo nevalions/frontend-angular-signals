@@ -1,0 +1,223 @@
+<app-collapsible-section title="Display Settings" sectionKey="scoreboard-settings">
+  <ng-template>
+    <div class="settings-forms">
+      <!-- Display Toggles Section -->
+      <div class="settings-section">
+        <h4 class="section-title">Display Elements</h4>
+        <div class="toggles-grid">
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showQtr()"
+              (change)="onToggleQtr($any($event.target).checked)"
+            />
+            Show Quarter
+          </label>
+
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showTime()"
+              (change)="onToggleTime($any($event.target).checked)"
+            />
+            Show Game Time
+          </label>
+
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showPlayClock()"
+              (change)="onTogglePlayClock($any($event.target).checked)"
+            />
+            Show Play Clock
+          </label>
+
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showDownDistance()"
+              (change)="onToggleDownDistance($any($event.target).checked)"
+            />
+            Show Down & Distance
+          </label>
+
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showTournamentLogo()"
+              (change)="onToggleTournamentLogo($any($event.target).checked)"
+            />
+            Show Tournament Logo
+          </label>
+
+          <label tuiLabel>
+            <input
+              tuiCheckbox
+              type="checkbox"
+              [checked]="showMainSponsor()"
+              (change)="onToggleMainSponsor($any($event.target).checked)"
+            />
+            Show Main Sponsor
+          </label>
+        </div>
+      </div>
+
+      <!-- Team Settings Section -->
+      <div class="settings-section">
+        <h4 class="section-title">Team Settings</h4>
+
+        <div class="team-settings">
+          <div class="team-column">
+            <h5 class="team-label">Home Team</h5>
+
+            <div class="color-picker">
+              <label>Game Color:</label>
+              <input
+                type="color"
+                [value]="teamAColor()"
+                (change)="onTeamAColorChange($event)"
+              />
+            </div>
+
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="useTeamAColor()"
+                (change)="onToggleUseTeamAColor($any($event.target).checked)"
+              />
+              Use Game Color
+            </label>
+
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="useTeamATitle()"
+                (change)="onToggleUseTeamATitle($any($event.target).checked)"
+              />
+              Use Game Title
+            </label>
+
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="useTeamALogo()"
+                (change)="onToggleUseTeamALogo($any($event.target).checked)"
+              />
+              Use Game Logo
+            </label>
+          </div>
+
+          <div class="team-column">
+            <h5 class="team-label">Away Team</h5>
+
+            <div class="color-picker">
+              <label>Game Color:</label>
+              <input
+                type="color"
+                [value]="teamBColor()"
+                (change)="onTeamBColorChange($event)"
+              />
+            </div>
+
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="useTeamBColor()"
+                (change)="onToggleUseTeamBColor($any($event.target).checked)"
+              />
+              Use Game Color
+            </label>
+
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="useTeamBTitle()"
+                (change)="onToggleUseTeamBTitle($any($event.target).checked)"
+              />
+              Use Game Title
+            </label>
+
+            <label tuiLabel>
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [checked]="useTeamBLogo()"
+                (change)="onToggleUseTeamBLogo($any($event.target).checked)"
+              />
+              Use Game Logo
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scale Settings Section -->
+      <div class="settings-section">
+        <h4 class="section-title">Scale Settings</h4>
+
+        <div class="scale-controls">
+          <div class="scale-control">
+            <label>Tournament Logo Scale: {{ tournamentLogoScale() | number:'1.2-2' }}</label>
+            <input
+              tuiSlider
+              type="range"
+              [min]="0.5"
+              [max]="2"
+              step="0.1"
+              [ngModel]="tournamentLogoScale()"
+              (ngModelChange)="onTournamentLogoScaleChange($event)"
+            />
+          </div>
+
+          <div class="scale-control">
+            <label>Main Sponsor Scale: {{ mainSponsorScale() | number:'1.2-2' }}</label>
+            <input
+              tuiSlider
+              type="range"
+              [min]="0.5"
+              [max]="2"
+              step="0.1"
+              [ngModel]="mainSponsorScale()"
+              (ngModelChange)="onMainSponsorScaleChange($event)"
+            />
+          </div>
+
+          <div class="scale-control">
+            <label>Home Logo Scale: {{ logoAScale() | number:'1.2-2' }}</label>
+            <input
+              tuiSlider
+              type="range"
+              [min]="0.5"
+              [max]="2"
+              step="0.1"
+              [ngModel]="logoAScale()"
+              (ngModelChange)="onLogoAScaleChange($event)"
+            />
+          </div>
+
+          <div class="scale-control">
+            <label>Away Logo Scale: {{ logoBScale() | number:'1.2-2' }}</label>
+            <input
+              tuiSlider
+              type="range"
+              [min]="0.5"
+              [max]="2"
+              step="0.1"
+              [ngModel]="logoBScale()"
+              (ngModelChange)="onLogoBScaleChange($event)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</app-collapsible-section>
