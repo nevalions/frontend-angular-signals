@@ -1,0 +1,26 @@
+.qtr-forms {
+  padding: 16px 0;
+}
+
+.quarter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+
+  button {
+    min-width: 60px;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 400px) {
+  .quarter-buttons {
+    gap: 8px;
+
+    button {
+      min-width: 50px;
+      padding: 8px 12px;
+    }
+  }
+}
