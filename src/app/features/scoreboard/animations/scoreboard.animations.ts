@@ -146,6 +146,24 @@ export const listItemAnimation: AnimationTriggerMetadata = trigger('listItem', [
 ]);
 
 /**
+ * Roster Group Stagger Animation
+ * Slides position groups with staggered timing
+ * Usage: [@rosterGroupStagger]="groupCount" on roster container
+ */
+export const rosterGroupStaggerAnimation: AnimationTriggerMetadata = trigger('rosterGroupStagger', [
+  transition('* => *', [
+    query(
+      '.roster-position-group',
+      [
+        style({ opacity: 0, transform: 'translateY(16px)' }),
+        stagger('80ms', [animate('220ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))]),
+      ],
+      { optional: true }
+    ),
+  ]),
+]);
+
+/**
  * Clock Warning Animation
  * Color change and flash when clock is under threshold
  * Usage: [@clockWarning]="isWarning"
@@ -218,6 +236,7 @@ export const SCOREBOARD_ANIMATIONS = [
   slideInRightAnimation,
   staggeredListAnimation,
   listItemAnimation,
+  rosterGroupStaggerAnimation,
   clockWarningAnimation,
   clockFlashAnimation,
   slideUpAnimation,

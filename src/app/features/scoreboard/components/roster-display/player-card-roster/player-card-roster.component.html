@@ -1,0 +1,12 @@
+<div
+  class="player-card"
+  [style.--team-color]="teamColor()"
+>
+  <div class="player-number">
+    @if (playerNumber()) {
+      <span>#{{ playerNumber() }}</span>
+    }
+  </div>
+  <div class="player-position">{{ playerPosition() }}</div>
+  <div class="player-name">{{ playerName() }}</div>
+</div>

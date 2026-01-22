@@ -6,11 +6,12 @@ import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-ma
 import { GameClock } from '../../../matches/models/gameclock.model';
 import { PlayClock } from '../../../matches/models/playclock.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
+import { FootballStartRosterDisplayComponent } from '../../components/roster-display/football-start-roster-display/football-start-roster-display.component';
 
 @Component({
   selector: 'app-scoreboard-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ScoreboardDisplayComponent],
+  imports: [ScoreboardDisplayComponent, FootballStartRosterDisplayComponent],
   templateUrl: './scoreboard-view.component.html',
   styleUrl: './scoreboard-view.component.less',
 })

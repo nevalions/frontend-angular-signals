@@ -7,6 +7,7 @@ export {
   slideInRightAnimation,
   staggeredListAnimation,
   listItemAnimation,
+  rosterGroupStaggerAnimation,
   clockWarningAnimation,
   clockFlashAnimation,
   slideUpAnimation,

@@ -8,6 +8,11 @@
       <p>{{ error() }}</p>
     </div>
   } @else {
+    <app-football-start-roster-display
+      [players]="data()?.players ?? []"
+      [scoreboard]="data()?.scoreboard ?? null"
+      [teams]="data()?.teams ?? null"
+    />
     <app-scoreboard-display
       [data]="data()"
       [gameClock]="gameClockSeconds()"

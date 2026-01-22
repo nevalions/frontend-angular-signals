@@ -1,0 +1,14 @@
+<section class="roster-position-group" [@staggeredList]="players().length">
+  <div class="group-header">
+    <span class="group-title">{{ title() }}</span>
+  </div>
+  <div class="group-players">
+    @for (player of players(); track player.id) {
+      <app-player-card-roster
+        [player]="player"
+        [teamColor]="teamColor()"
+        [@listItem]="player.id"
+      />
+    }
+  </div>
+</section>

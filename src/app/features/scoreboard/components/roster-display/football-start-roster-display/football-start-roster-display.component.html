@@ -1,0 +1,113 @@
+<div class="roster-overlay">
+  @if (showHomeOffense()) {
+    <section
+      class="roster-panel roster-panel--home roster-panel--offense"
+      [@slideInLeft]="true"
+      [@rosterGroupStagger]="homeOffenseGroupCount()"
+    >
+      <div class="roster-panel__header">Home Offense</div>
+      @if (homeOffenseGroups().qbWr.length) {
+        <app-roster-group-qb-wr
+          [players]="homeOffenseGroups().qbWr"
+          [teamColor]="teamAColor()"
+        />
+      }
+      @if (homeOffenseGroups().oLine.length) {
+        <app-roster-group-o-line
+          [players]="homeOffenseGroups().oLine"
+          [teamColor]="teamAColor()"
+        />
+      }
+      @if (homeOffenseGroups().backs.length) {
+        <app-roster-group-backs
+          [players]="homeOffenseGroups().backs"
+          [teamColor]="teamAColor()"
+        />
+      }
+    </section>
+  }
+
+  @if (showAwayOffense()) {
+    <section
+      class="roster-panel roster-panel--away roster-panel--offense"
+      [@slideInRight]="true"
+      [@rosterGroupStagger]="awayOffenseGroupCount()"
+    >
+      <div class="roster-panel__header">Away Offense</div>
+      @if (awayOffenseGroups().qbWr.length) {
+        <app-roster-group-qb-wr
+          [players]="awayOffenseGroups().qbWr"
+          [teamColor]="teamBColor()"
+        />
+      }
+      @if (awayOffenseGroups().oLine.length) {
+        <app-roster-group-o-line
+          [players]="awayOffenseGroups().oLine"
+          [teamColor]="teamBColor()"
+        />
+      }
+      @if (awayOffenseGroups().backs.length) {
+        <app-roster-group-backs
+          [players]="awayOffenseGroups().backs"
+          [teamColor]="teamBColor()"
+        />
+      }
+    </section>
+  }
+
+  @if (showHomeDefense()) {
+    <section
+      class="roster-panel roster-panel--home roster-panel--defense"
+      [@slideInLeft]="true"
+      [@rosterGroupStagger]="homeDefenseGroupCount()"
+    >
+      <div class="roster-panel__header">Home Defense</div>
+      @if (homeDefenseGroups().dLine.length) {
+        <app-roster-group-d-line
+          [players]="homeDefenseGroups().dLine"
+          [teamColor]="teamAColor()"
+        />
+      }
+      @if (homeDefenseGroups().lb.length) {
+        <app-roster-group-lb
+          [players]="homeDefenseGroups().lb"
+          [teamColor]="teamAColor()"
+        />
+      }
+      @if (homeDefenseGroups().db.length) {
+        <app-roster-group-db
+          [players]="homeDefenseGroups().db"
+          [teamColor]="teamAColor()"
+        />
+      }
+    </section>
+  }
+
+  @if (showAwayDefense()) {
+    <section
+      class="roster-panel roster-panel--away roster-panel--defense"
+      [@slideInRight]="true"
+      [@rosterGroupStagger]="awayDefenseGroupCount()"
+    >
+      <div class="roster-panel__header">Away Defense</div>
+      @if (awayDefenseGroups().dLine.length) {
+        <app-roster-group-d-line
+          [players]="awayDefenseGroups().dLine"
+          [teamColor]="teamBColor()"
+        />
+      }
+      @if (awayDefenseGroups().lb.length) {
+        <app-roster-group-lb
+          [players]="awayDefenseGroups().lb"
+          [teamColor]="teamBColor()"
+        />
+      }
+      @if (awayDefenseGroups().db.length) {
+        <app-roster-group-db
+          [players]="awayDefenseGroups().db"
+          [teamColor]="teamBColor()"
+        />
+      }
+    </section>
+  }
+</div>
