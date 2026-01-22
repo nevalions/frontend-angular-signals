@@ -7,6 +7,7 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 Implemented features are documented in `FEATURES_*.md` files:
 
 - [Positions Feature](FEATURES_POSITIONS.md) - Player positions within sports
+- [Scoreboard Feature](FEATURES_SCOREBOARD.md) - Real-time scoreboard management and display
 
 ## Development Documentation
 
