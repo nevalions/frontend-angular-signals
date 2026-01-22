@@ -1,0 +1,368 @@
+// Variables
+@scoreboard-bg: rgba(31, 31, 31, 0.9);
+@team-opacity: 0.8;
+@score-font-size: 55px;
+@clock-font-size: 30px;
+@quarter-font-size: 26px;
+@team-name-font-size: 26px;
+@play-clock-warning-color: #ff4444;
+@play-clock-normal-color: #ffc710;
+@flag-bg-color: #e4cd1c;
+@goal-bg-color: #ff6b00;
+@timeout-indicator-bg: #2196f3;
+
+.scoreboard-container {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  color: white;
+  background: @scoreboard-bg;
+  border-radius: 8px;
+  overflow: hidden;
+  user-select: none;
+
+  &.scoreboard {
+    // Admin preview mode - smaller size
+    max-width: 800px;
+    font-size: 14px;
+
+    .score {
+      font-size: 36px;
+    }
+
+    .info-value {
+      font-size: 18px;
+    }
+
+    .team-name {
+      font-size: 18px;
+    }
+  }
+
+  &.fullhd-scoreboard {
+    // HD view mode - full size for 1920x1080
+    width: 100%;
+    max-width: 1200px;
+    font-size: 16px;
+  }
+}
+
+// Logos row
+.logos-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  min-height: 60px;
+
+  .logo-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+  }
+}
+
+// Teams row
+.teams-row {
+  display: flex;
+  gap: 2px;
+}
+
+.team-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: var(--team-bg, #1a1a1a);
+  opacity: var(--team-opacity, @team-opacity);
+  transition: background-color 0.3s ease;
+}
+
+.lower-stats-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  z-index: 10;
+
+  .player-info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 16px;
+    gap: 4px;
+  }
+
+  .player-number {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .player-name {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .player-position {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+.team-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 8px;
+}
+
+.team-name-block {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-name {
+  font-size: @team-name-font-size;
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  transition: font-size 0.2s ease;
+}
+
+.goal-indicator,
+.timeout-indicator {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
+.goal-indicator {
+  background: @goal-bg-color;
+  animation: breathing 1s ease-in-out infinite;
+}
+
+.timeout-indicator {
+  background: @timeout-indicator-bg;
+}
+
+@keyframes breathing {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+}
+
+.timeout-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.timeout-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition: all 0.2s ease;
+
+  &.used {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: white;
+  }
+}
+
+.team-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  min-height: 60px;
+
+  img {
+    max-width: 50px;
+    max-height: 50px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+}
+
+.score-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(31, 31, 31, 0.8);
+}
+
+.score {
+  font-size: @score-font-size;
+  font-weight: bold;
+  line-height: 1;
+}
+
+// Game info row
+.game-info-row {
+  display: flex;
+  background: rgba(0, 0, 0, 0.5);
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &.quarter {
+    width: 70px;
+  }
+
+  &.game-clock {
+    width: 100px;
+  }
+
+  &.play-clock {
+    width: 60px;
+    color: @play-clock-normal-color;
+
+    &.warning {
+      color: @play-clock-warning-color;
+      animation: flash 0.5s ease-in-out infinite;
+    }
+  }
+
+  &.down-distance {
+    flex: 1;
+    min-width: 190px;
+    background: #808080;
+    position: relative;
+  }
+}
+
+.info-value {
+  font-size: @clock-font-size;
+  font-weight: 600;
+}
+
+.flag-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: @flag-bg-color;
+  color: #000;
+  font-size: @quarter-font-size;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1330px) {
+  .scoreboard-container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .teams-row {
+    flex-direction: column;
+  }
+
+  .team-name {
+    max-width: 150px;
+    font-size: 20px;
+  }
+
+  .score {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 730px) {
+  .team-name {
+    max-width: 120px;
+    font-size: 16px;
+  }
+
+  .score {
+    font-size: 32px;
+  }
+
+  .info-value {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  .game-info-row {
+    flex-wrap: wrap;
+  }
+
+  .info-box {
+    &.quarter,
+    &.game-clock {
+      width: 50%;
+    }
+
+    &.play-clock,
+    &.down-distance {
+      width: 50%;
+    }
+  }
+
+  .team-name {
+    max-width: 100px;
+    font-size: 14px;
+  }
+
+  .score {
+    font-size: 30px;
+  }
+}

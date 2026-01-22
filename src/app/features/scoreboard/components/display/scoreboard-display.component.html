@@ -1,0 +1,165 @@
+<div class="scoreboard-container" [class]="displayClass()">
+  <!-- Logos Row -->
+  <div class="logos-row">
+    @if (showMainSponsor() && sponsorLogoUrl()) {
+      <div class="logo-box sponsor-logo">
+        <img
+          [src]="sponsorLogoUrl()"
+          [style.transform]="'scale(' + sponsorLogoScale() + ')'"
+          alt="Sponsor logo"
+        />
+      </div>
+    }
+    @if (showTournamentLogo() && tournamentLogoUrl()) {
+      <div class="logo-box tournament-logo">
+        <img
+          [src]="tournamentLogoUrl()"
+          [style.transform]="'scale(' + tournamentLogoScale() + ')'"
+          alt="Tournament logo"
+        />
+      </div>
+    }
+  </div>
+
+  <!-- Teams Row -->
+  <div class="teams-row">
+    <!-- Team A -->
+    <div
+      class="team-block team-a"
+      [style.background-color]="teamAColor()"
+      [style.--team-opacity]="'0.8'"
+    >
+      <!-- Lower Stats Overlay for Team A -->
+      @if (showPlayerLower() && playerLowerData()?.team?.id === data()?.teams?.team_a?.id) {
+        <div class="lower-stats-overlay" [@fadeInOut]="true">
+          <tui-avatar
+            [src]="getPlayerPhoto(playerLowerData())"
+            size="xl"
+          />
+          <div class="player-info">
+            <span class="player-number">{{ getPlayerNumber(playerLowerData()) }}</span>
+            <span class="player-name">{{ getPlayerName(playerLowerData()) }}</span>
+            <span class="player-position">{{ getPlayerPosition(playerLowerData()) }}</span>
+          </div>
+        </div>
+      }
+
+      <div class="team-info">
+        <div class="team-name-block">
+          @if (showGoalTeamA()) {
+            <div class="goal-indicator" [@breathing]="goalAnimationState()">TOUCHDOWN</div>
+          } @else if (showTimeoutTeamA()) {
+            <div class="timeout-indicator">TIMEOUT</div>
+          } @else {
+            <span class="team-name">{{ teamAName() }}</span>
+          }
+        </div>
+
+        <div class="timeout-dots">
+          @for (used of timeoutAIndicators(); track $index) {
+            <span class="timeout-dot" [class.used]="used"></span>
+          }
+        </div>
+      </div>
+
+      <div class="team-logo">
+        @if (teamALogo()) {
+          <img
+            [src]="teamALogo()"
+            [style.transform]="'scale(' + teamALogoScale() + ')'"
+            alt="Team A logo"
+          />
+        }
+      </div>
+
+      <div class="score-block" [@scoreChange]="scoreA()">
+        <span class="score">{{ scoreA() }}</span>
+      </div>
+    </div>
+
+    <!-- Team B -->
+    <div
+      class="team-block team-b"
+      [style.background-color]="teamBColor()"
+      [style.--team-opacity]="'0.8'"
+    >
+      <!-- Lower Stats Overlay for Team B -->
+      @if (showPlayerLower() && playerLowerData()?.team?.id === data()?.teams?.team_b?.id) {
+        <div class="lower-stats-overlay" [@fadeInOut]="true">
+          <tui-avatar
+            [src]="getPlayerPhoto(playerLowerData())"
+            size="xl"
+          />
+          <div class="player-info">
+            <span class="player-number">{{ getPlayerNumber(playerLowerData()) }}</span>
+            <span class="player-name">{{ getPlayerName(playerLowerData()) }}</span>
+            <span class="player-position">{{ getPlayerPosition(playerLowerData()) }}</span>
+          </div>
+        </div>
+      }
+
+      <div class="team-info">
+        <div class="team-name-block">
+          @if (showGoalTeamB()) {
+            <div class="goal-indicator" [@breathing]="goalAnimationState()">TOUCHDOWN</div>
+          } @else if (showTimeoutTeamB()) {
+            <div class="timeout-indicator">TIMEOUT</div>
+          } @else {
+            <span class="team-name">{{ teamBName() }}</span>
+          }
+        </div>
+
+        <div class="timeout-dots">
+          @for (used of timeoutBIndicators(); track $index) {
+            <span class="timeout-dot" [class.used]="used"></span>
+          }
+        </div>
+      </div>
+
+      <div class="team-logo">
+        @if (teamBLogo()) {
+          <img
+            [src]="teamBLogo()"
+            [style.transform]="'scale(' + teamBLogoScale() + ')'"
+            alt="Team B logo"
+          />
+        }
+      </div>
+
+      <div class="score-block" [@scoreChange]="scoreB()">
+        <span class="score">{{ scoreB() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Info Row -->
+  <div class="game-info-row">
+    @if (showQuarter()) {
+      <div class="info-box quarter">
+        <span class="info-value">{{ quarter() }}</span>
+      </div>
+    }
+
+    @if (showTime()) {
+      <div class="info-box game-clock">
+        <span class="info-value">{{ gameClockDisplay() }}</span>
+      </div>
+    }
+
+    @if (showPlayClock() && playClock() !== null) {
+      <div class="info-box play-clock" [class.warning]="playClockWarning()">
+        <span class="info-value">{{ playClockDisplay() }}</span>
+      </div>
+    }
+
+    @if (showDownDistance()) {
+      <div class="info-box down-distance">
+        @if (showFlag()) {
+          <div class="flag-indicator" [@fadeInOut]="true">FLAG</div>
+        } @else {
+          <span class="info-value">{{ downDistance() }}</span>
+        }
+      </div>
+    }
+  </div>
+</div>
