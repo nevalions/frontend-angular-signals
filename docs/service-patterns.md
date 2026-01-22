@@ -426,17 +426,49 @@ matchData: Signal<ComprehensiveMatchData | null>
 gameClock: Signal<GameClock | null>
 playClock: Signal<PlayClock | null>
 lastError: Signal<string | null>
+lastPingReceived: Signal<number | null>
+connectionHealthy: Signal<boolean>
 ```
+
+### Connection Health Monitoring
+
+```typescript
+// Check if connection is healthy (ping received within 60 seconds)
+isHealthy = computed(() => wsService.connectionHealthy());
+
+// Get timestamp of last ping received
+lastPing = computed(() => wsService.lastPingReceived());
+
+// Show connection health indicator
+@if (wsService.connectionHealthy()) {
+  <div class="status-healthy">● Connection Healthy</div>
+} @else {
+  <div class="status-unhealthy">● Connection Issue</div>
+}
+```
+
+**Health Monitoring Signals:**
+- `lastPingReceived`: Timestamp (ms) of last ping received from server, or `null` if no ping received yet
+- `connectionHealthy`: Returns `true` if ping received within 60 seconds, `false` otherwise
+  - Returns `true` if no ping received yet (assumes healthy on new connection)
+  - Returns `false` if no ping received in last 60 seconds (possible stale connection)
 
 ### Message Types
 
 The WebSocket service automatically parses and routes incoming messages to appropriate signals:
 
-| Message Type | Signal Updated | Data Structure |
-|--------------|---------------|----------------|
-| `playclock-update` | `playClock` | `PlayClock` interface |
-| `gameclock-update` | `gameClock` | `GameClock` interface |
-| `message-update` | `matchData` | `ComprehensiveMatchData` interface |
+| Message Type | Signal Updated | Action | Data Structure |
+|--------------|---------------|---------|----------------|
+| `ping` | `lastPingReceived` | Responds with `pong` | `{ timestamp: number }` |
+| `playclock-update` | `playClock` | Updates clock signal | `PlayClock` interface |
+| `gameclock-update` | `gameClock` | Updates clock signal | `GameClock` interface |
+| `message-update` | `matchData` | Updates match data | `ComprehensiveMatchData` interface |
+
+**Ping/Pong Flow:**
+1. Server sends `ping` message with timestamp
+2. Client responds with `pong` message containing same timestamp
+3. Client updates `lastPingReceived` signal with current time
+4. `connectionHealthy` computed signal reflects connection health
 
 ### Connection State Monitoring
 
@@ -455,8 +487,9 @@ The WebSocket service automatically parses and routes incoming messages to appro
 
 ### Key Features
 
-- **Auto-reconnect**: Exponential backoff with jitter (up to 10 attempts, max 30s delay)
+- **Auto-reconnect**: Exponential backoff with jitter (up to 3 attempts, max 30s delay)
 - **Connection state tracking**: `'disconnected' | 'connecting' | 'connected' | 'error'`
+- **Connection health monitoring**: Ping/pong heartbeat with `connectionHealthy` signal
 - **Automatic cleanup**: Proper disconnect via `DestroyRef` on service destroy
 - **UUID-based client identification**: Unique client ID per session for server-side tracking
 - **Error handling**: `lastError` signal for debugging connection issues

@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, signal } from '@angular/core';
+import { DestroyRef, computed, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { catchError, tap } from 'rxjs/operators';
@@ -28,7 +28,7 @@ export interface ComprehensiveMatchData {
 /**
  * WebSocket message types from backend
  */
-interface WebSocketMessage {
+export interface WebSocketMessage {
   playclock?: PlayClock;
   gameclock?: GameClock;
   [key: string]: unknown;
@@ -84,6 +84,14 @@ export class WebSocketService {
 
   // Error signal for debugging
   readonly lastError = signal<string | null>(null);
+
+  // Connection health monitoring
+  readonly lastPingReceived = signal<number | null>(null);
+  readonly connectionHealthy = computed(() => {
+    const lastPing = this.lastPingReceived();
+    if (!lastPing) return true;
+    return Date.now() - lastPing < 60000;
+  });
 
   constructor() {
     this.clientId = this.generateUUID();
@@ -234,6 +242,12 @@ export class WebSocketService {
 
     const data = message['data'] as Record<string, unknown> | undefined;
 
+    // Handle ping messages
+    if (messageType === 'ping') {
+      this.handlePing(message);
+      return;
+    }
+
     // Handle playclock updates
     if (messageType === 'playclock-update' || ('playclock' in message && message.playclock && !('data' in message))) {
       console.log('[WebSocket] Playclock update');
@@ -284,6 +298,21 @@ export class WebSocketService {
     // Fallback: try to use message directly
     console.log('[WebSocket] Unknown message type, using as-is');
     this.matchData.set(message as ComprehensiveMatchData);
+  }
+
+  /**
+   * Handle ping messages from server
+   */
+  private handlePing(message: WebSocketMessage): void {
+    const timestamp = message['timestamp'] as number;
+    console.log('[WebSocket] Received ping, sending pong');
+
+    this.sendMessage({
+      type: 'pong',
+      timestamp: timestamp,
+    });
+
+    this.lastPingReceived.set(Date.now());
   }
 
   /**

@@ -138,6 +138,86 @@ describe('WebSocketService', () => {
       expect(consoleSpy).toHaveBeenCalledWith('[WebSocket] Disconnecting');
     });
   });
+
+  describe('Connection Health', () => {
+    it('should have lastPingReceived signal', () => {
+      expect(service.lastPingReceived).toBeDefined();
+      expect(typeof service.lastPingReceived).toBe('function');
+    });
+
+    it('should have connectionHealthy computed signal', () => {
+      expect(service.connectionHealthy).toBeDefined();
+      expect(typeof service.connectionHealthy).toBe('function');
+    });
+
+    it('should be healthy when no ping received yet', () => {
+      expect(service.lastPingReceived()).toBeNull();
+      expect(service.connectionHealthy()).toBe(true);
+    });
+
+    it('should be healthy when ping received recently', () => {
+      const recentTime = Date.now() - 30000;
+      service.lastPingReceived.set(recentTime);
+      expect(service.connectionHealthy()).toBe(true);
+    });
+
+    it('should be unhealthy when ping received long ago', () => {
+      const oldTime = Date.now() - 70000;
+      service.lastPingReceived.set(oldTime);
+      expect(service.connectionHealthy()).toBe(false);
+    });
+  });
+
+  describe('Ping/Pong Handling', () => {
+    it('should respond to ping with pong containing same timestamp', () => {
+      const testTimestamp = 1706000000.123;
+      const pingMessage = {
+        type: 'ping',
+        timestamp: testTimestamp,
+      };
+
+      const sendMessageSpy = vi.spyOn(service, 'sendMessage').mockImplementation(() => {});
+      const lastPingSpy = vi.spyOn(service.lastPingReceived, 'set');
+
+      service['handlePing'](pingMessage);
+
+      expect(sendMessageSpy).toHaveBeenCalledWith({
+        type: 'pong',
+        timestamp: testTimestamp,
+      });
+      expect(lastPingSpy).toHaveBeenCalled();
+    });
+
+    it('should update lastPingReceived signal when ping received', () => {
+      const pingMessage = {
+        type: 'ping',
+        timestamp: 1706000000.123,
+      };
+
+      vi.spyOn(service, 'sendMessage').mockImplementation(() => {});
+
+      service['handlePing'](pingMessage);
+
+      const lastPing = service.lastPingReceived();
+      expect(lastPing).not.toBeNull();
+      expect(typeof lastPing).toBe('number');
+      expect(lastPing).toBeLessThanOrEqual(Date.now());
+    });
+
+    it('should log ping reception', () => {
+      const pingMessage = {
+        type: 'ping',
+        timestamp: 1706000000.123,
+      };
+
+      const consoleLogSpy = vi.spyOn(console, 'log');
+      vi.spyOn(service, 'sendMessage').mockImplementation(() => {});
+
+      service['handlePing'](pingMessage);
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('[WebSocket] Received ping, sending pong');
+    });
+  });
 });
 
 describe('ConnectionState type', () => {
