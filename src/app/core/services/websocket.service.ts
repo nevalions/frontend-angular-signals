@@ -239,7 +239,7 @@ export class WebSocketService {
       console.log('[WebSocket] Playclock update');
       const playclock = (message.playclock ?? (data?.['playclock'] as PlayClock | undefined)) ?? null;
       if (playclock) {
-        this.playClock.set(this.mergePlayClock(playclock));
+        this.playClock.set(playclock);
       }
       return;
     }
@@ -249,7 +249,7 @@ export class WebSocketService {
       console.log('[WebSocket] Gameclock update');
       const gameclock = (message.gameclock ?? (data?.['gameclock'] as GameClock | undefined)) ?? null;
       if (gameclock) {
-        this.gameClock.set(this.mergeGameClock(gameclock));
+        this.gameClock.set(gameclock);
       }
       return;
     }
@@ -343,15 +343,22 @@ export class WebSocketService {
   }
 
   private isUpdateNewer(current: GameClock | PlayClock, update: GameClock | PlayClock): boolean {
+    const updateStatus = this.getClockStatus(update);
+    const currentStatus = this.getClockStatus(current);
+
+    if (updateStatus !== null && updateStatus !== currentStatus) {
+      return true;
+    }
+
     const updateVersion = update.version ?? null;
     const currentVersion = current.version ?? null;
 
-    if (updateVersion !== null || currentVersion !== null) {
-      if (updateVersion === null || currentVersion === null) {
-        return updateVersion !== null;
-      }
-
+    if (updateVersion !== null && currentVersion !== null) {
       return updateVersion >= currentVersion;
+    }
+
+    if (updateVersion !== null || currentVersion !== null) {
+      return true;
     }
 
     const updateTimestamp = update.updated_at ? Date.parse(update.updated_at) : Number.NaN;
@@ -370,6 +377,14 @@ export class WebSocketService {
     }
 
     return true;
+  }
+
+  private getClockStatus(clock: GameClock | PlayClock): string | null {
+    if ('gameclock_status' in clock) {
+      return clock.gameclock_status ?? null;
+    }
+
+    return 'playclock_status' in clock ? clock.playclock_status ?? null : null;
   }
 
   /**

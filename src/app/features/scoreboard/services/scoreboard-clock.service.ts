@@ -17,8 +17,6 @@ export class ScoreboardClockService {
   readonly gameClockSeconds = computed(() => this.gameClock()?.gameclock ?? 0);
   readonly playClockSeconds = computed(() => this.playClock()?.playclock ?? null);
 
-  private readonly lastGameClockActionAt = signal(0);
-  private readonly lastPlayClockActionAt = signal(0);
   private readonly gameClockLockUntil = signal(0);
   private readonly playClockLockUntil = signal(0);
   private gameClockLockTimer: ReturnType<typeof setTimeout> | null = null;
@@ -34,20 +32,12 @@ export class ScoreboardClockService {
       return;
     }
 
-    if (this.isActionLocked(this.lastGameClockActionAt())) {
-      return;
-    }
-
     this.gameClock.set(clock);
   });
 
   private wsPlayClockEffect = effect(() => {
     const clock = this.wsService.playClock();
     if (!clock) {
-      return;
-    }
-
-    if (this.isActionLocked(this.lastPlayClockActionAt())) {
       return;
     }
 
@@ -74,7 +64,12 @@ export class ScoreboardClockService {
 
     this.applyGameClockUpdate({ gameclock_status: 'running' });
     this.scoreboardStore.startGameClock(gc.id).subscribe({
-      next: (updated) => this.gameClock.set(this.mergeGameClock(gc, updated)),
+      next: (updated) => {
+        const current = this.gameClock();
+        if (current) {
+          this.gameClock.set(this.mergeGameClock(current, updated));
+        }
+      },
     });
   }
 
@@ -86,7 +81,12 @@ export class ScoreboardClockService {
 
     this.applyGameClockUpdate({ gameclock_status: 'paused' });
     this.scoreboardStore.pauseGameClock(gc.id).subscribe({
-      next: (updated) => this.gameClock.set(this.mergeGameClock(gc, updated)),
+      next: (updated) => {
+        const current = this.gameClock();
+        if (current) {
+          this.gameClock.set(this.mergeGameClock(current, updated));
+        }
+      },
     });
   }
 
@@ -103,7 +103,12 @@ export class ScoreboardClockService {
     });
 
     this.scoreboardStore.resetGameClock(gc.id, maxSeconds).subscribe({
-      next: (updated) => this.gameClock.set(this.mergeGameClock(gc, updated)),
+      next: (updated) => {
+        const current = this.gameClock();
+        if (current) {
+          this.gameClock.set(this.mergeGameClock(current, updated));
+        }
+      },
     });
   }
 
@@ -115,7 +120,12 @@ export class ScoreboardClockService {
 
     this.applyGameClockUpdate(update);
     this.scoreboardStore.updateGameClock(gc.id, update).subscribe({
-      next: (updated) => this.gameClock.set(this.mergeGameClock(gc, updated)),
+      next: (updated) => {
+        const current = this.gameClock();
+        if (current) {
+          this.gameClock.set(this.mergeGameClock(current, updated));
+        }
+      },
     });
   }
 
@@ -131,7 +141,12 @@ export class ScoreboardClockService {
     });
 
     this.scoreboardStore.startPlayClock(pc.id, seconds).subscribe({
-      next: (updated) => this.playClock.set(this.mergePlayClock(pc, updated)),
+      next: (updated) => {
+        const current = this.playClock();
+        if (current) {
+          this.playClock.set(this.mergePlayClock(current, updated));
+        }
+      },
     });
   }
 
@@ -147,7 +162,12 @@ export class ScoreboardClockService {
     });
 
     this.scoreboardStore.resetPlayClock(pc.id).subscribe({
-      next: (updated) => this.playClock.set(this.mergePlayClock(pc, updated)),
+      next: (updated) => {
+        const current = this.playClock();
+        if (current) {
+          this.playClock.set(this.mergePlayClock(current, updated));
+        }
+      },
     });
   }
 
@@ -183,7 +203,6 @@ export class ScoreboardClockService {
       return;
     }
 
-    this.lastGameClockActionAt.set(Date.now());
     this.setGameClockLock();
     this.gameClock.set({
       ...current,
@@ -199,7 +218,6 @@ export class ScoreboardClockService {
       return;
     }
 
-    this.lastPlayClockActionAt.set(Date.now());
     this.setPlayClockLock();
     this.playClock.set({
       ...current,
@@ -207,10 +225,6 @@ export class ScoreboardClockService {
       id: current.id,
       match_id: current.match_id,
     });
-  }
-
-  private isActionLocked(lastActionAt: number): boolean {
-    return lastActionAt > 0 && Date.now() - lastActionAt < this.actionLockMs;
   }
 
   private isLocked(lockUntil: number): boolean {
