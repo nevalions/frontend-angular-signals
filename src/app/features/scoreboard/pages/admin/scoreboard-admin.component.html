@@ -80,8 +80,8 @@
             />
 
             <app-time-forms
-              [gameClock]="gameClock()"
-              [playClock]="playClock()"
+              [gameClock]="gameClockWithPredictedValue()"
+              [playClock]="playClockWithPredictedValue()"
               [gameClockLocked]="gameClockLocked()"
               [playClockLocked]="playClockLocked()"
               (gameClockAction)="onGameClockAction($event)"

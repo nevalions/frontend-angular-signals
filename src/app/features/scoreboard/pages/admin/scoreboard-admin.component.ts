@@ -59,6 +59,20 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   protected readonly gameClockLocked = computed(() => this.clockService.gameClockActionLocked());
   protected readonly playClockLocked = computed(() => this.clockService.playClockActionLocked());
 
+  protected readonly gameClockWithPredictedValue = computed(() => {
+    const gc = this.clockService.gameClock();
+    const predicted = this.clockService.predictedGameClock();
+    if (!gc) return null;
+    return { ...gc, gameclock: predicted };
+  });
+
+  protected readonly playClockWithPredictedValue = computed(() => {
+    const pc = this.clockService.playClock();
+    const predicted = this.clockService.predictedPlayClock();
+    if (!pc) return null;
+    return { ...pc, playclock: predicted };
+  });
+
   // UI state
   protected readonly hideAllForms = signal(false);
 
@@ -90,8 +104,8 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
     return `${d.teams.team_a?.title || 'Team A'} vs ${d.teams.team_b?.title || 'Team B'}`;
   });
 
-  protected readonly gameClockSeconds = computed(() => this.clockService.gameClockSeconds());
-  protected readonly playClockSeconds = computed(() => this.clockService.playClockSeconds());
+  protected readonly gameClockSeconds = computed(() => this.clockService.predictedGameClock());
+  protected readonly playClockSeconds = computed(() => this.clockService.predictedPlayClock());
 
   ngOnInit(): void {
     this.loadData();

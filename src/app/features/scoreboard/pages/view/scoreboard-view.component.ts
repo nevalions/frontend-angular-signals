@@ -44,8 +44,8 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
   protected readonly error = signal<string | null>(null);
 
   // Computed values
-  protected readonly gameClockSeconds = computed(() => this.clockService.gameClockSeconds());
-  protected readonly playClockSeconds = computed(() => this.clockService.playClockSeconds());
+  protected readonly gameClockSeconds = computed(() => this.clockService.predictedGameClock());
+  protected readonly playClockSeconds = computed(() => this.clockService.predictedPlayClock());
 
   // Tournament logo/sponsor (would come from tournament data)
   protected readonly tournamentLogo = computed(() => {

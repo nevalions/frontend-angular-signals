@@ -1,13 +1,14 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, OnDestroy, signal } from '@angular/core';
 import { ScoreboardStoreService } from './scoreboard-store.service';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { GameClock, GameClockUpdate } from '../../matches/models/gameclock.model';
 import { PlayClock } from '../../matches/models/playclock.model';
+import { ClockPredictor } from '../utils/clock-predictor';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ScoreboardClockService {
+export class ScoreboardClockService implements OnDestroy {
   private scoreboardStore = inject(ScoreboardStoreService);
   private wsService = inject(WebSocketService);
 
@@ -17,11 +18,26 @@ export class ScoreboardClockService {
   readonly gameClockSeconds = computed(() => this.gameClock()?.gameclock ?? 0);
   readonly playClockSeconds = computed(() => this.playClock()?.playclock ?? null);
 
+  readonly predictedGameClock = signal<number>(0);
+  readonly predictedPlayClock = signal<number>(0);
+
   private readonly gameClockLockUntil = signal(0);
   private readonly playClockLockUntil = signal(0);
   private gameClockLockTimer: ReturnType<typeof setTimeout> | null = null;
   private playClockLockTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly actionLockMs = 500;
+
+  private gameClockPredictor: ClockPredictor;
+  private playClockPredictor: ClockPredictor;
+
+  constructor() {
+    this.gameClockPredictor = new ClockPredictor(
+      (value) => this.predictedGameClock.set(value)
+    );
+    this.playClockPredictor = new ClockPredictor(
+      (value) => this.predictedPlayClock.set(value)
+    );
+  }
 
   readonly gameClockActionLocked = computed(() => this.isLocked(this.gameClockLockUntil()));
   readonly playClockActionLocked = computed(() => this.isLocked(this.playClockLockUntil()));
@@ -33,6 +49,14 @@ export class ScoreboardClockService {
     }
 
     this.gameClock.set(clock);
+
+    if (clock.gameclock !== undefined && clock.gameclock !== null && clock.gameclock_status !== undefined && clock.gameclock_status !== null) {
+      this.gameClockPredictor.sync({
+        value: clock.gameclock,
+        status: clock.gameclock_status,
+        timestamp: clock.updated_at ? new Date(clock.updated_at).getTime() : undefined
+      });
+    }
   });
 
   private wsPlayClockEffect = effect(() => {
@@ -42,6 +66,14 @@ export class ScoreboardClockService {
     }
 
     this.playClock.set(clock);
+
+    if (clock.playclock !== undefined && clock.playclock !== null && clock.playclock_status !== undefined && clock.playclock_status !== null) {
+      this.playClockPredictor.sync({
+        value: clock.playclock,
+        status: clock.playclock_status,
+        timestamp: clock.updated_at ? new Date(clock.updated_at).getTime() : undefined
+      });
+    }
   });
 
   load(matchId: number): void {
@@ -225,6 +257,11 @@ export class ScoreboardClockService {
       id: current.id,
       match_id: current.match_id,
     });
+  }
+
+  ngOnDestroy(): void {
+    this.gameClockPredictor.destroy();
+    this.playClockPredictor.destroy();
   }
 
   private isLocked(lockUntil: number): boolean {
