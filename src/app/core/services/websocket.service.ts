@@ -68,10 +68,11 @@ export class WebSocketService {
   private closing$ = new Subject<void>();
 
   // Reconnection configuration
-  private readonly maxRetryAttempts = 10;
-  private readonly initialRetryDelay = 2000;
+  private readonly maxRetryAttempts = 3;
+  private readonly initialRetryDelay = 3000;
   private retryAttempt = 0;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private intentionalDisconnect = false;
 
   // Connection state signal
   readonly connectionState = signal<ConnectionState>('disconnected');
@@ -97,22 +98,36 @@ export class WebSocketService {
    * Connect to WebSocket for a specific match
    *
    * @param matchId - The match ID to connect to
+   * @param isReconnect - Whether this is a reconnection attempt (internal use)
    */
-  connect(matchId: number): void {
+  connect(matchId: number, isReconnect = false): void {
     // If already connected to the same match, skip
     if (this.socket$ && this.currentMatchId === matchId && this.connectionState() === 'connected') {
       console.log('[WebSocket] Already connected to match', matchId);
       return;
     }
 
-    // Disconnect from any existing connection
-    this.disconnect();
+    // If connecting to a different match, fully disconnect first
+    if (this.currentMatchId !== null && this.currentMatchId !== matchId) {
+      this.disconnect();
+    }
+
+    // Only reset retry count on fresh connections, not reconnects
+    if (!isReconnect) {
+      this.retryAttempt = 0;
+      this.intentionalDisconnect = false;
+    }
+
+    // Clear any existing socket without resetting state
+    if (this.socket$) {
+      this.socket$.complete();
+      this.socket$ = null;
+    }
 
     this.currentMatchId = matchId;
     this.connectionState.set('connecting');
-    this.retryAttempt = 0;
 
-    const wsUrl = buildWsUrl(`/match/${matchId}/${this.clientId}/`);
+    const wsUrl = buildWsUrl(`/api/matches/ws/id/${matchId}/${this.clientId}/`);
     console.log('[WebSocket] Connecting to', wsUrl);
 
     try {
@@ -160,6 +175,9 @@ export class WebSocketService {
    */
   disconnect(): void {
     console.log('[WebSocket] Disconnecting');
+
+    // Mark as intentional to prevent reconnect attempts
+    this.intentionalDisconnect = true;
 
     // Clear reconnect timer
     if (this.reconnectTimer) {
@@ -212,33 +230,67 @@ export class WebSocketService {
   private handleMessage(message: WebSocketMessage): void {
     console.log('[WebSocket] Message received:', message);
 
-    // Check for specific message types
-    if ('playclock' in message && message.playclock) {
-      console.log('[WebSocket] Playclock update');
-      this.playClock.set(message.playclock);
-    } else if ('gameclock' in message && message.gameclock) {
-      console.log('[WebSocket] Gameclock update');
-      this.gameClock.set(message.gameclock);
-    } else {
-      // Comprehensive match data update
-      console.log('[WebSocket] Match data update');
-      this.matchData.set(message as ComprehensiveMatchData);
+    const messageType = message['type'] as string | undefined;
 
-      // Also extract nested clock data if present
-      if (message.gameclock) {
-        this.gameClock.set(message.gameclock);
+    const data = message['data'] as Record<string, unknown> | undefined;
+
+    // Handle playclock updates
+    if (messageType === 'playclock-update' || ('playclock' in message && message.playclock && !('data' in message))) {
+      console.log('[WebSocket] Playclock update');
+      const playclock = (message.playclock ?? (data?.['playclock'] as PlayClock | undefined)) ?? null;
+      if (playclock) {
+        this.playClock.set(this.mergePlayClock(playclock));
       }
-      if (message.playclock) {
-        this.playClock.set(message.playclock);
-      }
+      return;
     }
+
+    // Handle gameclock updates
+    if (messageType === 'gameclock-update' || ('gameclock' in message && message.gameclock && !('data' in message))) {
+      console.log('[WebSocket] Gameclock update');
+      const gameclock = (message.gameclock ?? (data?.['gameclock'] as GameClock | undefined)) ?? null;
+      if (gameclock) {
+        this.gameClock.set(this.mergeGameClock(gameclock));
+      }
+      return;
+    }
+
+    // Handle match data updates (message-update or match-update)
+    if (messageType === 'message-update' || messageType === 'match-update') {
+      console.log('[WebSocket] Match data update');
+      // Backend sends data wrapped in 'data' property
+      if (data) {
+        // Transform backend format to our ComprehensiveMatchData format
+        const matchData: ComprehensiveMatchData = {
+          match_data: data['match_data'] as MatchData | undefined,
+          scoreboard: data['scoreboard_data'],
+          match: data['match'],
+          teams: data['teams_data'],
+          gameclock: data['gameclock'] as GameClock | undefined,
+          playclock: data['playclock'] as PlayClock | undefined,
+        };
+        this.matchData.set(matchData);
+
+        if (matchData.gameclock) {
+          this.gameClock.set(this.mergeGameClock(matchData.gameclock));
+        }
+
+        if (matchData.playclock) {
+          this.playClock.set(this.mergePlayClock(matchData.playclock));
+        }
+      }
+      return;
+    }
+
+    // Fallback: try to use message directly
+    console.log('[WebSocket] Unknown message type, using as-is');
+    this.matchData.set(message as ComprehensiveMatchData);
   }
 
   /**
    * Handle disconnection and attempt reconnect if appropriate
    */
   private handleDisconnect(): void {
-    if (this.connectionState() === 'disconnected') {
+    if (this.connectionState() === 'disconnected' || this.intentionalDisconnect) {
       return;
     }
 
@@ -248,9 +300,76 @@ export class WebSocketService {
     if (this.retryAttempt < this.maxRetryAttempts && this.currentMatchId) {
       this.scheduleReconnect();
     } else {
-      console.log('[WebSocket] Max retry attempts reached');
+      console.log('[WebSocket] Max retry attempts reached, giving up');
       this.connectionState.set('disconnected');
+      this.currentMatchId = null;
     }
+  }
+
+  private mergePlayClock(update: PlayClock): PlayClock {
+    const current = this.playClock();
+    if (!current) {
+      return update;
+    }
+
+    if (!this.isUpdateNewer(current, update)) {
+      return current;
+    }
+
+    return {
+      ...current,
+      ...update,
+      id: update.id ?? current.id,
+      match_id: update.match_id ?? current.match_id,
+    };
+  }
+
+  private mergeGameClock(update: GameClock): GameClock {
+    const current = this.gameClock();
+    if (!current) {
+      return update;
+    }
+
+    if (!this.isUpdateNewer(current, update)) {
+      return current;
+    }
+
+    return {
+      ...current,
+      ...update,
+      id: update.id ?? current.id,
+      match_id: update.match_id ?? current.match_id,
+    };
+  }
+
+  private isUpdateNewer(current: GameClock | PlayClock, update: GameClock | PlayClock): boolean {
+    const updateVersion = update.version ?? null;
+    const currentVersion = current.version ?? null;
+
+    if (updateVersion !== null || currentVersion !== null) {
+      if (updateVersion === null || currentVersion === null) {
+        return updateVersion !== null;
+      }
+
+      return updateVersion >= currentVersion;
+    }
+
+    const updateTimestamp = update.updated_at ? Date.parse(update.updated_at) : Number.NaN;
+    const currentTimestamp = current.updated_at ? Date.parse(current.updated_at) : Number.NaN;
+
+    if (!Number.isNaN(updateTimestamp) || !Number.isNaN(currentTimestamp)) {
+      if (Number.isNaN(updateTimestamp)) {
+        return false;
+      }
+
+      if (Number.isNaN(currentTimestamp)) {
+        return true;
+      }
+
+      return updateTimestamp >= currentTimestamp;
+    }
+
+    return true;
   }
 
   /**
@@ -268,11 +387,12 @@ export class WebSocketService {
 
     console.log(`[WebSocket] Scheduling reconnect attempt ${this.retryAttempt}/${this.maxRetryAttempts} in ${Math.round(delay)}ms`);
 
+    const matchIdToReconnect = this.currentMatchId;
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
-      if (this.currentMatchId && this.connectionState() !== 'connected') {
+      if (matchIdToReconnect && this.currentMatchId === matchIdToReconnect && this.connectionState() !== 'connected') {
         console.log('[WebSocket] Attempting reconnect...');
-        this.connect(this.currentMatchId);
+        this.connect(matchIdToReconnect, true); // Pass true to indicate reconnect
       }
     }, delay);
   }

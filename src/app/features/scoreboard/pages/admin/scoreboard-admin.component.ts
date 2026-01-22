@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, OnInit, signal, untracked } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
 import { ScoreboardStoreService } from '../../services/scoreboard-store.service';
+import { ScoreboardClockService } from '../../services/scoreboard-clock.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-match.model';
-import { GameClock } from '../../../matches/models/gameclock.model';
-import { PlayClock } from '../../../matches/models/playclock.model';
+import { FootballEvent, FootballEventCreate, FootballEventUpdate } from '../../../matches/models/football-event.model';
+import { MatchStats } from '../../../matches/models/match-stats.model';
 import { Scoreboard, ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
 import { PlayerMatchUpdate } from '../../../matches/models/player-match.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
@@ -16,6 +18,7 @@ import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../compo
 import { TimeoutFormsComponent, TimeoutChangeEvent } from '../../components/admin-forms/timeout-forms/timeout-forms.component';
 import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
 import { RosterFormsComponent } from '../../components/admin-forms/roster-forms/roster-forms.component';
+import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
 
 @Component({
   selector: 'app-scoreboard-admin',
@@ -31,27 +34,56 @@ import { RosterFormsComponent } from '../../components/admin-forms/roster-forms/
     TimeoutFormsComponent,
     ScoreboardSettingsFormsComponent,
     RosterFormsComponent,
+    EventsFormsComponent,
   ],
   templateUrl: './scoreboard-admin.component.html',
   styleUrl: './scoreboard-admin.component.less',
 })
-export class ScoreboardAdminComponent implements OnInit {
+export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private scoreboardStore = inject(ScoreboardStoreService);
+  private clockService = inject(ScoreboardClockService);
+  private wsService = inject(WebSocketService);
 
   matchId = createNumberParamSignal(this.route, 'matchId');
 
   // Data signals
   protected readonly data = signal<ComprehensiveMatchData | null>(null);
-  protected readonly gameClock = signal<GameClock | null>(null);
-  protected readonly playClock = signal<PlayClock | null>(null);
   protected readonly scoreboard = signal<Scoreboard | null>(null);
+  protected readonly matchStats = signal<MatchStats | null>(null);
+  protected readonly events = signal<FootballEvent[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
+  protected readonly gameClock = computed(() => this.clockService.gameClock());
+  protected readonly playClock = computed(() => this.clockService.playClock());
+  protected readonly gameClockLocked = computed(() => this.clockService.gameClockActionLocked());
+  protected readonly playClockLocked = computed(() => this.clockService.playClockActionLocked());
+
   // UI state
   protected readonly hideAllForms = signal(false);
+
+  // WebSocket effects - update data in real-time
+  private wsMatchDataEffect = effect(() => {
+    const message = this.wsService.matchData();
+    if (!message) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Update data from WebSocket message
+    this.data.set({
+      ...current,
+      match_data: message.match_data ?? current.match_data,
+      scoreboard: (message.scoreboard as ComprehensiveMatchData['scoreboard']) ?? current.scoreboard,
+    });
+
+    // Also update scoreboard signal if present in message
+    if (message.scoreboard) {
+      this.scoreboard.set(message.scoreboard as Scoreboard);
+    }
+  });
 
   // Computed values
   protected readonly matchTitle = computed(() => {
@@ -60,11 +92,23 @@ export class ScoreboardAdminComponent implements OnInit {
     return `${d.teams.team_a?.title || 'Team A'} vs ${d.teams.team_b?.title || 'Team B'}`;
   });
 
-  protected readonly gameClockSeconds = computed(() => this.gameClock()?.gameclock ?? 0);
-  protected readonly playClockSeconds = computed(() => this.playClock()?.playclock ?? null);
+  protected readonly gameClockSeconds = computed(() => this.clockService.gameClockSeconds());
+  protected readonly playClockSeconds = computed(() => this.clockService.playClockSeconds());
 
   ngOnInit(): void {
     this.loadData();
+    this.connectWebSocket();
+  }
+
+  ngOnDestroy(): void {
+    this.wsService.disconnect();
+  }
+
+  private connectWebSocket(): void {
+    const id = this.matchId();
+    if (id) {
+      this.wsService.connect(id);
+    }
   }
 
   private loadData(): void {
@@ -90,22 +134,24 @@ export class ScoreboardAdminComponent implements OnInit {
       },
     });
 
-    // Load game clock
-    this.scoreboardStore.getGameClock(id).subscribe({
-      next: (clock) => this.gameClock.set(clock),
-      error: () => console.error('Failed to load game clock'),
-    });
-
-    // Load play clock
-    this.scoreboardStore.getPlayClock(id).subscribe({
-      next: (clock) => this.playClock.set(clock),
-      error: () => console.error('Failed to load play clock'),
-    });
+    this.clockService.load(id);
 
     // Load scoreboard settings
     this.scoreboardStore.getScoreboard(id).subscribe({
       next: (sb) => this.scoreboard.set(sb),
       error: () => console.error('Failed to load scoreboard settings'),
+    });
+
+    // Load match stats
+    this.scoreboardStore.getMatchStats(id).subscribe({
+      next: (stats) => this.matchStats.set(stats),
+      error: () => console.error('Failed to load match stats'),
+    });
+
+    // Load events
+    this.scoreboardStore.getMatchEvents(id).subscribe({
+      next: (evts) => this.events.set(evts),
+      error: () => console.error('Failed to load events'),
     });
   }
 
@@ -124,6 +170,7 @@ export class ScoreboardAdminComponent implements OnInit {
   }
 
   // Event handlers for admin forms
+  // Note: We don't call loadData() after updates - WebSocket will push the changes
   onScoreChange(event: ScoreChangeEvent): void {
     const matchData = this.data()?.match_data;
     if (!matchData) return;
@@ -133,7 +180,6 @@ export class ScoreboardAdminComponent implements OnInit {
       : { score_team_b: event.score };
 
     this.scoreboardStore.updateMatchData(matchData.id, update).subscribe({
-      next: () => this.loadData(), // Reload to get updated data
       error: (err) => console.error('Failed to update score', err),
     });
   }
@@ -143,7 +189,6 @@ export class ScoreboardAdminComponent implements OnInit {
     if (!matchData) return;
 
     this.scoreboardStore.updateMatchData(matchData.id, { qtr }).subscribe({
-      next: () => this.loadData(),
       error: (err) => console.error('Failed to update quarter', err),
     });
   }
@@ -153,7 +198,6 @@ export class ScoreboardAdminComponent implements OnInit {
     if (!matchData) return;
 
     this.scoreboardStore.updateMatchData(matchData.id, event).subscribe({
-      next: () => this.loadData(),
       error: (err) => console.error('Failed to update down/distance', err),
     });
   }
@@ -169,51 +213,33 @@ export class ScoreboardAdminComponent implements OnInit {
   }
 
   onGameClockAction(event: GameClockActionEvent): void {
-    const gc = this.gameClock();
-    if (!gc) return;
-
     switch (event.action) {
       case 'start':
-        this.scoreboardStore.startGameClock(gc.id).subscribe({
-          next: (updated) => this.gameClock.set(updated),
-        });
+        this.clockService.startGameClock();
         break;
       case 'pause':
-        this.scoreboardStore.pauseGameClock(gc.id).subscribe({
-          next: (updated) => this.gameClock.set(updated),
-        });
+        this.clockService.pauseGameClock();
         break;
       case 'reset':
-        this.scoreboardStore.resetGameClock(gc.id).subscribe({
-          next: (updated) => this.gameClock.set(updated),
-        });
+        this.clockService.resetGameClock();
         break;
       case 'update':
         if (event.data) {
-          this.scoreboardStore.updateGameClock(gc.id, event.data).subscribe({
-            next: (updated) => this.gameClock.set(updated),
-          });
+          this.clockService.updateGameClock(event.data);
         }
         break;
     }
   }
 
   onPlayClockAction(event: PlayClockActionEvent): void {
-    const pc = this.playClock();
-    if (!pc) return;
-
     switch (event.action) {
       case 'start':
         if (event.seconds !== undefined) {
-          this.scoreboardStore.startPlayClock(pc.id, event.seconds).subscribe({
-            next: (updated) => this.playClock.set(updated),
-          });
+          this.clockService.startPlayClock(event.seconds);
         }
         break;
       case 'reset':
-        this.scoreboardStore.resetPlayClock(pc.id).subscribe({
-          next: (updated) => this.playClock.set(updated),
-        });
+        this.clockService.resetPlayClock();
         break;
     }
   }
@@ -227,7 +253,6 @@ export class ScoreboardAdminComponent implements OnInit {
       : { timeout_team_b: event.timeouts };
 
     this.scoreboardStore.updateMatchData(matchData.id, update).subscribe({
-      next: () => this.loadData(),
       error: (err) => console.error('Failed to update timeout', err),
     });
   }
@@ -247,7 +272,10 @@ export class ScoreboardAdminComponent implements OnInit {
     const currentData = this.data();
     if (!playerId || !currentData) return;
 
-    const { id: _id, ...payload } = update;
+    const payload: PlayerMatchUpdate = { ...update };
+    if ('id' in payload) {
+      delete payload.id;
+    }
     const updatedPlayers = currentData.players.map((player) =>
       player.id === playerId ? { ...player, ...payload } : player
     );
@@ -264,5 +292,46 @@ export class ScoreboardAdminComponent implements OnInit {
 
   toggleHideAllForms(): void {
     this.hideAllForms.update((v) => !v);
+  }
+
+  onEventCreate(event: FootballEventCreate): void {
+    const matchId = this.matchId();
+    if (!matchId) return;
+
+    const eventData = { ...event, match_id: matchId };
+    this.scoreboardStore.createFootballEvent(eventData).subscribe({
+      next: () => this.reloadEvents(),
+      error: (err) => console.error('Failed to create event', err),
+    });
+  }
+
+  onEventUpdate(payload: { id: number; data: FootballEventUpdate }): void {
+    this.scoreboardStore.updateFootballEvent(payload.id, payload.data).subscribe({
+      next: () => this.reloadEvents(),
+      error: (err) => console.error('Failed to update event', err),
+    });
+  }
+
+  onEventDelete(eventId: number): void {
+    this.scoreboardStore.deleteFootballEvent(eventId).subscribe({
+      next: () => this.reloadEvents(),
+      error: (err) => console.error('Failed to delete event', err),
+    });
+  }
+
+  private reloadEvents(): void {
+    const id = this.matchId();
+    if (!id) return;
+
+    this.scoreboardStore.getMatchEvents(id).subscribe({
+      next: (evts) => this.events.set(evts),
+      error: () => console.error('Failed to reload events'),
+    });
+
+    // Also reload stats since they depend on events
+    this.scoreboardStore.getMatchStats(id).subscribe({
+      next: (stats) => this.matchStats.set(stats),
+      error: () => console.error('Failed to reload match stats'),
+    });
   }
 }

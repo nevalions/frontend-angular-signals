@@ -20,6 +20,7 @@
               appearance="primary"
               size="m"
               (click)="onGameClockPause()"
+              [disabled]="!gameClockReady() || gameClockLocked()"
             >
               <tui-icon icon="@tui.pause" />
               Pause
@@ -31,6 +32,7 @@
               appearance="primary"
               size="m"
               (click)="onGameClockStart()"
+              [disabled]="!gameClockReady() || gameClockLocked()"
             >
               <tui-icon icon="@tui.play" />
               Start
@@ -43,6 +45,7 @@
             appearance="secondary"
             size="m"
             (click)="onGameClockReset()"
+            [disabled]="!gameClockReady() || gameClockRunning() || gameClockLocked()"
           >
             <tui-icon icon="@tui.refresh-cw" />
             Reset
@@ -57,6 +60,7 @@
               [min]="0"
               [max]="99"
               label="Min"
+              [disabled]="gameClockLocked()"
               (valueChange)="onManualMinutesChange($event)"
             />
             <span class="time-separator">:</span>
@@ -65,6 +69,7 @@
               [min]="0"
               [max]="59"
               label="Sec"
+              [disabled]="gameClockLocked()"
               (valueChange)="onManualSecondsChange($event)"
             />
             <button
@@ -73,6 +78,7 @@
               appearance="secondary"
               size="s"
               (click)="onSetGameClock()"
+              [disabled]="!gameClockReady() || gameClockLocked()"
             >
               Set
             </button>
@@ -81,12 +87,13 @@
 
         <div class="max-time-setting">
           <app-input-number-with-buttons
-            [value]="currentMaxMinutes()"
-            [min]="1"
-            [max]="20"
-            label="Quarter Length (min)"
-            (valueChange)="onMaxMinutesChange($event)"
-          />
+              [value]="currentMaxMinutes()"
+              [min]="1"
+              [max]="20"
+              label="Quarter Length (min)"
+              [disabled]="gameClockLocked()"
+              (valueChange)="onMaxMinutesChange($event)"
+            />
         </div>
       </div>
 
@@ -108,6 +115,7 @@
             appearance="primary"
             size="m"
             (click)="onPlayClockStart(40)"
+            [disabled]="!playClockReady() || playClockRunning() || playClockLocked()"
           >
             40 sec
           </button>
@@ -118,6 +126,7 @@
             appearance="primary"
             size="m"
             (click)="onPlayClockStart(25)"
+            [disabled]="!playClockReady() || playClockRunning() || playClockLocked()"
           >
             25 sec
           </button>
@@ -128,6 +137,7 @@
             appearance="secondary"
             size="m"
             (click)="onPlayClockReset()"
+            [disabled]="!playClockReady() || playClockLocked()"
           >
             Reset
           </button>

@@ -4,6 +4,8 @@ export interface GameClock {
   gameclock?: number | null;
   gameclock_max?: number | null;
   gameclock_status?: string | null;
+  updated_at?: string | null;
+  version?: number | null;
   match_id: number;
 }
 

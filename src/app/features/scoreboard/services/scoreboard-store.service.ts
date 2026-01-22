@@ -8,6 +8,8 @@ import { GameClock, GameClockUpdate } from '../../matches/models/gameclock.model
 import { PlayClock, PlayClockUpdate } from '../../matches/models/playclock.model';
 import { MatchData, MatchDataUpdate } from '../../matches/models/match-data.model';
 import { PlayerMatch, PlayerMatchUpdate } from '../../matches/models/player-match.model';
+import { FootballEvent, FootballEventCreate, FootballEventUpdate } from '../../matches/models/football-event.model';
+import { MatchStats } from '../../matches/models/match-stats.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,15 +41,15 @@ export class ScoreboardStoreService {
   }
 
   startGameClock(id: number): Observable<GameClock> {
-    return this.http.post<GameClock>(buildApiUrl(`/api/gameclock/${id}/start/`), null);
+    return this.http.put<GameClock>(buildApiUrl(`/api/gameclock/id/${id}/running/`), null);
   }
 
   pauseGameClock(id: number): Observable<GameClock> {
-    return this.http.post<GameClock>(buildApiUrl(`/api/gameclock/${id}/pause/`), null);
+    return this.http.put<GameClock>(buildApiUrl(`/api/gameclock/id/${id}/paused/`), null);
   }
 
-  resetGameClock(id: number): Observable<GameClock> {
-    return this.http.post<GameClock>(buildApiUrl(`/api/gameclock/${id}/reset/`), null);
+  resetGameClock(id: number, seconds: number): Observable<GameClock> {
+    return this.http.put<GameClock>(buildApiUrl(`/api/gameclock/id/${id}/stopped/${seconds}/`), null);
   }
 
   // Play clock
@@ -60,11 +62,11 @@ export class ScoreboardStoreService {
   }
 
   startPlayClock(id: number, seconds: number): Observable<PlayClock> {
-    return this.http.post<PlayClock>(buildApiUrl(`/api/playclock/${id}/start/`), { seconds });
+    return this.http.put<PlayClock>(buildApiUrl(`/api/playclock/id/${id}/running/${seconds}/`), null);
   }
 
   resetPlayClock(id: number): Observable<PlayClock> {
-    return this.http.post<PlayClock>(buildApiUrl(`/api/playclock/${id}/reset/`), null);
+    return this.http.put<PlayClock>(buildApiUrl(`/api/playclock/id/${id}/stopped/`), null);
   }
 
   // Match data
@@ -78,5 +80,27 @@ export class ScoreboardStoreService {
 
   updatePlayerMatch(playerMatchId: number, data: PlayerMatchUpdate): Observable<PlayerMatch> {
     return this.http.put<PlayerMatch>(buildApiUrl(`/api/players_match/${playerMatchId}/`), data);
+  }
+
+  // Match stats
+  getMatchStats(matchId: number): Observable<MatchStats> {
+    return this.http.get<MatchStats>(buildApiUrl(`/api/matches/id/${matchId}/stats/`));
+  }
+
+  // Football events
+  getMatchEvents(matchId: number): Observable<FootballEvent[]> {
+    return this.http.get<FootballEvent[]>(buildApiUrl(`/api/football_event/match_id/${matchId}/`));
+  }
+
+  createFootballEvent(data: FootballEventCreate): Observable<FootballEvent> {
+    return this.http.post<FootballEvent>(buildApiUrl('/api/football_events/'), data);
+  }
+
+  updateFootballEvent(id: number, data: FootballEventUpdate): Observable<FootballEvent> {
+    return this.http.put<FootballEvent>(buildApiUrl(`/api/football_events/${id}/`), data);
+  }
+
+  deleteFootballEvent(id: number): Observable<void> {
+    return this.http.delete<void>(buildApiUrl(`/api/football_events/${id}/`));
   }
 }

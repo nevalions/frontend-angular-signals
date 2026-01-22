@@ -45,6 +45,9 @@ export class TimeFormsComponent {
   /** Emits play clock actions */
   playClockAction = output<PlayClockActionEvent>();
 
+  gameClockLocked = input(false);
+  playClockLocked = input(false);
+
   // Local state for manual time entry
   protected readonly manualMinutes = signal<number>(12);
   protected readonly manualSeconds = signal<number>(0);
@@ -60,6 +63,8 @@ export class TimeFormsComponent {
     const gc = this.gameClock();
     return gc?.gameclock_status === 'running';
   });
+
+  protected readonly gameClockReady = computed(() => Boolean(this.gameClock()?.id));
 
   protected readonly gameClockDisplay = computed(() => {
     const seconds = this.gameClockSeconds();
@@ -82,6 +87,8 @@ export class TimeFormsComponent {
     const pc = this.playClock();
     return pc?.playclock_status === 'running';
   });
+
+  protected readonly playClockReady = computed(() => Boolean(this.playClock()?.id));
 
   /**
    * Format seconds to MM:SS display

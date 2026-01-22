@@ -82,6 +82,8 @@
             <app-time-forms
               [gameClock]="gameClock()"
               [playClock]="playClock()"
+              [gameClockLocked]="gameClockLocked()"
+              [playClockLocked]="playClockLocked()"
               (gameClockAction)="onGameClockAction($event)"
               (playClockAction)="onPlayClockAction($event)"
             />
@@ -108,6 +110,15 @@
               [players]="data()?.players ?? []"
               (scoreboardChange)="onScoreboardSettingsChange($event)"
               (playerUpdate)="onPlayerUpdate($event)"
+            />
+
+            <app-events-forms
+              [matchStats]="matchStats()"
+              [events]="events()"
+              [players]="data()?.players ?? []"
+              (eventCreate)="onEventCreate($event)"
+              (eventUpdate)="onEventUpdate($event)"
+              (eventDelete)="onEventDelete($event)"
             />
           </div>
         }

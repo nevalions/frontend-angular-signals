@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, OnInit, signal, untracked } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
 import { ScoreboardStoreService } from '../../services/scoreboard-store.service';
+import { ScoreboardClockService } from '../../services/scoreboard-clock.service';
 import { ComprehensiveMatchData, PlayerMatchWithDetails } from '../../../matches/models/comprehensive-match.model';
-import { GameClock } from '../../../matches/models/gameclock.model';
-import { PlayClock } from '../../../matches/models/playclock.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
 import { FootballStartRosterDisplayComponent } from '../../components/roster-display/football-start-roster-display/football-start-roster-display.component';
 import { MatchStoreService } from '../../../matches/services/match-store.service';
@@ -12,6 +11,7 @@ import { MatchStats, TeamStats } from '../../../matches/models/match-stats.model
 import { PlayerMatchLowerDisplayComponent } from '../../components/lower-display/player-match-lower-display/player-match-lower-display.component';
 import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-display/football-qb-lower-stats-display/football-qb-lower-stats-display.component';
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
+import { SponsorLineComponent } from '../../components/sponsor-display/sponsor-line.component';
 import { WebSocketService } from '../../../../core/services/websocket.service';
 
 @Component({
@@ -23,13 +23,15 @@ import { WebSocketService } from '../../../../core/services/websocket.service';
     PlayerMatchLowerDisplayComponent,
     FootballQbLowerStatsDisplayComponent,
     TeamMatchLowerFootballStatsDisplayComponent,
+    SponsorLineComponent,
   ],
   templateUrl: './scoreboard-view.component.html',
   styleUrl: './scoreboard-view.component.less',
 })
-export class ScoreboardViewComponent implements OnInit {
+export class ScoreboardViewComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private scoreboardStore = inject(ScoreboardStoreService);
+  private clockService = inject(ScoreboardClockService);
   private matchStore = inject(MatchStoreService);
   private wsService = inject(WebSocketService);
 
@@ -37,15 +39,13 @@ export class ScoreboardViewComponent implements OnInit {
 
   // Data signals
   protected readonly data = signal<ComprehensiveMatchData | null>(null);
-  protected readonly gameClock = signal<GameClock | null>(null);
-  protected readonly playClock = signal<PlayClock | null>(null);
   protected readonly matchStats = signal<MatchStats | null>(null);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
   // Computed values
-  protected readonly gameClockSeconds = computed(() => this.gameClock()?.gameclock ?? 0);
-  protected readonly playClockSeconds = computed(() => this.playClock()?.playclock ?? null);
+  protected readonly gameClockSeconds = computed(() => this.clockService.gameClockSeconds());
+  protected readonly playClockSeconds = computed(() => this.clockService.playClockSeconds());
 
   // Tournament logo/sponsor (would come from tournament data)
   protected readonly tournamentLogo = computed(() => {
@@ -58,7 +58,15 @@ export class ScoreboardViewComponent implements OnInit {
     return d?.match?.tournament?.main_sponsor?.logo_url || null;
   });
 
+  protected readonly mainSponsor = computed(() => {
+    const d = this.data();
+    return d?.match?.tournament?.main_sponsor ?? null;
+  });
+
   protected readonly scoreboard = computed(() => this.data()?.scoreboard ?? null);
+
+  protected readonly showMainSponsor = computed(() => this.scoreboard()?.is_main_sponsor ?? false);
+  protected readonly showMatchSponsorLine = computed(() => this.scoreboard()?.is_match_sponsor_line ?? false);
 
   protected readonly teamAName = computed(() => {
     const sb = this.scoreboard();
@@ -139,9 +147,34 @@ export class ScoreboardViewComponent implements OnInit {
     return this.getTeamStats(teamId);
   });
 
+  // Effects must be created in injection context (constructor/field initializer)
+  // Use untracked() to prevent infinite loop - we only want to react to wsService changes
+  private wsMatchDataEffect = effect(() => {
+    const message = this.wsService.matchData();
+    if (!message) {
+      return;
+    }
+
+    // Use untracked to read current data without creating dependency
+    const current = untracked(() => this.data());
+    if (!current) {
+      return;
+    }
+
+    this.data.set({
+      ...current,
+      match_data: message.match_data ?? current.match_data,
+      scoreboard: (message.scoreboard as ComprehensiveMatchData['scoreboard']) ?? current.scoreboard,
+    });
+  });
+
   ngOnInit(): void {
     this.loadData();
     this.connectWebSocket();
+  }
+
+  ngOnDestroy(): void {
+    this.wsService.disconnect();
   }
 
   private loadData(): void {
@@ -167,17 +200,7 @@ export class ScoreboardViewComponent implements OnInit {
       },
     });
 
-    // Load game clock
-    this.scoreboardStore.getGameClock(id).subscribe({
-      next: (clock) => this.gameClock.set(clock),
-      error: () => console.error('Failed to load game clock'),
-    });
-
-    // Load play clock
-    this.scoreboardStore.getPlayClock(id).subscribe({
-      next: (clock) => this.playClock.set(clock),
-      error: () => console.error('Failed to load play clock'),
-    });
+    this.clockService.load(id);
 
     // Load match stats for lower displays
     this.matchStore.getMatchStats(id).subscribe({
@@ -193,34 +216,6 @@ export class ScoreboardViewComponent implements OnInit {
     }
 
     this.wsService.connect(id);
-
-    effect(() => {
-      const message = this.wsService.matchData();
-      const current = this.data();
-      if (!message || !current) {
-        return;
-      }
-
-      this.data.set({
-        ...current,
-        match_data: message.match_data ?? current.match_data,
-        scoreboard: (message.scoreboard as ComprehensiveMatchData['scoreboard']) ?? current.scoreboard,
-      });
-    });
-
-    effect(() => {
-      const clock = this.wsService.gameClock();
-      if (clock) {
-        this.gameClock.set(clock);
-      }
-    });
-
-    effect(() => {
-      const clock = this.wsService.playClock();
-      if (clock) {
-        this.playClock.set(clock);
-      }
-    });
   }
 
   private getTeamStats(teamId: number | null): TeamStats | null {
