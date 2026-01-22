@@ -7,6 +7,7 @@ import { buildWsUrl } from '../config/api.constants';
 import { GameClock } from '../../features/matches/models/gameclock.model';
 import { PlayClock } from '../../features/matches/models/playclock.model';
 import { MatchData } from '../../features/matches/models/match-data.model';
+import { environment } from '../../../environments/environment';
 
 /**
  * Connection state for the WebSocket
@@ -102,6 +103,16 @@ export class WebSocketService {
     });
   }
 
+  private log(...args: unknown[]): void {
+    if (!environment.production) {
+      console.log('[WebSocket]', ...args);
+    }
+  }
+
+  private warn(...args: unknown[]): void {
+    console.warn('[WebSocket]', ...args);
+  }
+
   /**
    * Connect to WebSocket for a specific match
    *
@@ -111,7 +122,7 @@ export class WebSocketService {
   connect(matchId: number, isReconnect = false): void {
     // If already connected to the same match, skip
     if (this.socket$ && this.currentMatchId === matchId && this.connectionState() === 'connected') {
-      console.log('[WebSocket] Already connected to match', matchId);
+      this.log('Already connected to match', matchId);
       return;
     }
 
@@ -136,14 +147,14 @@ export class WebSocketService {
     this.connectionState.set('connecting');
 
     const wsUrl = buildWsUrl(`/api/matches/ws/id/${matchId}/${this.clientId}/`);
-    console.log('[WebSocket] Connecting to', wsUrl);
+    this.log('Connecting to', wsUrl);
 
     try {
       this.socket$ = webSocket<WebSocketMessage>({
         url: wsUrl,
         openObserver: {
           next: () => {
-            console.log('[WebSocket] Connection established');
+            this.log('Connection established');
             this.connectionState.set('connected');
             this.retryAttempt = 0;
             this.lastError.set(null);
@@ -151,7 +162,7 @@ export class WebSocketService {
         },
         closeObserver: {
           next: (event) => {
-            console.log('[WebSocket] Connection closed', event);
+            this.log('Connection closed', event);
             if (this.connectionState() !== 'disconnected') {
               this.handleDisconnect();
             }
@@ -182,7 +193,7 @@ export class WebSocketService {
    * Disconnect from WebSocket
    */
   disconnect(): void {
-    console.log('[WebSocket] Disconnecting');
+    this.log('Disconnecting');
 
     // Mark as intentional to prevent reconnect attempts
     this.intentionalDisconnect = true;
@@ -215,11 +226,11 @@ export class WebSocketService {
    */
   sendMessage(message: unknown): void {
     if (!this.socket$ || this.connectionState() !== 'connected') {
-      console.warn('[WebSocket] Cannot send message - not connected');
+      this.warn('Cannot send message - not connected');
       return;
     }
 
-    console.log('[WebSocket] Sending message:', message);
+    this.log('Sending message:', message);
     this.socket$.next(message as WebSocketMessage);
   }
 
@@ -236,7 +247,7 @@ export class WebSocketService {
    * Handle incoming WebSocket messages and update appropriate signals
    */
   private handleMessage(message: WebSocketMessage): void {
-    console.log('[WebSocket] Message received:', message);
+    this.log('Message received:', message);
 
     const messageType = message['type'] as string | undefined;
 
@@ -250,7 +261,7 @@ export class WebSocketService {
 
     // Handle playclock updates
     if (messageType === 'playclock-update' || ('playclock' in message && message.playclock && !('data' in message))) {
-      console.log('[WebSocket] Playclock update');
+      this.log('Playclock update');
       const playclock = (message.playclock ?? (data?.['playclock'] as PlayClock | undefined)) ?? null;
       if (playclock) {
         this.playClock.set(playclock);
@@ -260,7 +271,7 @@ export class WebSocketService {
 
     // Handle gameclock updates
     if (messageType === 'gameclock-update' || ('gameclock' in message && message.gameclock && !('data' in message))) {
-      console.log('[WebSocket] Gameclock update');
+      this.log('Gameclock update');
       const gameclock = (message.gameclock ?? (data?.['gameclock'] as GameClock | undefined)) ?? null;
       if (gameclock) {
         this.gameClock.set(gameclock);
@@ -270,7 +281,7 @@ export class WebSocketService {
 
     // Handle match data updates (message-update or match-update)
     if (messageType === 'message-update' || messageType === 'match-update') {
-      console.log('[WebSocket] Match data update');
+      this.log('Match data update');
       // Backend sends data wrapped in 'data' property
       if (data) {
         // Transform backend format to our ComprehensiveMatchData format
@@ -296,7 +307,7 @@ export class WebSocketService {
     }
 
     // Fallback: try to use message directly
-    console.log('[WebSocket] Unknown message type, using as-is');
+    this.log('Unknown message type, using as-is');
     this.matchData.set(message as ComprehensiveMatchData);
   }
 
@@ -305,7 +316,7 @@ export class WebSocketService {
    */
   private handlePing(message: WebSocketMessage): void {
     const timestamp = message['timestamp'] as number;
-    console.log('[WebSocket] Received ping, sending pong');
+    this.log('Received ping, sending pong');
 
     this.sendMessage({
       type: 'pong',
@@ -329,7 +340,7 @@ export class WebSocketService {
     if (this.retryAttempt < this.maxRetryAttempts && this.currentMatchId) {
       this.scheduleReconnect();
     } else {
-      console.log('[WebSocket] Max retry attempts reached, giving up');
+      this.log('Max retry attempts reached, giving up');
       this.connectionState.set('disconnected');
       this.currentMatchId = null;
     }
@@ -429,13 +440,13 @@ export class WebSocketService {
     const jitter = Math.random() * 1000;
     const delay = Math.min(backoffDelay + jitter, 30000); // Cap at 30 seconds
 
-    console.log(`[WebSocket] Scheduling reconnect attempt ${this.retryAttempt}/${this.maxRetryAttempts} in ${Math.round(delay)}ms`);
+    this.log(`Scheduling reconnect attempt ${this.retryAttempt}/${this.maxRetryAttempts} in ${Math.round(delay)}ms`);
 
     const matchIdToReconnect = this.currentMatchId;
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
       if (matchIdToReconnect && this.currentMatchId === matchIdToReconnect && this.connectionState() !== 'connected') {
-        console.log('[WebSocket] Attempting reconnect...');
+        this.log('Attempting reconnect...');
         this.connect(matchIdToReconnect, true); // Pass true to indicate reconnect
       }
     }, delay);
