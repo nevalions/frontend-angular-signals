@@ -1,0 +1,71 @@
+.timeout-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.team-timeout-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--tui-background-neutral-1);
+  border-radius: 8px;
+}
+
+.team-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+  text-transform: uppercase;
+}
+
+.timeout-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.timeout-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid var(--tui-border-normal);
+  transition: all 0.2s ease;
+
+  &.available {
+    background: var(--tui-status-positive);
+    border-color: var(--tui-status-positive);
+  }
+
+  &.used {
+    background: transparent;
+    border-color: var(--tui-border-normal);
+  }
+}
+
+.timeout-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+// Responsive adjustments
+@media (max-width: 400px) {
+  .timeout-controls {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .timeout-indicator {
+    width: 20px;
+    height: 20px;
+  }
+}

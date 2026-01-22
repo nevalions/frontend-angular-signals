@@ -1,0 +1,107 @@
+<app-collapsible-section title="Timeouts" sectionKey="scoreboard-timeouts">
+  <ng-template>
+    <div class="timeout-forms">
+      <!-- Home Team Timeouts -->
+      <div class="team-timeout-section">
+        <h4 class="team-label">Home Team</h4>
+        
+        <div class="timeout-indicators">
+          @for (available of indicatorsTeamA(); track $index) {
+            <span 
+              class="timeout-indicator" 
+              [class.available]="available"
+              [class.used]="!available"
+            ></span>
+          }
+        </div>
+
+        <div class="timeout-controls">
+          <button
+            tuiButton
+            type="button"
+            appearance="destructive"
+            size="s"
+            [disabled]="timeoutsTeamA() === 0"
+            (click)="onUseTimeout('a')"
+          >
+            <tui-icon icon="@tui.minus" />
+            Use Timeout
+          </button>
+
+          <button
+            tuiButton
+            type="button"
+            appearance="secondary"
+            size="s"
+            [disabled]="timeoutsTeamA() === 3"
+            (click)="onRestoreTimeout('a')"
+          >
+            <tui-icon icon="@tui.plus" />
+            Restore
+          </button>
+
+          <button
+            tuiButton
+            type="button"
+            appearance="outline"
+            size="s"
+            (click)="onResetTimeouts('a')"
+          >
+            Reset All
+          </button>
+        </div>
+      </div>
+
+      <!-- Away Team Timeouts -->
+      <div class="team-timeout-section">
+        <h4 class="team-label">Away Team</h4>
+        
+        <div class="timeout-indicators">
+          @for (available of indicatorsTeamB(); track $index) {
+            <span 
+              class="timeout-indicator" 
+              [class.available]="available"
+              [class.used]="!available"
+            ></span>
+          }
+        </div>
+
+        <div class="timeout-controls">
+          <button
+            tuiButton
+            type="button"
+            appearance="destructive"
+            size="s"
+            [disabled]="timeoutsTeamB() === 0"
+            (click)="onUseTimeout('b')"
+          >
+            <tui-icon icon="@tui.minus" />
+            Use Timeout
+          </button>
+
+          <button
+            tuiButton
+            type="button"
+            appearance="secondary"
+            size="s"
+            [disabled]="timeoutsTeamB() === 3"
+            (click)="onRestoreTimeout('b')"
+          >
+            <tui-icon icon="@tui.plus" />
+            Restore
+          </button>
+
+          <button
+            tuiButton
+            type="button"
+            appearance="outline"
+            size="s"
+            (click)="onResetTimeouts('b')"
+          >
+            Reset All
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</app-collapsible-section>
