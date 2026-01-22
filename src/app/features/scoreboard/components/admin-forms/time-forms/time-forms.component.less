@@ -1,0 +1,129 @@
+.time-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.time-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--tui-background-neutral-1);
+  border-radius: 8px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+  text-transform: uppercase;
+}
+
+.clock-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px;
+  background: var(--tui-background-base);
+  border-radius: 8px;
+}
+
+.clock-value {
+  font-size: 48px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  color: var(--tui-text-primary);
+}
+
+.play-clock-display {
+  &.warning .clock-value {
+    color: var(--tui-status-negative);
+    animation: pulse 1s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.clock-status {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tui-text-tertiary);
+  text-transform: uppercase;
+
+  &.running {
+    color: var(--tui-status-positive);
+  }
+}
+
+.clock-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.manual-time-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--tui-border-normal);
+}
+
+.entry-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+}
+
+.time-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.time-separator {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--tui-text-primary);
+  margin-bottom: 8px;
+}
+
+.max-time-setting {
+  padding-top: 12px;
+  border-top: 1px solid var(--tui-border-normal);
+}
+
+.play-clock-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+// Responsive adjustments
+@media (max-width: 600px) {
+  .time-inputs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .clock-controls,
+  .play-clock-buttons {
+    flex-wrap: wrap;
+  }
+
+  .clock-value {
+    font-size: 36px;
+  }
+}

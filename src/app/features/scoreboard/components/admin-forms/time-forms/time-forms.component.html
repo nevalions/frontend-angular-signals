@@ -1,0 +1,138 @@
+<app-collapsible-section title="Time Controls" sectionKey="scoreboard-time">
+  <ng-template>
+    <div class="time-forms">
+      <!-- Game Clock Section -->
+      <div class="time-section game-clock-section">
+        <h4 class="section-title">Game Clock</h4>
+
+        <div class="clock-display">
+          <span class="clock-value">{{ gameClockDisplay() }}</span>
+          <span class="clock-status" [class.running]="gameClockRunning()">
+            {{ gameClockRunning() ? 'Running' : 'Stopped' }}
+          </span>
+        </div>
+
+        <div class="clock-controls">
+          @if (gameClockRunning()) {
+            <button
+              tuiButton
+              type="button"
+              appearance="primary"
+              size="m"
+              (click)="onGameClockPause()"
+            >
+              <tui-icon icon="@tui.pause" />
+              Pause
+            </button>
+          } @else {
+            <button
+              tuiButton
+              type="button"
+              appearance="primary"
+              size="m"
+              (click)="onGameClockStart()"
+            >
+              <tui-icon icon="@tui.play" />
+              Start
+            </button>
+          }
+
+          <button
+            tuiButton
+            type="button"
+            appearance="secondary"
+            size="m"
+            (click)="onGameClockReset()"
+          >
+            <tui-icon icon="@tui.refresh-cw" />
+            Reset
+          </button>
+        </div>
+
+        <div class="manual-time-entry">
+          <span class="entry-label">Set Time:</span>
+          <div class="time-inputs">
+            <app-input-number-with-buttons
+              [value]="manualMinutes()"
+              [min]="0"
+              [max]="99"
+              label="Min"
+              (valueChange)="onManualMinutesChange($event)"
+            />
+            <span class="time-separator">:</span>
+            <app-input-number-with-buttons
+              [value]="manualSeconds()"
+              [min]="0"
+              [max]="59"
+              label="Sec"
+              (valueChange)="onManualSecondsChange($event)"
+            />
+            <button
+              tuiButton
+              type="button"
+              appearance="secondary"
+              size="s"
+              (click)="onSetGameClock()"
+            >
+              Set
+            </button>
+          </div>
+        </div>
+
+        <div class="max-time-setting">
+          <app-input-number-with-buttons
+            [value]="currentMaxMinutes()"
+            [min]="1"
+            [max]="20"
+            label="Quarter Length (min)"
+            (valueChange)="onMaxMinutesChange($event)"
+          />
+        </div>
+      </div>
+
+      <!-- Play Clock Section -->
+      <div class="time-section play-clock-section">
+        <h4 class="section-title">Play Clock</h4>
+
+        <div class="clock-display play-clock-display" [class.warning]="playClockSeconds() <= 5">
+          <span class="clock-value">{{ playClockSeconds() }}</span>
+          <span class="clock-status" [class.running]="playClockRunning()">
+            {{ playClockRunning() ? 'Running' : 'Stopped' }}
+          </span>
+        </div>
+
+        <div class="play-clock-buttons">
+          <button
+            tuiButton
+            type="button"
+            appearance="primary"
+            size="m"
+            (click)="onPlayClockStart(40)"
+          >
+            40 sec
+          </button>
+
+          <button
+            tuiButton
+            type="button"
+            appearance="primary"
+            size="m"
+            (click)="onPlayClockStart(25)"
+          >
+            25 sec
+          </button>
+
+          <button
+            tuiButton
+            type="button"
+            appearance="secondary"
+            size="m"
+            (click)="onPlayClockReset()"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</app-collapsible-section>
