@@ -94,6 +94,15 @@ export class WebSocketService {
     return Date.now() - lastPing < 60000;
   });
 
+  readonly lastRtt = signal<number | null>(null);
+  readonly connectionQuality = computed<'good' | 'fair' | 'poor' | 'unknown'>(() => {
+    const rtt = this.lastRtt();
+    if (rtt === null) return 'unknown';
+    if (rtt < 100) return 'good';
+    if (rtt < 300) return 'fair';
+    return 'poor';
+  });
+
   constructor() {
     this.clientId = this.generateUUID();
 
@@ -315,15 +324,22 @@ export class WebSocketService {
    * Handle ping messages from server
    */
   private handlePing(message: WebSocketMessage): void {
-    const timestamp = message['timestamp'] as number;
+    const serverTimestamp = message['timestamp'] as number;
     this.log('Received ping, sending pong');
+
+    const now = Date.now() / 1000;
 
     this.sendMessage({
       type: 'pong',
-      timestamp: timestamp,
+      timestamp: serverTimestamp,
     });
 
     this.lastPingReceived.set(Date.now());
+
+    if (serverTimestamp) {
+      const rtt = (now - serverTimestamp) * 1000;
+      this.lastRtt.set(rtt);
+    }
   }
 
   /**

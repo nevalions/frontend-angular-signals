@@ -428,6 +428,8 @@ playClock: Signal<PlayClock | null>
 lastError: Signal<string | null>
 lastPingReceived: Signal<number | null>
 connectionHealthy: Signal<boolean>
+lastRtt: Signal<number | null>
+connectionQuality: Signal<'good' | 'fair' | 'poor' | 'unknown'>
 ```
 
 ### Connection Health Monitoring
@@ -453,13 +455,34 @@ lastPing = computed(() => wsService.lastPingReceived());
   - Returns `true` if no ping received yet (assumes healthy on new connection)
   - Returns `false` if no ping received in last 60 seconds (possible stale connection)
 
+### Connection Quality Monitoring
+
+```typescript
+// Get last round-trip time (RTT) in milliseconds
+rtt = computed(() => wsService.lastRtt());
+
+// Get connection quality level
+quality = computed(() => wsService.connectionQuality());
+
+// Show connection quality indicator using ConnectionIndicatorComponent
+<app-connection-indicator [showLabel]="true" />
+```
+
+**Quality Monitoring Signals:**
+- `lastRtt`: Round-trip time (ms) calculated from ping/pong timestamp, or `null` if no RTT data yet
+- `connectionQuality`: Connection quality level based on RTT:
+  - `'good'`: RTT < 100ms (green dot)
+  - `'fair'`: RTT 100-300ms (yellow dot)
+  - `'poor'`: RTT > 300ms (red dot)
+  - `'unknown'`: No RTT data yet (gray dot)
+
 ### Message Types
 
 The WebSocket service automatically parses and routes incoming messages to appropriate signals:
 
 | Message Type | Signal Updated | Action | Data Structure |
 |--------------|---------------|---------|----------------|
-| `ping` | `lastPingReceived` | Responds with `pong` | `{ timestamp: number }` |
+| `ping` | `lastPingReceived`, `lastRtt`, `connectionQuality` | Responds with `pong`, calculates RTT | `{ timestamp: number }` |
 | `playclock-update` | `playClock` | Updates clock signal | `PlayClock` interface |
 | `gameclock-update` | `gameClock` | Updates clock signal | `GameClock` interface |
 | `message-update` | `matchData` | Updates match data | `ComprehensiveMatchData` interface |
@@ -468,6 +491,8 @@ The WebSocket service automatically parses and routes incoming messages to appro
 1. Server sends `ping` message with timestamp
 2. Client responds with `pong` message containing same timestamp
 3. Client updates `lastPingReceived` signal with current time
+4. Client calculates RTT (round-trip time) from timestamp and updates `lastRtt` signal
+5. Client updates `connectionQuality` signal based on RTT value
 4. `connectionHealthy` computed signal reflects connection health
 
 ### Connection State Monitoring

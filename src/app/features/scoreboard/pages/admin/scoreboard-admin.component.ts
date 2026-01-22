@@ -18,6 +18,7 @@ import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../compo
 import { TimeoutFormsComponent, TimeoutChangeEvent } from '../../components/admin-forms/timeout-forms/timeout-forms.component';
 import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
 import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
+import { ConnectionIndicatorComponent } from '../../../../shared/components/connection-indicator/connection-indicator.component';
 
 @Component({
   selector: 'app-scoreboard-admin',
@@ -33,6 +34,7 @@ import { EventsFormsComponent } from '../../components/admin-forms/events-forms/
     TimeoutFormsComponent,
     ScoreboardSettingsFormsComponent,
     EventsFormsComponent,
+    ConnectionIndicatorComponent,
   ],
   templateUrl: './scoreboard-admin.component.html',
   styleUrl: './scoreboard-admin.component.less',

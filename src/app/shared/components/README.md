@@ -4,6 +4,67 @@ Reusable UI components used across the application.
 
 ## Components
 
+### ConnectionIndicatorComponent
+
+**Location:** `src/app/shared/components/connection-indicator/`
+
+A visual indicator for WebSocket connection quality based on ping/pong round-trip time.
+
+**Features:**
+- Color-coded dot indicator (green/yellow/red/gray)
+- Quality levels based on RTT (good <100ms, fair <300ms, poor >300ms, unknown)
+- Optional label display
+- Signal-based reactive API
+- Standalone component
+
+**Usage Example:**
+
+```typescript
+import { ConnectionIndicatorComponent } from '../../../../shared/components/connection-indicator/connection-indicator.component';
+
+@Component({
+  selector: 'app-scoreboard-admin',
+  standalone: true,
+  imports: [ConnectionIndicatorComponent],
+  template: `
+    <app-connection-indicator [showLabel]="true" />
+  `,
+})
+export class ScoreboardAdminComponent {}
+```
+
+**Inputs:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|----------|-------------|
+| `showLabel` | `boolean` | No | `false` | Show/hide quality label text |
+
+**Quality Levels:**
+
+| Quality | RTT Range | Color | Label |
+|---------|-----------|-------|-------|
+| `good` | < 100ms | Green (#22c55e) | "Good" |
+| `fair` | 100-300ms | Yellow (#eab308) | "Fair" |
+| `poor` | > 300ms | Red (#ef4444) | "Poor" |
+| `unknown` | No data | Gray (#6b7280) | "Connecting..." |
+
+**Signals:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quality` | `Signal<'good' | 'fair' | 'poor' | 'unknown'>` | Current connection quality state |
+| `qualityLabel` | `Signal<string>` | Human-readable label for current quality |
+
+**Examples Used In:**
+- Scoreboard admin page header
+
+**Best Practices:**
+1. Enable `showLabel` when space permits for better user visibility
+2. Use `showLabel="false"` for compact displays where only the dot is needed
+3. The component automatically tracks RTT via `WebSocketService.connectionQuality`
+
+### TabsNavComponent
+
 ### TabsNavComponent
 
 **Location:** `src/app/shared/components/tabs-nav/`
