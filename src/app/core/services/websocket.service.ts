@@ -459,7 +459,7 @@ export class WebSocketService {
       return true;
     }
 
-    return updateTimestamp >= currentTimestamp;
+    return updateTimestamp > currentTimestamp;
   }
 
   private getClockStatus(clock: GameClock | PlayClock): string | null {
