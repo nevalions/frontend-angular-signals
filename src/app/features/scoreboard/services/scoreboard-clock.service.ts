@@ -44,129 +44,52 @@ export class ScoreboardClockService implements OnDestroy {
 
   private wsGameClockEffect = effect(() => {
     const clock = this.wsService.gameClock();
-    console.log('[ClockService][GAMECLOCK] Effect triggered, wsService.gameClock():', JSON.stringify(clock, null, 2));
+    if (!clock) return;
 
-    if (!clock) {
-      console.log('[ClockService][GAMECLOCK] No clock data, skipping');
-      return;
-    }
-
-    // Use untracked to read local state without creating dependencies
-    // This prevents infinite loops when we set gameClock later in this effect
     const current = untracked(() => this.gameClock());
-    const currentPredicted = untracked(() => this.predictedGameClock());
-    console.log('[ClockService][GAMECLOCK] Current local gameClock:', JSON.stringify(current, null, 2));
-    console.log('[ClockService][GAMECLOCK] Current predicted value:', currentPredicted);
-
-    if (current && clock.version != null && current.version != null && clock.version < current.version) {
-      console.log('[ClockService][GAMECLOCK] SKIPPING - incoming version', clock.version, '< current version', current.version);
+    
+    if (current && clock.version != null && current.version != null 
+        && clock.version < current.version) {
+      console.log('[ClockService] Skipping older version:', clock.version);
       return;
     }
 
-    // Determine what gameclock value to use
-    let effectiveGameclock = clock.gameclock;
+    this.gameClock.set(clock);
 
-    // The backend doesn't track running time - it stores the value when clock was started.
-    // On pause, it returns the start value, not the elapsed time.
-    // We need to use our local predicted time in these cases:
-    //
-    // PAUSE SCENARIO:
-    // - Incoming status is 'paused'
-    // - Local status was 'paused' (from optimistic update in pauseGameClock())
-    // - We have a local gameclock value that's lower than incoming (clock counts down)
-    // - This means we paused while running and have the correct elapsed time locally
-    //
-    // RESET SCENARIO:
-    // - Incoming status is 'stopped'
-    // - Local status is 'stopped' (from optimistic update in resetGameClock())
-    // - We should use the backend's value (which should be max time)
-    
-    const isLocalPaused = current?.gameclock_status === 'paused';
-    const isLocalStopped = current?.gameclock_status === 'stopped';
-    const localHasBetterValue = current?.gameclock != null && clock.gameclock != null && current.gameclock < clock.gameclock;
-    
-    // On pause: if local has a better (lower) value, use it
-    // The optimistic update in pauseGameClock() sets the correct predicted time
-    if (clock.gameclock_status === 'paused' && isLocalPaused && localHasBetterValue) {
-      console.log('[ClockService][GAMECLOCK] PAUSE detected - using local value:', current!.gameclock, '(backend returned:', clock.gameclock, ')');
-      effectiveGameclock = current!.gameclock;
-    }
-    
-    // On reset: use backend value (should be max time)
-    if (clock.gameclock_status === 'stopped' && isLocalStopped) {
-      console.log('[ClockService][GAMECLOCK] RESET detected - using backend value:', clock.gameclock);
-      // effectiveGameclock is already set to clock.gameclock, so no change needed
-    }
-
-    const updatedClock: GameClock = {
-      ...clock,
-      gameclock: effectiveGameclock,
-      gameclock_time_remaining: effectiveGameclock,
-    };
-
-    console.log('[ClockService][GAMECLOCK] Setting gameClock signal with:', JSON.stringify(updatedClock, null, 2));
-    this.gameClock.set(updatedClock);
-
-    if (effectiveGameclock !== undefined && effectiveGameclock !== null && clock.gameclock_status !== undefined && clock.gameclock_status !== null) {
-      console.log('[ClockService][GAMECLOCK] Syncing predictor with value:', effectiveGameclock, 'status:', clock.gameclock_status);
-      this.gameClockPredictor.sync({
-        value: effectiveGameclock,
-        status: clock.gameclock_status,
-        timestamp: clock.updated_at ? new Date(clock.updated_at).getTime() : undefined
-      });
-    } else {
-      console.log('[ClockService][GAMECLOCK] NOT syncing predictor - missing gameclock or gameclock_status');
-    }
+    const rtt = this.wsService.lastRtt() ?? 100;
+    this.gameClockPredictor.sync({
+      gameclock: clock.gameclock ?? 0,
+      gameclock_max: clock.gameclock_max ?? 720,
+      started_at_ms: clock.started_at_ms ?? null,
+      server_time_ms: clock.server_time_ms ?? null,
+      status: clock.gameclock_status ?? 'stopped',
+      rttMs: rtt,
+    });
   });
 
   private wsPlayClockEffect = effect(() => {
     const clock = this.wsService.playClock();
-    console.log('[ClockService][PLAYCLOCK] Effect triggered, wsService.playClock():', JSON.stringify(clock, null, 2));
+    if (!clock) return;
 
-    if (!clock) {
-      console.log('[ClockService][PLAYCLOCK] No clock data, skipping');
-      return;
-    }
-
-    // Use untracked to read local state without creating dependencies
-    // This prevents infinite loops when we set playClock later in this effect
     const current = untracked(() => this.playClock());
-    const currentPredicted = untracked(() => this.predictedPlayClock());
-    console.log('[ClockService][PLAYCLOCK] Current local playClock:', JSON.stringify(current, null, 2));
-    console.log('[ClockService][PLAYCLOCK] Current predicted value:', currentPredicted);
-
-    if (current && clock.version != null && current.version != null && clock.version < current.version) {
-      console.log('[ClockService][PLAYCLOCK] SKIPPING - incoming version', clock.version, '< current version', current.version);
+    
+    if (current && clock.version != null && current.version != null 
+        && clock.version < current.version) {
+      console.log('[ClockService] Skipping older version:', clock.version);
       return;
     }
 
-    // Determine what playclock value to use
-    let effectivePlayclock = clock.playclock;
+    this.playClock.set(clock);
 
-    // If stopped and local has better value (from optimistic update), use it
-    if (clock.playclock_status !== 'running' && current?.playclock != null && current.playclock > 0) {
-      console.log('[ClockService][PLAYCLOCK] Using local playClock value:', current.playclock);
-      effectivePlayclock = current.playclock;
-    }
-
-    const updatedClock: PlayClock = {
-      ...clock,
-      playclock: effectivePlayclock,
-    };
-
-    console.log('[ClockService][PLAYCLOCK] Setting playClock signal with:', JSON.stringify(updatedClock, null, 2));
-    this.playClock.set(updatedClock);
-
-    if (effectivePlayclock !== undefined && effectivePlayclock !== null && clock.playclock_status !== undefined && clock.playclock_status !== null) {
-      console.log('[ClockService][PLAYCLOCK] Syncing predictor with value:', effectivePlayclock, 'status:', clock.playclock_status);
-      this.playClockPredictor.sync({
-        value: effectivePlayclock,
-        status: clock.playclock_status,
-        timestamp: clock.updated_at ? new Date(clock.updated_at).getTime() : undefined
-      });
-    } else {
-      console.log('[ClockService][PLAYCLOCK] NOT syncing predictor - missing playclock or playclock_status');
-    }
+    const rtt = this.wsService.lastRtt() ?? 100;
+    this.playClockPredictor.sync({
+      gameclock: clock.playclock ?? 0,
+      gameclock_max: clock.playclock_max ?? 40,
+      started_at_ms: clock.started_at_ms ?? null,
+      server_time_ms: clock.server_time_ms ?? null,
+      status: clock.playclock_status ?? 'stopped',
+      rttMs: rtt,
+    });
   });
 
   load(matchId: number): void {
@@ -207,41 +130,18 @@ export class ScoreboardClockService implements OnDestroy {
 
   pauseGameClock(): void {
     const gc = this.gameClock();
-    console.log('[ClockService][ACTION] pauseGameClock called, current gc:', JSON.stringify(gc, null, 2));
-    if (!gc) {
-      console.log('[ClockService][ACTION] pauseGameClock ABORTED - no gameClock');
-      return;
-    }
+    if (!gc) return;
 
-    // Capture the current predicted time before pausing
-    // This is critical because the backend doesn't track running time
-    const currentPredictedTime = this.predictedGameClock();
-    console.log('[ClockService][ACTION] pauseGameClock - capturing predicted time:', currentPredictedTime);
+    this.applyGameClockUpdate({ gameclock_status: 'paused' });
 
-    this.applyGameClockUpdate({
-      gameclock_status: 'paused',
-      gameclock: currentPredictedTime,
-      gameclock_time_remaining: currentPredictedTime,
-    });
-
-    console.log('[ClockService][ACTION] pauseGameClock - calling API for gc.id:', gc.id);
     this.scoreboardStore.pauseGameClock(gc.id).subscribe({
       next: (updated) => {
-        console.log('[ClockService][ACTION] pauseGameClock API response:', JSON.stringify(updated, null, 2));
-        // Preserve our local predicted time since backend doesn't track it properly
         const current = this.gameClock();
         if (current) {
-          // Override the backend's gameclock value with our locally tracked value
-          const mergedWithLocalTime = this.mergeGameClock(current, {
-            ...updated,
-            gameclock: current.gameclock, // Keep local value
-            gameclock_time_remaining: current.gameclock_time_remaining, // Keep local value
-          });
-          console.log('[ClockService][ACTION] pauseGameClock merged result (with local time preserved):', JSON.stringify(mergedWithLocalTime, null, 2));
-          this.gameClock.set(mergedWithLocalTime);
+          this.gameClock.set(this.mergeGameClock(current, updated));
         }
       },
-      error: (err) => console.error('[ClockService][ACTION] pauseGameClock API error:', err),
+      error: (err) => console.error('[ClockService] pauseGameClock API error:', err),
     });
   }
 

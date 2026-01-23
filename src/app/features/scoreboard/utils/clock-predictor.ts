@@ -1,8 +1,11 @@
 export interface ClockState {
-  value: number;
   status: 'running' | 'stopped' | 'paused';
-  serverTime: number;
-  clientTime: number;
+  gameclockMax: number;
+  startedAtMs: number | null;
+  serverTimeMs: number;
+  clientReceiveMs: number;
+  frozenValue: number;
+  rttMs: number;
 }
 
 export class ClockPredictor {
@@ -14,41 +17,55 @@ export class ClockPredictor {
     this.onTick = onTick;
   }
 
-  sync(serverClock: { value: number; status: string; timestamp?: number }): void {
-    console.log('[ClockPredictor] sync called with:', JSON.stringify(serverClock));
-    console.log('[ClockPredictor] Previous state:', JSON.stringify(this.state));
-
+  sync(data: {
+    gameclock: number;
+    gameclock_max: number;
+    started_at_ms: number | null;
+    server_time_ms: number | null;
+    status: string;
+    rttMs?: number;
+  }): void {
+    const clientReceiveMs = Date.now();
+    const rttMs = data.rttMs ?? 100;
+    
     this.state = {
-      value: serverClock.value,
-      status: serverClock.status as ClockState['status'],
-      serverTime: serverClock.timestamp ?? Date.now(),
-      clientTime: Date.now()
+      status: data.status as ClockState['status'],
+      gameclockMax: data.gameclock_max,
+      startedAtMs: data.started_at_ms,
+      serverTimeMs: data.server_time_ms ?? clientReceiveMs,
+      clientReceiveMs,
+      frozenValue: data.gameclock,
+      rttMs,
     };
 
-    console.log('[ClockPredictor] New state:', JSON.stringify(this.state));
-
-    if (this.state.status === 'running' && !this.animationFrameId) {
-      console.log('[ClockPredictor] Status is running, starting prediction');
-      this.startPrediction();
-    } else if (this.state.status !== 'running') {
-      console.log('[ClockPredictor] Status is NOT running (' + this.state.status + '), stopping prediction and emitting value:', this.state.value);
-      this.stopPrediction();
-      this.onTick(this.state.value);
+    if (this.state.status === 'running' && this.state.startedAtMs) {
+      if (!this.animationFrameId) {
+        this.startPrediction();
+      }
     } else {
-      console.log('[ClockPredictor] Status is running but prediction already active');
+      this.stopPrediction();
+      this.onTick(this.state.frozenValue);
     }
   }
 
   private startPrediction(): void {
     const tick = () => {
-      if (!this.state || this.state.status !== 'running') return;
+      if (!this.state || this.state.status !== 'running' || !this.state.startedAtMs) {
+        return;
+      }
 
-      const elapsed = (Date.now() - this.state.clientTime) / 1000;
-      const predictedValue = Math.max(0, this.state.value - elapsed);
+      const now = Date.now();
+      const timeSinceReceive = now - this.state.clientReceiveMs;
+      const estimatedServerNow = this.state.serverTimeMs + timeSinceReceive;
+      
+      const elapsedMs = estimatedServerNow - this.state.startedAtMs;
+      const elapsedSec = Math.floor(elapsedMs / 1000);
+      
+      const remaining = Math.max(0, this.state.gameclockMax - elapsedSec);
+      
+      this.onTick(remaining);
 
-      this.onTick(Math.floor(predictedValue));
-
-      if (predictedValue > 0) {
+      if (remaining > 0) {
         this.animationFrameId = requestAnimationFrame(tick);
       }
     };
