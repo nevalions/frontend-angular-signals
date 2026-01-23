@@ -114,8 +114,12 @@ export class WebSocketService {
 
   private log(...args: unknown[]): void {
     if (!environment.production) {
-      console.log('[WebSocket]', ...args);
+      console.log('[WebSocket]', new Date().toISOString(), ...args);
     }
+  }
+
+  private logClock(type: 'gameclock' | 'playclock', action: string, data: unknown): void {
+    console.log(`[WebSocket][${type.toUpperCase()}]`, new Date().toISOString(), action, JSON.stringify(data, null, 2));
   }
 
   private warn(...args: unknown[]): void {
@@ -256,11 +260,15 @@ export class WebSocketService {
    * Handle incoming WebSocket messages and update appropriate signals
    */
   private handleMessage(message: WebSocketMessage): void {
-    this.log('Message received:', message);
+    this.log('Message received:', JSON.stringify(message, null, 2));
 
     const messageType = message['type'] as string | undefined;
+    console.log('[WebSocket][DEBUG] Message type:', messageType, 'Keys in message:', Object.keys(message));
 
     const data = message['data'] as Record<string, unknown> | undefined;
+    if (data) {
+      console.log('[WebSocket][DEBUG] Data keys:', Object.keys(data));
+    }
 
     // Handle ping messages
     if (messageType === 'ping') {
@@ -270,20 +278,36 @@ export class WebSocketService {
 
     // Handle playclock updates
     if (messageType === 'playclock-update' || ('playclock' in message && message.playclock && !('data' in message))) {
-      this.log('Playclock update');
+      this.logClock('playclock', 'RECEIVED playclock-update message', { messageType, hasPlayclock: 'playclock' in message });
       const playclock = (message.playclock ?? (data?.['playclock'] as PlayClock | undefined)) ?? null;
+      this.logClock('playclock', 'Extracted playclock data', playclock);
       if (playclock) {
-        this.playClock.set(playclock);
+        const currentPlayClock = this.playClock();
+        this.logClock('playclock', 'Current playClock before merge', currentPlayClock);
+        const merged = this.mergePlayClock(playclock);
+        this.logClock('playclock', 'Merged playClock to set', merged);
+        this.playClock.set(merged);
+        this.logClock('playclock', 'Signal updated, new value', this.playClock());
+      } else {
+        this.logClock('playclock', 'SKIPPED - no playclock data extracted', null);
       }
       return;
     }
 
     // Handle gameclock updates
     if (messageType === 'gameclock-update' || ('gameclock' in message && message.gameclock && !('data' in message))) {
-      this.log('Gameclock update');
+      this.logClock('gameclock', 'RECEIVED gameclock-update message', { messageType, hasGameclock: 'gameclock' in message });
       const gameclock = (message.gameclock ?? (data?.['gameclock'] as GameClock | undefined)) ?? null;
+      this.logClock('gameclock', 'Extracted gameclock data', gameclock);
       if (gameclock) {
-        this.gameClock.set(gameclock);
+        const currentGameClock = this.gameClock();
+        this.logClock('gameclock', 'Current gameClock before merge', currentGameClock);
+        const merged = this.mergeGameClock(gameclock);
+        this.logClock('gameclock', 'Merged gameClock to set', merged);
+        this.gameClock.set(merged);
+        this.logClock('gameclock', 'Signal updated, new value', this.gameClock());
+      } else {
+        this.logClock('gameclock', 'SKIPPED - no gameclock data extracted', null);
       }
       return;
     }
@@ -410,29 +434,32 @@ export class WebSocketService {
     const currentVersion = current.version ?? null;
 
     if (updateVersion !== null && currentVersion !== null) {
-      return updateVersion >= currentVersion;
+      if (updateVersion > currentVersion) {
+        return true;
+      }
+      if (updateVersion < currentVersion) {
+        return false;
+      }
+      // Versions are equal, use timestamp as tiebreaker
     }
 
-    if (updateVersion !== null || currentVersion !== null) {
-      return true;
-    }
-
+    // Fallback to timestamp comparison for equal/missing versions
     const updateTimestamp = update.updated_at ? Date.parse(update.updated_at) : Number.NaN;
     const currentTimestamp = current.updated_at ? Date.parse(current.updated_at) : Number.NaN;
 
-    if (!Number.isNaN(updateTimestamp) || !Number.isNaN(currentTimestamp)) {
-      if (Number.isNaN(updateTimestamp)) {
-        return false;
-      }
-
-      if (Number.isNaN(currentTimestamp)) {
-        return true;
-      }
-
-      return updateTimestamp >= currentTimestamp;
+    if (Number.isNaN(updateTimestamp) && Number.isNaN(currentTimestamp)) {
+      return true;
     }
 
-    return true;
+    if (Number.isNaN(updateTimestamp)) {
+      return false;
+    }
+
+    if (Number.isNaN(currentTimestamp)) {
+      return true;
+    }
+
+    return updateTimestamp >= currentTimestamp;
   }
 
   private getClockStatus(clock: GameClock | PlayClock): string | null {

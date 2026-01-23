@@ -73,7 +73,10 @@ export class TimeFormsComponent {
 
   protected readonly currentMaxMinutes = computed(() => {
     const gc = this.gameClock();
-    const maxSeconds = gc?.gameclock_max ?? 720; // Default 12 minutes
+    const maxSeconds = gc?.gameclock_max ?? 720;
+    if (gc && gc.gameclock_max == null) {
+      console.warn('[TimeFormsComponent] gameclock_max is null/undefined, using fallback 720 seconds (12 min). Backend should provide gameclock_max based on sport configuration.');
+    }
     return Math.floor(maxSeconds / 60);
   });
 
