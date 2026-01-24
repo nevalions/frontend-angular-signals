@@ -20,6 +20,16 @@ For detailed development guidelines, patterns, and best practices, see the [`doc
 
 For the complete documentation index, see **[docs/index.md](./docs/index.md)** or the **[Development Guidelines](./AGENTS.md)** file.
 
+## Installation
+
+To install dependencies, run:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+The `--legacy-peer-deps` flag is required due to Taiga UI peer dependency constraints.
+
 ## Development server
 
 To start a local development server, run:

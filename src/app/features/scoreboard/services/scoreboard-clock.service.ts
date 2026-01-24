@@ -132,8 +132,6 @@ export class ScoreboardClockService implements OnDestroy {
     const gc = this.gameClock();
     if (!gc) return;
 
-    this.applyGameClockUpdate({ gameclock_status: 'paused' });
-
     this.scoreboardStore.pauseGameClock(gc.id).subscribe({
       next: (updated) => {
         const current = this.gameClock();
