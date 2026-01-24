@@ -20,4 +20,6 @@ export interface PlayClockCreate {
 export interface PlayClockUpdate {
   playclock?: number | null;
   playclock_status?: string | null;
+  server_time_ms?: number | null;
+  started_at_ms?: number | null;
 }

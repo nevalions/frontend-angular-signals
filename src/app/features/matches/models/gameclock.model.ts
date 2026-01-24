@@ -25,4 +25,6 @@ export interface GameClockUpdate {
   gameclock?: number | null;
   gameclock_max?: number | null;
   gameclock_status?: string | null;
+  server_time_ms?: number | null;
+  started_at_ms?: number | null;
 }
