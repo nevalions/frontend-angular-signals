@@ -61,7 +61,9 @@ export class ClockPredictor {
       const elapsedMs = estimatedServerNow - this.state.startedAtMs;
       const elapsedSec = Math.floor(elapsedMs / 1000);
       
-      const remaining = Math.max(0, this.state.gameclockMax - elapsedSec);
+      const isResuming = this.state.frozenValue < this.state.gameclockMax;
+      const baseValue = isResuming ? this.state.frozenValue : this.state.gameclockMax;
+      const remaining = Math.max(0, baseValue - elapsedSec);
       
       this.onTick(remaining);
 
