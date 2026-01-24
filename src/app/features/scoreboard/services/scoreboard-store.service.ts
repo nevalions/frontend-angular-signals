@@ -1,7 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { buildApiUrl } from '../../../core/config/api.constants';
+
+/** Backend API response wrapper for clock endpoints */
+interface ApiResponseWrapper<T> {
+  content: T;
+  status_code: number;
+  success: boolean;
+  message?: string;
+}
 import { ComprehensiveMatchData } from '../../matches/models/comprehensive-match.model';
 import { Scoreboard, ScoreboardUpdate } from '../../matches/models/scoreboard.model';
 import { GameClock, GameClockUpdate } from '../../matches/models/gameclock.model';
@@ -41,15 +49,24 @@ export class ScoreboardStoreService {
   }
 
   startGameClock(id: number): Observable<GameClock> {
-    return this.http.put<GameClock>(buildApiUrl(`/api/gameclock/id/${id}/running/`), null);
+    // Backend returns wrapped response { content: GameClock, status_code, success, message }
+    return this.http
+      .put<ApiResponseWrapper<GameClock>>(buildApiUrl(`/api/gameclock/id/${id}/running/`), null)
+      .pipe(map((response) => response.content));
   }
 
   pauseGameClock(id: number): Observable<GameClock> {
-    return this.http.put<GameClock>(buildApiUrl(`/api/gameclock/id/${id}/paused/`), null);
+    // Backend returns wrapped response { content: GameClock, status_code, success, message }
+    return this.http
+      .put<ApiResponseWrapper<GameClock>>(buildApiUrl(`/api/gameclock/id/${id}/paused/`), null)
+      .pipe(map((response) => response.content));
   }
 
   resetGameClock(id: number, seconds: number): Observable<GameClock> {
-    return this.http.put<GameClock>(buildApiUrl(`/api/gameclock/id/${id}/stopped/${seconds}/`), null);
+    // Backend returns wrapped response { content: GameClock, status_code, success, message }
+    return this.http
+      .put<ApiResponseWrapper<GameClock>>(buildApiUrl(`/api/gameclock/id/${id}/stopped/${seconds}/`), null)
+      .pipe(map((response) => response.content));
   }
 
   // Play clock
@@ -62,11 +79,17 @@ export class ScoreboardStoreService {
   }
 
   startPlayClock(id: number, seconds: number): Observable<PlayClock> {
-    return this.http.put<PlayClock>(buildApiUrl(`/api/playclock/id/${id}/running/${seconds}/`), null);
+    // Backend returns wrapped response { content: PlayClock, status_code, success, message }
+    return this.http
+      .put<ApiResponseWrapper<PlayClock>>(buildApiUrl(`/api/playclock/id/${id}/running/${seconds}/`), null)
+      .pipe(map((response) => response.content));
   }
 
   resetPlayClock(id: number): Observable<PlayClock> {
-    return this.http.put<PlayClock>(buildApiUrl(`/api/playclock/id/${id}/stopped/`), null);
+    // Backend returns wrapped response { content: PlayClock, status_code, success, message }
+    return this.http
+      .put<ApiResponseWrapper<PlayClock>>(buildApiUrl(`/api/playclock/id/${id}/stopped/`), null)
+      .pipe(map((response) => response.content));
   }
 
   // Match data

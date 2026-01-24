@@ -35,7 +35,14 @@ export class ScoreboardClockService implements OnDestroy {
       (value) => this.predictedGameClock.set(value)
     );
     this.playClockPredictor = new ClockPredictor(
-      (value) => this.predictedPlayClock.set(value)
+      (value) => {
+        // Log only when value changes significantly (every second)
+        const current = this.predictedPlayClock();
+        if (current !== value) {
+          console.log('[ClockService] predictedPlayClock signal updated:', current, '->', value);
+        }
+        this.predictedPlayClock.set(value);
+      }
     );
   }
 
@@ -215,6 +222,34 @@ export class ScoreboardClockService implements OnDestroy {
           const merged = this.mergePlayClock(current, updated);
           console.log('[ClockService][ACTION] startPlayClock merged result:', JSON.stringify(merged, null, 2));
           this.playClock.set(merged);
+
+          // Sync predictor with API response data (WebSocket may be delayed or missing fields)
+          console.log('[ClockService][ACTION] startPlayClock - checking predictor sync conditions:', {
+            started_at_ms: merged.started_at_ms,
+            playclock_status: merged.playclock_status,
+            server_time_ms: merged.server_time_ms,
+          });
+          if (merged.started_at_ms && merged.playclock_status === 'running') {
+            const rtt = this.wsService.lastRtt() ?? 100;
+            console.log('[ClockService][ACTION] startPlayClock - syncing predictor with API data:', {
+              gameclock: merged.playclock ?? 0,
+              gameclock_max: merged.playclock_max ?? seconds,
+              started_at_ms: merged.started_at_ms,
+              server_time_ms: merged.server_time_ms ?? null,
+              status: merged.playclock_status,
+              rttMs: rtt,
+            });
+            this.playClockPredictor.sync({
+              gameclock: merged.playclock ?? 0,
+              gameclock_max: merged.playclock_max ?? seconds,
+              started_at_ms: merged.started_at_ms,
+              server_time_ms: merged.server_time_ms ?? null,
+              status: merged.playclock_status,
+              rttMs: rtt,
+            });
+          } else {
+            console.log('[ClockService][ACTION] startPlayClock - NOT syncing predictor (conditions not met)');
+          }
         }
       },
       error: (err) => console.error('[ClockService][ACTION] startPlayClock API error:', err),

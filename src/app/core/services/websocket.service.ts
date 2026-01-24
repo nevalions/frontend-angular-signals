@@ -277,17 +277,22 @@ export class WebSocketService {
     }
 
     // Handle playclock updates
-    if (messageType === 'playclock-update' || ('playclock' in message && message.playclock && !('data' in message))) {
+    if (messageType === 'playclock-update' || ('playclock' in message && message.playclock !== undefined && !('data' in message))) {
       this.logClock('playclock', 'RECEIVED playclock-update message', { messageType, hasPlayclock: 'playclock' in message });
       const playclock = (message.playclock ?? (data?.['playclock'] as PlayClock | undefined)) ?? null;
       this.logClock('playclock', 'Extracted playclock data', playclock);
-      if (playclock) {
-        const currentPlayClock = this.playClock();
-        this.logClock('playclock', 'Current playClock before merge', currentPlayClock);
-        const merged = this.mergePlayClock(playclock);
-        this.logClock('playclock', 'Merged playClock to set', merged);
-        this.playClock.set(merged);
-        this.logClock('playclock', 'Signal updated, new value', this.playClock());
+      if (playclock !== undefined) {
+        if (playclock === null) {
+          this.playClock.set(null);
+          this.logClock('playclock', 'Signal set to null', null);
+        } else {
+          const currentPlayClock = this.playClock();
+          this.logClock('playclock', 'Current playClock before merge', currentPlayClock);
+          const merged = this.mergePlayClock(playclock);
+          this.logClock('playclock', 'Merged playClock to set', merged);
+          this.playClock.set(merged);
+          this.logClock('playclock', 'Signal updated, new value', this.playClock());
+        }
       } else {
         this.logClock('playclock', 'SKIPPED - no playclock data extracted', null);
       }
@@ -295,17 +300,22 @@ export class WebSocketService {
     }
 
     // Handle gameclock updates
-    if (messageType === 'gameclock-update' || ('gameclock' in message && message.gameclock && !('data' in message))) {
+    if (messageType === 'gameclock-update' || ('gameclock' in message && message.gameclock !== undefined && !('data' in message))) {
       this.logClock('gameclock', 'RECEIVED gameclock-update message', { messageType, hasGameclock: 'gameclock' in message });
       const gameclock = (message.gameclock ?? (data?.['gameclock'] as GameClock | undefined)) ?? null;
       this.logClock('gameclock', 'Extracted gameclock data', gameclock);
-      if (gameclock) {
-        const currentGameClock = this.gameClock();
-        this.logClock('gameclock', 'Current gameClock before merge', currentGameClock);
-        const merged = this.mergeGameClock(gameclock);
-        this.logClock('gameclock', 'Merged gameClock to set', merged);
-        this.gameClock.set(merged);
-        this.logClock('gameclock', 'Signal updated, new value', this.gameClock());
+      if (gameclock !== undefined) {
+        if (gameclock === null) {
+          this.gameClock.set(null);
+          this.logClock('gameclock', 'Signal set to null', null);
+        } else {
+          const currentGameClock = this.gameClock();
+          this.logClock('gameclock', 'Current gameClock before merge', currentGameClock);
+          const merged = this.mergeGameClock(gameclock);
+          this.logClock('gameclock', 'Merged gameClock to set', merged);
+          this.gameClock.set(merged);
+          this.logClock('gameclock', 'Signal updated, new value', this.gameClock());
+        }
       } else {
         this.logClock('gameclock', 'SKIPPED - no gameclock data extracted', null);
       }
@@ -328,12 +338,20 @@ export class WebSocketService {
         };
         this.matchData.set(matchData);
 
-        if (matchData.gameclock) {
-          this.gameClock.set(this.mergeGameClock(matchData.gameclock));
+        if (matchData.gameclock !== undefined) {
+          if (matchData.gameclock === null) {
+            this.gameClock.set(null);
+          } else {
+            this.gameClock.set(this.mergeGameClock(matchData.gameclock));
+          }
         }
 
-        if (matchData.playclock) {
-          this.playClock.set(this.mergePlayClock(matchData.playclock));
+        if (matchData.playclock !== undefined) {
+          if (matchData.playclock === null) {
+            this.playClock.set(null);
+          } else {
+            this.playClock.set(this.mergePlayClock(matchData.playclock));
+          }
         }
       }
       return;
