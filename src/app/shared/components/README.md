@@ -2,6 +2,8 @@
 
 Reusable UI components used across the application.
 
+For shared directives, see [`../directives/README.md`](../directives/README.md).
+
 ## Components
 
 ### ConnectionIndicatorComponent

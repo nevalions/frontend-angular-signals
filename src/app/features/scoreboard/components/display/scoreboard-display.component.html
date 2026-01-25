@@ -32,11 +32,11 @@
       <div class="team-info">
         <div class="team-name-block">
           @if (showGoalTeamA()) {
-            <div class="goal-indicator" [@breathing]="goalAnimationState()">TOUCHDOWN</div>
+            <div class="goal-indicator" [appAutoFitText]="true" [maxFontSize]="35" [@breathing]="goalAnimationState()">TOUCHDOWN</div>
           } @else if (showTimeoutTeamA()) {
-            <div class="timeout-indicator">TIMEOUT</div>
+            <div class="timeout-indicator" [appAutoFitText]="true" [maxFontSize]="35">TIMEOUT</div>
           } @else {
-            <span class="team-name">{{ teamAName() }}</span>
+            <span class="team-name" [appAutoFitText]="true" [maxFontSize]="32">{{ teamAName() }}</span>
           }
         </div>
 
@@ -71,11 +71,11 @@
       <div class="team-info">
         <div class="team-name-block">
           @if (showGoalTeamB()) {
-            <div class="goal-indicator" [@breathing]="goalAnimationState()">TOUCHDOWN</div>
+            <div class="goal-indicator" [appAutoFitText]="true" [maxFontSize]="35" [@breathing]="goalAnimationState()">TOUCHDOWN</div>
           } @else if (showTimeoutTeamB()) {
-            <div class="timeout-indicator">TIMEOUT</div>
+            <div class="timeout-indicator" [appAutoFitText]="true" [maxFontSize]="35">TIMEOUT</div>
           } @else {
-            <span class="team-name">{{ teamBName() }}</span>
+            <span class="team-name" [appAutoFitText]="true" [maxFontSize]="32">{{ teamBName() }}</span>
           }
         </div>
 

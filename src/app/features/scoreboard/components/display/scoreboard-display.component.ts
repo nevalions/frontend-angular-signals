@@ -16,13 +16,14 @@ import {
   fadeInOutAnimation,
   scoreChangeAnimation,
 } from '../../animations';
+import { AutoFitTextDirective } from '../../../../shared/directives/auto-fit-text.directive';
 
 export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
 
 @Component({
   selector: 'app-scoreboard-display',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SponsorLineComponent, MatchSponsorLineDisplayFlatComponent],
+  imports: [SponsorLineComponent, MatchSponsorLineDisplayFlatComponent, AutoFitTextDirective],
   templateUrl: './scoreboard-display.component.html',
   styleUrl: './scoreboard-display.component.less',
   animations: [scoreChangeAnimation, fadeInOutAnimation, breathingAnimation],

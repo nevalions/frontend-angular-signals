@@ -110,26 +110,27 @@
 }
 
 .team-name-block {
-  min-height: auto;
+  height: 35px; // Fixed height to prevent timeout dots from moving
   display: flex;
-  align-items: flex-start;
+  align-items: center; // Center vertically within fixed height
   justify-content: flex-end;
   width: 100%;
 }
 
 .team-name {
   font-family: 'Noto Sans Black', monospace;
-  font-size: 26px;
   text-transform: uppercase;
   white-space: nowrap;
-  text-overflow: ellipsis;
   padding-right: 5px;
+  line-height: 1; // Consistent line height to prevent vertical shifts
+  // Font size set by autoFitText directive (max 32px)
 }
 
 .goal-indicator,
 .timeout-indicator {
-  font-size: 35px;
   text-transform: uppercase;
+  line-height: 1; // Consistent line height to prevent vertical shifts
+  // Font size set by autoFitText directive (max 35px)
 }
 
 .goal-indicator {
@@ -340,9 +341,7 @@
     width: 200px;
   }
 
-  .team-name {
-    font-size: 22px;
-  }
+  // Font size handled by autoFitText directive
 }
 
 @media screen and (max-width: 730px) {
@@ -400,7 +399,7 @@
 
   .team-name {
     white-space: nowrap;
-    font-size: 18px;
+    // Font size handled by autoFitText directive
   }
 
   .score {
@@ -419,6 +418,6 @@
 
   .team-name {
     white-space: nowrap;
-    font-size: 16px;
+    // Font size handled by autoFitText directive
   }
 }
