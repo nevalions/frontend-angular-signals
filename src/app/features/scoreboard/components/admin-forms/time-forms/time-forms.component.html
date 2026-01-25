@@ -60,7 +60,7 @@
               [min]="0"
               [max]="99"
               label="Min"
-              [disabled]="gameClockLocked()"
+              [disabled]="inputsDisabled()"
               (valueChange)="onManualMinutesChange($event)"
             />
             <span class="time-separator">:</span>
@@ -69,7 +69,7 @@
               [min]="0"
               [max]="59"
               label="Sec"
-              [disabled]="gameClockLocked()"
+              [disabled]="inputsDisabled()"
               (valueChange)="onManualSecondsChange($event)"
             />
             <button
@@ -78,7 +78,7 @@
               appearance="secondary"
               size="s"
               (click)="onSetGameClock()"
-              [disabled]="!gameClockReady() || gameClockLocked()"
+              [disabled]="!gameClockReady() || inputsDisabled()"
             >
               Set
             </button>
@@ -91,7 +91,7 @@
               [min]="1"
               [max]="20"
               label="Quarter Length (min)"
-              [disabled]="gameClockLocked()"
+              [disabled]="inputsDisabled()"
               (valueChange)="onMaxMinutesChange($event)"
             />
         </div>

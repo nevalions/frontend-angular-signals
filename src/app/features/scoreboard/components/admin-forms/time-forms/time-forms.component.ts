@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputNumber } from '@taiga-ui/kit';
@@ -52,6 +52,7 @@ export class TimeFormsComponent {
   protected readonly manualMinutes = signal<number>(12);
   protected readonly manualSeconds = signal<number>(0);
   protected readonly maxMinutes = signal<number>(12);
+  protected readonly isEditingTime = signal<boolean>(false);
 
   // Computed values from game clock
   protected readonly gameClockSeconds = computed(() => {
@@ -69,6 +70,22 @@ export class TimeFormsComponent {
   protected readonly gameClockDisplay = computed(() => {
     const seconds = this.gameClockSeconds();
     return this.formatTime(seconds);
+  });
+
+  // Sync manual time inputs with websocket gameclock when not editing
+  private syncWithGameClock = effect(() => {
+    if (!this.isEditingTime()) {
+      const seconds = this.gameClockSeconds();
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      this.manualMinutes.set(mins);
+      this.manualSeconds.set(secs);
+    }
+  });
+
+  // Disable inputs when gameclock is running
+  protected readonly inputsDisabled = computed(() => {
+    return this.gameClockRunning() || this.gameClockLocked();
   });
 
   protected readonly currentMaxMinutes = computed(() => {
@@ -152,14 +169,18 @@ export class TimeFormsComponent {
    * Update manual minutes input
    */
   onManualMinutesChange(minutes: number): void {
+    this.isEditingTime.set(true);
     this.manualMinutes.set(minutes);
+    setTimeout(() => this.isEditingTime.set(false), 2000);
   }
 
   /**
    * Update manual seconds input
    */
   onManualSecondsChange(seconds: number): void {
+    this.isEditingTime.set(true);
     this.manualSeconds.set(seconds);
+    setTimeout(() => this.isEditingTime.set(false), 2000);
   }
 
   /**
