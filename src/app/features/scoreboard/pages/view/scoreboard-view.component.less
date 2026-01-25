@@ -1,3 +1,6 @@
+// Scoreboard View Page - Full HD (1920x1080) Layout
+// Matches legacy match-scoreboard-display component positioning
+
 .scoreboard-view-page {
   display: flex;
   align-items: center;
@@ -14,20 +17,25 @@
   text-align: center;
 }
 
-// Full HD optimized - position scoreboard at bottom of screen
+// Full HD optimized - position scoreboard at bottom matching legacy
+// Legacy: top: 930px in 1080px viewport = bottom: 150px
 app-scoreboard-display {
   position: fixed;
-  bottom: 0;
+  bottom: 150px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 1920px;
+  z-index: 10;
 }
 
+// Lower display layer (team stats, player stats, QB stats)
+// Legacy: top: 715px in 1080px viewport = bottom: 365px
+// Positioned above scoreboard
 .lower-display-layer {
   position: fixed;
   left: 50%;
-  bottom: 180px;
+  bottom: 365px;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -38,15 +46,12 @@ app-scoreboard-display {
   z-index: 20;
 }
 
-@media (max-width: 1200px) {
-  .lower-display-layer {
-    bottom: 160px;
-  }
-}
-
+// Sponsor layer
+// Legacy: top: 1000px in 1080px viewport = bottom: 80px
+// Positioned below scoreboard
 .sponsor-layer {
   position: fixed;
-  bottom: 12px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -55,4 +60,19 @@ app-scoreboard-display {
   align-items: center;
   z-index: 15;
   pointer-events: none;
+}
+
+// Responsive adjustments
+@media (max-width: 1200px) {
+  .lower-display-layer {
+    bottom: 300px;
+  }
+
+  app-scoreboard-display {
+    bottom: 120px;
+  }
+
+  .sponsor-layer {
+    bottom: 60px;
+  }
 }
