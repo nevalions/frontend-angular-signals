@@ -28,6 +28,23 @@
   padding: 0;
 }
 
+.buttons-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.control-button-compact {
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  
+  tui-icon {
+    font-size: 0.875rem;
+  }
+}
+
 .number-input {
   flex: 1;
   min-width: 6rem;
@@ -43,6 +60,21 @@
   // Ensure Taiga UI textfield centers content
   ::ng-deep tui-textfield {
     text-align: center;
+  }
+}
+
+// Compact layout adjustments
+.compact {
+  .controls {
+    gap: 0.5rem;
+  }
+  
+  .number-input {
+    min-width: 4rem;
+    
+    input {
+      font-size: 1.125rem;
+    }
   }
 }
 

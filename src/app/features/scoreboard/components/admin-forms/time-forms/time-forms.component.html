@@ -5,6 +5,33 @@
       <div class="time-section game-clock-section">
         <h4 class="section-title">Game Clock</h4>
 
+        <!-- Quarter Length at top -->
+        <div class="max-time-setting">
+          <span class="setting-label">Quarter Length (min)</span>
+          <div class="max-time-row">
+            <app-input-number-with-buttons
+              [value]="currentMaxMinutes()"
+              [min]="1"
+              [max]="20"
+              size="m"
+              layout="compact"
+              [disabled]="inputsDisabled()"
+              (valueChange)="onMaxMinutesChange($event)"
+            />
+            <button
+              tuiButton
+              type="button"
+              appearance="primary"
+              size="m"
+              class="save-button"
+              (click)="onSaveQuarterLength()"
+              [disabled]="!gameClockReady() || inputsDisabled()"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+
         <div class="clock-display">
           <span class="clock-value">{{ gameClockDisplay() }}</span>
           <span class="clock-status" [class.running]="gameClockRunning()">
@@ -53,47 +80,44 @@
         </div>
 
         <div class="manual-time-entry">
-          <span class="entry-label">Set Time:</span>
-          <div class="time-inputs">
-            <app-input-number-with-buttons
-              [value]="manualMinutes()"
-              [min]="0"
-              [max]="99"
-              label="Min"
-              [disabled]="inputsDisabled()"
-              (valueChange)="onManualMinutesChange($event)"
-            />
-            <span class="time-separator">:</span>
-            <app-input-number-with-buttons
-              [value]="manualSeconds()"
-              [min]="0"
-              [max]="59"
-              label="Sec"
-              [disabled]="inputsDisabled()"
-              (valueChange)="onManualSecondsChange($event)"
-            />
+          <span class="setting-label">Set Time</span>
+          <div class="time-inputs-compact">
+            <div class="time-input-group">
+              <span class="input-label">Min</span>
+              <app-input-number-with-buttons
+                [value]="manualMinutes()"
+                [min]="0"
+                [max]="99"
+                size="m"
+                layout="compact"
+                [disabled]="inputsDisabled()"
+                (valueChange)="onManualMinutesChange($event)"
+              />
+            </div>
+            <div class="time-input-group">
+              <span class="input-label">Sec</span>
+              <app-input-number-with-buttons
+                [value]="manualSeconds()"
+                [min]="0"
+                [max]="59"
+                size="m"
+                layout="compact"
+                [disabled]="inputsDisabled()"
+                (valueChange)="onManualSecondsChange($event)"
+              />
+            </div>
             <button
               tuiButton
               type="button"
-              appearance="secondary"
-              size="s"
+              appearance="primary"
+              size="m"
+              class="save-button"
               (click)="onSetGameClock()"
               [disabled]="!gameClockReady() || inputsDisabled()"
             >
               Set
             </button>
           </div>
-        </div>
-
-        <div class="max-time-setting">
-          <app-input-number-with-buttons
-              [value]="currentMaxMinutes()"
-              [min]="1"
-              [max]="20"
-              label="Quarter Length (min)"
-              [disabled]="inputsDisabled()"
-              (valueChange)="onMaxMinutesChange($event)"
-            />
         </div>
       </div>
 

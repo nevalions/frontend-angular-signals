@@ -1,20 +1,47 @@
-<div class="input-number-with-buttons" [class.disabled]="disabled()">
+<div class="input-number-with-buttons" [class.disabled]="disabled()" [class.compact]="layout() === 'compact'">
   @if (label()) {
     <label class="label">{{ label() }}</label>
   }
 
   <div class="controls">
-    <button
-      tuiButton
-      type="button"
-      appearance="secondary"
-      [size]="size()"
-      class="control-button"
-      [disabled]="!canDecrement()"
-      (click)="decrement()"
-    >
-      <tui-icon icon="@tui.minus" />
-    </button>
+    @if (layout() === 'compact') {
+      <div class="buttons-vertical">
+        <button
+          tuiButton
+          type="button"
+          appearance="secondary"
+          [size]="size()"
+          class="control-button control-button-compact"
+          [disabled]="!canIncrement()"
+          (click)="increment()"
+        >
+          <tui-icon icon="@tui.plus" />
+        </button>
+        <button
+          tuiButton
+          type="button"
+          appearance="secondary"
+          [size]="size()"
+          class="control-button control-button-compact"
+          [disabled]="!canDecrement()"
+          (click)="decrement()"
+        >
+          <tui-icon icon="@tui.minus" />
+        </button>
+      </div>
+    } @else {
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        [size]="size()"
+        class="control-button"
+        [disabled]="!canDecrement()"
+        (click)="decrement()"
+      >
+        <tui-icon icon="@tui.minus" />
+      </button>
+    }
 
     <tui-textfield class="number-input">
       <input
@@ -27,16 +54,18 @@
       />
     </tui-textfield>
 
-    <button
-      tuiButton
-      type="button"
-      appearance="secondary"
-      [size]="size()"
-      class="control-button"
-      [disabled]="!canIncrement()"
-      (click)="increment()"
-    >
-      <tui-icon icon="@tui.plus" />
-    </button>
+    @if (layout() === 'horizontal') {
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        [size]="size()"
+        class="control-button"
+        [disabled]="!canIncrement()"
+        (click)="increment()"
+      >
+        <tui-icon icon="@tui.plus" />
+      </button>
+    }
   </div>
 </div>

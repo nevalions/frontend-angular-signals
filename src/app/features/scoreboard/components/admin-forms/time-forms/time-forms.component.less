@@ -76,33 +76,64 @@
 .manual-time-entry {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-top: 12px;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
   border-top: 1px solid var(--tui-border-normal);
 }
 
-.entry-label {
+.time-inputs-compact {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.input-label {
   font-size: 12px;
   font-weight: 600;
   color: var(--tui-text-secondary);
-}
-
-.time-inputs {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.time-separator {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--tui-text-primary);
-  margin-bottom: 8px;
+  text-transform: uppercase;
 }
 
 .max-time-setting {
-  padding-top: 12px;
-  border-top: 1px solid var(--tui-border-normal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--tui-border-normal);
+}
+
+.max-time-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  justify-content: center;
+}
+
+.setting-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.save-button {
+  min-width: 80px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .play-clock-buttons {
@@ -112,10 +143,39 @@
 }
 
 // Responsive adjustments
-@media (max-width: 600px) {
-  .time-inputs {
-    flex-wrap: wrap;
-    justify-content: center;
+@media (max-width: 768px) {
+  .time-section {
+    padding: 12px 8px;
+  }
+
+  .time-inputs-compact {
+    gap: 6px;
+  }
+
+  .time-input-group {
+    min-width: 70px;
+  }
+
+  .input-label {
+    font-size: 11px;
+  }
+
+  .max-time-row {
+    gap: 6px;
+  }
+
+  .max-time-setting,
+  .manual-time-entry {
+    gap: 8px;
+  }
+
+  .setting-label {
+    font-size: 11px;
+  }
+
+  .save-button {
+    min-width: 70px;
+    font-size: 0.875rem;
   }
 
   .clock-controls,

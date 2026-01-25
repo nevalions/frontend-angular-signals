@@ -158,6 +158,13 @@ export class TimeFormsComponent {
    */
   onMaxMinutesChange(minutes: number): void {
     this.maxMinutes.set(minutes);
+  }
+
+  /**
+   * Save quarter length to backend
+   */
+  onSaveQuarterLength(): void {
+    const minutes = this.currentMaxMinutes();
     const maxSeconds = minutes * 60;
     this.gameClockAction.emit({
       action: 'update',

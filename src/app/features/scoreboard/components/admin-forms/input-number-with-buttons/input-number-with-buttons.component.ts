@@ -33,6 +33,9 @@ export class InputNumberWithButtonsComponent {
   /** Button size */
   size = input<'s' | 'm' | 'l'>('s');
 
+  /** Layout mode - 'horizontal' (default) or 'compact' (vertical buttons) */
+  layout = input<'horizontal' | 'compact'>('horizontal');
+
   /** Emits the new value when changed */
   valueChange = output<number>();
 
