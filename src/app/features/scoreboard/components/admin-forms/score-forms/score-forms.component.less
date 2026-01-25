@@ -96,6 +96,58 @@
   width: 100%;
 }
 
+.td-toggle-button {
+  font-weight: 700;
+  min-width: 80px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-width: 2px;
+  transition: all 0.2s ease;
+
+  .td-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .td-label {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  // Active state styling
+  &.td-active {
+    box-shadow: 0 0 0 3px var(--tui-background-accent-1);
+    transform: scale(1.05);
+    
+    .td-icon {
+      animation: touchdown-pulse 0.6s ease-in-out;
+    }
+  }
+
+  // Hover effect
+  &:hover:not([disabled]) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not([disabled]) {
+    transform: translateY(0);
+  }
+}
+
+@keyframes touchdown-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
 // Responsive adjustments
 @media (max-width: 768px) {
   .score-forms {

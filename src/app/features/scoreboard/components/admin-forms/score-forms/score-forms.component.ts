@@ -27,6 +27,10 @@ export class ScoreFormsComponent {
   protected readonly pendingScoreTeamA = signal(0);
   protected readonly pendingScoreTeamB = signal(0);
 
+  // Toggle state for touchdown called
+  protected readonly touchdownCalledTeamA = signal(false);
+  protected readonly touchdownCalledTeamB = signal(false);
+
   // Check if there are unsaved changes
   protected readonly hasChanges = computed(() => {
     const data = this.matchData();
@@ -86,6 +90,17 @@ export class ScoreFormsComponent {
 
     // Apply immediately without waiting for save
     this.scoreChange.emit({ team, score: newScore });
+  }
+
+  /**
+   * Toggle touchdown called for a team
+   */
+  toggleTouchdownCalled(team: 'a' | 'b'): void {
+    if (team === 'a') {
+      this.touchdownCalledTeamA.update(value => !value);
+    } else {
+      this.touchdownCalledTeamB.update(value => !value);
+    }
   }
 
   /**

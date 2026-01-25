@@ -49,6 +49,19 @@
         <div class="quick-score-row">
           <span class="row-label">Home Team</span>
           <div class="quick-buttons">
+            <button
+              tuiButton
+              type="button"
+              [appearance]="touchdownCalledTeamA() ? 'accent' : 'outline'"
+              size="l"
+              title="Touchdown Called"
+              class="td-toggle-button"
+              [class.td-active]="touchdownCalledTeamA()"
+              (click)="toggleTouchdownCalled('a')"
+            >
+              <span class="td-icon">🏈</span>
+              <span class="td-label">TD</span>
+            </button>
             @for (btn of quickScoreButtons; track btn.label) {
               <button
                 tuiButton
@@ -67,6 +80,19 @@
         <div class="quick-score-row">
           <span class="row-label">Away Team</span>
           <div class="quick-buttons">
+            <button
+              tuiButton
+              type="button"
+              [appearance]="touchdownCalledTeamB() ? 'accent' : 'outline'"
+              size="l"
+              title="Touchdown Called"
+              class="td-toggle-button"
+              [class.td-active]="touchdownCalledTeamB()"
+              (click)="toggleTouchdownCalled('b')"
+            >
+              <span class="td-icon">🏈</span>
+              <span class="td-label">TD</span>
+            </button>
             @for (btn of quickScoreButtons; track btn.label) {
               <button
                 tuiButton
