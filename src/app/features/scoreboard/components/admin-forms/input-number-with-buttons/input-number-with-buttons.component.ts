@@ -30,6 +30,9 @@ export class InputNumberWithButtonsComponent {
   /** Disabled state */
   disabled = input(false);
 
+  /** Button size */
+  size = input<'s' | 'm' | 'l'>('s');
+
   /** Emits the new value when changed */
   valueChange = output<number>();
 

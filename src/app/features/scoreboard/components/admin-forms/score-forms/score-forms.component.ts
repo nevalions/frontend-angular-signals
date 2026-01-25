@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { TuiButton } from '@taiga-ui/core';
 import { MatchData } from '../../../../matches/models/match-data.model';
 import { InputNumberWithButtonsComponent } from '../input-number-with-buttons/input-number-with-buttons.component';
@@ -23,9 +23,19 @@ export class ScoreFormsComponent {
   /** Emits when score changes */
   scoreChange = output<ScoreChangeEvent>();
 
-  // Current scores computed from match data
-  protected readonly scoreTeamA = computed(() => this.matchData()?.score_team_a ?? 0);
-  protected readonly scoreTeamB = computed(() => this.matchData()?.score_team_b ?? 0);
+  // Local state for pending scores
+  protected readonly pendingScoreTeamA = signal(0);
+  protected readonly pendingScoreTeamB = signal(0);
+
+  // Check if there are unsaved changes
+  protected readonly hasChanges = computed(() => {
+    const data = this.matchData();
+    if (!data) return false;
+    return (
+      this.pendingScoreTeamA() !== (data.score_team_a ?? 0) ||
+      this.pendingScoreTeamB() !== (data.score_team_b ?? 0)
+    );
+  });
 
   // Quick score button configurations
   protected readonly quickScoreButtons = [
@@ -36,26 +46,61 @@ export class ScoreFormsComponent {
     { label: '-1', value: -1, title: 'Remove 1 Point' },
   ];
 
+  constructor() {
+    // Sync local state when match data changes
+    effect(() => {
+      const data = this.matchData();
+      if (data) {
+        this.pendingScoreTeamA.set(data.score_team_a ?? 0);
+        this.pendingScoreTeamB.set(data.score_team_b ?? 0);
+      }
+    });
+  }
+
   /**
    * Handle score input change for team A
    */
   onScoreAChange(newScore: number): void {
-    this.scoreChange.emit({ team: 'a', score: newScore });
+    this.pendingScoreTeamA.set(newScore);
   }
 
   /**
    * Handle score input change for team B
    */
   onScoreBChange(newScore: number): void {
-    this.scoreChange.emit({ team: 'b', score: newScore });
+    this.pendingScoreTeamB.set(newScore);
   }
 
   /**
-   * Handle quick score button click
+   * Handle quick score button click - applies immediately without save
    */
   onQuickScore(team: 'a' | 'b', points: number): void {
-    const currentScore = team === 'a' ? this.scoreTeamA() : this.scoreTeamB();
+    const currentScore = team === 'a' ? this.pendingScoreTeamA() : this.pendingScoreTeamB();
     const newScore = Math.max(0, currentScore + points);
+    
+    if (team === 'a') {
+      this.pendingScoreTeamA.set(newScore);
+    } else {
+      this.pendingScoreTeamB.set(newScore);
+    }
+
+    // Apply immediately without waiting for save
     this.scoreChange.emit({ team, score: newScore });
+  }
+
+  /**
+   * Save the pending scores
+   */
+  onSave(): void {
+    const currentScoreA = this.matchData()?.score_team_a ?? 0;
+    const currentScoreB = this.matchData()?.score_team_b ?? 0;
+
+    // Only emit if values actually changed
+    if (this.pendingScoreTeamA() !== currentScoreA) {
+      this.scoreChange.emit({ team: 'a', score: this.pendingScoreTeamA() });
+    }
+    if (this.pendingScoreTeamB() !== currentScoreB) {
+      this.scoreChange.emit({ team: 'b', score: this.pendingScoreTeamB() });
+    }
   }
 }

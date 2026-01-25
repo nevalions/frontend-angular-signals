@@ -5,83 +5,159 @@
   padding: 16px 0;
 }
 
+// Score Inputs and Save Section
+.score-inputs-and-save {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
 // Score Inputs Section
 .score-inputs-section {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 16px;
+  gap: 20px;
+  flex: 1;
+  min-width: fit-content;
 }
 
 .team-score {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  flex: 1;
+  max-width: 250px;
+  min-width: 180px;
 }
 
 .team-label {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--tui-text-secondary);
   text-transform: uppercase;
 }
 
 .score-separator {
-  font-size: 32px;
+  font-size: 40px;
   font-weight: bold;
   color: var(--tui-text-primary);
   align-self: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+// Save Section
+.save-section {
+  display: flex;
+  align-items: flex-end;
+}
+
+.save-button {
+  min-width: 120px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 // Quick Score Buttons Section
 .quick-score-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   border-top: 1px solid var(--tui-border-normal);
-  padding-top: 16px;
+  padding-top: 20px;
+  align-items: center;
 }
 
 .quick-score-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  width: 100%;
+  max-width: 600px;
 }
 
 .row-label {
-  width: 100px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--tui-text-secondary);
   text-transform: uppercase;
+  text-align: center;
 }
 
 .quick-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
 }
 
 // Responsive adjustments
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .score-forms {
+    gap: 20px;
+  }
+
+  .score-inputs-and-save {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
   .score-inputs-section {
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .team-score {
+    max-width: 100%;
+    width: 100%;
+    min-width: auto;
+  }
+
+  .team-label {
+    font-size: 15px;
   }
 
   .score-separator {
     display: none;
   }
 
+  .save-section {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .save-button {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .quick-score-section {
+    gap: 18px;
+    padding-top: 18px;
+  }
+
   .quick-score-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    gap: 12px;
+    max-width: 100%;
   }
 
   .row-label {
-    width: auto;
+    font-size: 15px;
+  }
+
+  .quick-buttons {
+    gap: 10px;
+
+    button {
+      flex: 1;
+      min-width: 70px;
+    }
   }
 }

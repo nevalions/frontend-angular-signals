@@ -8,7 +8,7 @@
       tuiButton
       type="button"
       appearance="secondary"
-      size="s"
+      [size]="size()"
       class="control-button"
       [disabled]="!canDecrement()"
       (click)="decrement()"
@@ -31,7 +31,7 @@
       tuiButton
       type="button"
       appearance="secondary"
-      size="s"
+      [size]="size()"
       class="control-button"
       [disabled]="!canIncrement()"
       (click)="increment()"

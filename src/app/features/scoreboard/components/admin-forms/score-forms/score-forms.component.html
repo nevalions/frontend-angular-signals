@@ -1,30 +1,46 @@
 <app-collapsible-section title="Score Controls" sectionKey="scoreboard-score">
   <ng-template>
     <div class="score-forms">
-      <!-- Score Inputs Section -->
-      <div class="score-inputs-section">
-        <div class="team-score team-a">
-          <span class="team-label">Home Team</span>
-          <app-input-number-with-buttons
-            [value]="scoreTeamA()"
-            [min]="0"
-            [max]="199"
-            label="Score"
-            (valueChange)="onScoreAChange($event)"
-          />
+      <!-- Score Inputs and Save Section -->
+      <div class="score-inputs-and-save">
+        <div class="score-inputs-section">
+          <div class="team-score team-a">
+            <span class="team-label">Home Team</span>
+            <app-input-number-with-buttons
+              [value]="pendingScoreTeamA()"
+              [min]="0"
+              [max]="199"
+              size="l"
+              (valueChange)="onScoreAChange($event)"
+            />
+          </div>
+
+          <div class="score-separator">:</div>
+
+          <div class="team-score team-b">
+            <span class="team-label">Away Team</span>
+            <app-input-number-with-buttons
+              [value]="pendingScoreTeamB()"
+              [min]="0"
+              [max]="199"
+              size="l"
+              (valueChange)="onScoreBChange($event)"
+            />
+          </div>
         </div>
 
-        <div class="score-separator">:</div>
-
-        <div class="team-score team-b">
-          <span class="team-label">Away Team</span>
-          <app-input-number-with-buttons
-            [value]="scoreTeamB()"
-            [min]="0"
-            [max]="199"
-            label="Score"
-            (valueChange)="onScoreBChange($event)"
-          />
+        <div class="save-section">
+          <button
+            tuiButton
+            type="button"
+            appearance="primary"
+            size="l"
+            class="save-button"
+            [disabled]="!hasChanges()"
+            (click)="onSave()"
+          >
+            Save
+          </button>
         </div>
       </div>
 
@@ -38,7 +54,7 @@
                 tuiButton
                 type="button"
                 appearance="secondary"
-                size="s"
+                size="l"
                 [title]="btn.title"
                 (click)="onQuickScore('a', btn.value)"
               >
@@ -56,7 +72,7 @@
                 tuiButton
                 type="button"
                 appearance="secondary"
-                size="s"
+                size="l"
                 [title]="btn.title"
                 (click)="onQuickScore('b', btn.value)"
               >
