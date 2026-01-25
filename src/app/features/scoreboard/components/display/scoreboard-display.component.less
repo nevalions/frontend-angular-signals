@@ -104,8 +104,9 @@
 .team-info {
   padding-top: 10px;
   width: 250px;
-  display: grid;
-  justify-content: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; // Align all children to the right
 }
 
 .team-name-block {
@@ -113,6 +114,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
+  width: 100%;
 }
 
 .team-name {
@@ -158,6 +160,8 @@
   font-family: 'Noto Sans Black', monospace;
   display: flex;
   padding: 5px;
+  justify-content: flex-end; // Always align to the right
+  width: 100%; // Take full width to ensure consistent positioning
 }
 
 .timeout-dot {
