@@ -19,6 +19,7 @@ import { TimeoutFormsComponent, TimeoutChangeEvent } from '../../components/admi
 import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
 import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
 import { ConnectionIndicatorComponent } from '../../../../shared/components/connection-indicator/connection-indicator.component';
+import { CollapsibleSectionService } from '../../components/admin-forms/collapsible-section/collapsible-section.service';
 
 @Component({
   selector: 'app-scoreboard-admin',
@@ -45,6 +46,7 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   private scoreboardStore = inject(ScoreboardStoreService);
   private clockService = inject(ScoreboardClockService);
   private wsService = inject(WebSocketService);
+  private readonly collapsibleSectionService = inject(CollapsibleSectionService);
 
   matchId = createNumberParamSignal(this.route, 'matchId');
 
@@ -306,6 +308,23 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
 
   toggleHideAllForms(): void {
     this.hideAllForms.update((v) => !v);
+    const targetState = !this.hideAllForms();
+
+    const sectionKeys = [
+      'scoreboard-score',
+      'scoreboard-qtr',
+      'scoreboard-time',
+      'scoreboard-down-distance',
+      'scoreboard-timeout',
+      'scoreboard-settings',
+      'scoreboard-events',
+    ] as const;
+
+    sectionKeys.forEach((key) => {
+      localStorage.setItem(key, String(targetState));
+    });
+
+    this.collapsibleSectionService.setGlobalExpanded(targetState);
   }
 
   onEventCreate(event: FootballEventCreate): void {

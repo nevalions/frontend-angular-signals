@@ -64,12 +64,11 @@
             (click)="toggleHideAllForms()"
           >
             <tui-icon [icon]="hideAllForms() ? '@tui.eye' : '@tui.eye-off'" />
-            {{ hideAllForms() ? 'Show All Forms' : 'Hide All Forms' }}
+            {{ hideAllForms() ? 'Expand All' : 'Collapse All' }}
           </button>
         </div>
 
-        @if (!hideAllForms()) {
-          <div class="forms-grid">
+        <div class="forms-grid">
             <app-score-forms
               [matchData]="data()?.match_data ?? null"
               (scoreChange)="onScoreChange($event)"
@@ -115,7 +114,6 @@
               (eventDelete)="onEventDelete($event)"
             />
           </div>
-        }
       </section>
     </div>
   }

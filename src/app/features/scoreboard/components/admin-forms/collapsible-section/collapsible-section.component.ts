@@ -5,11 +5,13 @@ import {
   computed,
   contentChild,
   effect,
+  inject,
   input,
   signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
+import { CollapsibleSectionService } from './collapsible-section.service';
 
 @Component({
   selector: 'app-collapsible-section',
@@ -25,7 +27,16 @@ export class CollapsibleSectionComponent {
 
   contentTemplate = contentChild<TemplateRef<unknown>>(TemplateRef);
 
-  readonly expanded = signal(true);
+  private readonly collapsibleSectionService = inject(CollapsibleSectionService);
+
+  private readonly localExpanded = signal(true);
+  readonly expanded = computed(() => {
+    const globalExpanded = this.collapsibleSectionService.globalExpanded();
+    if (globalExpanded !== null) {
+      return globalExpanded;
+    }
+    return this.localExpanded();
+  });
   readonly toggleIcon = computed(() => (this.expanded() ? '@tui.eye' : '@tui.eye-off'));
   readonly toggleLabel = computed(() =>
     this.expanded() ? 'Hide section content' : 'Show section content',
@@ -34,22 +45,23 @@ export class CollapsibleSectionComponent {
   constructor() {
     effect(() => {
       const key = this.sectionKey();
+      this.collapsibleSectionService.version();
       const storedValue = this.readStoredValue(key);
       const nextValue = storedValue ?? this.initiallyExpanded();
 
-      this.expanded.set(nextValue);
+      this.localExpanded.set(nextValue);
     });
 
     effect(() => {
       const key = this.sectionKey();
-      const value = this.expanded();
+      const value = this.localExpanded();
 
       this.persistValue(key, value);
     });
   }
 
   toggle(): void {
-    this.expanded.update((value) => !value);
+    this.localExpanded.update((value) => !value);
   }
 
   private readStoredValue(key: string): boolean | null {
