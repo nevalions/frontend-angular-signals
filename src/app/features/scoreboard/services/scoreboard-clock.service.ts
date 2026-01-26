@@ -12,6 +12,14 @@ export class ScoreboardClockService implements OnDestroy {
   private scoreboardStore = inject(ScoreboardStoreService);
   private wsService = inject(WebSocketService);
 
+  private readonly enableDebugLogging = false;
+
+  private debugLog(...args: unknown[]): void {
+    if (this.enableDebugLogging) {
+      console.log(...args);
+    }
+  }
+
   readonly gameClock = signal<GameClock | null>(null);
   readonly playClock = signal<PlayClock | null>(null);
 
@@ -39,7 +47,7 @@ export class ScoreboardClockService implements OnDestroy {
         // Log only when value changes significantly (every second)
         const current = this.predictedPlayClock();
         if (current !== value) {
-          console.log('[ClockService] predictedPlayClock signal updated:', current, '->', value);
+          this.debugLog('[ClockService] predictedPlayClock signal updated:', current, '->', value);
         }
         this.predictedPlayClock.set(value);
       }
@@ -57,7 +65,7 @@ export class ScoreboardClockService implements OnDestroy {
     
     if (current && clock.version != null && current.version != null 
         && clock.version < current.version) {
-      console.log('[ClockService] Skipping older version:', clock.version);
+      this.debugLog('[ClockService] Skipping older version:', clock.version);
       return;
     }
 
@@ -82,7 +90,7 @@ export class ScoreboardClockService implements OnDestroy {
     
     if (current && clock.version != null && current.version != null 
         && clock.version < current.version) {
-      console.log('[ClockService] Skipping older version:', clock.version);
+      this.debugLog('[ClockService] Skipping older version:', clock.version);
       return;
     }
 
@@ -113,21 +121,21 @@ export class ScoreboardClockService implements OnDestroy {
 
   startGameClock(): void {
     const gc = this.gameClock();
-    console.log('[ClockService][ACTION] startGameClock called, current gc:', JSON.stringify(gc, null, 2));
+    this.debugLog('[ClockService][ACTION] startGameClock called, current gc:', JSON.stringify(gc, null, 2));
     if (!gc) {
-      console.log('[ClockService][ACTION] startGameClock ABORTED - no gameClock');
+      this.debugLog('[ClockService][ACTION] startGameClock ABORTED - no gameClock');
       return;
     }
 
     this.applyGameClockUpdate({ gameclock_status: 'running' });
-    console.log('[ClockService][ACTION] startGameClock - calling API for gc.id:', gc.id);
+    this.debugLog('[ClockService][ACTION] startGameClock - calling API for gc.id:', gc.id);
     this.scoreboardStore.startGameClock(gc.id).subscribe({
       next: (updated) => {
-        console.log('[ClockService][ACTION] startGameClock API response:', JSON.stringify(updated, null, 2));
+        this.debugLog('[ClockService][ACTION] startGameClock API response:', JSON.stringify(updated, null, 2));
         const current = this.gameClock();
         if (current) {
           const merged = this.mergeGameClock(current, updated);
-          console.log('[ClockService][ACTION] startGameClock merged result:', JSON.stringify(merged, null, 2));
+          this.debugLog('[ClockService][ACTION] startGameClock merged result:', JSON.stringify(merged, null, 2));
           this.gameClock.set(merged);
         }
       },
@@ -152,9 +160,9 @@ export class ScoreboardClockService implements OnDestroy {
 
   resetGameClock(): void {
     const gc = this.gameClock();
-    console.log('[ClockService][ACTION] resetGameClock called, current gc:', JSON.stringify(gc, null, 2));
+    this.debugLog('[ClockService][ACTION] resetGameClock called, current gc:', JSON.stringify(gc, null, 2));
     if (!gc) {
-      console.log('[ClockService][ACTION] resetGameClock ABORTED - no gameClock');
+      this.debugLog('[ClockService][ACTION] resetGameClock ABORTED - no gameClock');
       return;
     }
 
@@ -162,20 +170,20 @@ export class ScoreboardClockService implements OnDestroy {
     if (gc.gameclock_max == null) {
       console.warn('[ClockService][ACTION] resetGameClock - gameclock_max is null/undefined, using fallback 720 seconds (12 min). Backend should provide gameclock_max based on sport configuration.');
     }
-    console.log('[ClockService][ACTION] resetGameClock - maxSeconds:', maxSeconds);
+    this.debugLog('[ClockService][ACTION] resetGameClock - maxSeconds:', maxSeconds);
     this.applyGameClockUpdate({
       gameclock_status: 'stopped',
       gameclock: maxSeconds,
     });
 
-    console.log('[ClockService][ACTION] resetGameClock - calling API for gc.id:', gc.id, 'maxSeconds:', maxSeconds);
+    this.debugLog('[ClockService][ACTION] resetGameClock - calling API for gc.id:', gc.id, 'maxSeconds:', maxSeconds);
     this.scoreboardStore.resetGameClock(gc.id, maxSeconds).subscribe({
       next: (updated) => {
-        console.log('[ClockService][ACTION] resetGameClock API response:', JSON.stringify(updated, null, 2));
+        this.debugLog('[ClockService][ACTION] resetGameClock API response:', JSON.stringify(updated, null, 2));
         const current = this.gameClock();
         if (current) {
           const merged = this.mergeGameClock(current, updated);
-          console.log('[ClockService][ACTION] resetGameClock merged result:', JSON.stringify(merged, null, 2));
+          this.debugLog('[ClockService][ACTION] resetGameClock merged result:', JSON.stringify(merged, null, 2));
           this.gameClock.set(merged);
         }
       },
@@ -202,9 +210,9 @@ export class ScoreboardClockService implements OnDestroy {
 
   startPlayClock(seconds: number): void {
     const pc = this.playClock();
-    console.log('[ClockService][ACTION] startPlayClock called, seconds:', seconds, 'current pc:', JSON.stringify(pc, null, 2));
+    this.debugLog('[ClockService][ACTION] startPlayClock called, seconds:', seconds, 'current pc:', JSON.stringify(pc, null, 2));
     if (!pc || pc.playclock_status === 'running') {
-      console.log('[ClockService][ACTION] startPlayClock ABORTED - no playClock or already running');
+      this.debugLog('[ClockService][ACTION] startPlayClock ABORTED - no playClock or already running');
       return;
     }
 
@@ -213,25 +221,25 @@ export class ScoreboardClockService implements OnDestroy {
       playclock: seconds,
     });
 
-    console.log('[ClockService][ACTION] startPlayClock - calling API for pc.id:', pc.id, 'seconds:', seconds);
+    this.debugLog('[ClockService][ACTION] startPlayClock - calling API for pc.id:', pc.id, 'seconds:', seconds);
     this.scoreboardStore.startPlayClock(pc.id, seconds).subscribe({
       next: (updated) => {
-        console.log('[ClockService][ACTION] startPlayClock API response:', JSON.stringify(updated, null, 2));
+        this.debugLog('[ClockService][ACTION] startPlayClock API response:', JSON.stringify(updated, null, 2));
         const current = this.playClock();
         if (current) {
           const merged = this.mergePlayClock(current, updated);
-          console.log('[ClockService][ACTION] startPlayClock merged result:', JSON.stringify(merged, null, 2));
+          this.debugLog('[ClockService][ACTION] startPlayClock merged result:', JSON.stringify(merged, null, 2));
           this.playClock.set(merged);
 
           // Sync predictor with API response data (WebSocket may be delayed or missing fields)
-          console.log('[ClockService][ACTION] startPlayClock - checking predictor sync conditions:', {
+          this.debugLog('[ClockService][ACTION] startPlayClock - checking predictor sync conditions:', {
             started_at_ms: merged.started_at_ms,
             playclock_status: merged.playclock_status,
             server_time_ms: merged.server_time_ms,
           });
           if (merged.started_at_ms && merged.playclock_status === 'running') {
             const rtt = this.wsService.lastRtt() ?? 100;
-            console.log('[ClockService][ACTION] startPlayClock - syncing predictor with API data:', {
+            this.debugLog('[ClockService][ACTION] startPlayClock - syncing predictor with API data:', {
               gameclock: merged.playclock ?? 0,
               gameclock_max: merged.playclock_max ?? seconds,
               started_at_ms: merged.started_at_ms,
@@ -248,7 +256,7 @@ export class ScoreboardClockService implements OnDestroy {
               rttMs: rtt,
             });
           } else {
-            console.log('[ClockService][ACTION] startPlayClock - NOT syncing predictor (conditions not met)');
+            this.debugLog('[ClockService][ACTION] startPlayClock - NOT syncing predictor (conditions not met)');
           }
         }
       },
@@ -258,9 +266,9 @@ export class ScoreboardClockService implements OnDestroy {
 
   resetPlayClock(): void {
     const pc = this.playClock();
-    console.log('[ClockService][ACTION] resetPlayClock called, current pc:', JSON.stringify(pc, null, 2));
+    this.debugLog('[ClockService][ACTION] resetPlayClock called, current pc:', JSON.stringify(pc, null, 2));
     if (!pc) {
-      console.log('[ClockService][ACTION] resetPlayClock ABORTED - no playClock');
+      this.debugLog('[ClockService][ACTION] resetPlayClock ABORTED - no playClock');
       return;
     }
 
@@ -269,14 +277,14 @@ export class ScoreboardClockService implements OnDestroy {
       playclock: 0,
     });
 
-    console.log('[ClockService][ACTION] resetPlayClock - calling API for pc.id:', pc.id);
+    this.debugLog('[ClockService][ACTION] resetPlayClock - calling API for pc.id:', pc.id);
     this.scoreboardStore.resetPlayClock(pc.id).subscribe({
       next: (updated) => {
-        console.log('[ClockService][ACTION] resetPlayClock API response:', JSON.stringify(updated, null, 2));
+        this.debugLog('[ClockService][ACTION] resetPlayClock API response:', JSON.stringify(updated, null, 2));
         const current = this.playClock();
         if (current) {
           const merged = this.mergePlayClock(current, updated);
-          console.log('[ClockService][ACTION] resetPlayClock merged result:', JSON.stringify(merged, null, 2));
+          this.debugLog('[ClockService][ACTION] resetPlayClock merged result:', JSON.stringify(merged, null, 2));
           this.playClock.set(merged);
         }
       },

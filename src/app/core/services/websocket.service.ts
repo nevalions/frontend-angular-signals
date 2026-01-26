@@ -62,6 +62,8 @@ export interface WebSocketMessage {
 export class WebSocketService {
   private destroyRef = inject(DestroyRef);
 
+  private readonly enableDebugLogging = false;
+
   // WebSocket subject and state
   private socket$: WebSocketSubject<WebSocketMessage> | null = null;
   private currentMatchId: number | null = null;
@@ -113,13 +115,21 @@ export class WebSocketService {
   }
 
   private log(...args: unknown[]): void {
-    if (!environment.production) {
+    if (this.enableDebugLogging && !environment.production) {
       console.log('[WebSocket]', new Date().toISOString(), ...args);
     }
   }
 
+  private debugLog(...args: unknown[]): void {
+    if (this.enableDebugLogging) {
+      console.log(...args);
+    }
+  }
+
   private logClock(type: 'gameclock' | 'playclock', action: string, data: unknown): void {
-    console.log(`[WebSocket][${type.toUpperCase()}]`, new Date().toISOString(), action, JSON.stringify(data, null, 2));
+    if (this.enableDebugLogging) {
+      console.log(`[WebSocket][${type.toUpperCase()}]`, new Date().toISOString(), action, JSON.stringify(data, null, 2));
+    }
   }
 
   private warn(...args: unknown[]): void {
@@ -263,11 +273,11 @@ export class WebSocketService {
     this.log('Message received:', JSON.stringify(message, null, 2));
 
     const messageType = message['type'] as string | undefined;
-    console.log('[WebSocket][DEBUG] Message type:', messageType, 'Keys in message:', Object.keys(message));
+    this.debugLog('[WebSocket][DEBUG] Message type:', messageType, 'Keys in message:', Object.keys(message));
 
     const data = message['data'] as Record<string, unknown> | undefined;
     if (data) {
-      console.log('[WebSocket][DEBUG] Data keys:', Object.keys(data));
+      this.debugLog('[WebSocket][DEBUG] Data keys:', Object.keys(data));
     }
 
     // Handle ping messages
