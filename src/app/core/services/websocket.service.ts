@@ -357,6 +357,53 @@ export class WebSocketService {
       return;
     }
 
+    // Handle initial-load message (combined full data on connection)
+    if (messageType === 'initial-load') {
+      const data = message['data'] as Record<string, unknown> | undefined;
+      if (data) {
+        const matchData: ComprehensiveMatchData = {
+          match_data: data['match_data'] as MatchData | undefined,
+          scoreboard: data['scoreboard_data'],
+          match: data['match'] as unknown,
+          teams: data['teams_data'] as unknown,
+          gameclock: data['gameclock'] as GameClock | undefined,
+          playclock: data['playclock'] as PlayClock | undefined,
+          events: data['events'] as FootballEvent[] | undefined,
+        };
+
+        // Set match data signal
+        this.matchData.set(matchData);
+
+        // Set clock signals separately (for predictor sync)
+        if (matchData.gameclock) {
+          this.gameClock.set(this.mergeGameClock(matchData.gameclock));
+        }
+        if (matchData.playclock) {
+          this.playClock.set(this.mergePlayClock(matchData.playclock));
+        }
+
+        // Set events and stats
+        if (matchData.events) {
+          this.events.set(matchData.events);
+          this.lastEventUpdate.set(Date.now());
+        }
+        const stats = data['statistics'] as MatchStats | undefined;
+        if (stats) {
+          this.statistics.set(stats);
+          this.lastStatsUpdate.set(Date.now());
+        }
+
+        this.log('Initial load data received via WebSocket', {
+          hasMatch: !!matchData['match'],
+          hasTeams: !!matchData['teams'],
+          hasScoreboard: !!matchData.scoreboard,
+          hasEvents: !!matchData.events,
+          hasStats: !!stats
+        });
+      }
+      return;
+    }
+
     // Handle match data updates (message-update or match-update)
     if (messageType === 'message-update' || messageType === 'match-update') {
       this.log('Match data update');

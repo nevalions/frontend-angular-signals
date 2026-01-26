@@ -482,9 +482,12 @@ The WebSocket service automatically parses and routes incoming messages to appro
 
 | Message Type | Signal Updated | Action | Data Structure |
 |--------------|---------------|---------|----------------|
+| `initial-load` | `matchData`, `gameClock`, `playClock`, `events`, `statistics` | Sets all signals atomically from initial message | `ComprehensiveMatchData` interface |
 | `ping` | `lastPingReceived`, `lastRtt`, `connectionQuality` | Responds with `pong`, calculates RTT | `{ timestamp: number }` |
 | `playclock-update` | `playClock` | Updates clock signal | `PlayClock` interface |
 | `gameclock-update` | `gameClock` | Updates clock signal | `GameClock` interface |
+| `event-update` | `events`, `lastEventUpdate` | Updates events list | `FootballEvent[]` interface |
+| `statistics-update` | `statistics`, `lastStatsUpdate` | Updates match statistics | `MatchStats` interface |
 | `message-update` | `matchData` | Updates match data | `ComprehensiveMatchData` interface |
 
 **Ping/Pong Flow:**
