@@ -8,6 +8,7 @@ import { GameClock } from '../../features/matches/models/gameclock.model';
 import { PlayClock } from '../../features/matches/models/playclock.model';
 import { MatchData } from '../../features/matches/models/match-data.model';
 import { FootballEvent } from '../../features/matches/models/football-event.model';
+import { MatchStats } from '../../features/matches/models/match-stats.model';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -25,6 +26,7 @@ export interface ComprehensiveMatchData {
   playclock?: PlayClock;
   scoreboard?: unknown;
   events?: FootballEvent[];
+  statistics?: MatchStats;
   [key: string]: unknown;
 }
 
@@ -56,6 +58,7 @@ export interface WebSocketMessage {
  * gameClock = computed(() => this.wsService.gameClock());
  * playClock = computed(() => this.wsService.playClock());
  * matchData = computed(() => this.wsService.matchData());
+ * statistics = computed(() => this.wsService.statistics());
  * ```
  */
 @Injectable({
@@ -87,7 +90,9 @@ export class WebSocketService {
   readonly gameClock = signal<GameClock | null>(null);
   readonly playClock = signal<PlayClock | null>(null);
   readonly events = signal<FootballEvent[]>([]);
+  readonly statistics = signal<MatchStats | null>(null);
   readonly lastEventUpdate = signal<number | null>(null);
+  readonly lastStatsUpdate = signal<number | null>(null);
 
   // Error signal for debugging
   readonly lastError = signal<string | null>(null);
@@ -269,7 +274,9 @@ export class WebSocketService {
     this.gameClock.set(null);
     this.playClock.set(null);
     this.events.set([]);
+    this.statistics.set(null);
     this.lastEventUpdate.set(null);
+    this.lastStatsUpdate.set(null);
   }
 
   /**
@@ -341,6 +348,12 @@ export class WebSocketService {
     // Handle event updates
     if (messageType === 'event-update') {
       this.handleEventUpdate(message);
+      return;
+    }
+
+    // Handle statistics updates
+    if (messageType === 'statistics-update') {
+      this.handleStatisticsUpdate(message);
       return;
     }
 
@@ -429,6 +442,26 @@ export class WebSocketService {
       }
     } catch (error) {
       console.error('[WebSocket] Error handling event update:', error);
+    }
+  }
+
+  /**
+   * Handle statistics-update messages from server
+   */
+  private handleStatisticsUpdate(message: WebSocketMessage): void {
+    try {
+      const stats = message['statistics'] as MatchStats | undefined;
+      const matchId = message['match_id'] as number | undefined;
+
+      this.log(`Received statistics for match ${matchId}`);
+
+      if (stats) {
+        this.statistics.set(stats);
+        this.lastStatsUpdate.set(Date.now());
+        this.log('Statistics updated via WebSocket');
+      }
+    } catch (error) {
+      console.error('[WebSocket] Error handling statistics update:', error);
     }
   }
 

@@ -4,6 +4,7 @@ import { WebSocketService, ConnectionState, ComprehensiveMatchData } from './web
 import { GameClock } from '../../features/matches/models/gameclock.model';
 import { PlayClock } from '../../features/matches/models/playclock.model';
 import { FootballEvent } from '../../features/matches/models/football-event.model';
+import { MatchStats } from '../../features/matches/models/match-stats.model';
 
 // Mock webSocket from rxjs/webSocket
 vi.mock('rxjs/webSocket', () => ({
@@ -343,6 +344,146 @@ describe('WebSocketService', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         '[WebSocket] Error handling event update:',
+        expect.any(Error)
+      );
+    });
+  });
+
+  describe('Statistics Update Handling', () => {
+    it('should handle statistics-update messages', () => {
+      const mockStats: MatchStats = {
+        match_id: 123,
+        team_a: {
+          id: 1,
+          team_stats: {
+            offence_yards: 320,
+            pass_att: 20,
+            run_att: 30,
+            avg_yards_per_att: 6.4,
+            pass_yards: 200,
+            run_yards: 120,
+            lost_yards: 0,
+            flag_yards: 10,
+            third_down_attempts: 10,
+            third_down_conversions: 5,
+            fourth_down_attempts: 2,
+            fourth_down_conversions: 1,
+            first_down_gained: 15,
+            turnovers: 1,
+          },
+          offense_stats: {
+            pass_attempts: 20,
+            pass_received: 15,
+            pass_yards: 200,
+            pass_td: 2,
+            run_attempts: 30,
+            run_yards: 120,
+            run_avr: 4.0,
+            run_td: 1,
+            fumble: 1,
+          },
+          qb_stats: {
+            passes: 20,
+            passes_completed: 15,
+            pass_yards: 200,
+            pass_td: 2,
+            pass_avr: 10.0,
+            run_attempts: 2,
+            run_yards: 10,
+            run_td: 0,
+            run_avr: 5.0,
+            fumble: 0,
+            interception: 0,
+            qb_rating: 120.5,
+          },
+          defense_stats: {
+            tackles: 10,
+            assist_tackles: 5,
+            sacks: 2,
+            interceptions: 1,
+            fumble_recoveries: 1,
+            flags: 2,
+          },
+        },
+        team_b: {
+          id: 2,
+          team_stats: {
+            offence_yards: 280,
+            pass_att: 25,
+            run_att: 25,
+            avg_yards_per_att: 5.6,
+            pass_yards: 180,
+            run_yards: 100,
+            lost_yards: 5,
+            flag_yards: 15,
+            third_down_attempts: 10,
+            third_down_conversions: 4,
+            fourth_down_attempts: 1,
+            fourth_down_conversions: 0,
+            first_down_gained: 12,
+            turnovers: 2,
+          },
+          offense_stats: {
+            pass_attempts: 25,
+            pass_received: 18,
+            pass_yards: 180,
+            pass_td: 1,
+            run_attempts: 25,
+            run_yards: 100,
+            run_avr: 4.0,
+            run_td: 1,
+            fumble: 2,
+          },
+          qb_stats: {
+            passes: 25,
+            passes_completed: 18,
+            pass_yards: 180,
+            pass_td: 1,
+            pass_avr: 7.2,
+            run_attempts: 1,
+            run_yards: 5,
+            run_td: 0,
+            run_avr: 5.0,
+            fumble: 1,
+            interception: 1,
+            qb_rating: 95.5,
+          },
+          defense_stats: {
+            tackles: 8,
+            assist_tackles: 4,
+            sacks: 1,
+            interceptions: 0,
+            fumble_recoveries: 0,
+            flags: 3,
+          },
+        },
+      };
+
+      const message = {
+        type: 'statistics-update',
+        match_id: 123,
+        statistics: mockStats,
+      };
+
+      service['handleStatisticsUpdate'](message);
+
+      expect(service.statistics()).toEqual(mockStats);
+      expect(service.lastStatsUpdate()).toBeGreaterThan(0);
+    });
+
+    it('should log error when handling statistics fails', () => {
+      const message = {
+        type: 'statistics-update',
+        match_id: 123,
+        statistics: 'invalid' as any,
+      };
+
+      const consoleSpy = vi.spyOn(console, 'error');
+
+      service['handleStatisticsUpdate'](message);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[WebSocket] Error handling statistics update:',
         expect.any(Error)
       );
     });

@@ -7,7 +7,6 @@ import { ScoreboardClockService } from '../../services/scoreboard-clock.service'
 import { WebSocketService } from '../../../../core/services/websocket.service';
 import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-match.model';
 import { FootballEvent, FootballEventCreate, FootballEventUpdate } from '../../../matches/models/football-event.model';
-import { MatchStats } from '../../../matches/models/match-stats.model';
 import { Scoreboard, ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
 import { PlayerMatchUpdate } from '../../../matches/models/player-match.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
@@ -55,7 +54,7 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   // Data signals
   protected readonly data = signal<ComprehensiveMatchData | null>(null);
   protected readonly scoreboard = signal<Scoreboard | null>(null);
-  protected readonly matchStats = signal<MatchStats | null>(null);
+  protected readonly matchStats = computed(() => this.wsService.statistics());
   protected readonly events = signal<FootballEvent[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
@@ -160,10 +159,10 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
       error: () => console.error('Failed to load scoreboard settings'),
     });
 
-    // Load match stats
+    // Initial load of match stats via HTTP for SSR/first load
+    // Real-time updates will come via WebSocket
     this.scoreboardStore.getMatchStats(id).subscribe({
-      next: (stats) => this.matchStats.set(stats),
-      error: () => console.error('Failed to load match stats'),
+      error: () => console.error('Failed to load initial match stats'),
     });
 
     // Load events
@@ -363,10 +362,6 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
       error: () => console.error('Failed to reload events'),
     });
 
-    // Also reload stats since they depend on events
-    this.scoreboardStore.getMatchStats(id).subscribe({
-      next: (stats) => this.matchStats.set(stats),
-      error: () => console.error('Failed to reload match stats'),
-    });
+    // Stats will be updated via WebSocket when events change
   }
 }

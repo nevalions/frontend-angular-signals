@@ -240,7 +240,7 @@
 - [Backend Schema: `FootballOffenseStats`](../../statsboards-backend/src/matches/schemas.py:43-55)
 
 **WebSocket:**
-- `WS /ws/match/{match_id}` - Real-time updates for match data, gameclock, playclock, scoreboard, football events
+- `WS /ws/match/{match_id}` - Real-time updates for match data, gameclock, playclock, scoreboard, football events, statistics
 - Connect to WebSocket to receive live updates from other admins
 
 ## TODOs

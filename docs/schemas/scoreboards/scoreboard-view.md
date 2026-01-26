@@ -190,6 +190,7 @@ All scoreboard elements update in real-time via WebSocket connection. Rosters an
   - Play clock (time, status)
   - Scoreboard settings (visibility, colors, toggles)
   - Football events (if applicable)
+  - Match statistics (team, QB, offense, defense stats)
 
 ## TODOs
 

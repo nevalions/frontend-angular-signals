@@ -7,7 +7,7 @@ import { ComprehensiveMatchData, PlayerMatchWithDetails } from '../../../matches
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
 import { FootballStartRosterDisplayComponent } from '../../components/roster-display/football-start-roster-display/football-start-roster-display.component';
 import { MatchStoreService } from '../../../matches/services/match-store.service';
-import { MatchStats, TeamStats } from '../../../matches/models/match-stats.model';
+import { TeamStats } from '../../../matches/models/match-stats.model';
 import { PlayerMatchLowerDisplayComponent } from '../../components/lower-display/player-match-lower-display/player-match-lower-display.component';
 import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-display/football-qb-lower-stats-display/football-qb-lower-stats-display.component';
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
@@ -41,7 +41,7 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
 
   // Data signals
   protected readonly data = signal<ComprehensiveMatchData | null>(null);
-  protected readonly matchStats = signal<MatchStats | null>(null);
+  protected readonly matchStats = computed(() => this.wsService.statistics());
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
@@ -204,10 +204,10 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
 
     this.clockService.load(id);
 
-    // Load match stats for lower displays
+    // Initial load of match stats via HTTP for SSR/first load
+    // Real-time updates will come via WebSocket
     this.matchStore.getMatchStats(id).subscribe({
-      next: (stats) => this.matchStats.set(stats),
-      error: () => console.error('Failed to load match stats'),
+      error: () => console.error('Failed to load initial match stats'),
     });
   }
 
