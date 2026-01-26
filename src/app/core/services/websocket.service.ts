@@ -7,6 +7,7 @@ import { buildWsUrl } from '../config/api.constants';
 import { GameClock } from '../../features/matches/models/gameclock.model';
 import { PlayClock } from '../../features/matches/models/playclock.model';
 import { MatchData } from '../../features/matches/models/match-data.model';
+import { FootballEvent } from '../../features/matches/models/football-event.model';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -23,6 +24,7 @@ export interface ComprehensiveMatchData {
   gameclock?: GameClock;
   playclock?: PlayClock;
   scoreboard?: unknown;
+  events?: FootballEvent[];
   [key: string]: unknown;
 }
 
@@ -84,6 +86,8 @@ export class WebSocketService {
   readonly matchData = signal<ComprehensiveMatchData | null>(null);
   readonly gameClock = signal<GameClock | null>(null);
   readonly playClock = signal<PlayClock | null>(null);
+  readonly events = signal<FootballEvent[]>([]);
+  readonly lastEventUpdate = signal<number | null>(null);
 
   // Error signal for debugging
   readonly lastError = signal<string | null>(null);
@@ -264,6 +268,8 @@ export class WebSocketService {
     this.matchData.set(null);
     this.gameClock.set(null);
     this.playClock.set(null);
+    this.events.set([]);
+    this.lastEventUpdate.set(null);
   }
 
   /**
@@ -332,6 +338,12 @@ export class WebSocketService {
       return;
     }
 
+    // Handle event updates
+    if (messageType === 'event-update') {
+      this.handleEventUpdate(message);
+      return;
+    }
+
     // Handle match data updates (message-update or match-update)
     if (messageType === 'message-update' || messageType === 'match-update') {
       this.log('Match data update');
@@ -345,6 +357,7 @@ export class WebSocketService {
           teams: data['teams_data'],
           gameclock: data['gameclock'] as GameClock | undefined,
           playclock: data['playclock'] as PlayClock | undefined,
+          events: data['events'] as FootballEvent[] | undefined,
         };
         this.matchData.set(matchData);
 
@@ -362,6 +375,11 @@ export class WebSocketService {
           } else {
             this.playClock.set(this.mergePlayClock(matchData.playclock));
           }
+        }
+
+        if (matchData.events !== undefined) {
+          this.events.set(matchData.events);
+          this.lastEventUpdate.set(Date.now());
         }
       }
       return;
@@ -391,6 +409,26 @@ export class WebSocketService {
     if (serverTimestamp) {
       const rtt = (now - serverTimestamp) * 1000;
       this.lastRtt.set(rtt);
+    }
+  }
+
+  /**
+   * Handle event-update messages from server
+   */
+  private handleEventUpdate(message: WebSocketMessage): void {
+    try {
+      const events = message['events'] as FootballEvent[] | undefined;
+      const matchId = message['match_id'] as number | undefined;
+
+      this.log(`Received ${events?.length ?? 0} events for match ${matchId}`);
+
+      if (events) {
+        this.events.set(events);
+        this.lastEventUpdate.set(Date.now());
+        this.log('Events updated via WebSocket', { count: events.length });
+      }
+    } catch (error) {
+      console.error('[WebSocket] Error handling event update:', error);
     }
   }
 

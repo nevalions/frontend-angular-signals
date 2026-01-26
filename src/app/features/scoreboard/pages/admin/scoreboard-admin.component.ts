@@ -20,6 +20,7 @@ import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/s
 import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
 import { ConnectionIndicatorComponent } from '../../../../shared/components/connection-indicator/connection-indicator.component';
 import { CollapsibleSectionService } from '../../components/admin-forms/collapsible-section/collapsible-section.service';
+import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.component';
 
 @Component({
   selector: 'app-scoreboard-admin',
@@ -36,6 +37,7 @@ import { CollapsibleSectionService } from '../../components/admin-forms/collapsi
     ScoreboardSettingsFormsComponent,
     EventsFormsComponent,
     ConnectionIndicatorComponent,
+    PlayByPlayComponent,
   ],
   templateUrl: './scoreboard-admin.component.html',
   styleUrl: './scoreboard-admin.component.less',

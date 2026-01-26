@@ -13,6 +13,7 @@ import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-dis
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
 import { SponsorLineComponent } from '../../components/sponsor-display/sponsor-line.component';
 import { WebSocketService } from '../../../../core/services/websocket.service';
+import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.component';
 
 @Component({
   selector: 'app-scoreboard-view',
@@ -24,6 +25,7 @@ import { WebSocketService } from '../../../../core/services/websocket.service';
     FootballQbLowerStatsDisplayComponent,
     TeamMatchLowerFootballStatsDisplayComponent,
     SponsorLineComponent,
+    PlayByPlayComponent,
   ],
   templateUrl: './scoreboard-view.component.html',
   styleUrl: './scoreboard-view.component.less',

@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { WebSocketService, ConnectionState, ComprehensiveMatchData } from './websocket.service';
 import { GameClock } from '../../features/matches/models/gameclock.model';
 import { PlayClock } from '../../features/matches/models/playclock.model';
+import { FootballEvent } from '../../features/matches/models/football-event.model';
 
 // Mock webSocket from rxjs/webSocket
 vi.mock('rxjs/webSocket', () => ({
@@ -48,6 +49,14 @@ describe('WebSocketService', () => {
       expect(service.playClock()).toBeNull();
     });
 
+    it('should initialize with empty events array', () => {
+      expect(service.events()).toEqual([]);
+    });
+
+    it('should initialize with null lastEventUpdate', () => {
+      expect(service.lastEventUpdate()).toBeNull();
+    });
+
     it('should initialize with null lastError', () => {
       expect(service.lastError()).toBeNull();
     });
@@ -77,6 +86,19 @@ describe('WebSocketService', () => {
       const clock: PlayClock | null = service.playClock();
       expect(clock).toBeNull();
     });
+
+    it('should have events signal of correct type', () => {
+      expect(typeof service.events).toBe('function');
+      const events: FootballEvent[] = service.events();
+      expect(Array.isArray(events)).toBe(true);
+      expect(events).toHaveLength(0);
+    });
+
+    it('should have lastEventUpdate signal of correct type', () => {
+      expect(typeof service.lastEventUpdate).toBe('function');
+      const lastUpdate: number | null = service.lastEventUpdate();
+      expect(lastUpdate).toBeNull();
+    });
   });
 
   describe('Public Methods', () => {
@@ -102,13 +124,15 @@ describe('WebSocketService', () => {
   });
 
   describe('resetData', () => {
-    it('should reset all data signals to null', () => {
+    it('should reset all data signals to null/empty', () => {
       // Manually set some values first (using internal access for testing)
       service.resetData();
 
       expect(service.matchData()).toBeNull();
       expect(service.gameClock()).toBeNull();
       expect(service.playClock()).toBeNull();
+      expect(service.events()).toEqual([]);
+      expect(service.lastEventUpdate()).toBeNull();
     });
   });
 
@@ -216,6 +240,111 @@ describe('WebSocketService', () => {
       service['handlePing'](pingMessage);
 
       expect(consoleLogSpy).toHaveBeenCalledWith('[WebSocket] Received ping, sending pong');
+    });
+  });
+
+  describe('Event Update Handling', () => {
+    it('should handle event-update messages', () => {
+      const mockEvents: FootballEvent[] = [
+        {
+          id: 1,
+          match_id: 123,
+          event_number: 1,
+          event_qtr: 1,
+          play_type: 'touchdown',
+          play_result: 'TD',
+        },
+        {
+          id: 2,
+          match_id: 123,
+          event_number: 2,
+          event_qtr: 2,
+          play_type: 'fieldgoal',
+          play_result: 'FG',
+        },
+      ];
+
+      const message = {
+        type: 'event-update',
+        match_id: 123,
+        events: mockEvents,
+      };
+
+      service['handleEventUpdate'](message);
+
+      expect(service.events()).toEqual(mockEvents);
+      expect(service.lastEventUpdate()).toBeGreaterThan(0);
+    });
+
+    it('should update events signal with empty array when no events provided', () => {
+      const message = {
+        type: 'event-update',
+        match_id: 123,
+        events: undefined,
+      };
+
+      service['handleEventUpdate'](message);
+
+      expect(service.events()).toEqual([]);
+      expect(service.lastEventUpdate()).toBeNull();
+    });
+
+    it('should handle event-update with empty events array', () => {
+      const message = {
+        type: 'event-update',
+        match_id: 123,
+        events: [],
+      };
+
+      service['handleEventUpdate'](message);
+
+      expect(service.events()).toEqual([]);
+      expect(service.lastEventUpdate()).toBeGreaterThan(0);
+    });
+
+    it('should log when receiving events', () => {
+      const mockEvents: FootballEvent[] = [
+        {
+          id: 1,
+          match_id: 123,
+          event_number: 1,
+          event_qtr: 1,
+          play_type: 'touchdown',
+        },
+      ];
+
+      const message = {
+        type: 'event-update',
+        match_id: 123,
+        events: mockEvents,
+      };
+
+      const consoleSpy = vi.spyOn(console, 'log');
+
+      service['handleEventUpdate'](message);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[WebSocket]',
+        expect.any(String),
+        'Received 1 events for match 123'
+      );
+    });
+
+    it('should log error when handling fails', () => {
+      const message = {
+        type: 'event-update',
+        match_id: 123,
+        events: 'invalid' as any,
+      };
+
+      const consoleSpy = vi.spyOn(console, 'error');
+
+      service['handleEventUpdate'](message);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[WebSocket] Error handling event update:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -505,11 +634,22 @@ describe('ComprehensiveMatchData interface', () => {
         playclock: 25,
         playclock_status: 'running',
       },
+      events: [
+        {
+          id: 1,
+          match_id: 123,
+          event_number: 1,
+          event_qtr: 1,
+          play_type: 'touchdown',
+        },
+      ],
     };
 
     expect(matchData.match_data?.id).toBe(1);
     expect(matchData.gameclock?.gameclock).toBe(720);
     expect(matchData.playclock?.playclock).toBe(25);
+    expect(matchData.events).toHaveLength(1);
+    expect(matchData.events?.[0].play_type).toBe('touchdown');
   });
 
   it('should accept ComprehensiveMatchData with optional fields', () => {

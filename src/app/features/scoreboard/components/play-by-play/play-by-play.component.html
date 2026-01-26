@@ -1,0 +1,97 @@
+<div class="play-by-play-container">
+  <div class="play-by-play-header">
+    <h3>Play by Play</h3>
+    <button
+      class="auto-scroll-toggle"
+      (click)="toggleAutoScroll()"
+      [class.active]="autoScroll()"
+      type="button"
+    >
+      {{ autoScroll() ? '📌 Auto-scroll ON' : '📌 Auto-scroll OFF' }}
+    </button>
+  </div>
+
+  <div class="play-by-play-list">
+    @if (events().length === 0) {
+      <div class="no-events">
+        <p>No events yet</p>
+      </div>
+    } @else {
+      @for (event of events(); track event.id) {
+        <div
+          class="event-item"
+          [attr.data-event-type]="event.play_result || event.score_result || 'play'"
+          [style.border-left-color]="getEventColor(event.play_result || event.score_result || 'play')"
+        >
+          <div class="event-icon">
+            {{ getEventIcon(event.play_result || event.score_result || 'play') }}
+          </div>
+
+          <div class="event-content">
+            <div class="event-header">
+              <span class="quarter">Q{{ event.event_qtr ?? 'N/A' }}</span>
+              <span class="event-type">{{ (event.play_result || event.score_result || 'Play') | titlecase }}</span>
+            </div>
+
+            @if (event.play_type) {
+              <div class="event-description">
+                Play type: {{ event.play_type | titlecase }}
+              </div>
+            }
+
+            @if (event.play_result) {
+              <div class="event-description">
+                Result: {{ event.play_result | titlecase }}
+              </div>
+            }
+
+            @if (event.score_result) {
+              <div class="event-description">
+                Score: {{ event.score_result | titlecase }}
+              </div>
+            }
+
+            @if (event.event_down && event.event_distance) {
+              <div class="event-description">
+                {{ event.event_down }} & {{ event.event_distance }}
+              </div>
+            }
+
+            @if (event.ball_on) {
+              <div class="event-description">
+                Ball on: {{ event.ball_on }}
+              </div>
+            }
+
+            @if (event.run_player || event.pass_received_player) {
+              <div class="event-player">
+                @if (event.run_player) {
+                  Run: Player #{{ event.run_player }}
+                }
+                @if (event.pass_received_player) {
+                  Pass received: Player #{{ event.pass_received_player }}
+                }
+              </div>
+            }
+
+            @if (event.score_player) {
+              <div class="event-player">
+                Scored by: Player #{{ event.score_player }}
+              </div>
+            }
+
+            @if (event.kick_player) {
+              <div class="event-player">
+                Kicked by: Player #{{ event.kick_player }}
+              </div>
+            }
+          </div>
+
+          <div class="event-meta">
+            <span class="event-time">#{{ event.event_number ?? event.id }}</span>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
