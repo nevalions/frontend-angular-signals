@@ -522,6 +522,44 @@ The WebSocket service automatically parses and routes incoming messages to appro
 - **UUID-based client identification**: Unique client ID per session for server-side tracking
 - **Error handling**: `lastError` signal for debugging connection issues
 
+### Component-Level Data Handling
+
+When using WebSocket data in components, handle the race condition between initial HTTP load and WebSocket `initial-load` message:
+
+```typescript
+// Use untracked() to prevent infinite loop and avoid creating dependency
+private wsMatchDataEffect = effect(() => {
+  const message = this.wsService.matchData();
+  if (!message) return;
+
+  const current = untracked(() => this.data());
+
+  // Handle initial-load message: use as initial dataset if current is null and has teams
+  if (!current && message['teams']) {
+    this.data.set(message);
+    this.loading.set(false);
+    return;
+  }
+
+  // Skip if no current data yet (waiting for initial-load or HTTP load)
+  if (!current) return;
+
+  // Merge only changed fields for subsequent updates
+  this.data.set({
+    ...current,
+    match_data: message.match_data ?? current.match_data,
+    scoreboard: message.scoreboard ?? current.scoreboard,
+  });
+});
+```
+
+**Key Points:**
+- Use `untracked()` to read current data without creating a dependency
+- Check for `initial-load` message when `current` is null
+- Set `loading.set(false)` when initial data arrives from WebSocket
+- Merge only changed fields for subsequent `match-update` messages
+- This handles both race conditions: WebSocket before HTTP, or HTTP before WebSocket
+
 ### WebSocket URL
 
 The service connects to: `WS /ws/match/{matchId}/{clientId}/`

@@ -87,6 +87,23 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
     if (!message) return;
 
     const current = untracked(() => this.data());
+
+    // Handle initial-load message: use as initial dataset if current is null and has teams
+    if (!current && message['teams']) {
+      this.data.set({
+        ...message,
+        players: [],
+      } as unknown as ComprehensiveMatchData);
+      this.loading.set(false);
+
+      // Also update scoreboard signal if present in message
+      if (message.scoreboard) {
+        this.scoreboard.set(message.scoreboard as Scoreboard);
+      }
+      return;
+    }
+
+    // Skip if no current data yet (waiting for initial-load or HTTP load)
     if (!current) return;
 
     // Update data from WebSocket message

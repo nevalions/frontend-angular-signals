@@ -159,10 +159,23 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
 
     // Use untracked to read current data without creating dependency
     const current = untracked(() => this.data());
+
+    // Handle initial-load message: use as initial dataset if current is null and has teams
+    if (!current && message['teams']) {
+      this.data.set({
+        ...message,
+        players: [],
+      } as unknown as ComprehensiveMatchData);
+      this.loading.set(false);
+      return;
+    }
+
+    // Skip if no current data yet (waiting for initial-load or HTTP load)
     if (!current) {
       return;
     }
 
+    // Merge only changed fields for subsequent updates
     this.data.set({
       ...current,
       match_data: message.match_data ?? current.match_data,
