@@ -33,7 +33,7 @@ export class SettingsComponent {
   });
 
   readonly tabs: TabsNavItem[] = [
-    { label: 'Dashboard', value: 'dashboard', icon: '@tui.dashboard' },
+    { label: 'Dashboard', value: 'dashboard', icon: '@tui.layout-dashboard' },
     { label: 'Users', value: 'users', icon: '@tui.user' },
     { label: 'Roles', value: 'roles', icon: '@tui.users' },
     { label: 'Global Settings', value: 'global-settings', icon: '@tui.settings' },
