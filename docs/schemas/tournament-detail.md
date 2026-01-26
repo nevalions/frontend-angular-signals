@@ -28,11 +28,14 @@
 ## What's on the page
 
 - Entity header with:
-  - Back button → Navigate to tournaments list in sport
-  - Tournament title
-  - Tournament logo (optional)
-  - Edit button → Navigate to `/sports/:sportId/seasons/:year/tournaments/:id/edit`
-  - Delete button → Confirm and delete tournament, navigate to tournaments list
+   - Back button → Navigate to tournaments list in sport
+   - Tournament title
+   - Tournament logo (optional)
+   - Edit button → Navigate to `/sports/:sportId/seasons/:year/tournaments/:id/edit`
+   - Delete button → Confirm and delete tournament, navigate to tournaments list
+   - Gear menu with custom actions (only visible when tournament has tournament_eesl_id):
+     - "Parse EESL Teams" → Navigate to `/sports/:sportId/seasons/:year/tournaments/:id/parse-eesl`
+     - "Parse EESL Matches" → Navigate to `/sports/:sportId/seasons/:year/tournaments/:id/parse-matches`
 - Tab navigation: Matches, Teams, Players
 - Tab content area → Shows data for selected tab
 

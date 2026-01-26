@@ -172,4 +172,8 @@ export class MatchStoreService {
   deletePlayerMatch(playerMatchId: number): Observable<void> {
     return this.apiService.delete('/api/players_match', playerMatchId);
   }
+
+  parseEESLTournamentMatches(eeslTournamentId: number): Observable<Match[]> {
+    return this.http.get<Match[]>(buildApiUrl(`/api/matches/pars_and_create/tournament/${eeslTournamentId}`));
+  }
 }

@@ -83,6 +83,11 @@ export class TournamentDetailComponent {
         id: 'parse-eesl-teams',
         label: 'Parse EESL Teams',
         icon: '@tui.users'
+      },
+      {
+        id: 'parse-eesl-matches',
+        label: 'Parse EESL Matches',
+        icon: '@tui.calendar'
       }
     ];
   });
@@ -134,6 +139,8 @@ export class TournamentDetailComponent {
   onCustomItemClick(itemId: string): void {
     if (itemId === 'parse-eesl-teams') {
       this.navigateToParseEesl();
+    } else if (itemId === 'parse-eesl-matches') {
+      this.navigateToParseMatches();
     }
   }
 
@@ -143,6 +150,15 @@ export class TournamentDetailComponent {
     const id = this.tournamentId();
     if (sportId && year && id) {
       this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', id, 'parse-eesl']);
+    }
+  }
+
+  navigateToParseMatches(): void {
+    const sportId = this.sportId();
+    const year = this.year();
+    const id = this.tournamentId();
+    if (sportId && year && id) {
+      this.router.navigate(['/sports', sportId, 'seasons', year, 'tournaments', id, 'parse-matches']);
     }
   }
 }

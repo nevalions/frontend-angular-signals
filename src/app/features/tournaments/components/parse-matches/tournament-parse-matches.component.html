@@ -1,0 +1,71 @@
+<div class="tournament-parse-matches">
+  <app-entity-header
+    [title]="tournament()?.title || 'Parse EESL Tournament Matches'"
+    [logoUrl]="tournament()?.tournament_logo_icon_url"
+    [showEdit]="false"
+    [showDelete]="false"
+    [showGear]="false"
+    (navigateBack)="navigateBack()"
+  />
+
+  <div class="tournament-parse-matches__content">
+    <div class="tournament-parse-matches__form-card">
+      <div class="tournament-parse-matches__info">
+        <p>Parse and automatically create matches from EESL tournament.</p>
+      </div>
+
+      @if (tournament()?.tournament_eesl_id) {
+        <div class="tournament-parse-matches__eesl-id">
+          <span class="tournament-parse-matches__label">EESL Tournament ID:</span>
+          <span class="tournament-parse-matches__value">{{ tournament()?.tournament_eesl_id }}</span>
+        </div>
+      }
+
+      <div class="tournament-parse-matches__actions">
+        <button
+          tuiButton
+          type="button"
+          appearance="primary"
+          [disabled]="isParsing() || !tournament()?.tournament_eesl_id"
+          (click)="parseTournamentMatches()"
+        >
+          @if (isParsing()) {
+            Parsing and Creating...
+          } @else {
+            Parse and Create Matches
+          }
+        </button>
+      </div>
+    </div>
+
+    @if (parsedMatches().length > 0) {
+      <div class="tournament-parse-matches__results">
+        <h2 class="tournament-parse-matches__results-title">Matches Created</h2>
+
+        @for (match of parsedMatches(); track match.id ?? $index) {
+          <div class="tournament-parse-matches__match-card">
+            <div class="tournament-parse-matches__match-content">
+              <tui-icon icon="@tui.calendar" class="tournament-parse-matches__match-icon" />
+              <div class="tournament-parse-matches__match-info">
+                @if (match.match_date) {
+                  <div class="tournament-parse-matches__match-title">{{ match.match_date }}</div>
+                } @else {
+                  <div class="tournament-parse-matches__match-title">Match #{{ $index + 1 }}</div>
+                }
+                <div class="tournament-parse-matches__match-details">
+                  Team A: {{ match.team_a_id }} vs Team B: {{ match.team_b_id }}
+                </div>
+                @if (match.week) {
+                  <div class="tournament-parse-matches__match-week">Week {{ match.week }}</div>
+                }
+                @if (match.match_eesl_id) {
+                  <div class="tournament-parse-matches__match-id">EESL ID: {{ match.match_eesl_id }}</div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

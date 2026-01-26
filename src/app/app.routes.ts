@@ -8,6 +8,7 @@ import { TournamentDetailComponent } from './features/tournaments/components/det
 import { TournamentCreateComponent } from './features/tournaments/components/create/tournament-create.component';
 import { TournamentEditComponent } from './features/tournaments/components/edit/tournament-edit.component';
 import { TournamentParseEeslComponent } from './features/tournaments/components/parse-eesl/tournament-parse-eesl.component';
+import { TournamentParseMatchesComponent } from './features/tournaments/components/parse-matches/tournament-parse-matches.component';
 import { TeamDetailComponent } from './features/teams/components/detail/team-detail.component';
 import { TeamEditComponent } from './features/teams/components/edit/team-edit.component';
 import { TeamCreateComponent } from './features/teams/components/create/team-create.component';
@@ -61,6 +62,10 @@ export const routes: Routes = [
       {
         path: ':sportId/seasons/:year/tournaments/:id/parse-eesl',
         component: TournamentParseEeslComponent,
+      },
+      {
+        path: ':sportId/seasons/:year/tournaments/:id/parse-matches',
+        component: TournamentParseMatchesComponent,
       },
       {
         path: ':sportId/seasons/:year/tournaments/:id/teams/:teamId',
