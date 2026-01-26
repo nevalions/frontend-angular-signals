@@ -2,10 +2,12 @@
   <div class="play-by-play-header">
     <h3>Play by Play</h3>
     <button
+      tuiButton
+      appearance="secondary"
+      size="s"
       class="auto-scroll-toggle"
       (click)="toggleAutoScroll()"
       [class.active]="autoScroll()"
-      type="button"
     >
       {{ autoScroll() ? '📌 Auto-scroll ON' : '📌 Auto-scroll OFF' }}
     </button>

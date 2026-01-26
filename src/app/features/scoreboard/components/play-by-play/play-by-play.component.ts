@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TuiButton } from '@taiga-ui/core';
 import { WebSocketService } from '../../../../core/services/websocket.service';
 
 @Component({
   selector: 'app-play-by-play',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TuiButton],
   templateUrl: './play-by-play.component.html',
   styleUrl: './play-by-play.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,17 +43,17 @@ export class PlayByPlayComponent {
 
   getEventColor(eventType: string): string {
     const colors: Record<string, string> = {
-      'touchdown': '#4ade80',
-      'fieldgoal': '#60a5fa',
-      'penalty': '#fbbf24',
-      'turnover': '#f87171',
-      'safety': '#a78bfa',
-      'kickoff': '#9ca3af',
-      'punt': '#9ca3af',
-      'extra_point': '#60a5fa',
-      'two_point_conversion': '#60a5fa',
+      'touchdown': 'var(--tui-status-positive)',
+      'fieldgoal': 'var(--tui-background-accent-1)',
+      'penalty': 'var(--tui-status-warning)',
+      'turnover': 'var(--tui-status-negative)',
+      'safety': 'var(--tui-background-accent-1)',
+      'kickoff': 'var(--tui-text-tertiary)',
+      'punt': 'var(--tui-text-tertiary)',
+      'extra_point': 'var(--tui-background-accent-1)',
+      'two_point_conversion': 'var(--tui-background-accent-1)',
     };
-    return colors[eventType] || '#9ca3af';
+    return colors[eventType] || 'var(--tui-text-tertiary)';
   }
 
   private scrollToLatest(): void {
