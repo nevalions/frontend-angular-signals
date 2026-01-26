@@ -30,33 +30,33 @@
     <div class="stats-side">
       <div class="stat">
         <span class="label">COMP/ATT</span>
-        <span class="value">
+        <span class="value" [class.updating]="isUpdating()">
           {{ formatStat(stats()?.passes_completed) }}/{{ formatStat(stats()?.passes) }}
         </span>
       </div>
       <div class="stat">
         <span class="label">PASS YDS</span>
-        <span class="value">{{ formatStat(stats()?.pass_yards) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.pass_yards) }}</span>
       </div>
       <div class="stat">
         <span class="label">PASS TD</span>
-        <span class="value">{{ formatStat(stats()?.pass_td) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.pass_td) }}</span>
       </div>
       <div class="stat">
         <span class="label">RUSH YDS</span>
-        <span class="value">{{ formatStat(stats()?.run_yards) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.run_yards) }}</span>
       </div>
       <div class="stat">
         <span class="label">RUSH ATT</span>
-        <span class="value">{{ formatStat(stats()?.run_attempts) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.run_attempts) }}</span>
       </div>
       <div class="stat">
         <span class="label">RUSH TD</span>
-        <span class="value">{{ formatStat(stats()?.run_td) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.run_td) }}</span>
       </div>
       <div class="stat">
         <span class="label">QB RTG</span>
-        <span class="value">{{ formatStat(stats()?.qb_rating) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.qb_rating) }}</span>
       </div>
     </div>
   </section>

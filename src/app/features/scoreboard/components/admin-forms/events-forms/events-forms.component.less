@@ -77,6 +77,12 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--tui-text-primary);
+  transition: all 0.3s ease;
+
+  &.updating {
+    color: var(--tui-text-action);
+    transform: scale(1.1);
+  }
 }
 
 .empty-state {

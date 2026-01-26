@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiDataList, TuiIcon, TuiLabel, TuiTextfield, TuiTextfieldDropdownDirective } from '@taiga-ui/core';
 import { TuiInputNumber, TuiSelect, TuiChevron } from '@taiga-ui/kit';
@@ -7,6 +7,7 @@ import { PlayerMatchWithDetails } from '../../../../matches/models/comprehensive
 import { FootballEvent, FootballEventCreate, FootballEventUpdate } from '../../../../matches/models/football-event.model';
 import { MatchStats, FootballTeamStats, FootballQBStats } from '../../../../matches/models/match-stats.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
+import { WebSocketService } from '../../../../../core/services/websocket.service';
 
 interface PlayerOption {
   id: number;
@@ -42,10 +43,14 @@ interface EventRowDisplay {
   styleUrl: './events-forms.component.less',
 })
 export class EventsFormsComponent {
+  private wsService = inject(WebSocketService);
   matchStats = input<MatchStats | null>(null);
   events = input<FootballEvent[]>([]);
   players = input<PlayerMatchWithDetails[]>([]);
   fieldLength = input<number>(100);
+
+  private lastStatsUpdate = 0;
+  protected readonly isUpdating = signal(false);
 
   eventCreate = output<FootballEventCreate>();
   eventUpdate = output<{ id: number; data: FootballEventUpdate }>();
@@ -71,6 +76,16 @@ export class EventsFormsComponent {
 
   protected readonly awayQbStats = computed((): FootballQBStats | null => {
     return this.matchStats()?.team_b?.qb_stats ?? null;
+  });
+
+  private updateEffect = effect(() => {
+    const updateTime = this.wsService.lastStatsUpdate();
+    if (updateTime && updateTime > this.lastStatsUpdate) {
+      this.lastStatsUpdate = updateTime;
+
+      this.isUpdating.set(true);
+      setTimeout(() => this.isUpdating.set(false), 500);
+    }
   });
 
   // Player options for dropdowns

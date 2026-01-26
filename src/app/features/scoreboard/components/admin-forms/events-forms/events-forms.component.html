@@ -12,27 +12,27 @@
               <div class="stat-rows">
                 <div class="stat-row">
                   <span class="stat-label">Offense Yards</span>
-                  <span class="stat-value">{{ formatStat(homeTeamStats()?.offence_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeTeamStats()?.offence_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Pass Attempts</span>
-                  <span class="stat-value">{{ formatStat(homeTeamStats()?.pass_att) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeTeamStats()?.pass_att) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Pass Yards</span>
-                  <span class="stat-value">{{ formatStat(homeTeamStats()?.pass_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeTeamStats()?.pass_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Run Attempts</span>
-                  <span class="stat-value">{{ formatStat(homeTeamStats()?.run_att) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeTeamStats()?.run_att) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Run Yards</span>
-                  <span class="stat-value">{{ formatStat(homeTeamStats()?.run_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeTeamStats()?.run_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Avg Yards/Att</span>
-                  <span class="stat-value">{{ formatDecimal(homeTeamStats()?.avg_yards_per_att) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatDecimal(homeTeamStats()?.avg_yards_per_att) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">3rd Down</span>
@@ -48,11 +48,11 @@
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">First Downs</span>
-                  <span class="stat-value">{{ formatStat(homeTeamStats()?.first_down_gained) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeTeamStats()?.first_down_gained) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Turnovers</span>
-                  <span class="stat-value">{{ formatStat(homeTeamStats()?.turnovers) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeTeamStats()?.turnovers) }}</span>
                 </div>
               </div>
             } @else {
@@ -67,27 +67,27 @@
               <div class="stat-rows">
                 <div class="stat-row">
                   <span class="stat-label">Offense Yards</span>
-                  <span class="stat-value">{{ formatStat(awayTeamStats()?.offence_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayTeamStats()?.offence_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Pass Attempts</span>
-                  <span class="stat-value">{{ formatStat(awayTeamStats()?.pass_att) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayTeamStats()?.pass_att) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Pass Yards</span>
-                  <span class="stat-value">{{ formatStat(awayTeamStats()?.pass_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayTeamStats()?.pass_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Run Attempts</span>
-                  <span class="stat-value">{{ formatStat(awayTeamStats()?.run_att) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayTeamStats()?.run_att) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Run Yards</span>
-                  <span class="stat-value">{{ formatStat(awayTeamStats()?.run_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayTeamStats()?.run_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Avg Yards/Att</span>
-                  <span class="stat-value">{{ formatDecimal(awayTeamStats()?.avg_yards_per_att) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatDecimal(awayTeamStats()?.avg_yards_per_att) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">3rd Down</span>
@@ -103,11 +103,11 @@
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">First Downs</span>
-                  <span class="stat-value">{{ formatStat(awayTeamStats()?.first_down_gained) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayTeamStats()?.first_down_gained) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Turnovers</span>
-                  <span class="stat-value">{{ formatStat(awayTeamStats()?.turnovers) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayTeamStats()?.turnovers) }}</span>
                 </div>
               </div>
             } @else {
@@ -134,31 +134,31 @@
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Pass Yards</span>
-                  <span class="stat-value">{{ formatStat(homeQbStats()?.pass_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeQbStats()?.pass_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Pass TD</span>
-                  <span class="stat-value">{{ formatStat(homeQbStats()?.pass_td) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeQbStats()?.pass_td) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Rush Attempts</span>
-                  <span class="stat-value">{{ formatStat(homeQbStats()?.run_attempts) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeQbStats()?.run_attempts) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Rush Yards</span>
-                  <span class="stat-value">{{ formatStat(homeQbStats()?.run_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeQbStats()?.run_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Rush TD</span>
-                  <span class="stat-value">{{ formatStat(homeQbStats()?.run_td) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeQbStats()?.run_td) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Interceptions</span>
-                  <span class="stat-value">{{ formatStat(homeQbStats()?.interception) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(homeQbStats()?.interception) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">QB Rating</span>
-                  <span class="stat-value">{{ formatDecimal(homeQbStats()?.qb_rating) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatDecimal(homeQbStats()?.qb_rating) }}</span>
                 </div>
               </div>
             } @else {
@@ -179,31 +179,31 @@
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Pass Yards</span>
-                  <span class="stat-value">{{ formatStat(awayQbStats()?.pass_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayQbStats()?.pass_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Pass TD</span>
-                  <span class="stat-value">{{ formatStat(awayQbStats()?.pass_td) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayQbStats()?.pass_td) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Rush Attempts</span>
-                  <span class="stat-value">{{ formatStat(awayQbStats()?.run_attempts) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayQbStats()?.run_attempts) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Rush Yards</span>
-                  <span class="stat-value">{{ formatStat(awayQbStats()?.run_yards) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayQbStats()?.run_yards) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Rush TD</span>
-                  <span class="stat-value">{{ formatStat(awayQbStats()?.run_td) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayQbStats()?.run_td) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Interceptions</span>
-                  <span class="stat-value">{{ formatStat(awayQbStats()?.interception) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatStat(awayQbStats()?.interception) }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">QB Rating</span>
-                  <span class="stat-value">{{ formatDecimal(awayQbStats()?.qb_rating) }}</span>
+                  <span class="stat-value" [class.updating]="isUpdating()">{{ formatDecimal(awayQbStats()?.qb_rating) }}</span>
                 </div>
               </div>
             } @else {

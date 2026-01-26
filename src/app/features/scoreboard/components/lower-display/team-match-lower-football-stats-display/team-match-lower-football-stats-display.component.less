@@ -67,6 +67,12 @@
 .value {
   font-size: 18px;
   font-weight: 700;
+  transition: all 0.3s ease;
+
+  &.updating {
+    color: var(--tui-text-action);
+    transform: scale(1.1);
+  }
 }
 
 @media (max-width: 900px) {

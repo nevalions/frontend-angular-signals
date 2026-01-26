@@ -12,55 +12,55 @@
     <div class="stats-grid">
       <div class="stat">
         <span class="label">OFF YDS</span>
-        <span class="value">{{ formatStat(stats()?.offence_yards) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.offence_yards) }}</span>
       </div>
       <div class="stat">
         <span class="label">PASS YDS</span>
-        <span class="value">{{ formatStat(stats()?.pass_yards) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.pass_yards) }}</span>
       </div>
       <div class="stat">
         <span class="label">RUSH YDS</span>
-        <span class="value">{{ formatStat(stats()?.run_yards) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.run_yards) }}</span>
       </div>
       <div class="stat">
         <span class="label">PASS ATT</span>
-        <span class="value">{{ formatStat(stats()?.pass_att) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.pass_att) }}</span>
       </div>
       <div class="stat">
         <span class="label">RUSH ATT</span>
-        <span class="value">{{ formatStat(stats()?.run_att) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.run_att) }}</span>
       </div>
       <div class="stat">
         <span class="label">AVG YDS/ATT</span>
-        <span class="value">{{ formatStat(stats()?.avg_yards_per_att) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.avg_yards_per_att) }}</span>
       </div>
       <div class="stat">
         <span class="label">LOST YDS</span>
-        <span class="value">{{ formatStat(stats()?.lost_yards) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.lost_yards) }}</span>
       </div>
       <div class="stat">
         <span class="label">FLAG YDS</span>
-        <span class="value">{{ formatStat(stats()?.flag_yards) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.flag_yards) }}</span>
       </div>
       <div class="stat">
         <span class="label">1ST DOWNS</span>
-        <span class="value">{{ formatStat(stats()?.first_down_gained) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.first_down_gained) }}</span>
       </div>
       <div class="stat">
         <span class="label">3RD DN</span>
-        <span class="value">
+        <span class="value" [class.updating]="isUpdating()">
           {{ formatStat(stats()?.third_down_conversions) }}/{{ formatStat(stats()?.third_down_attempts) }}
         </span>
       </div>
       <div class="stat">
         <span class="label">4TH DN</span>
-        <span class="value">
+        <span class="value" [class.updating]="isUpdating()">
           {{ formatStat(stats()?.fourth_down_conversions) }}/{{ formatStat(stats()?.fourth_down_attempts) }}
         </span>
       </div>
       <div class="stat">
         <span class="label">TURNOVERS</span>
-        <span class="value">{{ formatStat(stats()?.turnovers) }}</span>
+        <span class="value" [class.updating]="isUpdating()">{{ formatStat(stats()?.turnovers) }}</span>
       </div>
     </div>
   </section>

@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { PlayerMatchWithDetails } from '../../../../matches/models/comprehensive-match.model';
 import { FootballQBStats } from '../../../../matches/models/match-stats.model';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
 import { fadeInOutAnimation } from '../../../animations';
+import { WebSocketService } from '../../../../../core/services/websocket.service';
 
 @Component({
   selector: 'app-football-qb-lower-stats-display',
@@ -14,11 +15,15 @@ import { fadeInOutAnimation } from '../../../animations';
   animations: [fadeInOutAnimation],
 })
 export class FootballQbLowerStatsDisplayComponent {
+  private wsService = inject(WebSocketService);
   player = input<PlayerMatchWithDetails | null>(null);
   teamName = input<string>('');
   teamColor = input<string>('#1a1a1a');
   alignment = input<'home' | 'away'>('home');
   stats = input<FootballQBStats | null>(null);
+
+  private lastStatsUpdate = 0;
+  protected isUpdating = signal(false);
 
   protected readonly playerNumber = computed(() => {
     const player = this.player();
@@ -55,4 +60,14 @@ export class FootballQbLowerStatsDisplayComponent {
     }
     return value.toString();
   }
+
+  private updateEffect = effect(() => {
+    const updateTime = this.wsService.lastStatsUpdate();
+    if (updateTime && updateTime > this.lastStatsUpdate) {
+      this.lastStatsUpdate = updateTime;
+
+      this.isUpdating.set(true);
+      setTimeout(() => this.isUpdating.set(false), 500);
+    }
+  });
 }
