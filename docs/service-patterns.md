@@ -420,17 +420,24 @@ disconnect(): void
 sendMessage(message: unknown): void
 resetData(): void
 
-// Read-only signals
-connectionState: Signal<'connecting' | 'connected' | 'disconnected' | 'error'>
-matchData: Signal<ComprehensiveMatchData | null>
-gameClock: Signal<GameClock | null>
-playClock: Signal<PlayClock | null>
-lastError: Signal<string | null>
-lastPingReceived: Signal<number | null>
-connectionHealthy: Signal<boolean>
-lastRtt: Signal<number | null>
-connectionQuality: Signal<'good' | 'fair' | 'poor' | 'unknown'>
-```
+ // Read-only signals
+  connectionState: Signal<'connecting' | 'connected' | 'disconnected' | 'error'>
+  matchData: Signal<ComprehensiveMatchData | null> // Initial-load only
+  gameClock: Signal<GameClock | null>
+  playClock: Signal<PlayClock | null>
+  events: Signal<FootballEvent[]>
+  statistics: Signal<MatchStats | null>
+  lastEventUpdate: Signal<number | null>
+  lastStatsUpdate: Signal<number | null>
+  matchDataPartial: Signal<MatchData | null> // For incremental updates
+  scoreboardPartial: Signal<unknown | null> // For scoreboard settings updates
+  lastMatchDataUpdate: Signal<number | null> // Timestamp of last match data update
+  lastError: Signal<string | null>
+  lastPingReceived: Signal<number | null>
+  connectionHealthy: Signal<boolean>
+  lastRtt: Signal<number | null>
+  connectionQuality: Signal<'good' | 'fair' | 'poor' | 'unknown'>
+ ```
 
 ### Connection Health Monitoring
 
@@ -488,7 +495,7 @@ The WebSocket service automatically parses and routes incoming messages to appro
 | `gameclock-update` | `gameClock` | Updates clock signal | `GameClock` interface |
 | `event-update` | `events`, `lastEventUpdate` | Updates events list | `FootballEvent[]` interface |
 | `statistics-update` | `statistics`, `lastStatsUpdate` | Updates match statistics | `MatchStats` interface |
-| `message-update` | `matchData` | Updates match data | `ComprehensiveMatchData` interface |
+| `message-update` | `matchDataPartial`, `scoreboardPartial`, `lastMatchDataUpdate` | Updates partial match/scoreboard data | `MatchData` and `unknown` |
 
 **Ping/Pong Flow:**
 1. Server sends `ping` message with timestamp
@@ -559,6 +566,67 @@ private wsMatchDataEffect = effect(() => {
 - Set `loading.set(false)` when initial data arrives from WebSocket
 - Merge only changed fields for subsequent `match-update` messages
 - This handles both race conditions: WebSocket before HTTP, or HTTP before WebSocket
+
+### Partial Update Pattern
+
+For incremental updates (score, quarter, scoreboard settings), the service uses **partial update signals** to preserve existing data:
+
+**WebSocket Service Signals:**
+- `matchData` - Reserved for `initial-load` messages only (complete dataset)
+- `matchDataPartial` - For `match_data` updates (scores, quarters, etc.)
+- `scoreboardPartial` - For `scoreboard_data` updates (settings, display options)
+- `lastMatchDataUpdate` - Timestamp of last match data update (for debugging)
+
+**Why This Pattern?**
+When you save a score/quarter change, the backend sends a `match-update` message containing only the changed fields (`match_data`, `scoreboard_data`). If we overwrite the entire `matchData` signal with this incomplete object, we lose `teams`, `players`, and other required data.
+
+**Component Effects for Partial Updates:**
+
+```typescript
+// Handle partial match_data updates (e.g., score, quarter changes)
+private wsMatchDataPartialEffect = effect(() => {
+  const partial = this.wsService.matchDataPartial();
+  if (!partial) return;
+
+  const current = untracked(() => this.data());
+  if (!current) return;
+
+  // Merge only match_data field (preserves teams, players, etc.)
+  this.data.set({
+    ...current,
+    match_data: partial,
+  });
+});
+
+// Handle partial scoreboard_data updates (e.g., scoreboard settings)
+private wsScoreboardPartialEffect = effect(() => {
+  const partial = this.wsService.scoreboardPartial();
+  if (!partial) return;
+
+  const current = untracked(() => this.data());
+  if (!current) return;
+
+  // Merge only scoreboard field (preserves all other data)
+  this.data.set({
+    ...current,
+    scoreboard: partial as ComprehensiveMatchData['scoreboard'],
+  });
+});
+```
+
+**Flow:**
+1. User saves score → HTTP API succeeds
+2. Backend sends `match-update` with `{ match_data: {...} }`
+3. WebSocket service sets `matchDataPartial` signal (does NOT overwrite `matchData`)
+4. Component's `wsMatchDataPartialEffect` merges partial data
+5. `teams`, `players`, etc. preserved ✅
+6. UI updates with new score ✅
+
+**Key Benefits:**
+- No data loss: Incremental updates don't overwrite complete dataset
+- Type safety: Components control their own data merging logic
+- Separation of concerns: Initial-load vs. incremental updates clearly separated
+- Debugging: `lastMatchDataUpdate` timestamp available
 
 ### WebSocket URL
 
