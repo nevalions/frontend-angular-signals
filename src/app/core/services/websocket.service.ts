@@ -93,6 +93,11 @@ export class WebSocketService {
   readonly statistics = signal<MatchStats | null>(null);
   readonly lastEventUpdate = signal<number | null>(null);
   readonly lastStatsUpdate = signal<number | null>(null);
+  
+  // Partial update signals (for incremental updates from match-update messages)
+  readonly matchDataPartial = signal<MatchData | null>(null);
+  readonly scoreboardPartial = signal<unknown | null>(null);
+  readonly lastMatchDataUpdate = signal<number | null>(null);
 
   // Error signal for debugging
   readonly lastError = signal<string | null>(null);
@@ -409,36 +414,41 @@ export class WebSocketService {
       this.log('Match data update');
       // Backend sends data wrapped in 'data' property
       if (data) {
-        // Transform backend format to our ComprehensiveMatchData format
-        const matchData: ComprehensiveMatchData = {
-          match_data: data['match_data'] as MatchData | undefined,
-          scoreboard: data['scoreboard_data'],
-          match: data['match'],
-          teams: data['teams_data'],
-          gameclock: data['gameclock'] as GameClock | undefined,
-          playclock: data['playclock'] as PlayClock | undefined,
-          events: data['events'] as FootballEvent[] | undefined,
-        };
-        this.matchData.set(matchData);
-
-        if (matchData.gameclock !== undefined) {
-          if (matchData.gameclock === null) {
+        // Set partial update signals (don't overwrite matchData signal)
+        const matchData = data['match_data'] as MatchData | undefined;
+        if (matchData) {
+          this.matchDataPartial.set(matchData);
+          this.lastMatchDataUpdate.set(Date.now());
+        }
+        
+        const scoreboardData = data['scoreboard_data'];
+        if (scoreboardData) {
+          this.scoreboardPartial.set(scoreboardData);
+        }
+        
+        // Keep clock updates for predictor sync
+        const gameclock = data['gameclock'] as GameClock | undefined;
+        if (gameclock !== undefined) {
+          if (gameclock === null) {
             this.gameClock.set(null);
           } else {
-            this.gameClock.set(this.mergeGameClock(matchData.gameclock));
+            this.gameClock.set(this.mergeGameClock(gameclock));
           }
         }
-
-        if (matchData.playclock !== undefined) {
-          if (matchData.playclock === null) {
+        
+        const playclock = data['playclock'] as PlayClock | undefined;
+        if (playclock !== undefined) {
+          if (playclock === null) {
             this.playClock.set(null);
           } else {
-            this.playClock.set(this.mergePlayClock(matchData.playclock));
+            this.playClock.set(this.mergePlayClock(playclock));
           }
         }
-
-        if (matchData.events !== undefined) {
-          this.events.set(matchData.events);
+        
+        // Keep event updates
+        const events = data['events'] as FootballEvent[] | undefined;
+        if (events !== undefined) {
+          this.events.set(events);
           this.lastEventUpdate.set(Date.now());
         }
       }

@@ -82,6 +82,8 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   protected readonly hideAllForms = signal(false);
 
   // WebSocket effects - update data in real-time
+  
+  // Handle initial-load message: sets all data at once
   private wsMatchDataEffect = effect(() => {
     const message = this.wsService.matchData();
     if (!message) return;
@@ -106,17 +108,41 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
     // Skip if no current data yet (waiting for initial-load or HTTP load)
     if (!current) return;
 
-    // Update data from WebSocket message
+    // Note: Subsequent updates (match_data, scoreboard) are handled by partial effects
+    // Don't merge here to avoid type conflicts and data loss
+  });
+
+  // Handle partial match_data updates (e.g., score, quarter changes)
+  private wsMatchDataPartialEffect = effect(() => {
+    const partial = this.wsService.matchDataPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge only match_data field
     this.data.set({
       ...current,
-      match_data: message.match_data ?? current.match_data,
-      scoreboard: (message.scoreboard as ComprehensiveMatchData['scoreboard']) ?? current.scoreboard,
+      match_data: partial,
+    });
+  });
+
+  // Handle partial scoreboard_data updates (e.g., scoreboard settings)
+  private wsScoreboardPartialEffect = effect(() => {
+    const partial = this.wsService.scoreboardPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge only scoreboard field
+    this.data.set({
+      ...current,
+      scoreboard: partial as ComprehensiveMatchData['scoreboard'],
     });
 
-    // Also update scoreboard signal if present in message
-    if (message.scoreboard) {
-      this.scoreboard.set(message.scoreboard as Scoreboard);
-    }
+    // Also update separate scoreboard signal (admin-specific)
+    this.scoreboard.set(partial as Scoreboard);
   });
 
   // Computed values

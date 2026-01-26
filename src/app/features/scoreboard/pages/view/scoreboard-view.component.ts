@@ -151,6 +151,8 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
 
   // Effects must be created in injection context (constructor/field initializer)
   // Use untracked() to prevent infinite loop - we only want to react to wsService changes
+  
+  // Handle initial-load message: sets all data at once
   private wsMatchDataEffect = effect(() => {
     const message = this.wsService.matchData();
     if (!message) {
@@ -175,11 +177,37 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Merge only changed fields for subsequent updates
+    // Note: Subsequent updates (match_data, scoreboard) are handled by partial effects
+    // Don't merge here to avoid type conflicts and data loss
+  });
+
+  // Handle partial match_data updates (e.g., score, quarter changes)
+  private wsMatchDataPartialEffect = effect(() => {
+    const partial = this.wsService.matchDataPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge only match_data field
     this.data.set({
       ...current,
-      match_data: message.match_data ?? current.match_data,
-      scoreboard: (message.scoreboard as ComprehensiveMatchData['scoreboard']) ?? current.scoreboard,
+      match_data: partial,
+    });
+  });
+
+  // Handle partial scoreboard_data updates (e.g., scoreboard settings)
+  private wsScoreboardPartialEffect = effect(() => {
+    const partial = this.wsService.scoreboardPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge only scoreboard field
+    this.data.set({
+      ...current,
+      scoreboard: partial as ComprehensiveMatchData['scoreboard'],
     });
   });
 
