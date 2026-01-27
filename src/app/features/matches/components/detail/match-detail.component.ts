@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, OnDestroy, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TuiAlertService, TuiDialogService, TuiButton } from '@taiga-ui/core';
 import { MatchStoreService } from '../../services/match-store.service';
@@ -13,6 +13,7 @@ import { MatchData } from '../../models/match-data.model';
 import { ComprehensiveMatchData } from '../../models/comprehensive-match.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { DateService } from '../../../../core/services/date.service';
+import { WebSocketService } from '../../../../core/services/websocket.service';
 import { CommonModule } from '@angular/common';
 import { createNumberParamSignal, createStringParamSignal } from '../../../../core/utils/route-param-helper.util';
 import { TabsNavComponent, TabsNavItem } from '../../../../shared/components/tabs-nav/tabs-nav.component';
@@ -25,7 +26,7 @@ import { TabsNavComponent, TabsNavItem } from '../../../../shared/components/tab
   templateUrl: './match-detail.component.html',
   styleUrl: './match-detail.component.less',
 })
-export class MatchDetailComponent implements OnInit {
+export class MatchDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private matchStore = inject(MatchStoreService);
@@ -33,6 +34,8 @@ export class MatchDetailComponent implements OnInit {
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
   private dateService = inject(DateService);
+  private wsService = inject(WebSocketService);
+  private destroyRef = inject(DestroyRef);
 
   sportId = createNumberParamSignal(this.route, 'sportId');
 
@@ -97,6 +100,7 @@ export class MatchDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.connectWebSocket();
   }
 
   loadData(): void {
@@ -192,5 +196,16 @@ export class MatchDetailComponent implements OnInit {
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
+  }
+
+  ngOnDestroy(): void {
+    this.wsService.disconnect();
+  }
+
+  private connectWebSocket(): void {
+    const id = this.matchId();
+    if (id) {
+      this.wsService.connect(id);
+    }
   }
 }
