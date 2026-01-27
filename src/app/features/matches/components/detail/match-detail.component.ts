@@ -10,7 +10,6 @@ import { MatchPlayersTabComponent } from './tabs/match-players-tab.component';
 import { MatchEventsTabComponent } from './tabs/match-events-tab.component';
 import { MatchStatsTabComponent } from './tabs/match-stats-tab.component';
 import { MatchWithDetails } from '../../models/match.model';
-import { MatchData } from '../../models/match-data.model';
 import { ComprehensiveMatchData } from '../../models/comprehensive-match.model';
 import { Scoreboard } from '../../models/scoreboard.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
@@ -48,7 +47,6 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   tournamentId = createNumberParamSignal(this.route, 'tournamentId', { source: 'queryParamMap' });
 
   match = signal<MatchWithDetails | null>(null);
-  matchData = signal<MatchData | null>(null);
   comprehensiveData = signal<ComprehensiveMatchData | null>(null);
   scoreboard = signal<Scoreboard | null>(null);
   loading = signal(true);
@@ -66,7 +64,7 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   });
 
   scoreDisplay = computed(() => {
-    const md = this.matchData();
+    const md = this.comprehensiveData()?.match_data;
     if (md?.score_team_a !== null && md?.score_team_a !== undefined &&
         md?.score_team_b !== null && md?.score_team_b !== undefined) {
       return `${md.score_team_a}:${md.score_team_b}`;
@@ -120,7 +118,6 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
     this.matchStore.getComprehensiveMatchData(id).subscribe({
       next: (data) => {
         this.match.set(data.match);
-        this.matchData.set(data.match_data);
         this.comprehensiveData.set(data);
         this.loading.set(false);
       },
