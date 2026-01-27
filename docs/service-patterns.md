@@ -413,7 +413,7 @@ ngOnDestroy() {
 
 ### Service API
 
-```typescript
+ ```typescript
 // Connection management
 connect(matchId: number): void
 disconnect(): void
@@ -431,7 +431,15 @@ resetData(): void
   lastStatsUpdate: Signal<number | null>
   matchDataPartial: Signal<MatchData | null> // For incremental updates
   scoreboardPartial: Signal<unknown | null> // For scoreboard settings updates
+  matchPartial: Signal<MatchWithDetails | null> // For match details updates
+  teamsPartial: Signal<{team_a: Team; team_b: Team} | null> // For team updates
+  playersPartial: Signal<PlayerMatchWithDetails[] | null> // For roster updates
+  eventsPartial: Signal<FootballEvent[] | null> // For game events updates
   lastMatchDataUpdate: Signal<number | null> // Timestamp of last match data update
+  lastMatchUpdate: Signal<number | null> // Timestamp of last match update
+  lastTeamsUpdate: Signal<number | null> // Timestamp of last teams update
+  lastPlayersUpdate: Signal<number | null> // Timestamp of last players update
+  lastEventsUpdate: Signal<number | null> // Timestamp of last events update
   lastError: Signal<string | null>
   lastPingReceived: Signal<number | null>
   connectionHealthy: Signal<boolean>

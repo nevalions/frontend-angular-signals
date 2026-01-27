@@ -9,6 +9,8 @@ import { PlayClock } from '../../features/matches/models/playclock.model';
 import { MatchData } from '../../features/matches/models/match-data.model';
 import { FootballEvent } from '../../features/matches/models/football-event.model';
 import { MatchStats } from '../../features/matches/models/match-stats.model';
+import { MatchWithDetails, Team } from '../../features/matches/models/match.model';
+import { PlayerMatchWithDetails } from '../../features/matches/models/comprehensive-match.model';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -97,7 +99,16 @@ export class WebSocketService {
   // Partial update signals (for incremental updates from match-update messages)
   readonly matchDataPartial = signal<MatchData | null>(null);
   readonly scoreboardPartial = signal<unknown | null>(null);
+  readonly matchPartial = signal<MatchWithDetails | null>(null);
+  readonly teamsPartial = signal<{team_a: Team; team_b: Team} | null>(null);
+  readonly playersPartial = signal<PlayerMatchWithDetails[] | null>(null);
+  readonly eventsPartial = signal<FootballEvent[] | null>(null);
+
   readonly lastMatchDataUpdate = signal<number | null>(null);
+  readonly lastMatchUpdate = signal<number | null>(null);
+  readonly lastTeamsUpdate = signal<number | null>(null);
+  readonly lastPlayersUpdate = signal<number | null>(null);
+  readonly lastEventsUpdate = signal<number | null>(null);
 
   // Error signal for debugging
   readonly lastError = signal<string | null>(null);
@@ -420,12 +431,36 @@ export class WebSocketService {
           this.matchDataPartial.set(matchData);
           this.lastMatchDataUpdate.set(Date.now());
         }
-        
+
         const scoreboardData = data['scoreboard_data'];
         if (scoreboardData) {
           this.scoreboardPartial.set(scoreboardData);
         }
-        
+
+        const match = data['match'] as MatchWithDetails | undefined;
+        if (match) {
+          this.matchPartial.set(match);
+          this.lastMatchUpdate.set(Date.now());
+        }
+
+        const teams = data['teams_data'] as {team_a: Team; team_b: Team} | undefined;
+        if (teams) {
+          this.teamsPartial.set(teams);
+          this.lastTeamsUpdate.set(Date.now());
+        }
+
+        const players = data['players'] as PlayerMatchWithDetails[] | undefined;
+        if (players) {
+          this.playersPartial.set(players);
+          this.lastPlayersUpdate.set(Date.now());
+        }
+
+        const events = data['events'] as FootballEvent[] | undefined;
+        if (events) {
+          this.eventsPartial.set(events);
+          this.lastEventsUpdate.set(Date.now());
+        }
+
         // Keep clock updates for predictor sync
         const gameclock = data['gameclock'] as GameClock | undefined;
         if (gameclock !== undefined) {
@@ -435,7 +470,7 @@ export class WebSocketService {
             this.gameClock.set(this.mergeGameClock(gameclock));
           }
         }
-        
+
         const playclock = data['playclock'] as PlayClock | undefined;
         if (playclock !== undefined) {
           if (playclock === null) {
@@ -443,13 +478,6 @@ export class WebSocketService {
           } else {
             this.playClock.set(this.mergePlayClock(playclock));
           }
-        }
-        
-        // Keep event updates
-        const events = data['events'] as FootballEvent[] | undefined;
-        if (events !== undefined) {
-          this.events.set(events);
-          this.lastEventUpdate.set(Date.now());
         }
       }
       return;

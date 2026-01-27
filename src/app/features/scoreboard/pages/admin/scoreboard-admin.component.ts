@@ -94,7 +94,8 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
     if (!current && message['teams']) {
       this.data.set({
         ...message,
-        players: [],
+        players: message['players'] || [],
+        events: message['events'] || [],
       } as unknown as ComprehensiveMatchData);
       this.loading.set(false);
 
@@ -143,6 +144,70 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
 
     // Also update separate scoreboard signal (admin-specific)
     this.scoreboard.set(partial as Scoreboard);
+  });
+
+  // Handle partial match updates (team IDs, dates, sponsors)
+  private wsMatchPartialEffect = effect(() => {
+    const partial = this.wsService.matchPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge match field
+    this.data.set({
+      ...current,
+      match: partial,
+    });
+  });
+
+  // Handle partial teams updates (colors, logos, names)
+  private wsTeamsPartialEffect = effect(() => {
+    const partial = this.wsService.teamsPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge teams field
+    this.data.set({
+      ...current,
+      teams: partial,
+    });
+  });
+
+  // Handle players updates (from match-update messages)
+  private wsPlayersFromMatchUpdateEffect = effect(() => {
+    const players = this.wsService.playersPartial();
+    if (!players) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge players only if different
+    if (JSON.stringify(current.players) !== JSON.stringify(players)) {
+      this.data.set({
+        ...current,
+        players,
+      });
+    }
+  });
+
+  // Handle events updates (from match-update messages)
+  private wsEventsFromMatchUpdateEffect = effect(() => {
+    const events = this.wsService.eventsPartial();
+    if (!events) return;
+
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge events only if different
+    if (JSON.stringify(current.events) !== JSON.stringify(events)) {
+      this.data.set({
+        ...current,
+        events,
+      });
+    }
   });
 
   // Computed values
