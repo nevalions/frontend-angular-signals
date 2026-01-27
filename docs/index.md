@@ -36,6 +36,7 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 
 - **[API Configuration](./api-configuration.md)** - API endpoints, static assets, PUT endpoint patterns, backend docs
 - **[Backend Integration Patterns](./backend-integration-patterns.md)** - Schema strategy, mixed vs nested schemas, ordering with joined tables
+- **[WebSocket Data Flow](./websocket-data-flow.md)** - Real-time updates via WebSocket, message types, data flow patterns
 - **[Page Schemas](./schemas/)** - Page layouts, UI elements, and backend data requirements
 
 ## Page Schemas & Backend Requirements
