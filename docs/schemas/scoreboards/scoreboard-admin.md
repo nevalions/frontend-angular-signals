@@ -167,6 +167,36 @@
     - Football events table (create/edit/delete events with all player assignments)
 - Each form has a submit button to save changes
 
+## Real-time Updates (WebSocket)
+
+**Events Updates:**
+
+- Events list updates automatically via WebSocket (no page refresh needed)
+- EventsForms component reads from `WebSocketService.events` computed property
+- Event create/update/delete operations trigger WebSocket `event-update` message
+- All connected clients receive updated events array instantly
+- Play-by-play component also receives events from same WebSocket source
+
+**Update Types:**
+
+- **Event created**: New event appears in Events table immediately
+- **Event updated**: Event details update in Events table immediately
+- **Event deleted**: Event disappears from Events table immediately
+- **Statistics recalculated**: Team/QB/Offense stats update when events change
+- **Clock updates**: Game clock and play clock update via WebSocket `gameclock-update` and `playclock-update` messages
+- **Score updates**: Match scores update via WebSocket `match-update` message with updated match_data
+- **Team data updates**: Team colors, logos, and names update via WebSocket `teams-data` message
+
+**WebSocket Signal:**
+
+- `events` → Full FootballEvent array replacement (not partial updates)
+- `statistics` → Full MatchStats object replacement
+- `matchDataPartial` → Partial match_data updates (scores, quarter, down/distance)
+- `teamsPartial` → Full teams object replacement
+- Updates arrive via `event-update`, `statistics-update`, and `match-update` messages
+- API calls (POST/PUT/DELETE to /api/football_event) trigger backend → database → WebSocket broadcast flow
+- No HTTP GET requests to reload events after create/update/delete operations
+
 ## What we need from backend
 
 **For initial data load:**

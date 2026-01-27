@@ -45,7 +45,7 @@ interface EventRowDisplay {
 export class EventsFormsComponent {
   private wsService = inject(WebSocketService);
   matchStats = input<MatchStats | null>(null);
-  events = input<FootballEvent[]>([]);
+  protected readonly events = computed(() => this.wsService.events());
   players = input<PlayerMatchWithDetails[]>([]);
   fieldLength = input<number>(100);
 

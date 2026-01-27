@@ -6,7 +6,7 @@ import { ScoreboardStoreService } from '../../services/scoreboard-store.service'
 import { ScoreboardClockService } from '../../services/scoreboard-clock.service';
 import { WebSocketService } from '../../../../core/services/websocket.service';
 import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-match.model';
-import { FootballEvent, FootballEventCreate, FootballEventUpdate } from '../../../matches/models/football-event.model';
+import { FootballEventCreate, FootballEventUpdate } from '../../../matches/models/football-event.model';
 import { Scoreboard, ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
 import { PlayerMatchUpdate } from '../../../matches/models/player-match.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
@@ -55,7 +55,6 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   protected readonly data = signal<ComprehensiveMatchData | null>(null);
   protected readonly scoreboard = signal<Scoreboard | null>(null);
   protected readonly matchStats = computed(() => this.wsService.statistics());
-  protected readonly events = signal<FootballEvent[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
@@ -381,7 +380,6 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
     this.scoreboardStore.updatePlayerMatch(playerId, payload).subscribe({
       error: (err) => {
         console.error('Failed to update player', err);
-        this.loadData();
       },
     });
   }
@@ -413,34 +411,19 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
 
     const eventData = { ...event, match_id: matchId };
     this.scoreboardStore.createFootballEvent(eventData).subscribe({
-      next: () => this.reloadEvents(),
       error: (err) => console.error('Failed to create event', err),
     });
   }
 
   onEventUpdate(payload: { id: number; data: FootballEventUpdate }): void {
     this.scoreboardStore.updateFootballEvent(payload.id, payload.data).subscribe({
-      next: () => this.reloadEvents(),
       error: (err) => console.error('Failed to update event', err),
     });
   }
 
   onEventDelete(eventId: number): void {
     this.scoreboardStore.deleteFootballEvent(eventId).subscribe({
-      next: () => this.reloadEvents(),
       error: (err) => console.error('Failed to delete event', err),
     });
-  }
-
-  private reloadEvents(): void {
-    const id = this.matchId();
-    if (!id) return;
-
-    this.scoreboardStore.getMatchEvents(id).subscribe({
-      next: (evts) => this.events.set(evts),
-      error: () => console.error('Failed to reload events'),
-    });
-
-    // Stats will be updated via WebSocket when events change
   }
 }
