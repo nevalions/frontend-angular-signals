@@ -276,6 +276,21 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
     }
   });
 
+  // Handle events updates (from event-update messages)
+  private wsEventsEffect = effect(() => {
+    const events = this.wsService.events();
+    const current = untracked(() => this.data());
+    if (!current) return;
+
+    // Merge events only if different
+    if (JSON.stringify(current.events) !== JSON.stringify(events)) {
+      this.data.set({
+        ...current,
+        events: [...events],
+      });
+    }
+  });
+
   ngOnInit(): void {
     this.connectWebSocket();
     this.loadData();

@@ -411,18 +411,32 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
 
     const eventData = { ...event, match_id: matchId };
     this.scoreboardStore.createFootballEvent(eventData).subscribe({
+      next: (createdEvent) => {
+        const currentEvents = this.wsService.events();
+        this.wsService.events.set([...currentEvents, createdEvent]);
+      },
       error: (err) => console.error('Failed to create event', err),
     });
   }
 
   onEventUpdate(payload: { id: number; data: FootballEventUpdate }): void {
     this.scoreboardStore.updateFootballEvent(payload.id, payload.data).subscribe({
+      next: (updatedEvent) => {
+        const currentEvents = this.wsService.events();
+        this.wsService.events.set(
+          currentEvents.map((e) => (e.id === payload.id ? updatedEvent : e))
+        );
+      },
       error: (err) => console.error('Failed to update event', err),
     });
   }
 
   onEventDelete(eventId: number): void {
     this.scoreboardStore.deleteFootballEvent(eventId).subscribe({
+      next: () => {
+        const currentEvents = this.wsService.events();
+        this.wsService.events.set(currentEvents.filter((e) => e.id !== eventId));
+      },
       error: (err) => console.error('Failed to delete event', err),
     });
   }

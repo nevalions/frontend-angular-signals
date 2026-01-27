@@ -575,6 +575,110 @@ private wsMatchDataEffect = effect(() => {
 - Merge only changed fields for subsequent `match-update` messages
 - This handles both race conditions: WebSocket before HTTP, or HTTP before WebSocket
 
+### Immediate Signal Updates (API → WebSocket Pattern)
+
+When performing CRUD operations via HTTP API, update the WebSocket service's events signal directly for immediate UI feedback, then let other clients receive updates via the normal WebSocket broadcast.
+
+**Why This Pattern?**
+- Updating client sees changes immediately (no waiting for WebSocket broadcast)
+- Other clients still receive updates via WebSocket (maintains data consistency)
+- Eliminates duplicate HTTP reloads after successful API operations
+- Provides instant UX while maintaining real-time synchronization
+
+**Implementation Pattern (Create):**
+
+```typescript
+onEventCreate(event: FootballEventCreate): void {
+  const matchId = this.currentMatchId();
+  const eventData = { ...event, match_id: matchId };
+  
+  this.scoreboardStore.createFootballEvent(eventData).subscribe({
+    next: (createdEvent) => {
+      // Update WebSocket signal immediately for instant UI feedback
+      const currentEvents = this.wsService.events();
+      this.wsService.events.set([...currentEvents, createdEvent]);
+    },
+    error: (err) => console.error('Failed to create event', err),
+  });
+}
+```
+
+**Implementation Pattern (Update):**
+
+```typescript
+onEventUpdate(payload: { id: number; data: FootballEventUpdate }): void {
+  this.scoreboardStore.updateFootballEvent(payload.id, payload.data).subscribe({
+    next: (updatedEvent) => {
+      // Update WebSocket signal immediately - replace existing event
+      const currentEvents = this.wsService.events();
+      this.wsService.events.set(
+        currentEvents.map((e) => (e.id === payload.id ? updatedEvent : e))
+      );
+    },
+    error: (err) => console.error('Failed to update event', err),
+  });
+}
+```
+
+**Implementation Pattern (Delete):**
+
+```typescript
+onEventDelete(eventId: number): void {
+  this.scoreboardStore.deleteFootballEvent(eventId).subscribe({
+    next: () => {
+      // Update WebSocket signal immediately - remove event
+      const currentEvents = this.wsService.events();
+      this.wsService.events.set(currentEvents.filter((e) => e.id !== eventId));
+    },
+    error: (err) => console.error('Failed to delete event', err),
+  });
+}
+```
+
+**Data Flow:**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Admin Client (makes change)                              │
+│  1. POST/PUT/DELETE to API                              │
+│  2. API succeeds → immediately update wsService.events()   │
+│  3. Component effect sees change → UI updates instantly     │
+└─────────────────────────────────────────────────────────────┘
+                          │
+                          │ 3. Backend processes & triggers
+                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Backend WebSocket Broadcast                               │
+│  4. Database trigger → WebSocket broadcast                  │
+│  5. All other clients receive event-update message         │
+└─────────────────────────────────────────────────────────────┘
+                          │
+                          │ 6. Other clients update via WebSocket
+                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Other Clients                                            │
+│  7. WebSocket receives event-update                        │
+│  8. Component effects merge into local data                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**When to Use This Pattern:**
+- Admin or control panels where immediate feedback is critical
+- When a client makes changes via HTTP API and wants instant UI updates
+- For CRUD operations where the performing client should see changes immediately
+- Combined with component effects that watch `wsService.events()` and merge into local data
+
+**When NOT to Use This Pattern:**
+- Read-only clients (they should only receive updates via WebSocket)
+- When WebSocket messages already provide immediate feedback
+- For operations that don't change data visible to the client
+
+**Important Notes:**
+- Backend WebSocket broadcast still happens for all clients (ensures consistency)
+- No duplicate data: WebSocket broadcast overwrites the same signal with identical data
+- If WebSocket message arrives before API response, the component effect handles it normally
+- If WebSocket message arrives after API response, the signal update is idempotent (no duplicate effects)
+
 ### Partial Update Pattern
 
 For incremental updates (score, quarter, scoreboard settings), the service uses **partial update signals** to preserve existing data:

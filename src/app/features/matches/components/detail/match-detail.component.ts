@@ -302,4 +302,17 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
       });
     }
   });
+
+  private wsEventsEffect = effect(() => {
+    const events = this.wsService.events();
+    const current = untracked(() => this.comprehensiveData());
+    if (!current) return;
+
+    if (JSON.stringify(current.events) !== JSON.stringify(events)) {
+      this.comprehensiveData.set({
+        ...current,
+        events: [...events],
+      });
+    }
+  });
 }
