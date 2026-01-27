@@ -373,6 +373,12 @@ export class WebSocketService {
       return;
     }
 
+    // Handle players updates
+    if (messageType === 'players-update') {
+      this.handlePlayersUpdate(message);
+      return;
+    }
+
     // Handle initial-load message (combined full data on connection)
     if (messageType === 'initial-load') {
       const data = message['data'] as Record<string, unknown> | undefined;
@@ -549,6 +555,27 @@ export class WebSocketService {
       }
     } catch (error) {
       console.error('[WebSocket] Error handling statistics update:', error);
+    }
+  }
+
+  /**
+   * Handle players-update messages from server
+   */
+  private handlePlayersUpdate(message: WebSocketMessage): void {
+    try {
+      const data = message['data'] as Record<string, unknown> | undefined;
+      const players = data?.['players'] as PlayerMatchWithDetails[] | undefined;
+      const matchId = data?.['match_id'] as number | undefined;
+
+      this.log(`Received ${players?.length ?? 0} players for match ${matchId}`);
+
+      if (players) {
+        this.playersPartial.set(players);
+        this.lastPlayersUpdate.set(Date.now());
+        this.log('Players updated via WebSocket', { count: players.length });
+      }
+    } catch (error) {
+      console.error('[WebSocket] Error handling players update:', error);
     }
   }
 
