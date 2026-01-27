@@ -277,8 +277,8 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.loadData();
     this.connectWebSocket();
+    this.loadData();
   }
 
   ngOnDestroy(): void {
@@ -296,25 +296,8 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
     this.loading.set(true);
     this.error.set(null);
 
-    // Load comprehensive match data
-    this.scoreboardStore.getComprehensiveMatchData(id).subscribe({
-      next: (data) => {
-        this.data.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('Failed to load match data');
-        this.loading.set(false);
-      },
-    });
-
-    this.clockService.load(id);
-
-    // Initial load of match stats via HTTP for SSR/first load
-    // Real-time updates will come via WebSocket
-    this.matchStore.getMatchStats(id).subscribe({
-      error: () => console.error('Failed to load initial match stats'),
-    });
+    // Data will be loaded via WebSocket initial-load message
+    // No HTTP calls needed here
   }
 
   private connectWebSocket(): void {
