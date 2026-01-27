@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, OnDestroy, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, OnDestroy, DestroyRef, effect, untracked } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TuiAlertService, TuiDialogService, TuiButton } from '@taiga-ui/core';
 import { MatchStoreService } from '../../services/match-store.service';
@@ -48,6 +48,7 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   match = signal<MatchWithDetails | null>(null);
   matchData = signal<MatchData | null>(null);
   comprehensiveData = signal<ComprehensiveMatchData | null>(null);
+  scoreboard = signal<any | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
 
@@ -208,4 +209,65 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
       this.wsService.connect(id);
     }
   }
+
+  private wsInitialLoadEffect = effect(() => {
+    const message = this.wsService.matchData();
+    if (!message) return;
+
+    const current = untracked(() => this.comprehensiveData());
+
+    if (!current && message['teams']) {
+      this.comprehensiveData.set({
+        ...message,
+        players: message['players'] || [],
+        events: message['events'] || [],
+      } as unknown as ComprehensiveMatchData);
+      this.loading.set(false);
+    }
+
+    if (message.scoreboard) {
+      this.scoreboard.set(message.scoreboard as any);
+    }
+
+    if (!current) return;
+  });
+
+  private wsMatchDataPartialEffect = effect(() => {
+    const partial = this.wsService.matchDataPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.comprehensiveData());
+    if (!current) return;
+
+    this.comprehensiveData.set({
+      ...current,
+      match_data: partial,
+    });
+  });
+
+  private wsMatchPartialEffect = effect(() => {
+    const partial = this.wsService.matchPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.comprehensiveData());
+    if (!current) return;
+
+    this.comprehensiveData.set({
+      ...current,
+      match: partial,
+    });
+  });
+
+  private wsTeamsPartialEffect = effect(() => {
+    const partial = this.wsService.teamsPartial();
+    if (!partial) return;
+
+    const current = untracked(() => this.comprehensiveData());
+    if (!current) return;
+
+    this.comprehensiveData.set({
+      ...current,
+      teams: partial,
+    });
+  });
 }
