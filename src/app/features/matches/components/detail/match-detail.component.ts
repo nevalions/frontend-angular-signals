@@ -215,6 +215,10 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
       this.loading.set(false);
     }
 
+    if (message['match']) {
+      this.match.set(message['match'] as MatchWithDetails);
+    }
+
     if (message.scoreboard) {
       this.scoreboard.set(message.scoreboard as Scoreboard);
     }
@@ -249,6 +253,8 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
       players: current.players,
       events: current.events,
     });
+
+    this.match.set(partial);
   });
 
   private wsTeamsPartialEffect = effect(() => {
