@@ -411,6 +411,12 @@ export class WebSocketService {
           this.scoreboardPartial.set(scoreboardData);
         }
 
+        const players = data['players'] as PlayerMatchWithDetails[] | undefined;
+        if (players) {
+          this.playersPartial.set(players);
+          this.lastPlayersUpdate.set(Date.now());
+        }
+
         // Set events and stats
         if (matchData.events) {
           this.events.set(matchData.events);
