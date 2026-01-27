@@ -100,8 +100,8 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.loadData();
     this.connectWebSocket();
+    this.loadData();
   }
 
   loadData(): void {
@@ -115,17 +115,8 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
     this.loading.set(true);
     this.error.set(null);
 
-    this.matchStore.getComprehensiveMatchData(id).subscribe({
-      next: (data) => {
-        this.match.set(data.match);
-        this.comprehensiveData.set(data);
-        this.loading.set(false);
-      },
-      error: (_err) => {
-        this.error.set('Failed to load match');
-        this.loading.set(false);
-      }
-    });
+    // Data will be loaded via WebSocket initial-load message
+    // No HTTP calls needed here
   }
 
   navigateBack(): void {
