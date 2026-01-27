@@ -85,10 +85,8 @@ export class AuthService {
   }
 
   heartbeat(): Observable<void> {
-    console.log('[AuthService] Sending heartbeat...');
     return this.http.post<void>(buildApiUrl('/api/auth/heartbeat'), null).pipe(
       tap(() => {
-        console.log('[AuthService] Heartbeat successful');
       }),
       catchError((error) => {
         console.error('[AuthService] Heartbeat failed:', error);
