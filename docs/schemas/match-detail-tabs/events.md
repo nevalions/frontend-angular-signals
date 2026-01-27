@@ -72,8 +72,47 @@
 - Visual connectors between events
 - Quarter divider markers with flag icon
 
-### Empty State
+ ### Empty State
 - No Events Recorded message when no events available
+
+## Real-time Updates (WebSocket)
+
+**Events Timeline Updates:**
+
+- Events timeline updates automatically via WebSocket (no page refresh needed)
+- Parent component (MatchDetailComponent) updates `comprehensiveData.events` signal
+- Tab receives updates via `@Input()` and reflects changes instantly
+- New events appear at correct chronological position
+
+**Update Types:**
+
+- **New event added**: Event appears in timeline immediately (at correct position)
+- **Event modified**: Event details update in place (e.g., corrected yardage)
+- **Events reordered**: Timeline re-sorts chronologically (if backend reorders)
+- **Multiple events added**: All events appear, maintaining order
+
+**WebSocket Signal:**
+
+- `eventsPartial` → Complete events array replacement (not partial updates)
+- Effect compares `JSON.stringify(current.events)` vs `JSON.stringify(newEvents)` to avoid unnecessary re-renders
+- Updates arrive via `match-update` messages containing full events array
+
+**Event Types That Trigger Stats Updates:**
+
+- **Touchdown** → Updates points, yards, QB stats, offense stats
+- **Field goal** → Updates points
+- **Penalty** → Updates penalty yards
+- **Turnover** → Updates turnovers, defense stats
+- **Pass completion** → Updates pass stats, QB stats
+- **Run play** → Updates rush stats
+- **Sack** → Updates defense stats
+
+**Performance:**
+
+- Deep equality check prevents unnecessary re-renders
+- Full array replacement ensures no stale data
+- Signals ensure automatic UI refresh
+- Timeline sorting updates automatically
 
 ## What we need from backend
 

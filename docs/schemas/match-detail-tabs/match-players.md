@@ -82,8 +82,43 @@
   - Save changes
   - Delete from match (with confirmation)
 
-### Empty State
+ ### Empty State
 - No players registered message when team has no players
+
+## Real-time Updates (WebSocket)
+
+**Players Roster Updates:**
+
+- Players roster updates automatically via WebSocket (no page refresh needed)
+- Parent component (MatchDetailComponent) updates `comprehensiveData.players` signal
+- Tab receives updates via `@Input()` and reflects changes instantly
+- Local `localPlayersData` signal syncs via `syncEffect`
+
+**Update Types:**
+
+- **Player added**: New player appears in roster immediately
+- **Player removed**: Player disappears from roster immediately
+- **Player starter toggle**: Player moves between Starting/Bench sections
+- **Player number change**: Number updates in roster, sorting updates
+- **Player position change**: Position updates in roster
+
+**WebSocket Signal:**
+
+- `playersPartial` → Complete players array replacement (not partial updates)
+- Effect compares `JSON.stringify(current.players)` vs `JSON.stringify(newPlayers)` to avoid unnecessary re-renders
+- Updates arrive via `match-update` messages containing full players array
+
+**Optimistic Updates:**
+
+- Add/Remove/Toggle actions use optimistic updates (immediate UI feedback)
+- WebSocket eventually syncs with backend (server source of truth)
+- No conflict resolution needed (last update wins)
+
+**Performance:**
+
+- Deep equality check prevents unnecessary re-renders
+- Full array replacement ensures no stale data
+- Signals ensure automatic UI refresh
 
 ## What we need from backend
 

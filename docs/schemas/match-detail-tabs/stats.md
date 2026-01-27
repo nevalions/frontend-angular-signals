@@ -72,8 +72,41 @@
 - Quarterback statistics table (side-by-side comparison)
 - Offense statistics table (side-by-side comparison)
 - Defense statistics table (side-by-side comparison)
-- Each statistic shows values for both Team A and Team B
+ - Each statistic shows values for both Team A and Team B
 - Statistics calculated from match events and player data
+- **Real-time updates**: Statistics update automatically when new events are added (via WebSocket)
+- **Loading state**: Shows "Loading statistics..." while waiting for WebSocket initial-load message
+
+## Real-time Updates (WebSocket)
+
+**Statistics Loading:**
+
+- Statistics loaded via WebSocket `statistics` signal (not HTTP)
+- Initial load arrives via `initial-load` message with full stats
+- Updates arrive via `statistics-update` messages with complete MatchStats object
+
+**WebSocket Integration:**
+
+- Component injects `WebSocketService` and reads from `statistics` signal
+- No manual HTTP calls for statistics (automatic via WebSocket)
+- Computed properties (`statCategories`, etc.) recalculate automatically when stats change
+- Loading state handles initial null statistics gracefully
+
+**Triggered By:**
+
+- New touchdown event → Updates points, yards, QB stats
+- New penalty event → Updates penalties, yards
+- New turnover event → Updates turnovers, defense stats
+- New run event → Updates rush yards, total yards
+- New pass event → Updates pass yards, QB stats
+- Any event modification → Recalculates all affected statistics
+
+**Performance:**
+
+- No polling (WebSocket pushes updates)
+- Instant updates when events are added
+- No HTTP requests for statistics (WebSocket only)
+- Automatic UI refresh via Angular signals/computed
 
 ## What we need from backend
 

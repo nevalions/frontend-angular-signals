@@ -52,8 +52,56 @@
   - "Scoreboard Admin" button → Navigate to `/scoreboard/match/:id/admin`
   - "Scoreboard View" button → Navigate to `/scoreboard/match/:id/hd`
 
-- Tab navigation: Match Players, Events, Stats
+ - Tab navigation: Match Players, Events, Stats
 - Tab content area → Shows data for selected tab
+- Connection indicator → Shows WebSocket connection status (Good/Fair/Poor/Connecting)
+ 
+## Real-time Updates (WebSocket)
+
+**WebSocket Integration:**
+
+- Page automatically connects to WebSocket on load
+- Real-time updates for:
+  - **Match Data**: Score, quarter, down, distance (instant updates)
+  - **Teams**: Logos, names, colors (instant updates)
+  - **Players**: Roster changes, starter toggles, player details (instant updates)
+  - **Events**: Touchdowns, penalties, turnovers (instant updates)
+  - **Statistics**: Team stats, offense stats, QB stats, defense stats (instant updates)
+- Connection indicator shows current connection quality
+- Disconnects automatically when navigating away
+- Reconnects cleanly on page refresh
+
+**WebSocket Message Types:**
+
+- `initial-load` → Sets all match data (match, teams, players, events, scoreboard, statistics)
+- `match-update` → Partial updates for match_data, players, events arrays
+- `statistics-update` → Full MatchStats object replacement
+- `ping` → Health check with auto-pong response
+
+**Signals Used (WebSocketService):**
+
+- `matchData()` → Full match data object
+- `matchDataPartial()` → Score, quarter, game status updates
+- `matchPartial()` → Match metadata updates (team IDs, dates, sponsors)
+- `teamsPartial()` → Team updates (colors, logos, names)
+- `playersPartial()` → Players roster array updates
+- `eventsPartial()` → Events array updates
+- `statistics()` → Complete MatchStats object
+
+**Effects in Component:**
+
+- `wsInitialLoadEffect` → Handles initial-load messages
+- `wsMatchDataPartialEffect` → Handles match_data partial updates
+- `wsMatchPartialEffect` → Handles match partial updates
+- `wsTeamsPartialEffect` → Handles teams partial updates
+- `wsPlayersPartialEffect` → Handles players array updates
+- `wsEventsPartialEffect` → Handles events array updates
+
+**Tab Updates:**
+
+- **Match Players Tab**: Automatically reflects players roster changes (via comprehensiveData.players)
+- **Events Tab**: Automatically reflects new events (via comprehensiveData.events)
+- **Stats Tab**: Reads directly from wsService.statistics() computed property
 
 ## What we need from backend
 
