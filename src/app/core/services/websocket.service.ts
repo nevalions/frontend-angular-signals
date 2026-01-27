@@ -406,6 +406,11 @@ export class WebSocketService {
           this.playClock.set(this.mergePlayClock(matchData.playclock));
         }
 
+        const scoreboardData = data['scoreboard_data'];
+        if (scoreboardData) {
+          this.scoreboardPartial.set(scoreboardData);
+        }
+
         // Set events and stats
         if (matchData.events) {
           this.events.set(matchData.events);
