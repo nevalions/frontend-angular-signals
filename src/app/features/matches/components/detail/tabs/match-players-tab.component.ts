@@ -563,9 +563,6 @@ export class MatchPlayersTabComponent {
     label: 'Edit match player',
   }) as unknown as (data: MatchPlayerEditDialogData) => Observable<MatchPlayerEditDialogResult>;
 
-  // Local state for players to support optimistic updates
-  private localPlayersData = signal<PlayerMatchWithDetails[]>([]);
-
   addPlayerTeamAOpen = signal(false);
   addPlayerTeamBOpen = signal(false);
   availablePlayersTeamA = signal<MatchAvailablePlayer[]>([]);
@@ -579,24 +576,25 @@ export class MatchPlayersTabComponent {
   teamASort = signal<'number' | 'name'>('number');
   teamBSort = signal<'number' | 'name'>('number');
 
-  // Sync local players when comprehensiveData input changes
+  // Validate comprehensiveData input
   private syncEffect = effect(() => {
     const data = this.comprehensiveData();
-    if (data) {
-      this.localPlayersData.set([...data.players]);
+    // Just ensure data exists - no local state copying needed
+    if (!data) {
+      // Could add loading state here if needed
     }
   });
 
   teamAPlayers = computed(() => {
     const data = this.comprehensiveData();
     if (!data) return [];
-    return this.localPlayersData().filter(p => p.team_id === data.teams.team_a.id);
+    return data.players.filter((p: PlayerMatchWithDetails) => p.team_id === data.teams.team_a.id);
   });
 
   teamBPlayers = computed(() => {
     const data = this.comprehensiveData();
     if (!data) return [];
-    return this.localPlayersData().filter(p => p.team_id === data.teams.team_b.id);
+    return data.players.filter((p: PlayerMatchWithDetails) => p.team_id === data.teams.team_b.id);
   });
 
   teamAStarters = computed(() =>
@@ -678,7 +676,6 @@ export class MatchPlayersTabComponent {
     const teamPlayers = this.getTeamPlayersFor(player);
     this.editPlayerDialog({ player, sportId, teamPlayers }).subscribe((result: MatchPlayerEditDialogResult | void) => {
       if (result?.updated || result?.deleted) {
-        this.refreshMatchPlayers();
         this.loadAvailablePlayers('A');
         this.loadAvailablePlayers('B');
       }
@@ -760,22 +757,8 @@ export class MatchPlayersTabComponent {
 
   private onAddPlayerSuccess(team: 'A' | 'B'): void {
     this.cancelAddPlayer(team);
-    this.refreshMatchPlayers();
+    // No manual refresh needed - WebSocket will update players automatically
     this.loadAvailablePlayers(team);
-  }
-
-  private refreshMatchPlayers(): void {
-    const matchId = this.getMatchId();
-    if (!matchId) return;
-
-    this.matchStore.getComprehensiveMatchData(matchId).subscribe({
-      next: (data) => {
-        this.localPlayersData.set([...data.players]);
-      },
-      error: () => {
-        this.alerts.open('Failed to refresh match players', { label: 'Error', appearance: 'negative' }).subscribe();
-      }
-    });
   }
 
   private loadAvailablePlayers(team: 'A' | 'B'): void {
@@ -874,13 +857,8 @@ export class MatchPlayersTabComponent {
   togglePlayerStarting(playerId: number, isStarting: boolean): void {
     const data: PlayerMatchUpdate = { is_starting: isStarting };
 
-    // Optimistic update: update local data immediately
-    const currentPlayers = this.localPlayersData();
-    const updatedPlayers = currentPlayers.map(p =>
-      p.id === playerId ? { ...p, is_starting: isStarting } : p
-    );
-    this.localPlayersData.set(updatedPlayers);
-
+    // No optimistic updates - WebSocket provides real-time updates
+    // Server is single source of truth for all connected clients
     this.matchStore.updatePlayerMatch(playerId, data).subscribe({
       next: () => {
         this.alerts.open(
@@ -889,8 +867,6 @@ export class MatchPlayersTabComponent {
         ).subscribe();
       },
       error: () => {
-        // Revert optimistic update on error
-        this.localPlayersData.set(currentPlayers);
         this.alerts.open('Failed to update player status', { label: 'Error', appearance: 'error' }).subscribe();
       }
     });
