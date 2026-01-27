@@ -270,4 +270,34 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
       teams: partial,
     });
   });
+
+  private wsPlayersPartialEffect = effect(() => {
+    const players = this.wsService.playersPartial();
+    if (!players) return;
+
+    const current = untracked(() => this.comprehensiveData());
+    if (!current) return;
+
+    if (JSON.stringify(current.players) !== JSON.stringify(players)) {
+      this.comprehensiveData.set({
+        ...current,
+        players,
+      });
+    }
+  });
+
+  private wsEventsPartialEffect = effect(() => {
+    const events = this.wsService.eventsPartial();
+    if (!events) return;
+
+    const current = untracked(() => this.comprehensiveData());
+    if (!current) return;
+
+    if (JSON.stringify(current.events) !== JSON.stringify(events)) {
+      this.comprehensiveData.set({
+        ...current,
+        events,
+      });
+    }
+  });
 }
