@@ -579,7 +579,6 @@ export class MatchPlayersTabComponent {
   // Validate comprehensiveData input
   private syncEffect = effect(() => {
     const data = this.comprehensiveData();
-    // Just ensure data exists - no local state copying needed
     if (!data) {
       // Could add loading state here if needed
     }
@@ -588,13 +587,26 @@ export class MatchPlayersTabComponent {
   teamAPlayers = computed(() => {
     const data = this.comprehensiveData();
     if (!data) return [];
-    return data.players.filter((p: PlayerMatchWithDetails) => p.team_id === data.teams.team_a.id);
+    const teamAId = data.teams.team_a.id;
+    // FIXME: Backend bug - player.team_id is undefined, need to use player_team_tournament.team_id
+    // Remove this workaround when STAF-220 is fixed
+    const filtered = data.players.filter((p: PlayerMatchWithDetails) => {
+      const playerTeamId = p.team_id ?? p.player_team_tournament?.team_id;
+      return playerTeamId === teamAId;
+    });
+    return filtered;
   });
 
   teamBPlayers = computed(() => {
     const data = this.comprehensiveData();
     if (!data) return [];
-    return data.players.filter((p: PlayerMatchWithDetails) => p.team_id === data.teams.team_b.id);
+    const teamBId = data.teams.team_b.id;
+    // FIXME: Backend bug - player.team_id is undefined, need to use player_team_tournament.team_id
+    // Remove this workaround when STAF-220 is fixed
+    return data.players.filter((p: PlayerMatchWithDetails) => {
+      const playerTeamId = p.team_id ?? p.player_team_tournament?.team_id;
+      return playerTeamId === teamBId;
+    });
   });
 
   teamAStarters = computed(() =>
@@ -686,7 +698,11 @@ export class MatchPlayersTabComponent {
     const number = this.getPlayerNumberValue(player);
     if (!number) return false;
     const players = team === 'A' ? this.teamAPlayers() : this.teamBPlayers();
-    const matches = players.filter(p => this.getPlayerNumberValue(p) === number);
+    const matches = players.filter(p => {
+      const playerTeamId = p.team_id ?? p.player_team_tournament?.team_id;
+      const myTeamId = player.team_id ?? player.player_team_tournament?.team_id;
+      return this.getPlayerNumberValue(p) === number && myTeamId === playerTeamId;
+    });
     return matches.length > 1;
   }
 

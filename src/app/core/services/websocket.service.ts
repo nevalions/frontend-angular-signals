@@ -27,6 +27,9 @@ export interface ComprehensiveMatchData {
   gameclock?: GameClock;
   playclock?: PlayClock;
   scoreboard?: unknown;
+  match?: unknown;
+  teams?: unknown;
+  players?: PlayerMatchWithDetails[];
   events?: FootballEvent[];
   statistics?: MatchStats;
   [key: string]: unknown;
