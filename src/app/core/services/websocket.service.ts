@@ -385,6 +385,8 @@ export class WebSocketService {
           gameclock: data['gameclock'] as GameClock | undefined,
           playclock: data['playclock'] as PlayClock | undefined,
           events: data['events'] as FootballEvent[] | undefined,
+          // Set players separately if provided, otherwise initialize with empty array
+          players: (data['players'] as PlayerMatchWithDetails[] | undefined) || [],
         };
 
         // Set match data signal

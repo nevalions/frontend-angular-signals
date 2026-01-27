@@ -254,6 +254,9 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
     this.comprehensiveData.set({
       ...current,
       match: partial,
+      // Preserve players and events when updating match metadata
+      players: current.players,
+      events: current.events,
     });
   });
 
@@ -267,6 +270,9 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
     this.comprehensiveData.set({
       ...current,
       teams: partial,
+      // Preserve players and events when updating teams
+      players: current.players,
+      events: current.events,
     });
   });
 
