@@ -221,8 +221,8 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   protected readonly playClockSeconds = computed(() => this.clockService.predictedPlayClock());
 
   ngOnInit(): void {
-    this.loadData();
     this.connectWebSocket();
+    this.loadData();
   }
 
   ngOnDestroy(): void {
@@ -247,37 +247,8 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
     this.loading.set(true);
     this.error.set(null);
 
-    // Load comprehensive match data
-    this.scoreboardStore.getComprehensiveMatchData(id).subscribe({
-      next: (data) => {
-        this.data.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('Failed to load match data');
-        this.loading.set(false);
-      },
-    });
-
-    this.clockService.load(id);
-
-    // Load scoreboard settings
-    this.scoreboardStore.getScoreboard(id).subscribe({
-      next: (sb) => this.scoreboard.set(sb),
-      error: () => console.error('Failed to load scoreboard settings'),
-    });
-
-    // Initial load of match stats via HTTP for SSR/first load
-    // Real-time updates will come via WebSocket
-    this.scoreboardStore.getMatchStats(id).subscribe({
-      error: () => console.error('Failed to load initial match stats'),
-    });
-
-    // Load events
-    this.scoreboardStore.getMatchEvents(id).subscribe({
-      next: (evts) => this.events.set(evts),
-      error: () => console.error('Failed to load events'),
-    });
+    // Data will be loaded via WebSocket initial-load message
+    // No HTTP calls needed here
   }
 
   navigateBack(): void {
