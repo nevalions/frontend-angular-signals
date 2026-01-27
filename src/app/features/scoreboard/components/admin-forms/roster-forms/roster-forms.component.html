@@ -4,42 +4,42 @@
       <div class="settings-section">
         <h4 class="section-title">Roster Visibility</h4>
         <div class="toggles-grid">
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showHomeOffenseRoster()"
-              (change)="onToggleScoreboard('is_team_a_start_offense', $any($event.target).checked)"
+              [(ngModel)]="localShowHomeOffenseRoster"
+              (ngModelChange)="onToggleScoreboard('is_team_a_start_offense', $event)"
             />
             Show {{ homeTeam().label }} Offense Roster
           </label>
 
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showHomeDefenseRoster()"
-              (change)="onToggleScoreboard('is_team_a_start_defense', $any($event.target).checked)"
+              [(ngModel)]="localShowHomeDefenseRoster"
+              (ngModelChange)="onToggleScoreboard('is_team_a_start_defense', $event)"
             />
             Show {{ homeTeam().label }} Defense Roster
           </label>
 
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showAwayOffenseRoster()"
-              (change)="onToggleScoreboard('is_team_b_start_offense', $any($event.target).checked)"
+              [(ngModel)]="localShowAwayOffenseRoster"
+              (ngModelChange)="onToggleScoreboard('is_team_b_start_offense', $event)"
             />
             Show {{ awayTeam().label }} Offense Roster
           </label>
 
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showAwayDefenseRoster()"
-              (change)="onToggleScoreboard('is_team_b_start_defense', $any($event.target).checked)"
+              [(ngModel)]="localShowAwayDefenseRoster"
+              (ngModelChange)="onToggleScoreboard('is_team_b_start_defense', $event)"
             />
             Show {{ awayTeam().label }} Defense Roster
           </label>
@@ -71,7 +71,7 @@
               @if (homeTeam().players.length) {
                 <div class="player-list">
                   @for (player of homeTeam().players; track player.id) {
-                    <label class="player-row" tuiLabel>
+                    <label class="player-row">
                       <input
                         tuiCheckbox
                         type="checkbox"
@@ -106,7 +106,7 @@
               @if (homeTeam().players.length) {
                 <div class="player-list">
                   @for (player of homeTeam().players; track player.id) {
-                    <label class="player-row" tuiLabel>
+                    <label class="player-row">
                       <input
                         tuiCheckbox
                         type="checkbox"
@@ -147,7 +147,7 @@
               @if (awayTeam().players.length) {
                 <div class="player-list">
                   @for (player of awayTeam().players; track player.id) {
-                    <label class="player-row" tuiLabel>
+                    <label class="player-row">
                       <input
                         tuiCheckbox
                         type="checkbox"
@@ -182,7 +182,7 @@
               @if (awayTeam().players.length) {
                 <div class="player-list">
                   @for (player of awayTeam().players; track player.id) {
-                    <label class="player-row" tuiLabel>
+                    <label class="player-row">
                       <input
                         tuiCheckbox
                         type="checkbox"
@@ -207,12 +207,12 @@
         <h4 class="section-title">Lower Display Controls</h4>
         <div class="lower-controls">
           <div class="lower-toggle">
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="showPlayerLower()"
-                (change)="onToggleScoreboard('is_match_player_lower', $any($event.target).checked)"
+                [(ngModel)]="localShowPlayerLower"
+                (ngModelChange)="onToggleScoreboard('is_match_player_lower', $event)"
               />
               Show Player Lower Third
             </label>
@@ -233,12 +233,12 @@
           </div>
 
           <div class="lower-toggle">
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="showQbLower()"
-                (change)="onToggleScoreboard('is_football_qb_full_stats_lower', $any($event.target).checked)"
+                [(ngModel)]="localShowQbLower"
+                (ngModelChange)="onToggleScoreboard('is_football_qb_full_stats_lower', $event)"
               />
               Show QB Stats Lower Third
             </label>
@@ -259,24 +259,24 @@
           </div>
 
           <div class="lower-toggle">
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="showHomeTeamLower()"
-                (change)="onToggleScoreboard('is_home_match_team_lower', $any($event.target).checked)"
+                [(ngModel)]="localShowHomeTeamLower"
+                (ngModelChange)="onToggleScoreboard('is_home_match_team_lower', $event)"
               />
               Show {{ homeTeam().label }} Team Stats Lower
             </label>
           </div>
 
           <div class="lower-toggle">
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="showAwayTeamLower()"
-                (change)="onToggleScoreboard('is_away_match_team_lower', $any($event.target).checked)"
+                [(ngModel)]="localShowAwayTeamLower"
+                (ngModelChange)="onToggleScoreboard('is_away_match_team_lower', $event)"
               />
               Show {{ awayTeam().label }} Team Stats Lower
             </label>

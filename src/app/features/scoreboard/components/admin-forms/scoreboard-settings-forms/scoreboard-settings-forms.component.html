@@ -5,62 +5,62 @@
       <div class="settings-section">
         <h4 class="section-title">Display Elements</h4>
         <div class="toggles-grid">
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showQtr()"
-              (change)="onToggleQtr($any($event.target).checked)"
+              [(ngModel)]="localShowQtr"
+              (ngModelChange)="onToggleQtr($event)"
             />
             Show Quarter
           </label>
 
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showTime()"
-              (change)="onToggleTime($any($event.target).checked)"
+              [(ngModel)]="localShowTime"
+              (ngModelChange)="onToggleTime($event)"
             />
             Show Game Time
           </label>
 
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showPlayClock()"
-              (change)="onTogglePlayClock($any($event.target).checked)"
+              [(ngModel)]="localShowPlayClock"
+              (ngModelChange)="onTogglePlayClock($event)"
             />
             Show Play Clock
           </label>
 
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showDownDistance()"
-              (change)="onToggleDownDistance($any($event.target).checked)"
+              [(ngModel)]="localShowDownDistance"
+              (ngModelChange)="onToggleDownDistance($event)"
             />
             Show Down & Distance
           </label>
 
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showTournamentLogo()"
-              (change)="onToggleTournamentLogo($any($event.target).checked)"
+              [(ngModel)]="localShowTournamentLogo"
+              (ngModelChange)="onToggleTournamentLogo($event)"
             />
             Show Tournament Logo
           </label>
 
-          <label tuiLabel>
+          <label>
             <input
               tuiCheckbox
               type="checkbox"
-              [checked]="showMainSponsor()"
-              (change)="onToggleMainSponsor($any($event.target).checked)"
+              [(ngModel)]="localShowMainSponsor"
+              (ngModelChange)="onToggleMainSponsor($event)"
             />
             Show Main Sponsor
           </label>
@@ -84,32 +84,32 @@
               />
             </div>
 
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="useTeamAColor()"
-                (change)="onToggleUseTeamAColor($any($event.target).checked)"
+                [(ngModel)]="localUseTeamAColor"
+                (ngModelChange)="onToggleUseTeamAColor($event)"
               />
               Use Game Color
             </label>
 
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="useTeamATitle()"
-                (change)="onToggleUseTeamATitle($any($event.target).checked)"
+                [(ngModel)]="localUseTeamATitle"
+                (ngModelChange)="onToggleUseTeamATitle($event)"
               />
               Use Game Title
             </label>
 
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="useTeamALogo()"
-                (change)="onToggleUseTeamALogo($any($event.target).checked)"
+                [(ngModel)]="localUseTeamALogo"
+                (ngModelChange)="onToggleUseTeamALogo($event)"
               />
               Use Game Logo
             </label>
@@ -127,32 +127,32 @@
               />
             </div>
 
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="useTeamBColor()"
-                (change)="onToggleUseTeamBColor($any($event.target).checked)"
+                [(ngModel)]="localUseTeamBColor"
+                (ngModelChange)="onToggleUseTeamBColor($event)"
               />
               Use Game Color
             </label>
 
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="useTeamBTitle()"
-                (change)="onToggleUseTeamBTitle($any($event.target).checked)"
+                [(ngModel)]="localUseTeamBTitle"
+                (ngModelChange)="onToggleUseTeamBTitle($event)"
               />
               Use Game Title
             </label>
 
-            <label tuiLabel>
+            <label>
               <input
                 tuiCheckbox
                 type="checkbox"
-                [checked]="useTeamBLogo()"
-                (change)="onToggleUseTeamBLogo($any($event.target).checked)"
+                [(ngModel)]="localUseTeamBLogo"
+                (ngModelChange)="onToggleUseTeamBLogo($event)"
               />
               Use Game Logo
             </label>

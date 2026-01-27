@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TuiLabel } from '@taiga-ui/core';
 import { TuiCheckbox, TuiSlider } from '@taiga-ui/kit';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
@@ -9,7 +8,7 @@ import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-
 @Component({
   selector: 'app-scoreboard-settings-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, FormsModule, TuiLabel, TuiCheckbox, TuiSlider, CollapsibleSectionComponent],
+  imports: [DecimalPipe, FormsModule, TuiCheckbox, TuiSlider, CollapsibleSectionComponent],
   templateUrl: './scoreboard-settings-forms.component.html',
   styleUrl: './scoreboard-settings-forms.component.less',
 })
@@ -28,15 +27,47 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly showTournamentLogo = computed(() => this.scoreboard()?.is_tournament_logo ?? true);
   protected readonly showMainSponsor = computed(() => this.scoreboard()?.is_main_sponsor ?? true);
 
+  // Local state for display toggles
+  protected readonly localShowQtr = signal(true);
+  protected readonly localShowTime = signal(true);
+  protected readonly localShowPlayClock = signal(true);
+  protected readonly localShowDownDistance = signal(true);
+  protected readonly localShowTournamentLogo = signal(true);
+  protected readonly localShowMainSponsor = signal(true);
+
+  // Local state for team settings
+  protected readonly localUseTeamAColor = signal(false);
+  protected readonly localUseTeamBColor = signal(false);
+  protected readonly localUseTeamATitle = signal(false);
+  protected readonly localUseTeamBTitle = signal(false);
+  protected readonly localUseTeamALogo = signal(false);
+  protected readonly localUseTeamBLogo = signal(false);
+
+  // Sync local state when scoreboard changes
+  constructor() {
+    effect(() => {
+      const sb = this.scoreboard();
+      if (sb) {
+        this.localShowQtr.set(sb.is_qtr ?? true);
+        this.localShowTime.set(sb.is_time ?? true);
+        this.localShowPlayClock.set(sb.is_playclock ?? true);
+        this.localShowDownDistance.set(sb.is_downdistance ?? true);
+        this.localShowTournamentLogo.set(sb.is_tournament_logo ?? true);
+        this.localShowMainSponsor.set(sb.is_main_sponsor ?? true);
+
+        this.localUseTeamAColor.set(sb.use_team_a_game_color ?? false);
+        this.localUseTeamBColor.set(sb.use_team_b_game_color ?? false);
+        this.localUseTeamATitle.set(sb.use_team_a_game_title ?? false);
+        this.localUseTeamBTitle.set(sb.use_team_b_game_title ?? false);
+        this.localUseTeamALogo.set(sb.use_team_a_game_logo ?? false);
+        this.localUseTeamBLogo.set(sb.use_team_b_game_logo ?? false);
+      }
+    });
+  }
+
   // Team color settings
   protected readonly teamAColor = computed(() => this.scoreboard()?.team_a_game_color ?? '#1a1a1a');
   protected readonly teamBColor = computed(() => this.scoreboard()?.team_b_game_color ?? '#1a1a1a');
-  protected readonly useTeamAColor = computed(() => this.scoreboard()?.use_team_a_game_color ?? false);
-  protected readonly useTeamBColor = computed(() => this.scoreboard()?.use_team_b_game_color ?? false);
-  protected readonly useTeamATitle = computed(() => this.scoreboard()?.use_team_a_game_title ?? false);
-  protected readonly useTeamBTitle = computed(() => this.scoreboard()?.use_team_b_game_title ?? false);
-  protected readonly useTeamALogo = computed(() => this.scoreboard()?.use_team_a_game_logo ?? false);
-  protected readonly useTeamBLogo = computed(() => this.scoreboard()?.use_team_b_game_logo ?? false);
 
   // Scale settings
   protected readonly tournamentLogoScale = computed(() => this.scoreboard()?.scale_tournament_logo ?? 1);
@@ -46,26 +77,32 @@ export class ScoreboardSettingsFormsComponent {
 
   // Toggle handlers
   onToggleQtr(value: boolean): void {
+    this.localShowQtr.set(value);
     this.scoreboardChange.emit({ is_qtr: value });
   }
 
   onToggleTime(value: boolean): void {
+    this.localShowTime.set(value);
     this.scoreboardChange.emit({ is_time: value });
   }
 
   onTogglePlayClock(value: boolean): void {
+    this.localShowPlayClock.set(value);
     this.scoreboardChange.emit({ is_playclock: value });
   }
 
   onToggleDownDistance(value: boolean): void {
+    this.localShowDownDistance.set(value);
     this.scoreboardChange.emit({ is_downdistance: value });
   }
 
   onToggleTournamentLogo(value: boolean): void {
+    this.localShowTournamentLogo.set(value);
     this.scoreboardChange.emit({ is_tournament_logo: value });
   }
 
   onToggleMainSponsor(value: boolean): void {
+    this.localShowMainSponsor.set(value);
     this.scoreboardChange.emit({ is_main_sponsor: value });
   }
 
@@ -81,26 +118,32 @@ export class ScoreboardSettingsFormsComponent {
   }
 
   onToggleUseTeamAColor(value: boolean): void {
+    this.localUseTeamAColor.set(value);
     this.scoreboardChange.emit({ use_team_a_game_color: value });
   }
 
   onToggleUseTeamBColor(value: boolean): void {
+    this.localUseTeamBColor.set(value);
     this.scoreboardChange.emit({ use_team_b_game_color: value });
   }
 
   onToggleUseTeamATitle(value: boolean): void {
+    this.localUseTeamATitle.set(value);
     this.scoreboardChange.emit({ use_team_a_game_title: value });
   }
 
   onToggleUseTeamBTitle(value: boolean): void {
+    this.localUseTeamBTitle.set(value);
     this.scoreboardChange.emit({ use_team_b_game_title: value });
   }
 
   onToggleUseTeamALogo(value: boolean): void {
+    this.localUseTeamALogo.set(value);
     this.scoreboardChange.emit({ use_team_a_game_logo: value });
   }
 
   onToggleUseTeamBLogo(value: boolean): void {
+    this.localUseTeamBLogo.set(value);
     this.scoreboardChange.emit({ use_team_b_game_logo: value });
   }
 

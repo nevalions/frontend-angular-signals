@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { type TuiStringHandler } from '@taiga-ui/cdk';
-import { TuiButton, TuiDataList, TuiLabel, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiTextfield } from '@taiga-ui/core';
 import { TuiCheckbox, TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { PlayerMatchWithDetails } from '../../../../matches/models/comprehensive-match.model';
 import { PlayerMatchUpdate } from '../../../../matches/models/player-match.model';
@@ -39,7 +39,6 @@ interface TeamGroup {
     TuiCheckbox,
     TuiChevron,
     TuiDataList,
-    TuiLabel,
     TuiSelect,
     TuiTextfield,
     CollapsibleSectionComponent,
@@ -77,6 +76,35 @@ export class RosterFormsComponent {
   protected readonly showHomeDefenseRoster = computed(() => this.scoreboard()?.is_team_a_start_defense ?? false);
   protected readonly showAwayDefenseRoster = computed(() => this.scoreboard()?.is_team_b_start_defense ?? false);
 
+  // Local state for roster visibility toggles
+  protected readonly localShowHomeOffenseRoster = signal(false);
+  protected readonly localShowAwayOffenseRoster = signal(false);
+  protected readonly localShowHomeDefenseRoster = signal(false);
+  protected readonly localShowAwayDefenseRoster = signal(false);
+
+  // Local state for lower display toggles
+  protected readonly localShowPlayerLower = signal(false);
+  protected readonly localShowQbLower = signal(false);
+  protected readonly localShowHomeTeamLower = signal(false);
+  protected readonly localShowAwayTeamLower = signal(false);
+
+  // Sync local state when scoreboard changes
+  constructor() {
+    effect(() => {
+      const sb = this.scoreboard();
+      if (sb) {
+        this.localShowHomeOffenseRoster.set(sb.is_team_a_start_offense ?? false);
+        this.localShowAwayOffenseRoster.set(sb.is_team_b_start_offense ?? false);
+        this.localShowHomeDefenseRoster.set(sb.is_team_a_start_defense ?? false);
+        this.localShowAwayDefenseRoster.set(sb.is_team_b_start_defense ?? false);
+        this.localShowPlayerLower.set(sb.is_match_player_lower ?? false);
+        this.localShowQbLower.set(sb.is_football_qb_full_stats_lower ?? false);
+        this.localShowHomeTeamLower.set(sb.is_home_match_team_lower ?? false);
+        this.localShowAwayTeamLower.set(sb.is_away_match_team_lower ?? false);
+      }
+    });
+  }
+
   protected readonly playerStringify: TuiStringHandler<number | null> = (value) =>
     value === null ? 'Select player' : this.playerLabelMap().get(value) ?? 'Select player';
 
@@ -84,6 +112,32 @@ export class RosterFormsComponent {
     value === null ? 'Select QB' : this.qbLabelMap().get(value) ?? 'Select QB';
 
   onToggleScoreboard(key: ScoreboardToggleKey, value: boolean): void {
+    switch (key) {
+      case 'is_team_a_start_offense':
+        this.localShowHomeOffenseRoster.set(value);
+        break;
+      case 'is_team_b_start_offense':
+        this.localShowAwayOffenseRoster.set(value);
+        break;
+      case 'is_team_a_start_defense':
+        this.localShowHomeDefenseRoster.set(value);
+        break;
+      case 'is_team_b_start_defense':
+        this.localShowAwayDefenseRoster.set(value);
+        break;
+      case 'is_match_player_lower':
+        this.localShowPlayerLower.set(value);
+        break;
+      case 'is_football_qb_full_stats_lower':
+        this.localShowQbLower.set(value);
+        break;
+      case 'is_home_match_team_lower':
+        this.localShowHomeTeamLower.set(value);
+        break;
+      case 'is_away_match_team_lower':
+        this.localShowAwayTeamLower.set(value);
+        break;
+    }
     this.scoreboardChange.emit({ [key]: value });
   }
 
