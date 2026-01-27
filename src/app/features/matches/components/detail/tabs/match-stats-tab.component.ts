@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, computed, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatchStoreService } from '../../../services/match-store.service';
 import { WebSocketService } from '../../../../../core/services/websocket.service';
 import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
 import { MatchStats } from '../../../models/match-stats.model';
@@ -170,7 +169,7 @@ interface StatCategory {
   `,
   styleUrl: './match-stats-tab.component.less',
 })
-export class MatchStatsTabComponent implements OnInit {
+export class MatchStatsTabComponent {
   comprehensiveData = input<ComprehensiveMatchData | null>(null);
   private wsService = inject(WebSocketService);
 
@@ -273,9 +272,6 @@ export class MatchStatsTabComponent implements OnInit {
       { label: 'Fumble Recoveries', teamA: teamA?.fumble_recoveries || 0, teamB: teamB?.fumble_recoveries || 0 },
       { label: 'Penalties', teamA: teamA?.flags || 0, teamB: teamB?.flags || 0, icon: '@tui.flag' },
     ];
-  }
-
-  ngOnInit(): void {
   }
 
   getTeamLogo(team: { team_logo_url?: string | null }): string | null {

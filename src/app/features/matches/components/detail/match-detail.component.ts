@@ -12,6 +12,7 @@ import { MatchStatsTabComponent } from './tabs/match-stats-tab.component';
 import { MatchWithDetails } from '../../models/match.model';
 import { MatchData } from '../../models/match-data.model';
 import { ComprehensiveMatchData } from '../../models/comprehensive-match.model';
+import { Scoreboard } from '../../models/scoreboard.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { DateService } from '../../../../core/services/date.service';
 import { WebSocketService } from '../../../../core/services/websocket.service';
@@ -49,7 +50,7 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   match = signal<MatchWithDetails | null>(null);
   matchData = signal<MatchData | null>(null);
   comprehensiveData = signal<ComprehensiveMatchData | null>(null);
-  scoreboard = signal<any | null>(null);
+  scoreboard = signal<Scoreboard | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
 
@@ -227,7 +228,7 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
     }
 
     if (message.scoreboard) {
-      this.scoreboard.set(message.scoreboard as any);
+      this.scoreboard.set(message.scoreboard as Scoreboard);
     }
 
     if (!current) return;
