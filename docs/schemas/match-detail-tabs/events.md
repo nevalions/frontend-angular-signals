@@ -99,13 +99,41 @@
 
 **Event Types That Trigger Stats Updates:**
 
-- **Touchdown** → Updates points, yards, QB stats, offense stats
-- **Field goal** → Updates points
+- **Touchdown** → Updates points (+7), yards, QB stats, offense stats
+- **Field goal** → Updates points (+3)
 - **Penalty** → Updates penalty yards
 - **Turnover** → Updates turnovers, defense stats
 - **Pass completion** → Updates pass stats, QB stats
 - **Run play** → Updates rush stats
 - **Sack** → Updates defense stats
+
+**Scoring Events and Score Changes:**
+
+**Scoring Events That Update Score:**
+- **Touchdown** → Score updates via `match-update` message (score_team_a or score_team_b +7)
+- **Field goal** → Score updates via `match-update` message (score_team_a or score_team_b +3)
+- **Extra point** → Score updates via `match-update` message (score_team_a or score_team_b +1)
+- **Two-point conversion** → Score updates via `match-update` message (score_team_a or score_team_b +2)
+- **Safety** → Score updates via `match-update` message (score_team_a or score_team_b +2)
+
+**Score Change Flow:**
+1. User adds scoring event (e.g., touchdown for Team A)
+2. Backend creates event in database
+3. Backend updates match_data.score_team_a or score_team_b
+4. Database trigger fires → PostgreSQL sends notification
+5. Backend sends `match-update` WebSocket message with updated match_data (including scores)
+6. Parent component (MatchDetail) updates `comprehensiveData.match_data` via `wsMatchDataPartialEffect`
+7. `scoreDisplay` computed property recalculates → Score shows 7-0
+8. **Simultaneously**, backend recalculates statistics
+9. Backend sends `statistics-update` WebSocket message
+10. Stats tab receives updated MatchStats object via WebSocket
+11. All connected clients see same score and stats instantly (broadcast pattern)
+
+**Multi-Tab Update:**
+- Score changes appear on match detail page header instantly
+- Events tab shows new touchdown event immediately
+- Stats tab shows updated team points immediately
+- All three tabs update simultaneously without page refresh
 
 **Performance:**
 

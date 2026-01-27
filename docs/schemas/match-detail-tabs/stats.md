@@ -94,12 +94,27 @@
 
 **Triggered By:**
 
-- New touchdown event → Updates points, yards, QB stats
+- **Score change events** → Updates points in team stats
+  - Touchdown → Updates points (+7)
+  - Field goal → Updates points (+3)
+  - Extra point → Updates points (+1)
+  - Two-point conversion → Updates points (+2)
+  - Safety → Updates points (+2)
+- New touchdown event → Updates yards, QB stats, offense stats
 - New penalty event → Updates penalties, yards
 - New turnover event → Updates turnovers, defense stats
 - New run event → Updates rush yards, total yards
 - New pass event → Updates pass yards, QB stats
 - Any event modification → Recalculates all affected statistics
+
+**Score Update Flow:**
+1. Score change occurs (touchdown, field goal, etc.)
+2. Backend recalculates statistics (team stats, QB stats, etc.)
+3. Database trigger fires on statistics table
+4. Backend sends `statistics-update` WebSocket message with full MatchStats object
+5. WebSocket service updates `statistics` signal
+6. Tab recomputes statistics automatically (computed properties)
+7. UI reflects updated stats instantly (points, yards, QB ratings, etc.)
 
 **Performance:**
 

@@ -71,6 +71,30 @@
 - Disconnects automatically when navigating away
 - Reconnects cleanly on page refresh
 
+**Score Changes via WebSocket:**
+
+**Score Update Flow:**
+1. User adds touchdown/field goal event → Backend updates match_data score (score_team_a, score_team_b)
+2. Database trigger fires → PostgreSQL sends notification to backend
+3. Backend sends `match-update` WebSocket message with updated match_data (full MatchData object)
+4. WebSocket service updates `matchDataPartial` signal
+5. `wsMatchDataPartialEffect` merges update into `comprehensiveData.match_data`
+6. `scoreDisplay` computed property recalculates → Score updates instantly on page
+
+**Triggered By:**
+- **Touchdown event added** → Updates score_team_a or score_team_b (+7 points)
+- **Field goal event added** → Updates score_team_a or score_team_b (+3 points)
+- **Extra point successful** → Updates score_team_a or score_team_b (+1 point)
+- **Two-point conversion successful** → Updates score_team_a or score_team_b (+2 points)
+- **Safety** → Updates score_team_a or score_team_b (+2 points)
+- **Manual score edit** → Direct update of score_team_a or score_team_b
+
+**Score Display:**
+- Score displayed in header: `${score_team_a}:${score_team_b}` (computed property)
+- Updates instantly via WebSocket `match-update` messages
+- No HTTP polling or page refresh needed
+- All connected clients see same score simultaneously (broadcast pattern)
+
 **WebSocket Message Types:**
 
 - `initial-load` → Sets all match data (match, teams, players, events, scoreboard, statistics)
