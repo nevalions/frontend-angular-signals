@@ -5,6 +5,7 @@ import { MatchStoreService } from '../../services/match-store.service';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { EntityHeaderComponent } from '../../../../shared/components/entity-header/entity-header.component';
+import { ConnectionIndicatorComponent } from '../../../../shared/components/connection-indicator/connection-indicator.component';
 import { MatchPlayersTabComponent } from './tabs/match-players-tab.component';
 import { MatchEventsTabComponent } from './tabs/match-events-tab.component';
 import { MatchStatsTabComponent } from './tabs/match-stats-tab.component';
@@ -22,7 +23,7 @@ import { TabsNavComponent, TabsNavItem } from '../../../../shared/components/tab
   selector: 'app-match-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, EntityHeaderComponent, TabsNavComponent, MatchPlayersTabComponent, MatchEventsTabComponent, MatchStatsTabComponent, TuiButton],
+  imports: [CommonModule, EntityHeaderComponent, TabsNavComponent, MatchPlayersTabComponent, MatchEventsTabComponent, MatchStatsTabComponent, TuiButton, ConnectionIndicatorComponent],
   templateUrl: './match-detail.component.html',
   styleUrl: './match-detail.component.less',
 })
