@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, computed, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchStoreService } from '../../../services/match-store.service';
+import { WebSocketService } from '../../../../../core/services/websocket.service';
 import { ComprehensiveMatchData } from '../../../models/comprehensive-match.model';
 import { MatchStats } from '../../../models/match-stats.model';
 import { TuiProgress, TuiAvatar } from '@taiga-ui/kit';
@@ -171,9 +172,12 @@ interface StatCategory {
 })
 export class MatchStatsTabComponent implements OnInit {
   comprehensiveData = input<ComprehensiveMatchData | null>(null);
-  private matchStore = inject(MatchStoreService);
+  private wsService = inject(WebSocketService);
 
-  stats = signal<MatchStats | null>(null);
+  stats = computed(() => {
+    const wsStats = this.wsService.statistics();
+    return wsStats;
+  });
 
   teamATitle = computed(() => this.comprehensiveData()?.teams.team_a.title || 'Team A');
   teamBTitle = computed(() => this.comprehensiveData()?.teams.team_b.title || 'Team B');
@@ -272,17 +276,6 @@ export class MatchStatsTabComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const data = this.comprehensiveData();
-    if (data?.match.id) {
-      this.matchStore.getMatchStats(data.match.id).subscribe({
-        next: (stats: MatchStats) => {
-          this.stats.set(stats);
-        },
-        error: (err: Error) => {
-          console.error('Failed to load match stats:', err);
-        }
-      });
-    }
   }
 
   getTeamLogo(team: { team_logo_url?: string | null }): string | null {
