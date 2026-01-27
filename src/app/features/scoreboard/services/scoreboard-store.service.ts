@@ -116,14 +116,14 @@ export class ScoreboardStoreService {
   }
 
   createFootballEvent(data: FootballEventCreate): Observable<FootballEvent> {
-    return this.http.post<FootballEvent>(buildApiUrl('/api/football_events/'), data);
+    return this.http.post<FootballEvent>(buildApiUrl('/api/football_event/'), data);
   }
 
   updateFootballEvent(id: number, data: FootballEventUpdate): Observable<FootballEvent> {
-    return this.http.put<FootballEvent>(buildApiUrl(`/api/football_events/${id}/`), data);
+    return this.http.put<FootballEvent>(buildApiUrl(`/api/football_event/${id}/`), data);
   }
 
   deleteFootballEvent(id: number): Observable<void> {
-    return this.http.delete<void>(buildApiUrl(`/api/football_events/${id}/`));
+    return this.http.delete<void>(buildApiUrl(`/api/football_event/id/${id}`));
   }
 }

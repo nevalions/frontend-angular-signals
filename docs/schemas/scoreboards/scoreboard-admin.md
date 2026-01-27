@@ -234,6 +234,7 @@
 - `GET /api/football_event/matches/{match_id}/events-with-players/` - Get football events with all 17 player references pre-populated
 - `POST /api/football_event/` - Create football event
 - `PUT /api/football_event/{id}/` - Update football event
+- `DELETE /api/football_event/id/{id}` - Delete football event (requires admin role)
 - [Backend Schema: `FootballEventSchema`](../../statsboards-backend/src/football_events/schemas.py)
 - [Backend Schema: `FootballTeamStats`](../../statsboards-backend/src/matches/schemas.py:88-105)
 - [Backend Schema: `FootballQBStats`](../../statsboards-backend/src/matches/schemas.py:58-73)
