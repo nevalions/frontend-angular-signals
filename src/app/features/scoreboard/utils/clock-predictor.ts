@@ -72,6 +72,9 @@ export class ClockPredictor {
         return;
       }
 
+      const tickStatus = this.state.status;
+      const tickStartedAtMs = this.state.startedAtMs;
+
       const now = Date.now();
       const timeSinceReceive = now - this.state.clientReceiveMs;
       const estimatedServerNow = this.state.serverTimeMs + timeSinceReceive;
@@ -82,6 +85,11 @@ export class ClockPredictor {
       const isResuming = this.state.frozenValue < this.state.gameclockMax;
       const baseValue = isResuming ? this.state.frozenValue : this.state.gameclockMax;
       const remaining = Math.max(0, baseValue - elapsedSec);
+
+      if (this.state.status !== tickStatus || this.state.startedAtMs !== tickStartedAtMs) {
+        this.debugLog('[ClockPredictor] tick() state changed during execution, discarding result');
+        return;
+      }
       
       // Log first few ticks and every second thereafter
       tickCount++;

@@ -177,8 +177,9 @@ export class WebSocketService {
       return;
     }
 
-    // If connecting to a different match, fully disconnect first
+    // If connecting to a different match, reset clock signals
     if (this.currentMatchId !== null && this.currentMatchId !== matchId) {
+      this.resetClockSignals();
       this.disconnect();
     }
 
@@ -299,6 +300,14 @@ export class WebSocketService {
   }
 
   /**
+   * Clear clock-specific signals when switching matches
+   */
+  private resetClockSignals(): void {
+    this.gameClock.set(null);
+    this.playClock.set(null);
+  }
+
+  /**
    * Handle incoming WebSocket messages and update appropriate signals
    */
   private handleMessage(message: WebSocketMessage): void {
@@ -347,16 +356,21 @@ export class WebSocketService {
       const gameclock = (message.gameclock ?? (data?.['gameclock'] as GameClock | undefined)) ?? null;
       this.logClock('gameclock', 'Extracted gameclock data', gameclock);
       if (gameclock !== undefined) {
-        if (gameclock === null) {
-          this.gameClock.set(null);
-          this.logClock('gameclock', 'Signal set to null', null);
+        const messageMatchId = message['match_id'] as number | undefined;
+        if (this.currentMatchId === messageMatchId) {
+          if (gameclock === null) {
+            this.gameClock.set(null);
+            this.logClock('gameclock', 'Signal set to null', null);
+          } else {
+            const currentGameClock = this.gameClock();
+            this.logClock('gameclock', 'Current gameClock before merge', currentGameClock);
+            const merged = this.mergeGameClock(gameclock);
+            this.logClock('gameclock', 'Merged gameClock to set', merged);
+            this.gameClock.set(merged);
+            this.logClock('gameclock', 'Signal updated, new value', this.gameClock());
+          }
         } else {
-          const currentGameClock = this.gameClock();
-          this.logClock('gameclock', 'Current gameClock before merge', currentGameClock);
-          const merged = this.mergeGameClock(gameclock);
-          this.logClock('gameclock', 'Merged gameClock to set', merged);
-          this.gameClock.set(merged);
-          this.logClock('gameclock', 'Signal updated, new value', this.gameClock());
+          this.logClock('gameclock', 'Skipping gameclock update for different match: messageMatchId=' + messageMatchId + ', currentMatchId=' + this.currentMatchId, null);
         }
       } else {
         this.logClock('gameclock', 'SKIPPED - no gameclock data extracted', null);
@@ -447,11 +461,22 @@ export class WebSocketService {
       this.log('Match data update');
       // Backend sends data wrapped in 'data' property
       if (data) {
-        // Set partial update signals (don't overwrite matchData signal)
-        const matchData = data['match_data'] as MatchData | undefined;
-        if (matchData) {
-          this.matchDataPartial.set(matchData);
+        // Check if match_data fields are directly in data (not nested)
+        const hasMatchDataFields = [
+          'score_team_a', 'score_team_b', 'qtr', 'down', 'distance',
+          'ball_on', 'timeout_team_a', 'timeout_team_b', 'field_length', 'game_status'
+        ].some(field => field in data);
+
+        if (hasMatchDataFields) {
+          this.matchDataPartial.set(data as unknown as MatchData);
           this.lastMatchDataUpdate.set(Date.now());
+        } else {
+          // Set partial update signals (don't overwrite matchData signal)
+          const matchData = data['match_data'] as MatchData | undefined;
+          if (matchData) {
+            this.matchDataPartial.set(matchData);
+            this.lastMatchDataUpdate.set(Date.now());
+          }
         }
 
         const scoreboardData = data['scoreboard_data'];

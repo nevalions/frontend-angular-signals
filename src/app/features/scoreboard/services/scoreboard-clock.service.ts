@@ -137,6 +137,16 @@ export class ScoreboardClockService implements OnDestroy {
           const merged = this.mergeGameClock(current, updated);
           this.debugLog('[ClockService][ACTION] startGameClock merged result:', JSON.stringify(merged, null, 2));
           this.gameClock.set(merged);
+
+          const rtt = this.wsService.lastRtt() ?? 100;
+          this.gameClockPredictor.sync({
+            gameclock: merged.gameclock ?? 0,
+            gameclock_max: merged.gameclock_max ?? 720,
+            started_at_ms: merged.started_at_ms ?? null,
+            server_time_ms: merged.server_time_ms ?? null,
+            status: merged.gameclock_status ?? 'stopped',
+            rttMs: rtt,
+          });
         }
       },
       error: (err) => console.error('[ClockService][ACTION] startGameClock API error:', err),
@@ -151,7 +161,18 @@ export class ScoreboardClockService implements OnDestroy {
       next: (updated) => {
         const current = this.gameClock();
         if (current) {
-          this.gameClock.set(this.mergeGameClock(current, updated));
+          const merged = this.mergeGameClock(current, updated);
+          this.gameClock.set(merged);
+
+          const rtt = this.wsService.lastRtt() ?? 100;
+          this.gameClockPredictor.sync({
+            gameclock: merged.gameclock ?? 0,
+            gameclock_max: merged.gameclock_max ?? 720,
+            started_at_ms: merged.started_at_ms ?? null,
+            server_time_ms: merged.server_time_ms ?? null,
+            status: merged.gameclock_status ?? 'stopped',
+            rttMs: rtt,
+          });
         }
       },
       error: (err) => console.error('[ClockService] pauseGameClock API error:', err),
@@ -185,6 +206,16 @@ export class ScoreboardClockService implements OnDestroy {
           const merged = this.mergeGameClock(current, updated);
           this.debugLog('[ClockService][ACTION] resetGameClock merged result:', JSON.stringify(merged, null, 2));
           this.gameClock.set(merged);
+
+          const rtt = this.wsService.lastRtt() ?? 100;
+          this.gameClockPredictor.sync({
+            gameclock: merged.gameclock ?? 0,
+            gameclock_max: merged.gameclock_max ?? maxSeconds,
+            started_at_ms: merged.started_at_ms ?? null,
+            server_time_ms: merged.server_time_ms ?? null,
+            status: merged.gameclock_status ?? 'stopped',
+            rttMs: rtt,
+          });
         }
       },
       error: (err) => console.error('[ClockService][ACTION] resetGameClock API error:', err),
