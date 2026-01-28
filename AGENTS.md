@@ -48,6 +48,17 @@ The backend for this project is **[statsboards-backend](../statsboards-backend/)
 
 - **[API Configuration](./docs/api-configuration.md)** - API endpoints and static assets
 
+## Development Credentials
+
+**Admin/Testing Credentials:**
+- Username: `test`
+- Password: `password`
+
+**Notes:**
+- These credentials can be used to log in to the admin panel
+- The admin panel requires authentication for access
+- Login page: Click the "test" button in the navbar or navigate to `/persons` and log in there
+
 ## Page Schemas & Backend Requirements
 
 **CRITICAL**: Page schemas define source of truth for entire frontend project.
