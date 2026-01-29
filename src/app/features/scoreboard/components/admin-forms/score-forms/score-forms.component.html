@@ -1,6 +1,20 @@
 <app-collapsible-section title="Score Controls" sectionKey="scoreboard-score">
   <ng-template>
     <div class="score-forms">
+      <!-- Quarter Selection -->
+      <div class="quarter-section">
+        <tui-textfield tuiChevron class="quarter-select">
+          <label tuiLabel>Quarter</label>
+          <input
+            tuiSelect
+            [ngModel]="selectedQtr()"
+            (ngModelChange)="selectedQtr.set($event)"
+            placeholder="Select quarter"
+          />
+          <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="quarterOptions" />
+        </tui-textfield>
+      </div>
+
       <!-- Score Panel: Two teams side by side -->
       <div class="score-panel">
         @for (team of teamConfig; track team.key) {

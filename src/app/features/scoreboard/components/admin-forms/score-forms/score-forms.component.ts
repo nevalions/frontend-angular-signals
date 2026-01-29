@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
-import { TuiInputNumber } from '@taiga-ui/kit';
+import { TuiChevron, TuiDataListWrapper, TuiInputNumber, TuiSelect } from '@taiga-ui/kit';
 import { MatchData } from '../../../../matches/models/match-data.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 
@@ -15,10 +15,14 @@ export interface TimeoutChangeEvent {
   timeouts: string;
 }
 
+export interface QuarterChangeEvent {
+  qtr: string;
+}
+
 @Component({
   selector: 'app-score-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TuiButton, TuiTextfield, TuiInputNumber, TuiIcon, CollapsibleSectionComponent],
+  imports: [FormsModule, TuiButton, TuiTextfield, TuiInputNumber, TuiIcon, TuiSelect, TuiChevron, TuiDataListWrapper, CollapsibleSectionComponent],
   templateUrl: './score-forms.component.html',
   styleUrl: './score-forms.component.less',
 })
@@ -31,6 +35,21 @@ export class ScoreFormsComponent {
 
   /** Emits when timeout changes */
   timeoutChange = output<TimeoutChangeEvent>();
+
+  /** Emits when quarter changes */
+  qtrChange = output<QuarterChangeEvent>();
+
+  /** Available quarter options */
+  protected readonly quarterOptions = [
+    '1st',
+    '2nd',
+    '3rd',
+    '4th',
+    'OT',
+  ] as const;
+
+  /** Selected quarter (local state) */
+  protected readonly selectedQtr = signal<string>('1st');
 
   // Local state for pending scores
   protected readonly pendingScoreTeamA = signal(0);
@@ -138,6 +157,16 @@ export class ScoreFormsComponent {
       if (data) {
         this.pendingScoreTeamA.set(data.score_team_a ?? 0);
         this.pendingScoreTeamB.set(data.score_team_b ?? 0);
+        this.selectedQtr.set(data.qtr ?? '1st');
+      }
+    });
+
+    // Emit quarter changes
+    effect(() => {
+      const qtr = this.selectedQtr();
+      const data = this.matchData();
+      if (data && qtr !== data.qtr) {
+        this.qtrChange.emit({ qtr });
       }
     });
   }
@@ -238,8 +267,8 @@ export class ScoreFormsComponent {
   }
 
   /**
-   * Reset all timeouts for a team
-   */
+     * Reset all timeouts for a team
+     */
   onResetTimeouts(team: 'a' | 'b'): void {
     this.timeoutChange.emit({
       team,

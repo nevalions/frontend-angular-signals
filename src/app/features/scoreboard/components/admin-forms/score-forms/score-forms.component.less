@@ -7,6 +7,16 @@
   padding: 16px 0;
 }
 
+// Quarter Section
+.quarter-section {
+  padding: 0 4px;
+  max-width: 200px;
+}
+
+.quarter-select {
+  width: 100%;
+}
+
 // Score Panel - contains both team panels side by side
 .score-panel {
   display: grid;
@@ -332,6 +342,15 @@
 
 // Mobile breakpoint (450px) - Stack teams vertically
 @media (max-width: 450px) {
+  .quarter-section {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .quarter-select {
+    width: 100%;
+  }
+
   .score-forms {
     gap: 16px;
     padding: 12px 0;

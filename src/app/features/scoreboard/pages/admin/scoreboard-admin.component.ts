@@ -10,9 +10,8 @@ import { FootballEventCreate, FootballEventUpdate } from '../../../matches/model
 import { Scoreboard, ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
 import { PlayerMatchUpdate } from '../../../matches/models/player-match.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
-import { ScoreFormsComponent, ScoreChangeEvent, TimeoutChangeEvent } from '../../components/admin-forms/score-forms/score-forms.component';
+import { ScoreFormsComponent, ScoreChangeEvent, TimeoutChangeEvent, QuarterChangeEvent } from '../../components/admin-forms/score-forms/score-forms.component';
 import { TimeFormsComponent, GameClockActionEvent, PlayClockActionEvent } from '../../components/admin-forms/time-forms/time-forms.component';
-import { QtrFormsComponent } from '../../components/admin-forms/qtr-forms/qtr-forms.component';
 import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../components/admin-forms/down-distance-forms/down-distance-forms.component';
 import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
 import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
@@ -29,7 +28,6 @@ import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.
     ScoreboardDisplayComponent,
     ScoreFormsComponent,
     TimeFormsComponent,
-    QtrFormsComponent,
     DownDistanceFormsComponent,
     ScoreboardSettingsFormsComponent,
     EventsFormsComponent,
@@ -277,11 +275,11 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
     });
   }
 
-  onQtrChange(qtr: string): void {
+  onQtrChange(event: QuarterChangeEvent): void {
     const matchData = this.data()?.match_data;
     if (!matchData) return;
 
-    this.scoreboardStore.updateMatchData(matchData.id, { qtr }).subscribe({
+    this.scoreboardStore.updateMatchData(matchData.id, { qtr: event.qtr }).subscribe({
       error: (err) => console.error('Failed to update quarter', err),
     });
   }

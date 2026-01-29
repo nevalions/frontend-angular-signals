@@ -73,10 +73,6 @@
               [matchData]="data()?.match_data ?? null"
               (scoreChange)="onScoreChange($event)"
               (timeoutChange)="onTimeoutChange($event)"
-            />
-
-            <app-qtr-forms
-              [currentQtr]="data()?.match_data?.qtr ?? null"
               (qtrChange)="onQtrChange($event)"
             />
 
