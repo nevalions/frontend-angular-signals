@@ -9,15 +9,17 @@
         <div class="max-time-setting">
           <span class="setting-label">Quarter Length (min)</span>
           <div class="max-time-row">
-            <app-input-number-with-buttons
-              [value]="currentMaxMinutes()"
-              [min]="1"
-              [max]="20"
-              size="m"
-              layout="compact"
-              [disabled]="inputsDisabled()"
-              (valueChange)="onMaxMinutesChange($event)"
-            />
+            <tui-textfield>
+              <input
+                tuiInputNumber
+                [ngModel]="currentMaxMinutes()"
+                [min]="1"
+                [max]="20"
+                [step]="1"
+                [disabled]="inputsDisabled()"
+                (ngModelChange)="onMaxMinutesChange($event)"
+              />
+            </tui-textfield>
             <button
               tuiButton
               type="button"
@@ -84,27 +86,31 @@
           <div class="time-inputs-compact">
             <div class="time-input-group">
               <span class="input-label">Min</span>
-              <app-input-number-with-buttons
-                [value]="manualMinutes()"
-                [min]="0"
-                [max]="99"
-                size="m"
-                layout="compact"
-                [disabled]="inputsDisabled()"
-                (valueChange)="onManualMinutesChange($event)"
-              />
+              <tui-textfield>
+                <input
+                  tuiInputNumber
+                  [ngModel]="manualMinutes()"
+                  [min]="0"
+                  [max]="99"
+                  [step]="1"
+                  [disabled]="inputsDisabled()"
+                  (ngModelChange)="onManualMinutesChange($event)"
+                />
+              </tui-textfield>
             </div>
             <div class="time-input-group">
               <span class="input-label">Sec</span>
-              <app-input-number-with-buttons
-                [value]="manualSeconds()"
-                [min]="0"
-                [max]="59"
-                size="m"
-                layout="compact"
-                [disabled]="inputsDisabled()"
-                (valueChange)="onManualSecondsChange($event)"
-              />
+              <tui-textfield>
+                <input
+                  tuiInputNumber
+                  [ngModel]="manualSeconds()"
+                  [min]="0"
+                  [max]="59"
+                  [step]="1"
+                  [disabled]="inputsDisabled()"
+                  (ngModelChange)="onManualSecondsChange($event)"
+                />
+              </tui-textfield>
             </div>
             <button
               tuiButton

@@ -6,26 +6,32 @@
         <div class="score-inputs-section">
           <div class="team-score team-a">
             <span class="team-label">Home Team</span>
-            <app-input-number-with-buttons
-              [value]="pendingScoreTeamA()"
-              [min]="0"
-              [max]="199"
-              size="l"
-              (valueChange)="onScoreAChange($event)"
-            />
+            <tui-textfield>
+              <input
+                tuiInputNumber
+                [ngModel]="pendingScoreTeamA()"
+                [min]="0"
+                [max]="199"
+                [step]="1"
+                (ngModelChange)="onScoreAChange($event)"
+              />
+            </tui-textfield>
           </div>
 
           <div class="score-separator">:</div>
 
           <div class="team-score team-b">
             <span class="team-label">Away Team</span>
-            <app-input-number-with-buttons
-              [value]="pendingScoreTeamB()"
-              [min]="0"
-              [max]="199"
-              size="l"
-              (valueChange)="onScoreBChange($event)"
-            />
+            <tui-textfield>
+              <input
+                tuiInputNumber
+                [ngModel]="pendingScoreTeamB()"
+                [min]="0"
+                [max]="199"
+                [step]="1"
+                (ngModelChange)="onScoreBChange($event)"
+              />
+            </tui-textfield>
           </div>
         </div>
 

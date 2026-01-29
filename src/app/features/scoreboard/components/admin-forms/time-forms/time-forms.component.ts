@@ -5,7 +5,6 @@ import { TuiInputNumber } from '@taiga-ui/kit';
 import { GameClock, GameClockUpdate } from '../../../../matches/models/gameclock.model';
 import { PlayClock } from '../../../../matches/models/playclock.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
-import { InputNumberWithButtonsComponent } from '../input-number-with-buttons/input-number-with-buttons.component';
 
 export interface GameClockActionEvent {
   action: 'start' | 'pause' | 'reset' | 'update';
@@ -27,7 +26,6 @@ export interface PlayClockActionEvent {
     TuiTextfield,
     TuiInputNumber,
     CollapsibleSectionComponent,
-    InputNumberWithButtonsComponent,
   ],
   templateUrl: './time-forms.component.html',
   styleUrl: './time-forms.component.less',

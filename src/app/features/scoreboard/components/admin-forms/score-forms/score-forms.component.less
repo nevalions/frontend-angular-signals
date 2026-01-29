@@ -32,6 +32,10 @@
   flex: 1;
   max-width: 250px;
   min-width: 180px;
+
+  tui-textfield {
+    width: 100%;
+  }
 }
 
 .team-label {
@@ -122,7 +126,7 @@
   &.td-active {
     box-shadow: 0 0 0 3px var(--tui-background-accent-1);
     transform: scale(1.05);
-    
+
     .td-icon {
       animation: touchdown-pulse 0.6s ease-in-out;
     }
@@ -210,6 +214,149 @@
     button {
       flex: 1;
       min-width: 70px;
+    }
+  }
+}
+
+// Small screens - keep inputs on same row, reduce sizes
+@media (max-width: 450px) {
+  .score-forms {
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .score-inputs-and-save {
+    gap: 12px;
+  }
+
+  .score-inputs-section {
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-end;
+  }
+
+  .team-score {
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+
+    // Make tui-textfield smaller on small screens
+    tui-textfield {
+      font-size: 0.875rem;
+    }
+  }
+
+  .team-label {
+    font-size: 12px;
+  }
+
+  .score-separator {
+    display: none;
+  }
+
+  .save-button {
+    min-width: 80px;
+  }
+
+  .quick-score-section {
+    gap: 12px;
+    padding-top: 12px;
+  }
+
+  .quick-score-row {
+    gap: 8px;
+  }
+
+  .row-label {
+    font-size: 12px;
+  }
+
+  .quick-buttons {
+    gap: 8px;
+
+    button {
+      min-width: 50px;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+  }
+
+  .td-toggle-button {
+    min-width: 60px;
+    padding: 4px 8px;
+
+    .td-icon {
+      font-size: 14px;
+    }
+
+    .td-label {
+      font-size: 12px;
+    }
+  }
+}
+
+// Small screens - reduce sizes further
+@media (max-width: 450px) {
+  .score-forms {
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .score-inputs-and-save {
+    gap: 12px;
+  }
+
+  .score-inputs-section {
+    gap: 12px;
+  }
+
+  .team-score {
+    gap: 8px;
+  }
+
+  .team-label {
+    font-size: 12px;
+  }
+
+  .save-button {
+    min-width: 80px;
+  }
+
+  .quick-score-section {
+    gap: 12px;
+    padding-top: 12px;
+  }
+
+  .quick-score-row {
+    gap: 8px;
+  }
+
+  .row-label {
+    font-size: 12px;
+  }
+
+  .quick-buttons {
+    gap: 8px;
+
+    button {
+      min-width: 50px;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+  }
+
+  .td-toggle-button {
+    min-width: 60px;
+    padding: 4px 8px;
+
+    .td-icon {
+      font-size: 14px;
+    }
+
+    .td-label {
+      font-size: 12px;
     }
   }
 }

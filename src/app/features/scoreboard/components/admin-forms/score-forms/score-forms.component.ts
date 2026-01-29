@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
-import { TuiButton } from '@taiga-ui/core';
+import { FormsModule } from '@angular/forms';
+import { TuiButton, TuiTextfield } from '@taiga-ui/core';
+import { TuiInputNumber } from '@taiga-ui/kit';
 import { MatchData } from '../../../../matches/models/match-data.model';
-import { InputNumberWithButtonsComponent } from '../input-number-with-buttons/input-number-with-buttons.component';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 
 export interface ScoreChangeEvent {
@@ -12,7 +13,7 @@ export interface ScoreChangeEvent {
 @Component({
   selector: 'app-score-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiButton, InputNumberWithButtonsComponent, CollapsibleSectionComponent],
+  imports: [FormsModule, TuiButton, TuiTextfield, TuiInputNumber, CollapsibleSectionComponent],
   templateUrl: './score-forms.component.html',
   styleUrl: './score-forms.component.less',
 })
