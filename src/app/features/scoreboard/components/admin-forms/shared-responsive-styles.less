@@ -1,0 +1,66 @@
+// Shared Responsive Styles for Admin Forms Components
+// Standard breakpoints for scoreboard admin forms
+@sb-breakpoint-tablet: 768px;
+@sb-breakpoint-mobile: 450px;
+
+// Use these mixins OUTSIDE of media queries in component files
+// Apply styles directly at breakpoint level
+
+// Tablet Button Styles (768px)
+.sb-btn-tablet() {
+  font-size: 0.875rem;
+  min-width: 70px;
+  flex: 1;
+}
+
+// Mobile Button Styles (450px) - use !important to override Taiga UI inline styles
+.sb-btn-mobile() {
+  font-size: 10px !important;
+  min-width: 40px !important;
+  padding: 2px 4px !important;
+  height: 28px !important;
+  flex-shrink: 1;
+}
+
+// Save Button - Tablet
+.sb-btn-save-tablet() {
+  width: 100%;
+  min-width: auto;
+}
+
+// Save Button - Mobile
+.sb-btn-save-mobile() {
+  min-width: 80px !important;
+  font-size: 12px !important;
+  padding: 4px 12px !important;
+  height: 32px !important;
+}
+
+// Input - Mobile
+.sb-input-mobile() {
+  font-size: 0.875rem;
+}
+
+// Container - Tablet
+.sb-container-tablet() {
+  gap: 20px;
+}
+
+// Container - Mobile
+.sb-container-mobile() {
+  gap: 12px;
+  padding: 8px 0;
+}
+
+// Buttons Row - Tablet
+.sb-buttons-row-tablet() {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+// Buttons Row - Mobile
+.sb-buttons-row-mobile() {
+  gap: 4px;
+  flex-wrap: nowrap;
+  justify-content: center;
+}

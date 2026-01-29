@@ -129,18 +129,26 @@ export class ScoreFormsComponent {
   }
 
   /**
-   * Save the pending scores
-   */
-  onSave(): void {
-    const currentScoreA = this.matchData()?.score_team_a ?? 0;
-    const currentScoreB = this.matchData()?.score_team_b ?? 0;
+    * Save the pending scores
+    */
+   onSave(): void {
+     const currentScoreA = this.matchData()?.score_team_a ?? 0;
+     const currentScoreB = this.matchData()?.score_team_b ?? 0;
 
-    // Only emit if values actually changed
-    if (this.pendingScoreTeamA() !== currentScoreA) {
-      this.scoreChange.emit({ team: 'a', score: this.pendingScoreTeamA() });
-    }
-    if (this.pendingScoreTeamB() !== currentScoreB) {
-      this.scoreChange.emit({ team: 'b', score: this.pendingScoreTeamB() });
-    }
-  }
+     // Only emit if values actually changed
+     if (this.pendingScoreTeamA() !== currentScoreA) {
+       this.scoreChange.emit({ team: 'a', score: this.pendingScoreTeamA() });
+     }
+     if (this.pendingScoreTeamB() !== currentScoreB) {
+       this.scoreChange.emit({ team: 'b', score: this.pendingScoreTeamB() });
+     }
+   }
+
+   /**
+    * Check if screen width is at mobile breakpoint (450px)
+    */
+   isMobile(): boolean {
+     return window.innerWidth <= 450;
+   }
 }
+

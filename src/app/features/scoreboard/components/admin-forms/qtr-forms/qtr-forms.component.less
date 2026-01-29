@@ -1,3 +1,5 @@
+@import '../shared-responsive-styles.less';
+
 .qtr-forms {
   padding: 16px 0;
 }
@@ -14,13 +16,18 @@
 }
 
 // Responsive adjustments
-@media (max-width: 400px) {
+@media (max-width: 768px) {
   .quarter-buttons {
-    gap: 8px;
+    .sb-buttons-row-tablet();
+  }
+}
+
+@media (max-width: 450px) {
+  .quarter-buttons {
+    .sb-buttons-row-mobile();
 
     button {
-      min-width: 50px;
-      padding: 8px 12px;
+      .sb-btn-mobile();
     }
   }
 }

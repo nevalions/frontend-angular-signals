@@ -1,3 +1,5 @@
+@import '../shared-responsive-styles.less';
+
 .roster-forms {
   display: flex;
   flex-direction: column;
@@ -135,7 +137,7 @@
   gap: 8px;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .player-row {
     grid-template-columns: auto minmax(28px, 36px) minmax(100px, 1fr);
     row-gap: 4px;
@@ -144,9 +146,7 @@
   .player-position {
     grid-column: 2 / -1;
   }
-}
 
-@media (max-width: 600px) {
   .toggles-grid {
     grid-template-columns: 1fr;
   }
@@ -157,5 +157,16 @@
 
   .lower-controls {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 450px) {
+  .player-row {
+    grid-template-columns: auto minmax(24px, 32px) minmax(80px, 1fr);
+    font-size: 12px;
+  }
+
+  .starter-group {
+    padding: 8px;
   }
 }

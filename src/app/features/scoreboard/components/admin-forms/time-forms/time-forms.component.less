@@ -1,3 +1,5 @@
+@import '../shared-responsive-styles.less';
+
 .time-forms {
   display: flex;
   flex-direction: column;
@@ -40,6 +42,12 @@
 }
 
 .play-clock-display {
+  padding: 12px;
+
+  .clock-value {
+    font-size: 36px;
+  }
+
   &.warning .clock-value {
     color: var(--tui-status-negative);
     animation: pulse 1s ease-in-out infinite;
@@ -86,7 +94,8 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  width: 100%;
 }
 
 .time-input-group {
@@ -94,8 +103,8 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  min-width: 80px;
-  flex-shrink: 0;
+  flex: 1;
+  max-width: 100px;
 }
 
 .input-label {
@@ -116,8 +125,8 @@
 
 .max-time-row {
   display: flex;
-  align-items: flex-end;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
   justify-content: center;
 }
 
@@ -142,48 +151,183 @@
   gap: 12px;
 }
 
-// Responsive adjustments
+// Responsive adjustments - Tablet
 @media (max-width: 768px) {
   .time-section {
-    padding: 12px 8px;
+    padding: 12px;
   }
 
-  .time-inputs-compact {
-    gap: 6px;
+  .clock-value {
+    font-size: 40px;
   }
 
-  .time-input-group {
+  .play-clock-display .clock-value {
+    font-size: 32px;
+  }
+
+  .clock-controls,
+  .play-clock-buttons {
+    gap: 8px;
+  }
+}
+
+// Input field styling to ensure values are visible
+.max-time-row,
+.time-inputs-compact {
+  tui-textfield {
     min-width: 70px;
+
+    input {
+      text-align: center;
+      font-weight: 600;
+    }
+  }
+}
+
+.time-input-group {
+  tui-textfield {
+    width: 100%;
+
+    input {
+      text-align: center;
+      font-weight: 600;
+    }
+  }
+}
+
+// Mobile breakpoint (450px)
+@media (max-width: 450px) {
+  .time-forms {
+    gap: 16px;
+    padding: 8px 0;
   }
 
-  .input-label {
+  .time-section {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    text-align: center;
+  }
+
+  // Clock display - make it prominent
+  .clock-display {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .clock-value {
+    font-size: 42px;
+    letter-spacing: 2px;
+  }
+
+  .play-clock-display {
+    padding: 10px;
+
+    .clock-value {
+      font-size: 32px;
+    }
+  }
+
+  .clock-status {
     font-size: 11px;
   }
 
-  .max-time-row {
-    gap: 6px;
+  // Control buttons - full width, larger touch targets
+  .clock-controls,
+  .play-clock-buttons {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+
+    button {
+      flex: 1;
+      min-height: 44px !important; // iOS minimum touch target
+      font-size: 13px !important;
+      padding: 8px 12px !important;
+    }
   }
 
-  .max-time-setting,
-  .manual-time-entry {
+  // Quarter length setting
+  .max-time-setting {
+    gap: 10px;
+    padding-bottom: 14px;
+  }
+
+  .max-time-row {
+    display: flex;
     gap: 8px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
+    tui-textfield {
+      width: 80px;
+      flex-shrink: 0;
+    }
+
+    .save-button {
+      min-width: 70px;
+      height: 44px !important;
+      font-size: 14px !important;
+      padding: 8px 16px !important;
+    }
   }
 
   .setting-label {
     font-size: 11px;
   }
 
-  .save-button {
-    min-width: 70px;
-    font-size: 0.875rem;
+  // Manual time entry
+  .manual-time-entry {
+    gap: 10px;
+    padding-top: 14px;
   }
 
-  .clock-controls,
-  .play-clock-buttons {
-    flex-wrap: wrap;
+  .time-inputs-compact {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-end;
+
+    .save-button {
+      min-width: 60px;
+      height: 44px !important;
+      font-size: 14px !important;
+      padding: 8px 12px !important;
+      align-self: flex-end;
+    }
   }
 
-  .clock-value {
-    font-size: 36px;
+  .time-input-group {
+    flex: 1;
+    max-width: 80px;
+    gap: 4px;
+
+    tui-textfield {
+      width: 100%;
+
+      input {
+        text-align: center;
+        font-size: 16px; // Prevents iOS zoom on focus
+        font-weight: 600;
+      }
+    }
+  }
+
+  .input-label {
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  // Global input styling for this component on mobile
+  tui-textfield {
+    input {
+      font-size: 16px !important; // Prevents iOS zoom
+      text-align: center;
+    }
   }
 }

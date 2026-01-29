@@ -9,13 +9,12 @@
         <div class="max-time-setting">
           <span class="setting-label">Quarter Length (min)</span>
           <div class="max-time-row">
-            <tui-textfield>
+            <tui-textfield [tuiTextfieldCleaner]="false">
               <input
                 tuiInputNumber
                 [ngModel]="currentMaxMinutes()"
                 [min]="1"
                 [max]="20"
-                [step]="1"
                 [disabled]="inputsDisabled()"
                 (ngModelChange)="onMaxMinutesChange($event)"
               />
@@ -86,13 +85,12 @@
           <div class="time-inputs-compact">
             <div class="time-input-group">
               <span class="input-label">Min</span>
-              <tui-textfield>
+              <tui-textfield [tuiTextfieldCleaner]="false">
                 <input
                   tuiInputNumber
                   [ngModel]="manualMinutes()"
                   [min]="0"
                   [max]="99"
-                  [step]="1"
                   [disabled]="inputsDisabled()"
                   (ngModelChange)="onManualMinutesChange($event)"
                 />
@@ -100,13 +98,12 @@
             </div>
             <div class="time-input-group">
               <span class="input-label">Sec</span>
-              <tui-textfield>
+              <tui-textfield [tuiTextfieldCleaner]="false">
                 <input
                   tuiInputNumber
                   [ngModel]="manualSeconds()"
                   [min]="0"
                   [max]="59"
-                  [step]="1"
                   [disabled]="inputsDisabled()"
                   (ngModelChange)="onManualSecondsChange($event)"
                 />

@@ -1,3 +1,5 @@
+@import '../shared-responsive-styles.less';
+
 .timeout-forms {
   display: flex;
   flex-direction: column;
@@ -55,11 +57,18 @@
 }
 
 // Responsive adjustments
-@media (max-width: 400px) {
+@media (max-width: 768px) {
+  .timeout-controls {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 450px) {
   .timeout-controls {
     flex-direction: column;
 
     button {
+      .sb-btn-mobile();
       width: 100%;
     }
   }

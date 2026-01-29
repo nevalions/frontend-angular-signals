@@ -39,41 +39,43 @@
         </div>
       </div>
 
-      <!-- Quick Score Buttons Section -->
-      <div class="quick-score-section">
-        @for (team of teamConfig; track team.key) {
-          <div class="quick-score-row">
-            <span class="row-label">{{ team.label }}</span>
-            <div class="quick-buttons">
-              <button
-                tuiButton
-                type="button"
-                [appearance]="team.touchdownCalled() ? 'accent' : 'outline'"
-                size="l"
-                title="Touchdown Called"
-                class="td-toggle-button"
-                [class.td-active]="team.touchdownCalled()"
-                (click)="team.toggleTouchdown()"
-              >
-                <span class="td-icon">🏈</span>
-                <span class="td-label">TD</span>
-              </button>
-              @for (btn of quickScoreButtons; track btn.label) {
-                <button
-                  tuiButton
-                  type="button"
-                  appearance="secondary"
-                  size="l"
-                  [title]="btn.title"
-                  (click)="team.onQuickScore(btn.value)"
-                >
-                  {{ btn.label }}
-                </button>
-              }
-            </div>
-          </div>
-        }
-      </div>
-    </div>
-  </ng-template>
+       <!-- Quick Score Buttons Section -->
+       <div class="quick-score-section">
+         @for (team of teamConfig; track team.key) {
+           <div class="quick-score-row">
+             <span class="row-label">{{ team.label }}</span>
+             <div class="quick-buttons">
+               <button
+                 tuiButton
+                 type="button"
+                 [appearance]="team.touchdownCalled() ? 'accent' : 'outline'"
+                 size="l"
+                 title="Touchdown Called"
+                 class="td-toggle-button"
+                 [class.td-active]="team.touchdownCalled()"
+                 (click)="team.toggleTouchdown()"
+                 [style]="isMobile() ? 'font-size: 10px; padding: 2px 4px; height: 28px;' : ''"
+               >
+                 <span class="td-icon">🏈</span>
+                 <span class="td-label">TD</span>
+               </button>
+               @for (btn of quickScoreButtons; track btn.label) {
+                 <button
+                   tuiButton
+                   type="button"
+                   appearance="secondary"
+                   size="l"
+                   [title]="btn.title"
+                   (click)="team.onQuickScore(btn.value)"
+                   [style]="isMobile() ? 'font-size: 10px; padding: 2px 4px; height: 28px;' : ''"
+                 >
+                   {{ btn.label }}
+                 </button>
+               }
+             </div>
+           </div>
+         }
+       </div>
+     </div>
+   </ng-template>
 </app-collapsible-section>

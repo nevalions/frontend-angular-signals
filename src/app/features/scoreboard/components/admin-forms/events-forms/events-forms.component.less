@@ -1,3 +1,5 @@
+@import '../shared-responsive-styles.less';
+
 .events-forms {
   display: flex;
   flex-direction: column;
@@ -189,5 +191,34 @@
 
   .form-row {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 450px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+
+    button {
+      .sb-btn-mobile();
+      width: 100%;
+    }
+  }
+
+  .events-table {
+    font-size: 12px;
+
+    th,
+    td {
+      padding: 8px 10px;
+    }
+  }
+
+  .actions-cell {
+    flex-direction: column;
+    gap: 2px;
   }
 }
