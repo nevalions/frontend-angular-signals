@@ -51,6 +51,30 @@ export class ScoreFormsComponent {
     { label: '-1', value: -1, title: 'Remove 1 Point' },
   ];
 
+  // Team score input configurations
+  protected readonly teamConfig = [
+    {
+      key: 'a' as const,
+      label: 'Home Team',
+      class: 'team-a',
+      pendingScore: this.pendingScoreTeamA,
+      onChange: (score: number) => this.onScoreAChange(score),
+      touchdownCalled: this.touchdownCalledTeamA,
+      toggleTouchdown: () => this.toggleTouchdownCalled('a'),
+      onQuickScore: (points: number) => this.onQuickScore('a', points),
+    },
+    {
+      key: 'b' as const,
+      label: 'Away Team',
+      class: 'team-b',
+      pendingScore: this.pendingScoreTeamB,
+      onChange: (score: number) => this.onScoreBChange(score),
+      touchdownCalled: this.touchdownCalledTeamB,
+      toggleTouchdown: () => this.toggleTouchdownCalled('b'),
+      onQuickScore: (points: number) => this.onQuickScore('b', points),
+    },
+  ];
+
   constructor() {
     // Sync local state when match data changes
     effect(() => {

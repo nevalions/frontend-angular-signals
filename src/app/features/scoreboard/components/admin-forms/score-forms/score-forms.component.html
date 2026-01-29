@@ -4,35 +4,24 @@
       <!-- Score Inputs and Save Section -->
       <div class="score-inputs-and-save">
         <div class="score-inputs-section">
-          <div class="team-score team-a">
-            <span class="team-label">Home Team</span>
-            <tui-textfield>
-              <input
-                tuiInputNumber
-                [ngModel]="pendingScoreTeamA()"
-                [min]="0"
-                [max]="199"
-                [step]="1"
-                (ngModelChange)="onScoreAChange($event)"
-              />
-            </tui-textfield>
-          </div>
-
-          <div class="score-separator">:</div>
-
-          <div class="team-score team-b">
-            <span class="team-label">Away Team</span>
-            <tui-textfield>
-              <input
-                tuiInputNumber
-                [ngModel]="pendingScoreTeamB()"
-                [min]="0"
-                [max]="199"
-                [step]="1"
-                (ngModelChange)="onScoreBChange($event)"
-              />
-            </tui-textfield>
-          </div>
+          @for (team of teamConfig; track team.key) {
+            <div class="team-score" [class]="team.class">
+              <span class="team-label">{{ team.label }}</span>
+              <tui-textfield>
+                <input
+                  tuiInputNumber
+                  [ngModel]="team.pendingScore()"
+                  [min]="0"
+                  [max]="199"
+                  [step]="1"
+                  (ngModelChange)="team.onChange($event)"
+                />
+              </tui-textfield>
+            </div>
+            @if (team.key === 'a') {
+              <div class="score-separator">:</div>
+            }
+          }
         </div>
 
         <div class="save-section">
@@ -52,67 +41,38 @@
 
       <!-- Quick Score Buttons Section -->
       <div class="quick-score-section">
-        <div class="quick-score-row">
-          <span class="row-label">Home Team</span>
-          <div class="quick-buttons">
-            <button
-              tuiButton
-              type="button"
-              [appearance]="touchdownCalledTeamA() ? 'accent' : 'outline'"
-              size="l"
-              title="Touchdown Called"
-              class="td-toggle-button"
-              [class.td-active]="touchdownCalledTeamA()"
-              (click)="toggleTouchdownCalled('a')"
-            >
-              <span class="td-icon">🏈</span>
-              <span class="td-label">TD</span>
-            </button>
-            @for (btn of quickScoreButtons; track btn.label) {
+        @for (team of teamConfig; track team.key) {
+          <div class="quick-score-row">
+            <span class="row-label">{{ team.label }}</span>
+            <div class="quick-buttons">
               <button
                 tuiButton
                 type="button"
-                appearance="secondary"
+                [appearance]="team.touchdownCalled() ? 'accent' : 'outline'"
                 size="l"
-                [title]="btn.title"
-                (click)="onQuickScore('a', btn.value)"
+                title="Touchdown Called"
+                class="td-toggle-button"
+                [class.td-active]="team.touchdownCalled()"
+                (click)="team.toggleTouchdown()"
               >
-                {{ btn.label }}
+                <span class="td-icon">🏈</span>
+                <span class="td-label">TD</span>
               </button>
-            }
+              @for (btn of quickScoreButtons; track btn.label) {
+                <button
+                  tuiButton
+                  type="button"
+                  appearance="secondary"
+                  size="l"
+                  [title]="btn.title"
+                  (click)="team.onQuickScore(btn.value)"
+                >
+                  {{ btn.label }}
+                </button>
+              }
+            </div>
           </div>
-        </div>
-
-        <div class="quick-score-row">
-          <span class="row-label">Away Team</span>
-          <div class="quick-buttons">
-            <button
-              tuiButton
-              type="button"
-              [appearance]="touchdownCalledTeamB() ? 'accent' : 'outline'"
-              size="l"
-              title="Touchdown Called"
-              class="td-toggle-button"
-              [class.td-active]="touchdownCalledTeamB()"
-              (click)="toggleTouchdownCalled('b')"
-            >
-              <span class="td-icon">🏈</span>
-              <span class="td-label">TD</span>
-            </button>
-            @for (btn of quickScoreButtons; track btn.label) {
-              <button
-                tuiButton
-                type="button"
-                appearance="secondary"
-                size="l"
-                [title]="btn.title"
-                (click)="onQuickScore('b', btn.value)"
-              >
-                {{ btn.label }}
-              </button>
-            }
-          </div>
-        </div>
+        }
       </div>
     </div>
   </ng-template>
