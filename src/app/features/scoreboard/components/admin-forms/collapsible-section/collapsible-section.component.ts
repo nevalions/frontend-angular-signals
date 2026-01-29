@@ -61,6 +61,7 @@ export class CollapsibleSectionComponent {
   }
 
   toggle(): void {
+    this.collapsibleSectionService.clearGlobalExpanded();
     this.localExpanded.update((value) => !value);
   }
 
