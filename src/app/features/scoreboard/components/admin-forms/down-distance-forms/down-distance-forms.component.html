@@ -1,81 +1,72 @@
 <app-collapsible-section title="Down & Distance" sectionKey="scoreboard-down-distance">
   <ng-template>
     <div class="down-distance-forms">
-      <!-- Down Selection -->
-      <div class="form-section">
-        <label class="section-label">Down</label>
-        <div class="down-buttons">
-          @for (option of downOptions; track option.value) {
-            <button
-              tuiButton
-              type="button"
-              [appearance]="isDownSelected(option.value) ? 'primary' : 'secondary'"
-              size="m"
-              (click)="onDownSelect(option.value)"
-            >
-              {{ option.label }}
-            </button>
-          }
+      <!-- Down & Distance Panel -->
+      <div class="down-distance-panel">
+        <!-- Current Down & Distance Display -->
+        <div class="current-values">
+          <span class="values">{{ currentDown() }} & {{ currentDistance() }}</span>
         </div>
-      </div>
 
-      <!-- Distance Input -->
-      <div class="form-section">
-        <label class="section-label">Distance</label>
-        <div class="distance-controls">
-          <tui-textfield>
-            <input
-              tuiInputNumber
-              [ngModel]="currentDistance()"
-              [min]="1"
-              [max]="99"
-              [step]="1"
-              (ngModelChange)="onDistanceChange($event)"
-            />
-          </tui-textfield>
-          <div class="distance-presets">
-            @for (preset of distancePresets; track preset.value) {
+        <!-- Down Selection -->
+        <div class="form-section">
+          <label class="section-label">Down</label>
+          <div class="down-buttons">
+            @for (option of downOptions; track option.value) {
               <button
                 tuiButton
                 type="button"
-                [appearance]="isDistancePresetSelected(preset.value) ? 'primary' : 'secondary'"
-                size="s"
-                (click)="onDistancePreset(preset.value)"
+                [appearance]="isDownSelected(option.value) ? 'primary' : 'secondary'"
+                size="m"
+                (click)="onDownSelect(option.value)"
               >
-                {{ preset.label }}
+                {{ option.label }}
               </button>
             }
+
+            <!-- Flag Toggle Button -->
+            <button
+              tuiButton
+              type="button"
+              [appearance]="isFlagActive() ? 'accent' : 'outline'"
+              size="m"
+              class="flag-toggle-button"
+              [class.flag-active]="isFlagActive()"
+              (click)="onFlagToggle()"
+            >
+              <span class="flag-icon">🚩</span>
+            </button>
           </div>
         </div>
-      </div>
 
-      <!-- Ball On Input -->
-      <div class="form-section">
-        <label class="section-label">Ball On (Yard Line)</label>
-        <tui-textfield>
-          <input
-            tuiInputNumber
-            [ngModel]="currentBallOn()"
-            [min]="1"
-            [max]="50"
-            [step]="1"
-            (ngModelChange)="onBallOnChange($event)"
-          />
-        </tui-textfield>
-      </div>
+        <!-- Distance Select & Save Row -->
+        <div class="distance-save-row">
+          <div class="distance-select-wrapper">
+            <tui-textfield tuiChevron [tuiTextfieldCleaner]="false">
+              <label tuiLabel>Distance</label>
+              <input
+                tuiSelect
+                [ngModel]="pendingDistance()"
+                (ngModelChange)="pendingDistance.set($event)"
+                placeholder="Select distance"
+              />
+              <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="distanceOptions" />
+            </tui-textfield>
+          </div>
 
-      <!-- Flag Toggle -->
-      <div class="form-section flag-section">
-        <button
-          tuiButton
-          type="button"
-          [appearance]="isFlagActive() ? 'destructive' : 'secondary'"
-          size="m"
-          (click)="onFlagToggle()"
-        >
-          <tui-icon icon="@tui.flag" />
-          {{ isFlagActive() ? 'Hide Flag' : 'Show Flag' }}
-        </button>
+          <!-- Save Button -->
+          <button
+            tuiButton
+            type="button"
+            appearance="primary"
+            size="l"
+            class="save-button"
+            [disabled]="!hasChanges()"
+            (click)="onSave()"
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>
   </ng-template>

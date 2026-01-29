@@ -69,6 +69,13 @@
         </div>
 
         <div class="forms-grid">
+            <app-down-distance-forms
+              [matchData]="data()?.match_data ?? null"
+              [scoreboard]="scoreboard()"
+              (downDistanceChange)="onDownDistanceChange($event)"
+              (flagToggle)="onFlagToggle($event)"
+            />
+
             <app-score-forms
               [matchData]="data()?.match_data ?? null"
               (scoreChange)="onScoreChange($event)"
@@ -83,13 +90,6 @@
               [playClockLocked]="playClockLocked()"
               (gameClockAction)="onGameClockAction($event)"
               (playClockAction)="onPlayClockAction($event)"
-            />
-
-            <app-down-distance-forms
-              [matchData]="data()?.match_data ?? null"
-              [scoreboard]="scoreboard()"
-              (downDistanceChange)="onDownDistanceChange($event)"
-              (flagToggle)="onFlagToggle($event)"
             />
 
             <app-scoreboard-settings-forms

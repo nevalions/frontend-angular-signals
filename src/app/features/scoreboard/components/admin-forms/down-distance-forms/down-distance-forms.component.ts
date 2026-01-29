@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
-import { TuiInputNumber } from '@taiga-ui/kit';
+import { TuiChevron, TuiDataListWrapper, TuiSelect } from '@taiga-ui/kit';
 import { MatchData } from '../../../../matches/models/match-data.model';
 import { Scoreboard } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
@@ -9,7 +9,6 @@ import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-
 export interface DownDistanceChangeEvent {
   down?: string;
   distance?: string;
-  ball_on?: number;
 }
 
 export interface DownOption {
@@ -20,7 +19,7 @@ export interface DownOption {
 @Component({
   selector: 'app-down-distance-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TuiButton, TuiIcon, TuiTextfield, TuiInputNumber, CollapsibleSectionComponent],
+  imports: [FormsModule, TuiButton, TuiTextfield, TuiSelect, TuiChevron, TuiDataListWrapper, CollapsibleSectionComponent],
   templateUrl: './down-distance-forms.component.html',
   styleUrl: './down-distance-forms.component.less',
 })
@@ -45,49 +44,71 @@ export class DownDistanceFormsComponent {
     { value: '4th', label: '4th' },
   ];
 
-  /** Common distance presets */
-  protected readonly distancePresets = [
-    { value: '10', label: '10' },
-    { value: 'Goal', label: 'Goal' },
-    { value: 'Inches', label: 'Inches' },
-  ];
+  /** Distance options (1-20 and 20+) */
+  protected readonly distanceOptions = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+    '19',
+    '20',
+    '20+',
+  ] as const;
 
-  // Computed values from match data
+  // Local state for pending down and distance
+  protected readonly pendingDown = signal<string>('1st');
+  protected readonly pendingDistance = signal<string>('10');
+
+  // Computed values from match data (displayed as "Current")
   protected readonly currentDown = computed(() => this.matchData()?.down ?? '1st');
-  protected readonly currentDistance = computed(() => {
-    const dist = this.matchData()?.distance;
-    return dist ? parseInt(dist, 10) || 10 : 10;
-  });
-  protected readonly currentDistanceText = computed(() => this.matchData()?.distance ?? '10');
-  protected readonly currentBallOn = computed(() => this.matchData()?.ball_on ?? 50);
+  protected readonly currentDistance = computed(() => this.matchData()?.distance ?? '10');
   protected readonly isFlagActive = computed(() => this.scoreboard()?.is_flag ?? false);
 
+  // Check if there are unsaved changes
+  protected readonly hasChanges = computed(() => {
+    const data = this.matchData();
+    if (!data) return false;
+    return (
+      this.pendingDown() !== (data.down ?? '1st') ||
+      this.pendingDistance() !== (data.distance ?? '10')
+    );
+  });
+
   /**
-   * Handle down selection
+   * Handle down selection - updates local state only
    */
   onDownSelect(down: string): void {
-    this.downDistanceChange.emit({ down });
+    this.pendingDown.set(down);
   }
 
   /**
-   * Handle distance change from input
+   * Save the pending down and distance changes
    */
-  onDistanceChange(distance: number): void {
-    this.downDistanceChange.emit({ distance: distance.toString() });
-  }
+  onSave(): void {
+    const currentDown = this.matchData()?.down ?? '1st';
+    const currentDistance = this.matchData()?.distance ?? '10';
 
-  /**
-   * Handle distance preset selection
-   */
-  onDistancePreset(value: string): void {
-    this.downDistanceChange.emit({ distance: value });
-  }
-
-  /**
-   * Handle ball on change
-   */
-  onBallOnChange(ballOn: number): void {
-    this.downDistanceChange.emit({ ball_on: ballOn });
+    // Only emit if values actually changed
+    if (this.pendingDown() !== currentDown || this.pendingDistance() !== currentDistance) {
+      this.downDistanceChange.emit({
+        down: this.pendingDown(),
+        distance: this.pendingDistance(),
+      });
+    }
   }
 
   /**
@@ -101,13 +122,19 @@ export class DownDistanceFormsComponent {
    * Check if a down option is currently selected
    */
   isDownSelected(down: string): boolean {
-    return this.currentDown() === down;
+    return this.pendingDown() === down;
   }
 
-  /**
-   * Check if a distance preset is currently selected
-   */
-  isDistancePresetSelected(value: string): boolean {
-    return this.currentDistanceText() === value;
+  constructor() {
+    // Sync local state when match data changes
+    effect(() => {
+      const data = this.matchData();
+      if (data) {
+        this.pendingDown.set(data.down ?? '1st');
+        this.pendingDistance.set(data.distance ?? '10');
+      }
+    });
   }
+
+
 }
