@@ -10,11 +10,10 @@ import { FootballEventCreate, FootballEventUpdate } from '../../../matches/model
 import { Scoreboard, ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
 import { PlayerMatchUpdate } from '../../../matches/models/player-match.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
-import { ScoreFormsComponent, ScoreChangeEvent } from '../../components/admin-forms/score-forms/score-forms.component';
+import { ScoreFormsComponent, ScoreChangeEvent, TimeoutChangeEvent } from '../../components/admin-forms/score-forms/score-forms.component';
 import { TimeFormsComponent, GameClockActionEvent, PlayClockActionEvent } from '../../components/admin-forms/time-forms/time-forms.component';
 import { QtrFormsComponent } from '../../components/admin-forms/qtr-forms/qtr-forms.component';
 import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../components/admin-forms/down-distance-forms/down-distance-forms.component';
-import { TimeoutFormsComponent, TimeoutChangeEvent } from '../../components/admin-forms/timeout-forms/timeout-forms.component';
 import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
 import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
 import { ConnectionIndicatorComponent } from '../../../../shared/components/connection-indicator/connection-indicator.component';
@@ -32,7 +31,6 @@ import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.
     TimeFormsComponent,
     QtrFormsComponent,
     DownDistanceFormsComponent,
-    TimeoutFormsComponent,
     ScoreboardSettingsFormsComponent,
     EventsFormsComponent,
     ConnectionIndicatorComponent,
@@ -393,7 +391,6 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
       'scoreboard-qtr',
       'scoreboard-time',
       'scoreboard-down-distance',
-      'scoreboard-timeout',
       'scoreboard-settings',
       'scoreboard-events',
     ] as const;

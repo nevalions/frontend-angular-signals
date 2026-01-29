@@ -10,6 +10,11 @@ export interface ScoreChangeEvent {
   score: number;
 }
 
+export interface TimeoutChangeEvent {
+  team: 'a' | 'b';
+  timeouts: string;
+}
+
 @Component({
   selector: 'app-score-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,6 +29,9 @@ export class ScoreFormsComponent {
   /** Emits when score changes */
   scoreChange = output<ScoreChangeEvent>();
 
+  /** Emits when timeout changes */
+  timeoutChange = output<TimeoutChangeEvent>();
+
   // Local state for pending scores
   protected readonly pendingScoreTeamA = signal(0);
   protected readonly pendingScoreTeamB = signal(0);
@@ -31,6 +39,10 @@ export class ScoreFormsComponent {
   // Toggle state for touchdown called
   protected readonly touchdownCalledTeamA = signal(false);
   protected readonly touchdownCalledTeamB = signal(false);
+
+  // Toggle state for timeout called
+  protected readonly timeoutCalledTeamA = signal(false);
+  protected readonly timeoutCalledTeamB = signal(false);
 
   // Manual edit section expanded state
   protected readonly manualEditExpanded = signal(false);
@@ -43,6 +55,26 @@ export class ScoreFormsComponent {
       this.pendingScoreTeamA() !== (data.score_team_a ?? 0) ||
       this.pendingScoreTeamB() !== (data.score_team_b ?? 0)
     );
+  });
+
+  // Parse timeout strings into count (assumes format like "ooo" or "oo" or "o")
+  protected readonly timeoutsTeamA = computed(() => {
+    const timeout = this.matchData()?.timeout_team_a || '';
+    return this.countTimeouts(timeout);
+  });
+
+  protected readonly timeoutsTeamB = computed(() => {
+    const timeout = this.matchData()?.timeout_team_b || '';
+    return this.countTimeouts(timeout);
+  });
+
+  // Create timeout indicator arrays (3 max timeouts)
+  protected readonly indicatorsTeamA = computed(() => {
+    return this.createIndicators(this.timeoutsTeamA());
+  });
+
+  protected readonly indicatorsTeamB = computed(() => {
+    return this.createIndicators(this.timeoutsTeamB());
   });
 
   // Quick score button configurations
@@ -64,6 +96,8 @@ export class ScoreFormsComponent {
       onChange: (score: number) => this.onScoreAChange(score),
       touchdownCalled: this.touchdownCalledTeamA,
       toggleTouchdown: () => this.toggleTouchdownCalled('a'),
+      timeoutCalled: this.timeoutCalledTeamA,
+      toggleTimeout: () => this.toggleTimeoutCalled('a'),
       onQuickScore: (points: number) => this.onQuickScore('a', points),
     },
     {
@@ -74,9 +108,28 @@ export class ScoreFormsComponent {
       onChange: (score: number) => this.onScoreBChange(score),
       touchdownCalled: this.touchdownCalledTeamB,
       toggleTouchdown: () => this.toggleTouchdownCalled('b'),
+      timeoutCalled: this.timeoutCalledTeamB,
+      toggleTimeout: () => this.toggleTimeoutCalled('b'),
       onQuickScore: (points: number) => this.onQuickScore('b', points),
     },
   ];
+
+  private countTimeouts(timeoutStr: string): number {
+    if (!timeoutStr) return 3;
+    return (timeoutStr.match(/o/gi) || []).length;
+  }
+
+  private createIndicators(remaining: number): boolean[] {
+    const indicators: boolean[] = [];
+    for (let i = 0; i < 3; i++) {
+      indicators.push(i < remaining);
+    }
+    return indicators;
+  }
+
+  private createTimeoutString(remaining: number): string {
+    return 'o'.repeat(remaining) + '●'.repeat(3 - remaining);
+  }
 
   constructor() {
     // Sync local state when match data changes
@@ -121,19 +174,30 @@ export class ScoreFormsComponent {
   }
 
   /**
-   * Toggle touchdown called for a team
+    * Toggle touchdown called for a team
+    */
+   toggleTouchdownCalled(team: 'a' | 'b'): void {
+     if (team === 'a') {
+       this.touchdownCalledTeamA.update(value => !value);
+     } else {
+       this.touchdownCalledTeamB.update(value => !value);
+     }
+   }
+
+  /**
+   * Toggle timeout called for a team
    */
-  toggleTouchdownCalled(team: 'a' | 'b'): void {
+  toggleTimeoutCalled(team: 'a' | 'b'): void {
     if (team === 'a') {
-      this.touchdownCalledTeamA.update(value => !value);
+      this.timeoutCalledTeamA.update(value => !value);
     } else {
-      this.touchdownCalledTeamB.update(value => !value);
+      this.timeoutCalledTeamB.update(value => !value);
     }
   }
 
-  /**
-    * Save the pending scores
-    */
+   /**
+      * Save the pending scores
+      */
    onSave(): void {
      const currentScoreA = this.matchData()?.score_team_a ?? 0;
      const currentScoreB = this.matchData()?.score_team_b ?? 0;
@@ -147,5 +211,41 @@ export class ScoreFormsComponent {
      }
    }
 
-}
+  /**
+   * Add timeout for a team (decrease remaining)
+   */
+  onUseTimeout(team: 'a' | 'b'): void {
+    const current = team === 'a' ? this.timeoutsTeamA() : this.timeoutsTeamB();
+    if (current > 0) {
+      this.timeoutChange.emit({
+        team,
+        timeouts: this.createTimeoutString(current - 1),
+      });
+    }
+  }
+
+  /**
+   * Restore timeout for a team (increase remaining)
+   */
+  onRestoreTimeout(team: 'a' | 'b'): void {
+    const current = team === 'a' ? this.timeoutsTeamA() : this.timeoutsTeamB();
+    if (current < 3) {
+      this.timeoutChange.emit({
+        team,
+        timeouts: this.createTimeoutString(current + 1),
+      });
+    }
+  }
+
+  /**
+   * Reset all timeouts for a team
+   */
+  onResetTimeouts(team: 'a' | 'b'): void {
+    this.timeoutChange.emit({
+      team,
+      timeouts: 'ooo',
+    });
+  }
+
+ }
 

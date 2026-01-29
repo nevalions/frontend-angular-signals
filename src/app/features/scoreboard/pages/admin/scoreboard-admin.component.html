@@ -72,6 +72,7 @@
             <app-score-forms
               [matchData]="data()?.match_data ?? null"
               (scoreChange)="onScoreChange($event)"
+              (timeoutChange)="onTimeoutChange($event)"
             />
 
             <app-qtr-forms
@@ -93,11 +94,6 @@
               [scoreboard]="scoreboard()"
               (downDistanceChange)="onDownDistanceChange($event)"
               (flagToggle)="onFlagToggle($event)"
-            />
-
-            <app-timeout-forms
-              [matchData]="data()?.match_data ?? null"
-              (timeoutChange)="onTimeoutChange($event)"
             />
 
             <app-scoreboard-settings-forms

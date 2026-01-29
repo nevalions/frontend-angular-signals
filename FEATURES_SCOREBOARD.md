@@ -93,8 +93,8 @@ Real-time updates for match data, game clock, play clock, scoreboard settings, a
 - `src/app/features/scoreboard/pages/view/scoreboard-view.component.*` - FullHD broadcast view
 - `src/app/features/scoreboard/components/display/scoreboard-display-flat.component.*` - Reusable scoreboard display
 - `src/app/features/scoreboard/components/admin-forms/qtr-forms/qtr-forms.component.*` - Quarter selection form
+- `src/app/features/scoreboard/components/admin-forms/score-forms/score-forms.component.*` - Score and timeout management form
 - `src/app/features/scoreboard/components/admin-forms/down-distance-forms/down-distance-forms.component.*` - Down & distance form
-- `src/app/features/scoreboard/components/admin-forms/timeout-forms/timeout-forms.component.*` - Timeout management form
 - `src/app/features/scoreboard/components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component.*` - Scoreboard display settings form
 - `src/app/features/scoreboard/animations/slide-up.animation.ts` - Animation for roster displays
 
@@ -181,11 +181,16 @@ Real-time updates for match data, game clock, play clock, scoreboard settings, a
 - Flag toggle button
 - Submit button to save
 
-##### Timeout Forms (`TimeoutFormsComponent`)
-- Timeout management for both teams
-- Visual indicators (●●●)
-- Use/Restore timeout buttons
-- Reset all timeouts button
+##### Score Forms (`ScoreFormsComponent`)
+- Score management for both teams
+- Quick score buttons (+6, +3, +2, +1, -1)
+- Touchdown called toggle button
+- Timeout management for both teams (integrated)
+  - Visual indicators (●●●)
+  - Use (-TO) and Restore (+TO) timeout buttons
+  - Reset all timeouts button
+  - Timeout called toggle button (TO)
+- Manual score input for corrections
 - Submit button to save
 
 ##### Scoreboard Settings Forms (`ScoreboardSettingsFormsComponent`)

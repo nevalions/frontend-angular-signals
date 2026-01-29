@@ -132,15 +132,16 @@ For `tuiInputNumber` fields on mobile, remove `[step]` attribute and add `[tuiTe
 
 All admin-forms components use these shared styles and breakpoints:
 
-- ✅ **score-forms** - Reference implementation
+- ✅ **score-forms** - Reference implementation (includes integrated timeout controls)
 - ✅ **time-forms** - Updated with inline styles for mobile
 - ✅ **qtr-forms** - Standardized breakpoints
-- ✅ **timeout-forms** - Standardized breakpoints
 - ✅ **events-forms** - Added mobile support
 - ✅ **roster-forms** - Standardized breakpoints
 - ✅ **scoreboard-settings-forms** - Standardized breakpoints
 - ✅ **down-distance-forms** - Standardized breakpoints
 - ✅ **collapsible-section** - Uses breakpoint variables
+
+> **Note:** Timeout controls are now integrated into `score-forms` component instead of a separate `timeout-forms` component.
 
 ## Best Practices
 

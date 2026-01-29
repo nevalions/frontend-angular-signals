@@ -7,19 +7,35 @@
           <div class="team-panel" [class]="team.class">
             <div class="team-header">
               <span class="team-label">{{ team.label }}</span>
-              <button
-                tuiButton
-                type="button"
-                [appearance]="team.touchdownCalled() ? 'accent' : 'outline'"
-                size="s"
-                title="Touchdown Called"
-                class="td-toggle-button"
-                [class.td-active]="team.touchdownCalled()"
-                (click)="team.toggleTouchdown()"
-              >
-                <span class="td-icon">🏈</span>
-                <span class="td-text">TD</span>
-              </button>
+              <div class="header-buttons">
+                <button
+                  tuiButton
+                  type="button"
+                  [appearance]="team.touchdownCalled() ? 'accent' : 'outline'"
+                  size="s"
+                  title="Touchdown Called"
+                  class="td-toggle-button"
+                  [class.td-active]="team.touchdownCalled()"
+                  (click)="team.toggleTouchdown()"
+                >
+                  <span class="td-icon">🏈</span>
+                  <span class="td-text">TD</span>
+                </button>
+
+                <button
+                  tuiButton
+                  type="button"
+                  [appearance]="team.timeoutCalled() ? 'accent' : 'outline'"
+                  size="s"
+                  title="Timeout Called"
+                  class="to-toggle-button"
+                  [class.to-active]="team.timeoutCalled()"
+                  (click)="team.toggleTimeout()"
+                >
+                  <span class="to-icon">⏱️</span>
+                  <span class="to-text">TO</span>
+                </button>
+              </div>
             </div>
 
             <!-- Large Score Display -->
@@ -27,7 +43,7 @@
               <span class="score-value">{{ team.pendingScore() }}</span>
             </div>
 
-            <!-- Quick Score Buttons - Large Touch Targets -->
+             <!-- Quick Score Buttons - Large Touch Targets -->
             <div class="quick-buttons">
               @for (btn of quickScoreButtons; track btn.label) {
                 <button
@@ -42,6 +58,58 @@
                   {{ btn.label }}
                 </button>
               }
+            </div>
+
+            <!-- Timeout Controls -->
+            <div class="timeout-controls">
+              <div class="timeout-indicators">
+                @for (available of (team.key === 'a' ? indicatorsTeamA() : indicatorsTeamB()); track $index) {
+                  <span
+                    class="timeout-indicator"
+                    [class.available]="available"
+                    [class.used]="!available"
+                  ></span>
+                }
+              </div>
+
+              <div class="timeout-buttons">
+                <button
+                  tuiButton
+                  type="button"
+                  appearance="destructive"
+                  size="s"
+                  [disabled]="(team.key === 'a' ? timeoutsTeamA() : timeoutsTeamB()) === 0"
+                  (click)="onUseTimeout(team.key)"
+                  title="Use Timeout"
+                >
+                  <tui-icon icon="@tui.minus" />
+                  TO
+                </button>
+
+                <button
+                  tuiButton
+                  type="button"
+                  appearance="secondary"
+                  size="s"
+                  [disabled]="(team.key === 'a' ? timeoutsTeamA() : timeoutsTeamB()) === 3"
+                  (click)="onRestoreTimeout(team.key)"
+                  title="Restore Timeout"
+                >
+                  <tui-icon icon="@tui.plus" />
+                  TO
+                </button>
+
+                <button
+                  tuiButton
+                  type="button"
+                  appearance="outline"
+                  size="s"
+                  (click)="onResetTimeouts(team.key)"
+                  title="Reset All Timeouts"
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           </div>
         }

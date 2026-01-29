@@ -40,6 +40,11 @@
   letter-spacing: 0.5px;
 }
 
+.header-buttons {
+  display: flex;
+  gap: 6px;
+}
+
 // TD Toggle Button
 .td-toggle-button {
   font-weight: 700;
@@ -74,6 +79,52 @@
   &:hover:not([disabled]) {
     transform: translateY(-1px);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// TO Toggle Button
+.to-toggle-button {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-width: 2px;
+  transition: all 0.2s ease;
+  min-width: 56px;
+
+  .to-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .to-text {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  &.to-active {
+    box-shadow: 0 0 0 3px var(--tui-background-accent-1);
+    transform: scale(1.02);
+
+    .to-icon {
+      animation: timeout-pulse 0.6s ease-in-out;
+    }
+  }
+
+  &:hover:not([disabled]) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@keyframes timeout-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
   }
 }
 
@@ -117,6 +168,58 @@
   font-weight: 700 !important;
   font-size: 18px !important;
   padding: 8px 4px !important;
+}
+
+// Timeout Controls
+.timeout-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--tui-border-normal);
+}
+
+.timeout-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.timeout-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--tui-background-neutral-3);
+  border: 2px solid var(--tui-border-normal);
+  transition: all 0.2s ease;
+
+  &.available {
+    background: var(--tui-background-success);
+    border-color: var(--tui-border-positive);
+  }
+
+  &.used {
+    background: var(--tui-background-neutral-3);
+    border-color: var(--tui-border-normal);
+  }
+}
+
+.timeout-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+
+  button {
+    font-size: 11px;
+    font-weight: 600;
+    min-height: 36px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
 }
 
 // Manual Edit Section
@@ -201,6 +304,30 @@
     min-height: 44px;
     font-size: 15px;
   }
+
+  .timeout-controls {
+    gap: 6px;
+    padding-top: 6px;
+  }
+
+  .timeout-indicators {
+    gap: 5px;
+  }
+
+  .timeout-indicator {
+    width: 14px;
+    height: 14px;
+  }
+
+  .timeout-buttons {
+    gap: 5px;
+
+    button {
+      min-height: 32px;
+      font-size: 11px;
+      padding: 4px 6px;
+    }
+  }
 }
 
 // Mobile breakpoint (450px) - Stack teams vertically
@@ -233,6 +360,10 @@
     text-align: left;
   }
 
+  .header-buttons {
+    gap: 5px;
+  }
+
   .td-toggle-button {
     min-width: 56px;
     padding: 4px 10px;
@@ -242,6 +373,19 @@
     }
 
     .td-text {
+      font-size: 11px;
+    }
+  }
+
+  .to-toggle-button {
+    min-width: 56px;
+    padding: 4px 10px;
+
+    .to-icon {
+      font-size: 14px;
+    }
+
+    .to-text {
       font-size: 11px;
     }
   }
@@ -265,6 +409,30 @@
     font-size: 18px !important;
     font-weight: 700 !important;
     padding: 8px 4px !important;
+  }
+
+  .timeout-controls {
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .timeout-indicators {
+    gap: 6px;
+  }
+
+  .timeout-indicator {
+    width: 16px;
+    height: 16px;
+  }
+
+  .timeout-buttons {
+    gap: 6px;
+
+    button {
+      min-height: 36px;
+      font-size: 12px;
+      padding: 4px 8px;
+    }
   }
 
   .manual-edit {
@@ -316,6 +484,19 @@
     }
   }
 
+  .to-toggle-button {
+    min-width: 50px;
+    padding: 4px 8px;
+
+    .to-icon {
+      font-size: 12px;
+    }
+
+    .to-text {
+      font-size: 10px;
+    }
+  }
+
   .score-value {
     font-size: 40px;
   }
@@ -328,5 +509,29 @@
     min-height: 48px !important;
     height: 48px !important;
     font-size: 16px !important;
+  }
+
+  .timeout-controls {
+    gap: 6px;
+    padding-top: 6px;
+  }
+
+  .timeout-indicators {
+    gap: 5px;
+  }
+
+  .timeout-indicator {
+    width: 14px;
+    height: 14px;
+  }
+
+  .timeout-buttons {
+    gap: 5px;
+
+    button {
+      min-height: 32px;
+      font-size: 11px;
+      padding: 4px 6px;
+    }
   }
 }
