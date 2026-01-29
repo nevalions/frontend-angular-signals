@@ -282,12 +282,13 @@ export class ScoreboardDisplayComponent {
   private parseTimeoutString(timeout: string): boolean[] {
     if (!timeout) return [false, false, false];
 
-    // Assume 3 timeouts, filled circle = used, empty = available
+    // 'o' = available (visible), '●' = used (faded)
     const result: boolean[] = [];
     for (let i = 0; i < 3; i++) {
       const char = timeout[i];
-      // Check if character indicates a used timeout (filled circle or similar)
-      result.push(char === 'o' || char === '●' || char === '1');
+      // 'o' = available → true (adds .used class, opacity 0.81, visible)
+      // '●' = used → false (no .used class, opacity 0.3, faded)
+      result.push(char === 'o');
     }
     return result;
   }
