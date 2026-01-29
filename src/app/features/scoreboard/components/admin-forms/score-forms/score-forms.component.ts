@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiButton, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiInputNumber } from '@taiga-ui/kit';
 import { MatchData } from '../../../../matches/models/match-data.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
@@ -13,7 +13,7 @@ export interface ScoreChangeEvent {
 @Component({
   selector: 'app-score-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TuiButton, TuiTextfield, TuiInputNumber, CollapsibleSectionComponent],
+  imports: [FormsModule, TuiButton, TuiTextfield, TuiInputNumber, TuiIcon, CollapsibleSectionComponent],
   templateUrl: './score-forms.component.html',
   styleUrl: './score-forms.component.less',
 })
@@ -31,6 +31,9 @@ export class ScoreFormsComponent {
   // Toggle state for touchdown called
   protected readonly touchdownCalledTeamA = signal(false);
   protected readonly touchdownCalledTeamB = signal(false);
+
+  // Manual edit section expanded state
+  protected readonly manualEditExpanded = signal(false);
 
   // Check if there are unsaved changes
   protected readonly hasChanges = computed(() => {
@@ -144,11 +147,5 @@ export class ScoreFormsComponent {
      }
    }
 
-   /**
-    * Check if screen width is at mobile breakpoint (450px)
-    */
-   isMobile(): boolean {
-     return window.innerWidth <= 450;
-   }
 }
 

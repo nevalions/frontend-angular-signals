@@ -3,149 +3,77 @@
 .score-forms {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   padding: 16px 0;
 }
 
-// Score Inputs and Save Section
-.score-inputs-and-save {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 24px;
-  flex-wrap: wrap;
+// Score Panel - contains both team panels side by side
+.score-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-// Score Inputs Section
-.score-inputs-section {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 20px;
-  flex: 1;
-  min-width: fit-content;
-}
-
-.team-score {
+// Team Panel - individual team's score area
+.team-panel {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
-  flex: 1;
-  max-width: 250px;
-  min-width: 180px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--tui-background-neutral-1);
+  border: 1px solid var(--tui-border-normal);
+}
 
-  tui-textfield {
-    width: 100%;
-  }
-
-  .td-toggle-button {
-    display: none;
-  }
+.team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .team-label {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--tui-text-secondary);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.score-separator {
-  font-size: 40px;
-  font-weight: bold;
-  color: var(--tui-text-primary);
-  align-self: center;
-  margin-bottom: 12px;
-}
-
-// Save Section
-.save-section {
-  display: flex;
-  align-items: flex-end;
-}
-
-.save-button {
-  min-width: 120px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-// Quick Score Buttons Section
-.quick-score-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border-top: 1px solid var(--tui-border-normal);
-  padding-top: 20px;
-  align-items: center;
-}
-
-.quick-score-row {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 600px;
-}
-
-.row-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--tui-text-secondary);
-  text-transform: uppercase;
-  text-align: center;
-}
-
-.quick-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  width: 100%;
-}
-
+// TD Toggle Button
 .td-toggle-button {
   font-weight: 700;
-  min-width: 80px;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   border-width: 2px;
   transition: all 0.2s ease;
+  min-width: 56px;
 
   .td-icon {
-    font-size: 18px;
+    font-size: 14px;
     line-height: 1;
   }
 
-  .td-label {
-    font-size: 14px;
+  .td-text {
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.5px;
   }
 
-  // Active state styling
   &.td-active {
     box-shadow: 0 0 0 3px var(--tui-background-accent-1);
-    transform: scale(1.05);
+    transform: scale(1.02);
 
     .td-icon {
       animation: touchdown-pulse 0.6s ease-in-out;
     }
   }
 
-  // Hover effect
   &:hover:not([disabled]) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  &:active:not([disabled]) {
-    transform: translateY(0);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -158,139 +86,247 @@
   }
 }
 
-// Responsive adjustments
-@media (max-width: 768px) {
-  .score-forms {
-    gap: 20px;
+// Large Score Display
+.score-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: var(--tui-background-neutral-2);
+  border-radius: 8px;
+}
+
+.score-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--tui-text-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+// Quick Score Buttons - Large Touch Targets
+.quick-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.quick-btn {
+  min-height: 52px !important;
+  height: 52px !important;
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  padding: 8px 4px !important;
+}
+
+// Manual Edit Section
+.manual-edit {
+  border-top: 1px solid var(--tui-border-normal);
+  padding-top: 12px;
+}
+
+.manual-edit-toggle {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--tui-text-secondary);
+
+  tui-icon {
+    font-size: 16px;
   }
 
-  .score-inputs-and-save {
-    flex-direction: column;
-    gap: 16px;
-    align-items: stretch;
-  }
-
-  .score-inputs-section {
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-  }
-
-  .team-score {
-    max-width: 100%;
-    width: 100%;
-    min-width: auto;
-  }
-
-  .team-label {
-    font-size: 15px;
-  }
-
-  .score-separator {
-    display: none;
-  }
-
-  .save-section {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .save-button {
-    width: 100%;
-    min-width: auto;
-  }
-
-  .quick-score-section {
-    gap: 18px;
-    padding-top: 18px;
-  }
-
-  .quick-score-row {
-    gap: 12px;
-    max-width: 100%;
-  }
-
-  .row-label {
-    font-size: 15px;
-  }
-
-  .quick-buttons {
-    .sb-buttons-row-tablet();
+  &:hover {
+    color: var(--tui-text-primary);
   }
 }
 
-// Small screens - keep inputs on same row, reduce sizes
-@media (max-width: 450px) {
-  .score-forms {
-    .sb-container-mobile();
+.manual-edit-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+
+  .save-button {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+
+.manual-input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .input-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tui-text-secondary);
+    text-transform: uppercase;
   }
 
-  .score-inputs-and-save {
+  .score-input {
+    width: 100%;
+
+    input {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+    }
+  }
+}
+
+.save-button {
+  min-width: 200px;
+  font-weight: 600;
+}
+
+// Tablet breakpoint (768px)
+@media (max-width: 768px) {
+  .score-panel {
     gap: 12px;
   }
 
-  .score-inputs-section {
-    flex-direction: row;
-    gap: 8px;
-    width: 100%;
-    align-items: flex-end;
+  .team-panel {
+    padding: 12px;
+    gap: 10px;
   }
 
-  .team-score {
-    gap: 8px;
-    flex: 1;
-    min-width: 0;
-    max-width: none;
+  .score-value {
+    font-size: 42px;
+  }
 
-    tui-textfield {
-      .sb-input-mobile();
+  .quick-btn {
+    min-height: 44px;
+    font-size: 15px;
+  }
+}
+
+// Mobile breakpoint (450px) - Stack teams vertically
+@media (max-width: 450px) {
+  .score-forms {
+    gap: 16px;
+    padding: 12px 0;
+  }
+
+  .score-panel {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .team-panel {
+    padding: 12px;
+    gap: 12px;
+    border-radius: 10px;
+  }
+
+  .team-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .team-label {
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .td-toggle-button {
+    min-width: 56px;
+    padding: 4px 10px;
+
+    .td-icon {
+      font-size: 14px;
     }
+
+    .td-text {
+      font-size: 11px;
+    }
+  }
+
+  .score-display {
+    padding: 8px 12px;
+  }
+
+  .score-value {
+    font-size: 48px;
+  }
+
+  .quick-buttons {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .quick-btn {
+    min-height: 52px !important;
+    height: 52px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    padding: 8px 4px !important;
+  }
+
+  .manual-edit {
+    padding-top: 8px;
+
+    summary {
+      font-size: 12px;
+    }
+  }
+
+  .manual-input-row {
+    .input-label {
+      font-size: 12px;
+      min-width: 70px;
+    }
+  }
+
+  .save-section {
+    padding-top: 12px;
+  }
+
+  .save-button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+// Extra small screens (360px)
+@media (max-width: 360px) {
+  .team-panel {
+    padding: 10px;
+    gap: 10px;
   }
 
   .team-label {
     font-size: 12px;
   }
 
-  .score-separator {
-    display: none;
+  .td-toggle-button {
+    min-width: 50px;
+    padding: 4px 8px;
+
+    .td-icon {
+      font-size: 12px;
+    }
+
+    .td-text {
+      font-size: 10px;
+    }
   }
 
-  .save-button {
-    .sb-btn-save-mobile();
-  }
-
-  .quick-score-section {
-    gap: 12px;
-    padding-top: 12px;
-  }
-
-  .quick-score-row {
-    gap: 8px;
-  }
-
-  .row-label {
-    font-size: 12px;
+  .score-value {
+    font-size: 40px;
   }
 
   .quick-buttons {
-    .sb-buttons-row-mobile();
+    gap: 6px;
+  }
 
-    button {
-      .sb-btn-mobile();
-    }
-
-    .td-toggle-button {
-      min-width: 50px;
-      padding: 2px 4px;
-      font-size: 10px;
-
-      .td-icon {
-        display: none;
-      }
-
-      .td-label {
-        font-size: 10px;
-      }
-    }
+  .quick-btn {
+    min-height: 48px !important;
+    height: 48px !important;
+    font-size: 16px !important;
   }
 }

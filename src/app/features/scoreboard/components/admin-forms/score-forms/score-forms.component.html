@@ -1,81 +1,98 @@
 <app-collapsible-section title="Score Controls" sectionKey="scoreboard-score">
   <ng-template>
     <div class="score-forms">
-      <!-- Score Inputs and Save Section -->
-      <div class="score-inputs-and-save">
-        <div class="score-inputs-section">
-          @for (team of teamConfig; track team.key) {
-            <div class="team-score" [class]="team.class">
+      <!-- Score Panel: Two teams side by side -->
+      <div class="score-panel">
+        @for (team of teamConfig; track team.key) {
+          <div class="team-panel" [class]="team.class">
+            <div class="team-header">
               <span class="team-label">{{ team.label }}</span>
-              <tui-textfield>
-                <input
-                  tuiInputNumber
-                  [ngModel]="team.pendingScore()"
-                  [min]="0"
-                  [max]="199"
-                  [step]="1"
-                  (ngModelChange)="team.onChange($event)"
-                />
-              </tui-textfield>
+              <button
+                tuiButton
+                type="button"
+                [appearance]="team.touchdownCalled() ? 'accent' : 'outline'"
+                size="s"
+                title="Touchdown Called"
+                class="td-toggle-button"
+                [class.td-active]="team.touchdownCalled()"
+                (click)="team.toggleTouchdown()"
+              >
+                <span class="td-icon">🏈</span>
+                <span class="td-text">TD</span>
+              </button>
             </div>
-            @if (team.key === 'a') {
-              <div class="score-separator">:</div>
-            }
-          }
-        </div>
 
-        <div class="save-section">
-          <button
-            tuiButton
-            type="button"
-            appearance="primary"
-            size="l"
-            class="save-button"
-            [disabled]="!hasChanges()"
-            (click)="onSave()"
-          >
-            Save
-          </button>
-        </div>
+            <!-- Large Score Display -->
+            <div class="score-display">
+              <span class="score-value">{{ team.pendingScore() }}</span>
+            </div>
+
+            <!-- Quick Score Buttons - Large Touch Targets -->
+            <div class="quick-buttons">
+              @for (btn of quickScoreButtons; track btn.label) {
+                <button
+                  tuiButton
+                  type="button"
+                  [appearance]="btn.value > 0 ? 'secondary' : 'outline'"
+                  size="l"
+                  [title]="btn.title"
+                  class="quick-btn"
+                  (click)="team.onQuickScore(btn.value)"
+                >
+                  {{ btn.label }}
+                </button>
+              }
+            </div>
+          </div>
+        }
       </div>
 
-       <!-- Quick Score Buttons Section -->
-       <div class="quick-score-section">
-         @for (team of teamConfig; track team.key) {
-           <div class="quick-score-row">
-             <span class="row-label">{{ team.label }}</span>
-             <div class="quick-buttons">
-               <button
-                 tuiButton
-                 type="button"
-                 [appearance]="team.touchdownCalled() ? 'accent' : 'outline'"
-                 size="l"
-                 title="Touchdown Called"
-                 class="td-toggle-button"
-                 [class.td-active]="team.touchdownCalled()"
-                 (click)="team.toggleTouchdown()"
-                 [style]="isMobile() ? 'font-size: 10px; padding: 2px 4px; height: 28px;' : ''"
-               >
-                 <span class="td-icon">🏈</span>
-                 <span class="td-label">TD</span>
-               </button>
-               @for (btn of quickScoreButtons; track btn.label) {
-                 <button
-                   tuiButton
-                   type="button"
-                   appearance="secondary"
-                   size="l"
-                   [title]="btn.title"
-                   (click)="team.onQuickScore(btn.value)"
-                   [style]="isMobile() ? 'font-size: 10px; padding: 2px 4px; height: 28px;' : ''"
-                 >
-                   {{ btn.label }}
-                 </button>
-               }
-             </div>
-           </div>
-         }
-       </div>
-     </div>
-   </ng-template>
+      <!-- Manual Score Edit (collapsed by default, for corrections) -->
+      <div class="manual-edit">
+        <button
+          tuiButton
+          type="button"
+          appearance="flat"
+          size="m"
+          class="manual-edit-toggle"
+          (click)="manualEditExpanded.set(!manualEditExpanded())"
+        >
+          <tui-icon [icon]="manualEditExpanded() ? '@tui.chevron-up' : '@tui.chevron-down'" />
+          <span>Manual Score Edit</span>
+        </button>
+        
+        @if (manualEditExpanded()) {
+          <div class="manual-edit-content">
+            @for (team of teamConfig; track team.key) {
+              <div class="manual-input-row">
+                <span class="input-label">{{ team.label }}</span>
+                <tui-textfield class="score-input">
+                  <input
+                    tuiInputNumber
+                    [ngModel]="team.pendingScore()"
+                    [min]="0"
+                    [max]="199"
+                    [step]="1"
+                    (ngModelChange)="team.onChange($event)"
+                  />
+                </tui-textfield>
+              </div>
+            }
+            <!-- Save Button inside Manual Edit -->
+            <button
+              tuiButton
+              type="button"
+              appearance="primary"
+              size="l"
+              class="save-button"
+              [disabled]="!hasChanges()"
+              (click)="onSave()"
+            >
+              Save Score Changes
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </ng-template>
 </app-collapsible-section>
