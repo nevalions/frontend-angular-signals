@@ -195,131 +195,177 @@
   }
 }
 
-// Mobile breakpoint (450px)
+// Mobile breakpoint (450px) - Optimized for single screen view
 @media (max-width: 450px) {
   .time-forms {
-    gap: 16px;
-    padding: 8px 0;
+    gap: 6px;
+    padding: 2px 0;
   }
 
   .time-section {
-    padding: 12px;
-    gap: 12px;
+    padding: 6px 8px;
+    gap: 4px;
   }
 
   .section-title {
-    font-size: 13px;
+    font-size: 10px;
     text-align: center;
+    margin-bottom: 0;
   }
 
-  // Clock display - make it prominent
+  // Clock display - compact but readable
   .clock-display {
-    padding: 12px;
-    border-radius: 12px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
   }
 
   .clock-value {
-    font-size: 42px;
-    letter-spacing: 2px;
+    font-size: 28px;
+    letter-spacing: 1px;
   }
 
   .play-clock-display {
-    padding: 10px;
+    padding: 4px 6px;
 
     .clock-value {
-      font-size: 32px;
+      font-size: 24px;
     }
   }
 
   .clock-status {
-    font-size: 11px;
+    font-size: 10px;
   }
 
-  // Control buttons - full width, larger touch targets
+  // Control buttons - compact, inline
   .clock-controls,
   .play-clock-buttons {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
 
     button {
       flex: 1;
-      min-height: 44px !important; // iOS minimum touch target
-      font-size: 13px !important;
-      padding: 8px 12px !important;
+      min-height: 36px !important;
+      font-size: 11px !important;
+      padding: 4px 6px !important;
     }
   }
 
-  // Quarter length setting
+  // Quarter length setting - compact stacked layout
   .max-time-setting {
-    gap: 10px;
-    padding-bottom: 14px;
+    gap: 2px;
+    padding-bottom: 4px;
+    border-bottom: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
   }
 
   .max-time-row {
     display: flex;
-    gap: 8px;
-    width: 100%;
+    gap: 6px;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
+    width: 100%;
 
     tui-textfield {
-      width: 80px;
+      width: 52px;
       flex-shrink: 0;
+      height: 36px;
+
+      input {
+        height: 36px;
+        padding: 0 8px;
+        line-height: 36px;
+      }
     }
 
     .save-button {
-      min-width: 70px;
-      height: 44px !important;
-      font-size: 14px !important;
-      padding: 8px 16px !important;
+      min-width: 52px;
+      height: 36px !important;
+      font-size: 11px !important;
+      padding: 4px 8px !important;
+      line-height: 36px;
+      align-self: stretch;
     }
   }
 
   .setting-label {
-    font-size: 11px;
+    font-size: 9px;
+    white-space: nowrap;
+    text-align: center;
   }
 
-  // Manual time entry
+  // Manual time entry - compact stacked layout
   .manual-time-entry {
-    gap: 10px;
-    padding-top: 14px;
+    gap: 2px;
+    padding-top: 4px;
+    border-top: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
   }
 
   .time-inputs-compact {
     display: flex;
-    gap: 8px;
-    width: 100%;
+    gap: 6px;
     justify-content: center;
     align-items: flex-end;
+    width: 100%;
+
+    tui-textfield {
+      min-width: 0;
+      width: 64px;
+      height: 36px;
+
+      input {
+        height: 36px;
+        padding: 0 8px;
+        line-height: 36px;
+      }
+    }
 
     .save-button {
-      min-width: 60px;
-      height: 44px !important;
-      font-size: 14px !important;
-      padding: 8px 12px !important;
+      min-width: 46px;
+      height: 36px !important;
+      font-size: 11px !important;
+      padding: 4px 8px !important;
+      line-height: 36px;
       align-self: flex-end;
+      margin-bottom: 6px;
     }
   }
 
   .time-input-group {
-    flex: 1;
-    max-width: 80px;
-    gap: 4px;
+    flex: 0 0 auto;
+    max-width: 64px;
+    min-width: 64px;
+    gap: 2px;
 
     tui-textfield {
       width: 100%;
+      min-width: 64px;
+      height: 36px;
 
       input {
         text-align: center;
         font-size: 16px; // Prevents iOS zoom on focus
         font-weight: 600;
+        height: 36px;
+        padding: 0 8px;
+        line-height: 36px;
       }
     }
   }
 
   .input-label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
   }
 
