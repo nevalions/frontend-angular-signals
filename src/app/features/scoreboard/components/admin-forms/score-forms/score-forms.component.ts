@@ -30,6 +30,12 @@ export class ScoreFormsComponent {
   /** Match data containing current scores */
   matchData = input<MatchData | null>(null);
 
+  /** Team A color */
+  teamColorA = input<string>('#ffffff');
+
+  /** Team B color */
+  teamColorB = input<string>('#ffffff');
+
   /** Emits when score changes */
   scoreChange = output<ScoreChangeEvent>();
 

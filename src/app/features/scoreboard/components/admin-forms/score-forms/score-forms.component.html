@@ -53,7 +53,7 @@
             </div>
 
             <!-- Large Score Display -->
-            <div class="score-display">
+            <div class="score-display" [style.background-color]="team.key === 'a' ? teamColorA() + '20' : teamColorB() + '20'">
               <span class="score-value">{{ team.pendingScore() }}</span>
             </div>
 
