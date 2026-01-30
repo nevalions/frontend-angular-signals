@@ -65,7 +65,7 @@
  │  │  [1st] [2nd] [3rd] [4th] [🚩]                      │     │
  │  │                                                         │     │
  │  │  Distance: [10 ▼]                         [Submit]     │     │
- │  │  Quick: [INCH] [GOAL] [10]                            │     │
+  │  │  Quick: [INCH] [GOAL] [1&10]                          │     │
  │  │                                                         │     │
  │  │  Special States:                                       │     │
  │  │  [PAT 1] [PAT 2] [FG] [KICK OFF]                     │     │

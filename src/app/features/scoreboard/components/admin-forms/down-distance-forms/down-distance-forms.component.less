@@ -129,7 +129,7 @@ tui-badged-content:has(tui-badge-notification) {
 
 .special-state-buttons {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, auto);
   gap: 6px;
 
   button {
@@ -138,6 +138,7 @@ tui-badged-content:has(tui-badge-notification) {
     font-weight: 700 !important;
     font-size: 14px !important;
     padding: 8px 4px !important;
+    min-width: auto !important;
   }
 }
 
