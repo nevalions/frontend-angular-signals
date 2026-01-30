@@ -102,8 +102,12 @@ export class ScoreboardDisplayComponent {
   });
 
   protected readonly teamAColor = computed(() => {
+    const d = this.data();
     const sb = this.scoreboard();
-    return sb?.team_a_game_color || '#1a1a1a';
+    if (sb?.use_team_a_game_color) {
+      return sb.team_a_game_color ?? '#1a1a1a';
+    }
+    return d?.teams?.team_a?.team_color ?? '#1a1a1a';
   });
 
   protected readonly scoreA = computed(() => {
@@ -138,8 +142,12 @@ export class ScoreboardDisplayComponent {
   });
 
   protected readonly teamBColor = computed(() => {
+    const d = this.data();
     const sb = this.scoreboard();
-    return sb?.team_b_game_color || '#1a1a1a';
+    if (sb?.use_team_b_game_color) {
+      return sb.team_b_game_color ?? '#1a1a1a';
+    }
+    return d?.teams?.team_b?.team_color ?? '#1a1a1a';
   });
 
   protected readonly scoreB = computed(() => {

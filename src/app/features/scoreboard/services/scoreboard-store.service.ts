@@ -126,4 +126,10 @@ export class ScoreboardStoreService {
   deleteFootballEvent(id: number): Observable<void> {
     return this.http.delete<void>(buildApiUrl(`/api/football_event/id/${id}`));
   }
+
+  uploadMatchTeamLogo(matchId: number, file: File): Observable<{ logoUrl: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ logoUrl: string }>(buildApiUrl(`/api/matches/id/${matchId}/upload_team_logo`), formData);
+  }
 }

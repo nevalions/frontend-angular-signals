@@ -1,23 +1,36 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TuiSwitch, TuiSlider } from '@taiga-ui/kit';
+import { TuiAlertService } from '@taiga-ui/core';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
+import { ScoreboardStoreService } from '../../../services/scoreboard-store.service';
+import { buildStaticUrl } from '../../../../../core/config/api.constants';
 
 @Component({
   selector: 'app-scoreboard-settings-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, FormsModule, TuiSwitch, TuiSlider, CollapsibleSectionComponent],
+  imports: [DecimalPipe, FormsModule, ReactiveFormsModule, TuiSwitch, TuiSlider, CollapsibleSectionComponent],
   templateUrl: './scoreboard-settings-forms.component.html',
   styleUrl: './scoreboard-settings-forms.component.less',
 })
 export class ScoreboardSettingsFormsComponent {
+  private fb = inject(FormBuilder);
+  private scoreboardStore = inject(ScoreboardStoreService);
+  private alerts = inject(TuiAlertService);
+
   /** Current scoreboard settings */
   scoreboard = input<Scoreboard | null>(null);
 
   /** Emits partial updates to scoreboard settings */
   scoreboardChange = output<Partial<ScoreboardUpdate>>();
+
+  teamALogoForm = this.fb.control<File | null>(null);
+  teamBLogoForm = this.fb.control<File | null>(null);
+
+  uploadingTeamALogo = signal(false);
+  uploadingTeamBLogo = signal(false);
 
   // Display toggles computed from scoreboard
   protected readonly showQtr = computed(() => this.scoreboard()?.is_qtr ?? true);
@@ -69,6 +82,20 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly teamAColor = computed(() => this.scoreboard()?.team_a_game_color ?? '#1a1a1a');
   protected readonly teamBColor = computed(() => this.scoreboard()?.team_b_game_color ?? '#1a1a1a');
 
+  // Team game titles
+  protected readonly teamAGameTitle = computed(() => this.scoreboard()?.team_a_game_title ?? '');
+  protected readonly teamBGameTitle = computed(() => this.scoreboard()?.team_b_game_title ?? '');
+
+  // Team game logos
+  protected readonly teamAGameLogo = computed(() => {
+    const logoUrl = this.scoreboard()?.team_a_game_logo;
+    return logoUrl ? buildStaticUrl(logoUrl) : '';
+  });
+  protected readonly teamBGameLogo = computed(() => {
+    const logoUrl = this.scoreboard()?.team_b_game_logo;
+    return logoUrl ? buildStaticUrl(logoUrl) : '';
+  });
+
   // Scale settings
   protected readonly tournamentLogoScale = computed(() => this.scoreboard()?.scale_tournament_logo ?? 1);
   protected readonly mainSponsorScale = computed(() => this.scoreboard()?.scale_main_sponsor ?? 1);
@@ -117,6 +144,16 @@ export class ScoreboardSettingsFormsComponent {
     this.scoreboardChange.emit({ team_b_game_color: value });
   }
 
+  onTeamAGameTitleChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.scoreboardChange.emit({ team_a_game_title: value || null });
+  }
+
+  onTeamBGameTitleChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.scoreboardChange.emit({ team_b_game_title: value || null });
+  }
+
   onToggleUseTeamAColor(value: boolean): void {
     this.localUseTeamAColor.set(value);
     this.scoreboardChange.emit({ use_team_a_game_color: value });
@@ -162,5 +199,89 @@ export class ScoreboardSettingsFormsComponent {
 
   onLogoBScaleChange(value: number): void {
     this.scoreboardChange.emit({ scale_logo_b: value });
+  }
+
+  onTeamALogoFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) {
+        this.alerts.open('Please select an image file', { label: 'Error', appearance: 'negative' }).subscribe();
+        return;
+      }
+      const maxSize = 30 * 1024 * 1024;
+      if (file.size > maxSize) {
+        this.alerts.open('File size must be less than 30MB', { label: 'Error', appearance: 'negative' }).subscribe();
+        return;
+      }
+      this.uploadTeamALogo(file);
+    }
+  }
+
+  onTeamBLogoFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) {
+        this.alerts.open('Please select an image file', { label: 'Error', appearance: 'negative' }).subscribe();
+        return;
+      }
+      const maxSize = 30 * 1024 * 1024;
+      if (file.size > maxSize) {
+        this.alerts.open('File size must be less than 30MB', { label: 'Error', appearance: 'negative' }).subscribe();
+        return;
+      }
+      this.uploadTeamBLogo(file);
+    }
+  }
+
+  removeTeamALogo(): void {
+    this.scoreboardChange.emit({ team_a_game_logo: null });
+    this.teamALogoForm.setValue(null);
+  }
+
+  removeTeamBLogo(): void {
+    this.scoreboardChange.emit({ team_b_game_logo: null });
+    this.teamBLogoForm.setValue(null);
+  }
+
+  private uploadTeamALogo(file: File): void {
+    const matchId = this.scoreboard()?.match_id;
+    if (!matchId) {
+      this.alerts.open('Match ID not found', { label: 'Error', appearance: 'negative' }).subscribe();
+      return;
+    }
+    this.uploadingTeamALogo.set(true);
+    this.scoreboardStore.uploadMatchTeamLogo(matchId, file).subscribe({
+      next: (response) => {
+        this.scoreboardChange.emit({ team_a_game_logo: response.logoUrl });
+        this.uploadingTeamALogo.set(false);
+        this.teamALogoForm.setValue(null);
+      },
+      error: () => {
+        this.alerts.open('Failed to upload logo', { label: 'Error', appearance: 'negative' }).subscribe();
+        this.uploadingTeamALogo.set(false);
+      },
+    });
+  }
+
+  private uploadTeamBLogo(file: File): void {
+    const matchId = this.scoreboard()?.match_id;
+    if (!matchId) {
+      this.alerts.open('Match ID not found', { label: 'Error', appearance: 'negative' }).subscribe();
+      return;
+    }
+    this.uploadingTeamBLogo.set(true);
+    this.scoreboardStore.uploadMatchTeamLogo(matchId, file).subscribe({
+      next: (response) => {
+        this.scoreboardChange.emit({ team_b_game_logo: response.logoUrl });
+        this.uploadingTeamBLogo.set(false);
+        this.teamBLogoForm.setValue(null);
+      },
+      error: () => {
+        this.alerts.open('Failed to upload logo', { label: 'Error', appearance: 'negative' }).subscribe();
+        this.uploadingTeamBLogo.set(false);
+      },
+    });
   }
 }

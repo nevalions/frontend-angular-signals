@@ -83,13 +83,32 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │  [👁️🗑️] Scoreboard Settings Forms                            │
 │  ┌────────────────────────────────────────────────────────────┐     │
-│  │  [Show/Hide] Qtr Field              [Submit]          │     │
-│  │  [Show/Hide] Game Time Field         [Submit]          │     │
-│  │  [Show/Hide] Play Clock            [Submit]          │     │
-│  │  [Show/Hide] Down & Distance Field  [Submit]          │     │
-│  │                                                         │     │
-│  │  Home Team Game Color:  [Color Picker]   [Submit]        │     │
-│  │  Away Team Game Color:  [Color Picker]   [Submit]        │     │
+│  │  [Show/Hide] Qtr Field              [Submit]          │
+│  │  [Show/Hide] Game Time Field         [Submit]          │
+│  │  [Show/Hide] Play Clock            [Submit]          │
+│  │  [Show/Hide] Down & Distance Field  [Submit]          │
+│  └────────────────────────────────────────────────────────────┘     │
+│  ┌────────────────────────────────────────────────────────────┐     │
+│  │  HOME TEAM                                              │
+│  │  [✓] Use Game Color      [Toggle]                     │
+│  │  Home Team Game Color:  [Color Picker]   [Submit]        │
+│  │  [✓] Use Game Title      [Toggle]                     │
+│  │  Home Team Game Title:  [Title Input]   [Submit]        │
+│  │  [✓] Use Game Logo       [Toggle]                     │
+│  │  Home Team Game Logo:   [Upload File]                  │
+│  │                          [Preview Image]                │
+│  │                          [Remove Button]                │
+│  └────────────────────────────────────────────────────────────┘     │
+│  ┌────────────────────────────────────────────────────────────┐     │
+│  │  AWAY TEAM                                              │
+│  │  [✓] Use Game Color      [Toggle]                     │
+│  │  Away Team Game Color:  [Color Picker]   [Submit]        │
+│  │  [✓] Use Game Title      [Toggle]                     │
+│  │  Away Team Game Title:  [Title Input]   [Submit]        │
+│  │  [✓] Use Game Logo       [Toggle]                     │
+│  │  Away Team Game Logo:   [Upload File]                  │
+│  │                          [Preview Image]                │
+│  │                          [Remove Button]                │
 │  └────────────────────────────────────────────────────────────┘     │
 └──────────────────────────────────────────────────────────────────────┘
 
@@ -158,7 +177,13 @@
   - **Down & Distance Forms** → Set down and distance
   - **Timeout Forms** → Manage timeouts for each team
   - **Change Teams Forms** → Select different teams for the match
-  - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility, set team colors
+  - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility and team settings:
+    - Display toggles: Qtr, Time, Play Clock, Down/Distance, Tournament Logo, Sponsor
+    - Team settings (Home and Away):
+      - Use game color switch + game color picker
+      - Use game title switch + game title input
+      - Use game logo switch + game logo upload (with preview and remove)
+      - Logo scale slider
   - **Events Forms** → Football events tracking and statistics:
     - Team stats (offense yards, pass/run attempts, averages, down conversions, turnovers)
     - Quarterback stats (passing/rushing yards, TDs, QB rating)
@@ -238,6 +263,7 @@
 **Scoreboard:**
 - `GET /api/matches/id/{match_id}/scoreboard_data/` - Get scoreboard settings
 - `PUT /api/scoreboards/{id}` - Update scoreboard settings
+- `POST /api/matches/id/{match_id}/upload_team_logo` - Upload team game logo for match (returns logoUrl)
 - [Backend Schema: `ScoreboardSchema`](../../statsboards-backend/src/scoreboards/schemas.py)
 
 **Players in Match:**

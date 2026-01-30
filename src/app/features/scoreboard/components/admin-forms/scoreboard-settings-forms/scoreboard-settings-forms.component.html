@@ -108,6 +108,16 @@
                 Title
               </label>
 
+              <div class="title-input">
+                <label>Game Title:</label>
+                <input
+                  type="text"
+                  [value]="teamAGameTitle() ?? ''"
+                  (change)="onTeamAGameTitleChange($event)"
+                  placeholder="Enter game title"
+                />
+              </div>
+
               <label>
                 <input
                   tuiSwitch
@@ -117,6 +127,35 @@
                 />
                 Logo
               </label>
+
+              <div class="logo-upload">
+                <label>Game Logo:</label>
+                @if (!teamAGameLogo()) {
+                  <input
+                    type="file"
+                    (change)="onTeamALogoFileSelected($event)"
+                    accept="image/*"
+                    class="logo-input-file"
+                  />
+                }
+                @if (uploadingTeamALogo()) {
+                  <div class="logo-uploading">Uploading...</div>
+                }
+                @if (teamAGameLogo()) {
+                  <div class="logo-preview">
+                    <img [src]="teamAGameLogo()" alt="Home team logo" />
+                    <button
+                      tuiButton
+                      type="button"
+                      appearance="destructive"
+                      size="s"
+                      (click)="removeTeamALogo()"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                }
+              </div>
             </div>
           </div>
 
@@ -156,6 +195,16 @@
                 Title
               </label>
 
+              <div class="title-input">
+                <label>Game Title:</label>
+                <input
+                  type="text"
+                  [value]="teamBGameTitle() ?? ''"
+                  (change)="onTeamBGameTitleChange($event)"
+                  placeholder="Enter game title"
+                />
+              </div>
+
               <label>
                 <input
                   tuiSwitch
@@ -165,6 +214,35 @@
                 />
                 Logo
               </label>
+
+              <div class="logo-upload">
+                <label>Game Logo:</label>
+                @if (!teamBGameLogo()) {
+                  <input
+                    type="file"
+                    (change)="onTeamBLogoFileSelected($event)"
+                    accept="image/*"
+                    class="logo-input-file"
+                  />
+                }
+                @if (uploadingTeamBLogo()) {
+                  <div class="logo-uploading">Uploading...</div>
+                }
+                @if (teamBGameLogo()) {
+                  <div class="logo-preview">
+                    <img [src]="teamBGameLogo()" alt="Away team logo" />
+                    <button
+                      tuiButton
+                      type="button"
+                      appearance="destructive"
+                      size="s"
+                      (click)="removeTeamBLogo()"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                }
+              </div>
             </div>
           </div>
         </div>
