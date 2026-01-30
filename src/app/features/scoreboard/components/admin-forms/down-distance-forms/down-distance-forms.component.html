@@ -4,18 +4,20 @@
       <!-- Down & Distance Panel -->
       <div class="down-distance-panel">
         <!-- Current Down & Distance Display -->
-        <tui-badged-content>
-          @if (hasChanges()) {
-            <tui-badge-notification tuiSlot="top" appearance="negative">!</tui-badge-notification>
-          }
-          <div class="current-values">
-            @if (currentDown()) {
-              <span class="values">{{ currentDown() }} & {{ currentDistance() }}</span>
-            } @else {
-              <span class="values">{{ currentDistance() }}</span>
+        <div class="current-values-wrapper">
+          <tui-badged-content>
+            @if (hasChanges()) {
+              <tui-badge-notification tuiSlot="top" appearance="negative">!</tui-badge-notification>
             }
-          </div>
-        </tui-badged-content>
+            <div class="current-values">
+              @if (currentDown()) {
+                <span class="values">{{ currentDown() }} & {{ currentDistance() }}</span>
+              } @else {
+                <span class="values">{{ currentDistance() }}</span>
+              }
+            </div>
+          </tui-badged-content>
+        </div>
 
         <!-- Down Selection -->
         <div class="form-section">
