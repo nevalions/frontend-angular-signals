@@ -21,23 +21,45 @@
 // Current Values Display (similar to score-display in score-forms)
 .current-values-wrapper {
   width: 100%;
+
+  tui-badged-content {
+    display: block;
+    width: 100%;
+    position: relative;
+  }
+
+  tui-badge-notification {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    transform: translate(50%, -50%);
+  }
 }
 
 .current-values {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  min-height: 64px;
   padding: 8px;
   border-radius: 8px;
   background: var(--tui-background-neutral-2);
   gap: 12px;
+  box-sizing: border-box;
 
   .values {
-    font-size: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: 32px;
     font-weight: 700;
     color: var(--tui-text-primary);
     line-height: 1;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 }
 
@@ -45,11 +67,11 @@
 @keyframes blink-badge {
   0%, 100% {
     opacity: 1;
-    transform: scale(1);
+    transform: translate(50%, -50%) scale(1);
   }
   50% {
     opacity: 0.6;
-    transform: scale(1.1);
+    transform: translate(50%, -50%) scale(1.1);
   }
 }
 
@@ -208,7 +230,7 @@ tui-badged-content:has(tui-badge-notification) {
     padding: 8px;
 
     .values {
-      font-size: 42px;
+      font-size: 32px;
     }
   }
 
@@ -269,7 +291,7 @@ tui-badged-content:has(tui-badge-notification) {
     padding: 8px 12px;
 
     .values {
-      font-size: 48px;
+      font-size: 32px;
     }
   }
 
