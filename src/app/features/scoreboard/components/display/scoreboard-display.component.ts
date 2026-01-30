@@ -17,6 +17,7 @@ import {
   scoreChangeAnimation,
 } from '../../animations';
 import { AutoFitTextDirective } from '../../../../shared/directives/auto-fit-text.directive';
+import { Sponsor } from '../../../../shared/types';
 
 export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
 
@@ -215,7 +216,14 @@ export class ScoreboardDisplayComponent {
 
   protected readonly sponsorLine = computed(() => this.data()?.match?.tournament?.sponsor_line ?? null);
   protected readonly matchSponsorLine = computed(() => this.data()?.match?.sponsor_line ?? null);
-  protected readonly tournamentSponsor = computed(() => this.data()?.match?.tournament?.main_sponsor ?? null);
+  protected readonly tournamentSponsor = computed(() => {
+    const inputSponsor = this.tournamentSponsorLogo();
+    const dataSponsor = this.data()?.match?.tournament?.main_sponsor ?? null;
+    if (inputSponsor && typeof inputSponsor === 'string') {
+      return { id: 0, title: '', logo_url: inputSponsor } as Sponsor;
+    }
+    return dataSponsor;
+  });
   protected readonly matchSponsor = computed(() => this.data()?.match?.main_sponsor ?? null);
 
   // Logo URLs
@@ -225,8 +233,9 @@ export class ScoreboardDisplayComponent {
   });
 
   protected readonly sponsorLogoUrl = computed(() => {
-    const logo = this.tournamentSponsorLogo() ?? this.tournamentSponsor()?.logo_url ?? null;
-    return logo ? buildStaticUrl(logo) : null;
+    const sponsor = this.tournamentSponsor();
+    const logoUrl = typeof sponsor === 'string' ? sponsor : sponsor?.logo_url ?? null;
+    return logoUrl ? buildStaticUrl(logoUrl) : null;
   });
 
   // Logo scaling
