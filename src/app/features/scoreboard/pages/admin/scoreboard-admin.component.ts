@@ -17,7 +17,7 @@ import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/s
 import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
 import { ConnectionIndicatorComponent } from '../../../../shared/components/connection-indicator/connection-indicator.component';
 import { CollapsibleSectionService } from '../../components/admin-forms/collapsible-section/collapsible-section.service';
-import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.component';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 @Component({
   selector: 'app-scoreboard-admin',
@@ -32,7 +32,6 @@ import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.
     ScoreboardSettingsFormsComponent,
     EventsFormsComponent,
     ConnectionIndicatorComponent,
-    PlayByPlayComponent,
   ],
   templateUrl: './scoreboard-admin.component.html',
   styleUrl: './scoreboard-admin.component.less',
@@ -44,6 +43,7 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   private clockService = inject(ScoreboardClockService);
   private wsService = inject(WebSocketService);
   private readonly collapsibleSectionService = inject(CollapsibleSectionService);
+  private readonly navigationHelper = inject(NavigationHelperService);
 
   matchId = createNumberParamSignal(this.route, 'matchId');
 
@@ -77,7 +77,7 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   protected readonly hideAllForms = signal(false);
 
   // WebSocket effects - update data in real-time
-  
+
   // Handle initial-load message: sets all data at once
   private wsMatchDataEffect = effect(() => {
     const message = this.wsService.matchData();
@@ -247,9 +247,16 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   }
 
   navigateBack(): void {
-    // Navigate back to match detail
-    // For now, use history back since we don't have full context
-    window.history.back();
+    const matchId = this.matchId();
+    const data = this.data();
+    const sportId = data?.teams?.team_a?.sport_id;
+    const tournamentId = data?.match?.tournament_id?.toString();
+    
+    if (sportId && matchId) {
+      this.navigationHelper.toMatchDetail(sportId, matchId, undefined, tournamentId);
+    } else {
+      this.navigationHelper.toSportsList();
+    }
   }
 
   openHdView(): void {

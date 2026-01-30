@@ -112,6 +112,14 @@ export class NavigationHelperService {
     this.router.navigate(['/sports', sportId, 'matches', matchId, 'edit']);
   }
 
+  toScoreboardAdmin(matchId: number | string): void {
+    this.router.navigate(['/scoreboard', 'match', matchId, 'admin']);
+  }
+
+  toScoreboardView(matchId: number | string): void {
+    this.router.navigate(['/scoreboard', 'match', matchId, 'hd']);
+  }
+
   toSettings(): void {
     this.router.navigate(['/settings']);
   }

@@ -1,28 +1,15 @@
 <div class="scoreboard-admin-page">
   <header class="page-header">
     <div class="header-left">
-      <button
-        tuiButton
-        type="button"
-        appearance="secondary"
-        size="s"
-        (click)="navigateBack()"
-      >
+      <button tuiButton type="button" appearance="secondary" size="s" (click)="navigateBack()">
         <tui-icon icon="@tui.arrow-left" />
         Back
       </button>
       <h1 class="page-title">Scoreboard Admin</h1>
     </div>
     <div class="header-right">
-      <span class="match-title">{{ matchTitle() }}</span>
       <app-connection-indicator [showLabel]="true" />
-      <button
-        tuiButton
-        type="button"
-        appearance="primary"
-        size="s"
-        (click)="openHdView()"
-      >
+      <button tuiButton type="button" appearance="primary" size="s" (click)="openHdView()">
         <tui-icon icon="@tui.external-link" />
         Open HD View
       </button>
@@ -36,9 +23,7 @@
   } @else if (error()) {
     <div class="error-state">
       <p>{{ error() }}</p>
-      <button tuiButton appearance="secondary" (click)="navigateBack()">
-        Go Back
-      </button>
+      <button tuiButton appearance="secondary" (click)="navigateBack()">Go Back</button>
     </div>
   } @else {
     <div class="admin-content">
@@ -69,46 +54,44 @@
         </div>
 
         <div class="forms-grid">
-            <app-down-distance-forms
-              [matchData]="data()?.match_data ?? null"
-              [scoreboard]="scoreboard()"
-              (downDistanceChange)="onDownDistanceChange($event)"
-              (flagToggle)="onFlagToggle($event)"
-            />
+          <app-down-distance-forms
+            [matchData]="data()?.match_data ?? null"
+            [scoreboard]="scoreboard()"
+            (downDistanceChange)="onDownDistanceChange($event)"
+            (flagToggle)="onFlagToggle($event)"
+          />
 
-            <app-score-forms
-              [matchData]="data()?.match_data ?? null"
-              [teamColorA]="data()?.teams?.team_a?.team_color ?? '#ffffff'"
-              [teamColorB]="data()?.teams?.team_b?.team_color ?? '#ffffff'"
-              (scoreChange)="onScoreChange($event)"
-              (timeoutChange)="onTimeoutChange($event)"
-              (qtrChange)="onQtrChange($event)"
-            />
+          <app-score-forms
+            [matchData]="data()?.match_data ?? null"
+            [teamColorA]="data()?.teams?.team_a?.team_color ?? '#ffffff'"
+            [teamColorB]="data()?.teams?.team_b?.team_color ?? '#ffffff'"
+            (scoreChange)="onScoreChange($event)"
+            (timeoutChange)="onTimeoutChange($event)"
+            (qtrChange)="onQtrChange($event)"
+          />
 
-            <app-time-forms
-              [gameClock]="gameClockWithPredictedValue()"
-              [playClock]="playClockWithPredictedValue()"
-              [gameClockLocked]="gameClockLocked()"
-              [playClockLocked]="playClockLocked()"
-              (gameClockAction)="onGameClockAction($event)"
-              (playClockAction)="onPlayClockAction($event)"
-            />
+          <app-time-forms
+            [gameClock]="gameClockWithPredictedValue()"
+            [playClock]="playClockWithPredictedValue()"
+            [gameClockLocked]="gameClockLocked()"
+            [playClockLocked]="playClockLocked()"
+            (gameClockAction)="onGameClockAction($event)"
+            (playClockAction)="onPlayClockAction($event)"
+          />
 
-            <app-scoreboard-settings-forms
-              [scoreboard]="scoreboard()"
-              (scoreboardChange)="onScoreboardSettingsChange($event)"
-            />
+          <app-scoreboard-settings-forms
+            [scoreboard]="scoreboard()"
+            (scoreboardChange)="onScoreboardSettingsChange($event)"
+          />
 
-            <app-events-forms
-              [matchStats]="matchStats()"
-              [players]="data()?.players ?? []"
-              (eventCreate)="onEventCreate($event)"
-              (eventUpdate)="onEventUpdate($event)"
-              (eventDelete)="onEventDelete($event)"
-            />
-
-            <app-play-by-play />
-          </div>
+          <app-events-forms
+            [matchStats]="matchStats()"
+            [players]="data()?.players ?? []"
+            (eventCreate)="onEventCreate($event)"
+            (eventUpdate)="onEventUpdate($event)"
+            (eventDelete)="onEventDelete($event)"
+          />
+        </div>
       </section>
     </div>
   }

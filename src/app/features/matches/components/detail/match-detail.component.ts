@@ -169,14 +169,14 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   navigateToScoreboardAdmin(): void {
     const matchId = this.matchId();
     if (matchId) {
-      this.router.navigate(['/scoreboard', 'match', matchId, 'admin']);
+      this.navigationHelper.toScoreboardAdmin(matchId);
     }
   }
 
   navigateToScoreboardView(): void {
     const matchId = this.matchId();
     if (matchId) {
-      this.router.navigate(['/scoreboard', 'match', matchId, 'hd']);
+      window.open(`/scoreboard/match/${matchId}/hd`, '_blank');
     }
   }
 

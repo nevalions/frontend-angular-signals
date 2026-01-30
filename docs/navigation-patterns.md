@@ -58,6 +58,15 @@ toTeamCreate(sportId: number | string)
 toPlayerDetail(sportId: number | string, playerId: number | string, fromSport?: boolean, tournamentId?: number | string, year?: number | string)
 ```
 
+### Matches
+
+```typescript
+toMatchDetail(sportId: number | string, matchId: number | string, year?: number | string, tournamentId?: number | string)
+toMatchEdit(sportId: number | string, matchId: number | string)
+toScoreboardAdmin(matchId: number | string)
+toScoreboardView(matchId: number | string)
+```
+
 ### Persons
 
 ```typescript
