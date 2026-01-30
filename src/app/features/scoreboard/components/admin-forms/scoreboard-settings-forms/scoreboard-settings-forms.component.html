@@ -3,171 +3,254 @@
     <div class="settings-forms">
       <!-- Display Toggles Section -->
       <div class="settings-section">
-        <h4 class="section-title">Display Elements</h4>
+        <div class="section-header">
+          <tui-icon icon="@tui.tv" class="section-icon" />
+          <h4 class="section-title">Display Elements</h4>
+        </div>
+        <p class="section-description">Toggle visibility of scoreboard elements</p>
+
         <div class="toggles-grid">
-          <label>
+          <label tuiBlock="m" class="toggle-block">
             <input
               tuiSwitch
               type="checkbox"
+              size="s"
               [(ngModel)]="localShowQtr"
               (ngModelChange)="onToggleQtr($event)"
             />
-            Quarter
+            <span tuiTitle>
+              Quarter
+              <span tuiSubtitle>Show current quarter</span>
+            </span>
           </label>
 
-          <label>
+          <label tuiBlock="m" class="toggle-block">
             <input
               tuiSwitch
               type="checkbox"
+              size="s"
               [(ngModel)]="localShowTime"
               (ngModelChange)="onToggleTime($event)"
             />
-            Time
+            <span tuiTitle>
+              Game Clock
+              <span tuiSubtitle>Display time remaining</span>
+            </span>
           </label>
 
-          <label>
+          <label tuiBlock="m" class="toggle-block">
             <input
               tuiSwitch
               type="checkbox"
+              size="s"
               [(ngModel)]="localShowPlayClock"
               (ngModelChange)="onTogglePlayClock($event)"
             />
-            Play Clock
+            <span tuiTitle>
+              Play Clock
+              <span tuiSubtitle>Show play clock timer</span>
+            </span>
           </label>
 
-          <label>
+          <label tuiBlock="m" class="toggle-block">
             <input
               tuiSwitch
               type="checkbox"
+              size="s"
               [(ngModel)]="localShowDownDistance"
               (ngModelChange)="onToggleDownDistance($event)"
             />
-            Down & Dist.
+            <span tuiTitle>
+              Down & Distance
+              <span tuiSubtitle>Show current down info</span>
+            </span>
           </label>
 
-          <label>
+          <label tuiBlock="m" class="toggle-block">
             <input
               tuiSwitch
               type="checkbox"
+              size="s"
               [(ngModel)]="localShowTournamentLogo"
               (ngModelChange)="onToggleTournamentLogo($event)"
             />
-            Tourn. Logo
+            <span tuiTitle>
+              Tournament Logo
+              <span tuiSubtitle>Display league branding</span>
+            </span>
           </label>
 
-          <label>
+          <label tuiBlock="m" class="toggle-block">
             <input
               tuiSwitch
               type="checkbox"
+              size="s"
               [(ngModel)]="localShowMainSponsor"
               (ngModelChange)="onToggleMainSponsor($event)"
             />
-            Sponsor
+            <span tuiTitle>
+              Sponsor Logo
+              <span tuiSubtitle>Show sponsor branding</span>
+            </span>
           </label>
         </div>
       </div>
 
       <!-- Team Settings Section -->
-      <div class="settings-section">
-        <h4 class="section-title">Team Settings</h4>
+      <div class="settings-section team-section">
+        <div class="section-header">
+          <tui-icon icon="@tui.users" class="section-icon" />
+          <h4 class="section-title">Team Customization</h4>
+        </div>
+        <p class="section-description">Customize team appearance on the scoreboard</p>
 
         <div class="team-settings">
           <!-- Home Team Panel -->
           <div class="team-panel team-home">
             <div class="team-header">
+              <div class="team-badge home">
+                <tui-icon icon="@tui.home" />
+              </div>
               <span class="team-label">Home Team</span>
             </div>
 
             <div class="team-content">
-              <div class="color-picker">
-                <label>Game Color:</label>
-                <input
-                  type="color"
-                  [value]="teamAColor()"
-                  (change)="onTeamAColorChange($event)"
-                />
-              </div>
-
-              <label>
-                <input
-                  tuiSwitch
-                  type="checkbox"
-                  [(ngModel)]="localUseTeamAColor"
-                  (ngModelChange)="onToggleUseTeamAColor($event)"
-                />
-                Color
-              </label>
-
-              <label>
-                <input
-                  tuiSwitch
-                  type="checkbox"
-                  [(ngModel)]="localUseTeamATitle"
-                  (ngModelChange)="onToggleUseTeamATitle($event)"
-                />
-                Title
-              </label>
-
-              <div class="title-input">
-                <label>Game Title:</label>
-                <input
-                  type="text"
-                  [value]="teamAGameTitle()"
-                  (change)="onTeamAGameTitleChange($event)"
-                  placeholder="Enter game title"
-                />
-              </div>
-
-              <label>
-                <input
-                  tuiSwitch
-                  type="checkbox"
-                  [(ngModel)]="localUseTeamALogo"
-                  (ngModelChange)="onToggleUseTeamALogo($event)"
-                />
-                Logo
-              </label>
-
-              <div class="logo-upload">
-                <label>Game Logo:</label>
-                @if (!teamAGameLogo()) {
-                  <input
-                    type="file"
-                    (change)="onTeamALogoFileSelected($event)"
-                    accept="image/*"
-                    class="logo-input-file"
-                  />
-                }
-                @if (uploadingTeamALogo()) {
-                  <div class="logo-uploading">Uploading...</div>
-                }
-                @if (teamAGameLogo()) {
-                  <div class="logo-preview">
-                    <img [src]="teamAGameLogo()" alt="Home team logo" />
-                    <button
-                      tuiButton
-                      type="button"
-                      appearance="destructive"
+              <!-- Color Settings Group -->
+              <div class="settings-group">
+                <div class="group-header">
+                  <span class="group-title">Team Color</span>
+                </div>
+                <div class="color-row">
+                  <tui-textfield class="color-field">
+                    <label tuiLabel>Game Color</label>
+                    <input
+                      tuiInputColor
+                      [ngModel]="teamAColor()"
+                      (ngModelChange)="onTeamAColorInputChange($event)"
+                      placeholder="#1a1a1a"
+                    />
+                  </tui-textfield>
+                  <label tuiBlock="s" class="use-toggle">
+                    <input
+                      tuiSwitch
+                      type="checkbox"
                       size="s"
-                      (click)="removeTeamALogo()"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                }
+                      [(ngModel)]="localUseTeamAColor"
+                      (ngModelChange)="onToggleUseTeamAColor($event)"
+                    />
+                    <span>Use</span>
+                  </label>
+                </div>
               </div>
 
-              <div class="logo-scale">
-                <label>Logo Scale: {{ logoAScale() | number:'1.2-2' }}</label>
-                <input
-                  tuiSlider
-                  type="range"
-                  [min]="0.5"
-                  [max]="2"
-                  step="0.1"
-                  [ngModel]="logoAScale()"
-                  (ngModelChange)="onLogoAScaleChange($event)"
-                />
+              <!-- Title Settings Group -->
+              <div class="settings-group">
+                <div class="group-header">
+                  <span class="group-title">Team Title</span>
+                </div>
+                <div class="title-row">
+                  <tui-textfield class="title-field">
+                    <label tuiLabel>Game Title</label>
+                    <input
+                      tuiTextfield
+                      [ngModel]="teamAGameTitle()"
+                      (ngModelChange)="onTeamAGameTitleInputChange($event)"
+                      placeholder="Enter custom title"
+                    />
+                  </tui-textfield>
+                  <label tuiBlock="s" class="use-toggle">
+                    <input
+                      tuiSwitch
+                      type="checkbox"
+                      size="s"
+                      [(ngModel)]="localUseTeamATitle"
+                      (ngModelChange)="onToggleUseTeamATitle($event)"
+                    />
+                    <span>Use</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Logo Settings Group -->
+              <div class="settings-group">
+                <div class="group-header">
+                  <span class="group-title">Team Logo</span>
+                </div>
+                <div class="logo-controls">
+                  <label tuiBlock="s" class="use-toggle logo-toggle">
+                    <input
+                      tuiSwitch
+                      type="checkbox"
+                      size="s"
+                      [(ngModel)]="localUseTeamALogo"
+                      (ngModelChange)="onToggleUseTeamALogo($event)"
+                    />
+                    <span>Use custom logo</span>
+                  </label>
+                </div>
+
+                <div class="logo-upload-area">
+                  @if (!teamAGameLogo() && !uploadingTeamALogo()) {
+                    <label class="file-upload-label">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        class="file-input-hidden"
+                        (change)="onTeamALogoFileSelected($event)"
+                      />
+                      <div class="upload-content">
+                        <tui-icon icon="@tui.upload" class="upload-icon" />
+                        <span class="upload-text">Drop logo here or click to upload</span>
+                        <span class="upload-hint">Max 30MB, image files only</span>
+                      </div>
+                    </label>
+                  }
+                  @if (uploadingTeamALogo()) {
+                    <div class="logo-uploading">
+                      <tui-loader size="m" />
+                      <span>Uploading logo...</span>
+                    </div>
+                  }
+                  @if (teamAGameLogo()) {
+                    <div class="logo-preview-card">
+                      <img [src]="teamAGameLogo()" alt="Home team logo" class="logo-img" />
+                      <button
+                        tuiIconButton
+                        type="button"
+                        appearance="flat-destructive"
+                        iconStart="@tui.trash-2"
+                        size="s"
+                        class="remove-logo-btn"
+                        (click)="removeTeamALogo()"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <div class="scale-slider">
+                  <div class="slider-header">
+                    <span class="slider-label">Logo Scale</span>
+                    <span class="slider-value">{{ logoAScale() | number:'1.1-1' }}x</span>
+                  </div>
+                  <input
+                    tuiSlider
+                    type="range"
+                    [min]="0.5"
+                    [max]="2"
+                    step="0.1"
+                    [segments]="3"
+                    [ngModel]="logoAScale()"
+                    (ngModelChange)="onLogoAScaleChange($event)"
+                  />
+                  <div class="slider-labels">
+                    <span>0.5x</span>
+                    <span>1x</span>
+                    <span>1.5x</span>
+                    <span>2x</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -175,99 +258,149 @@
           <!-- Away Team Panel -->
           <div class="team-panel team-away">
             <div class="team-header">
+              <div class="team-badge away">
+                <tui-icon icon="@tui.plane" />
+              </div>
               <span class="team-label">Away Team</span>
             </div>
 
             <div class="team-content">
-              <div class="color-picker">
-                <label>Game Color:</label>
-                <input
-                  type="color"
-                  [value]="teamBColor()"
-                  (change)="onTeamBColorChange($event)"
-                />
-              </div>
-
-              <label>
-                <input
-                  tuiSwitch
-                  type="checkbox"
-                  [(ngModel)]="localUseTeamBColor"
-                  (ngModelChange)="onToggleUseTeamBColor($event)"
-                />
-                Color
-              </label>
-
-              <label>
-                <input
-                  tuiSwitch
-                  type="checkbox"
-                  [(ngModel)]="localUseTeamBTitle"
-                  (ngModelChange)="onToggleUseTeamBTitle($event)"
-                />
-                Title
-              </label>
-
-              <div class="title-input">
-                <label>Game Title:</label>
-                <input
-                  type="text"
-                  [value]="teamBGameTitle()"
-                  (change)="onTeamBGameTitleChange($event)"
-                  placeholder="Enter game title"
-                />
-              </div>
-
-              <label>
-                <input
-                  tuiSwitch
-                  type="checkbox"
-                  [(ngModel)]="localUseTeamBLogo"
-                  (ngModelChange)="onToggleUseTeamBLogo($event)"
-                />
-                Logo
-              </label>
-
-              <div class="logo-upload">
-                <label>Game Logo:</label>
-                @if (!teamBGameLogo()) {
-                  <input
-                    type="file"
-                    (change)="onTeamBLogoFileSelected($event)"
-                    accept="image/*"
-                    class="logo-input-file"
-                  />
-                }
-                @if (uploadingTeamBLogo()) {
-                  <div class="logo-uploading">Uploading...</div>
-                }
-                @if (teamBGameLogo()) {
-                  <div class="logo-preview">
-                    <img [src]="teamBGameLogo()" alt="Away team logo" />
-                    <button
-                      tuiButton
-                      type="button"
-                      appearance="destructive"
+              <!-- Color Settings Group -->
+              <div class="settings-group">
+                <div class="group-header">
+                  <span class="group-title">Team Color</span>
+                </div>
+                <div class="color-row">
+                  <tui-textfield class="color-field">
+                    <label tuiLabel>Game Color</label>
+                    <input
+                      tuiInputColor
+                      [ngModel]="teamBColor()"
+                      (ngModelChange)="onTeamBColorInputChange($event)"
+                      placeholder="#1a1a1a"
+                    />
+                  </tui-textfield>
+                  <label tuiBlock="s" class="use-toggle">
+                    <input
+                      tuiSwitch
+                      type="checkbox"
                       size="s"
-                      (click)="removeTeamBLogo()"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                }
+                      [(ngModel)]="localUseTeamBColor"
+                      (ngModelChange)="onToggleUseTeamBColor($event)"
+                    />
+                    <span>Use</span>
+                  </label>
+                </div>
               </div>
 
-              <div class="logo-scale">
-                <label>Logo Scale: {{ logoBScale() | number:'1.2-2' }}</label>
-                <input
-                  tuiSlider
-                  type="range"
-                  [min]="0.5"
-                  [max]="2"
-                  step="0.1"
-                  [ngModel]="logoBScale()"
-                  (ngModelChange)="onLogoBScaleChange($event)"
-                />
+              <!-- Title Settings Group -->
+              <div class="settings-group">
+                <div class="group-header">
+                  <span class="group-title">Team Title</span>
+                </div>
+                <div class="title-row">
+                  <tui-textfield class="title-field">
+                    <label tuiLabel>Game Title</label>
+                    <input
+                      tuiTextfield
+                      [ngModel]="teamBGameTitle()"
+                      (ngModelChange)="onTeamBGameTitleInputChange($event)"
+                      placeholder="Enter custom title"
+                    />
+                  </tui-textfield>
+                  <label tuiBlock="s" class="use-toggle">
+                    <input
+                      tuiSwitch
+                      type="checkbox"
+                      size="s"
+                      [(ngModel)]="localUseTeamBTitle"
+                      (ngModelChange)="onToggleUseTeamBTitle($event)"
+                    />
+                    <span>Use</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Logo Settings Group -->
+              <div class="settings-group">
+                <div class="group-header">
+                  <span class="group-title">Team Logo</span>
+                </div>
+                <div class="logo-controls">
+                  <label tuiBlock="s" class="use-toggle logo-toggle">
+                    <input
+                      tuiSwitch
+                      type="checkbox"
+                      size="s"
+                      [(ngModel)]="localUseTeamBLogo"
+                      (ngModelChange)="onToggleUseTeamBLogo($event)"
+                    />
+                    <span>Use custom logo</span>
+                  </label>
+                </div>
+
+                <div class="logo-upload-area">
+                  @if (!teamBGameLogo() && !uploadingTeamBLogo()) {
+                    <label class="file-upload-label">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        class="file-input-hidden"
+                        (change)="onTeamBLogoFileSelected($event)"
+                      />
+                      <div class="upload-content">
+                        <tui-icon icon="@tui.upload" class="upload-icon" />
+                        <span class="upload-text">Drop logo here or click to upload</span>
+                        <span class="upload-hint">Max 30MB, image files only</span>
+                      </div>
+                    </label>
+                  }
+                  @if (uploadingTeamBLogo()) {
+                    <div class="logo-uploading">
+                      <tui-loader size="m" />
+                      <span>Uploading logo...</span>
+                    </div>
+                  }
+                  @if (teamBGameLogo()) {
+                    <div class="logo-preview-card">
+                      <img [src]="teamBGameLogo()" alt="Away team logo" class="logo-img" />
+                      <button
+                        tuiIconButton
+                        type="button"
+                        appearance="flat-destructive"
+                        iconStart="@tui.trash-2"
+                        size="s"
+                        class="remove-logo-btn"
+                        (click)="removeTeamBLogo()"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <div class="scale-slider">
+                  <div class="slider-header">
+                    <span class="slider-label">Logo Scale</span>
+                    <span class="slider-value">{{ logoBScale() | number:'1.1-1' }}x</span>
+                  </div>
+                  <input
+                    tuiSlider
+                    type="range"
+                    [min]="0.5"
+                    [max]="2"
+                    step="0.1"
+                    [segments]="3"
+                    [ngModel]="logoBScale()"
+                    (ngModelChange)="onLogoBScaleChange($event)"
+                  />
+                  <div class="slider-labels">
+                    <span>0.5x</span>
+                    <span>1x</span>
+                    <span>1.5x</span>
+                    <span>2x</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -276,33 +409,57 @@
 
       <!-- Scale Settings Section -->
       <div class="settings-section">
-        <h4 class="section-title">Scale Settings</h4>
+        <div class="section-header">
+          <tui-icon icon="@tui.maximize-2" class="section-icon" />
+          <h4 class="section-title">Global Scale Settings</h4>
+        </div>
+        <p class="section-description">Adjust the size of branding elements</p>
 
         <div class="scale-controls">
           <div class="scale-control">
-            <label>Tournament Logo Scale: {{ tournamentLogoScale() | number:'1.2-2' }}</label>
+            <div class="slider-header">
+              <span class="slider-label">Tournament Logo Scale</span>
+              <span class="slider-value">{{ tournamentLogoScale() | number:'1.1-1' }}x</span>
+            </div>
             <input
               tuiSlider
               type="range"
               [min]="0.5"
               [max]="2"
               step="0.1"
+              [segments]="3"
               [ngModel]="tournamentLogoScale()"
               (ngModelChange)="onTournamentLogoScaleChange($event)"
             />
+            <div class="slider-labels">
+              <span>0.5x</span>
+              <span>1x</span>
+              <span>1.5x</span>
+              <span>2x</span>
+            </div>
           </div>
 
           <div class="scale-control">
-            <label>Main Sponsor Scale: {{ mainSponsorScale() | number:'1.2-2' }}</label>
+            <div class="slider-header">
+              <span class="slider-label">Main Sponsor Scale</span>
+              <span class="slider-value">{{ mainSponsorScale() | number:'1.1-1' }}x</span>
+            </div>
             <input
               tuiSlider
               type="range"
               [min]="0.5"
               [max]="2"
               step="0.1"
+              [segments]="3"
               [ngModel]="mainSponsorScale()"
               (ngModelChange)="onMainSponsorScaleChange($event)"
             />
+            <div class="slider-labels">
+              <span>0.5x</span>
+              <span>1x</span>
+              <span>1.5x</span>
+              <span>2x</span>
+            </div>
           </div>
         </div>
       </div>

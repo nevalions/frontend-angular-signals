@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { TuiSwitch, TuiSlider } from '@taiga-ui/kit';
-import { TuiAlertService } from '@taiga-ui/core';
+import { TuiSwitch, TuiSlider, TuiBlock, TuiInputColor } from '@taiga-ui/kit';
+import { TuiAlertService, TuiIcon, TuiLoader, TuiTextfield, TuiTitle, TuiButton } from '@taiga-ui/core';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 import { ScoreboardStoreService } from '../../../services/scoreboard-store.service';
@@ -11,7 +11,21 @@ import { buildStaticUrl } from '../../../../../core/config/api.constants';
 @Component({
   selector: 'app-scoreboard-settings-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, FormsModule, ReactiveFormsModule, TuiSwitch, TuiSlider, CollapsibleSectionComponent],
+  imports: [
+    DecimalPipe,
+    FormsModule,
+    ReactiveFormsModule,
+    TuiSwitch,
+    TuiSlider,
+    TuiBlock,
+    TuiInputColor,
+    TuiIcon,
+    TuiLoader,
+    TuiTextfield,
+    TuiTitle,
+    TuiButton,
+    CollapsibleSectionComponent,
+  ],
   templateUrl: './scoreboard-settings-forms.component.html',
   styleUrl: './scoreboard-settings-forms.component.less',
 })
@@ -144,6 +158,19 @@ export class ScoreboardSettingsFormsComponent {
     this.scoreboardChange.emit({ team_b_game_color: value });
   }
 
+  // New handlers for TuiInputColor (ngModelChange)
+  onTeamAColorInputChange(value: string): void {
+    if (value) {
+      this.scoreboardChange.emit({ team_a_game_color: value });
+    }
+  }
+
+  onTeamBColorInputChange(value: string): void {
+    if (value) {
+      this.scoreboardChange.emit({ team_b_game_color: value });
+    }
+  }
+
   onTeamAGameTitleChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.scoreboardChange.emit({ team_a_game_title: value || null });
@@ -151,6 +178,15 @@ export class ScoreboardSettingsFormsComponent {
 
   onTeamBGameTitleChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
+    this.scoreboardChange.emit({ team_b_game_title: value || null });
+  }
+
+  // New handlers for TuiTextfield (ngModelChange)
+  onTeamAGameTitleInputChange(value: string): void {
+    this.scoreboardChange.emit({ team_a_game_title: value || null });
+  }
+
+  onTeamBGameTitleInputChange(value: string): void {
     this.scoreboardChange.emit({ team_b_game_title: value || null });
   }
 
@@ -236,12 +272,14 @@ export class ScoreboardSettingsFormsComponent {
   }
 
   removeTeamALogo(): void {
-    this.scoreboardChange.emit({ team_a_game_logo: null });
+    // Send empty string instead of null because backend uses exclude_none=True
+    this.scoreboardChange.emit({ team_a_game_logo: '' });
     this.teamALogoForm.setValue(null);
   }
 
   removeTeamBLogo(): void {
-    this.scoreboardChange.emit({ team_b_game_logo: null });
+    // Send empty string instead of null because backend uses exclude_none=True
+    this.scoreboardChange.emit({ team_b_game_logo: '' });
     this.teamBLogoForm.setValue(null);
   }
 
