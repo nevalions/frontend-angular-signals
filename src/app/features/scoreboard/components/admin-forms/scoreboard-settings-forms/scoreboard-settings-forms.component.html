@@ -93,6 +93,20 @@
               <span tuiSubtitle>Show sponsor branding</span>
             </span>
           </label>
+
+          <label tuiBlock="m" class="toggle-block">
+            <input
+              tuiSwitch
+              type="checkbox"
+              size="s"
+              [(ngModel)]="localShowSponsorLine"
+              (ngModelChange)="onToggleSponsorLine($event)"
+            />
+            <span tuiTitle>
+              Sponsor Line
+              <span tuiSubtitle>Show sponsor line</span>
+            </span>
+          </label>
         </div>
       </div>
 

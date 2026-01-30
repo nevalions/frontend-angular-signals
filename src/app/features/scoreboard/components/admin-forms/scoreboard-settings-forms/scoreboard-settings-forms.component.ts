@@ -53,6 +53,7 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly showDownDistance = computed(() => this.scoreboard()?.is_downdistance ?? true);
   protected readonly showTournamentLogo = computed(() => this.scoreboard()?.is_tournament_logo ?? true);
   protected readonly showMainSponsor = computed(() => this.scoreboard()?.is_main_sponsor ?? true);
+  protected readonly showSponsorLine = computed(() => this.scoreboard()?.is_sponsor_line ?? true);
 
   // Local state for display toggles
   protected readonly localShowQtr = signal(true);
@@ -61,6 +62,7 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly localShowDownDistance = signal(true);
   protected readonly localShowTournamentLogo = signal(true);
   protected readonly localShowMainSponsor = signal(true);
+  protected readonly localShowSponsorLine = signal(true);
 
   // Local state for team settings
   protected readonly localUseTeamAColor = signal(false);
@@ -81,6 +83,7 @@ export class ScoreboardSettingsFormsComponent {
         this.localShowDownDistance.set(sb.is_downdistance ?? true);
         this.localShowTournamentLogo.set(sb.is_tournament_logo ?? true);
         this.localShowMainSponsor.set(sb.is_main_sponsor ?? true);
+        this.localShowSponsorLine.set(sb.is_sponsor_line ?? true);
 
         this.localUseTeamAColor.set(sb.use_team_a_game_color ?? false);
         this.localUseTeamBColor.set(sb.use_team_b_game_color ?? false);
@@ -145,6 +148,11 @@ export class ScoreboardSettingsFormsComponent {
   onToggleMainSponsor(value: boolean): void {
     this.localShowMainSponsor.set(value);
     this.scoreboardChange.emit({ is_main_sponsor: value });
+  }
+
+  onToggleSponsorLine(value: boolean): void {
+    this.localShowSponsorLine.set(value);
+    this.scoreboardChange.emit({ is_sponsor_line: value });
   }
 
   // Team settings handlers
