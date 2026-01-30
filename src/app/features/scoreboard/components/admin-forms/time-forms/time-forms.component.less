@@ -96,6 +96,12 @@
   justify-content: center;
   gap: 12px;
   width: 100%;
+
+  .save-button {
+    height: 44px !important;
+    min-height: 44px !important;
+    margin-bottom: 0;
+  }
 }
 
 .time-input-group {
@@ -105,6 +111,15 @@
   gap: 6px;
   flex: 1;
   max-width: 100px;
+
+  tui-textfield {
+    height: 44px !important;
+    min-height: 44px !important;
+
+    input {
+      height: 44px;
+    }
+  }
 }
 
 .input-label {
@@ -128,6 +143,20 @@
   align-items: center;
   gap: 12px;
   justify-content: center;
+
+  tui-textfield {
+    height: 44px !important;
+    min-height: 44px !important;
+
+    input {
+      height: 44px;
+    }
+  }
+
+  .save-button {
+    height: 44px !important;
+    min-height: 44px !important;
+  }
 }
 
 .setting-label {
@@ -270,28 +299,29 @@
     display: flex;
     gap: 6px;
     justify-content: center;
-    align-items: stretch;
+    align-items: center;
     width: 100%;
 
     tui-textfield {
-      width: 52px;
+      width: 60px;
       flex-shrink: 0;
-      height: 36px;
+      height: 36px !important;
+      min-height: 36px !important;
 
       input {
         height: 36px;
         padding: 0 8px;
-        line-height: 36px;
+        text-align: center;
       }
     }
 
     .save-button {
-      min-width: 52px;
+      min-width: 60px;
       height: 36px !important;
-      font-size: 11px !important;
-      padding: 4px 8px !important;
-      line-height: 36px;
-      align-self: stretch;
+      min-height: 36px !important;
+      max-height: 36px !important;
+      font-size: 12px !important;
+      padding: 0 12px !important;
     }
   }
 
@@ -319,39 +349,28 @@
     align-items: flex-end;
     width: 100%;
 
-    tui-textfield {
-      min-width: 0;
-      width: 64px;
-      height: 36px;
-
-      input {
-        height: 36px;
-        padding: 0 8px;
-        line-height: 36px;
-      }
-    }
-
     .save-button {
-      min-width: 46px;
+      min-width: 50px;
       height: 36px !important;
-      font-size: 11px !important;
-      padding: 4px 8px !important;
-      line-height: 36px;
-      align-self: flex-end;
-      margin-bottom: 6px;
+      min-height: 36px !important;
+      max-height: 36px !important;
+      font-size: 12px !important;
+      padding: 0 10px !important;
+      margin-bottom: 0;
     }
   }
 
   .time-input-group {
     flex: 0 0 auto;
-    max-width: 64px;
-    min-width: 64px;
+    max-width: 60px;
+    min-width: 60px;
     gap: 2px;
 
     tui-textfield {
       width: 100%;
-      min-width: 64px;
-      height: 36px;
+      min-width: 60px;
+      height: 36px !important;
+      min-height: 36px !important;
 
       input {
         text-align: center;
@@ -359,7 +378,6 @@
         font-weight: 600;
         height: 36px;
         padding: 0 8px;
-        line-height: 36px;
       }
     }
   }
