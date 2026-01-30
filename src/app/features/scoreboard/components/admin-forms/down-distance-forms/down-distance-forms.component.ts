@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiTextfield } from '@taiga-ui/core';
-import { TuiChevron, TuiDataListWrapper, TuiSelect } from '@taiga-ui/kit';
+import { TuiChevron, TuiDataListWrapper, TuiSelect, TuiBadgedContent, TuiBadgeNotification } from '@taiga-ui/kit';
 import { MatchData } from '../../../../matches/models/match-data.model';
 import { Scoreboard } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
@@ -19,7 +19,7 @@ export interface DownOption {
 @Component({
   selector: 'app-down-distance-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TuiButton, TuiTextfield, TuiSelect, TuiChevron, TuiDataListWrapper, CollapsibleSectionComponent],
+  imports: [FormsModule, TuiButton, TuiTextfield, TuiSelect, TuiChevron, TuiDataListWrapper, TuiBadgedContent, TuiBadgeNotification, CollapsibleSectionComponent],
   templateUrl: './down-distance-forms.component.html',
   styleUrl: './down-distance-forms.component.less',
 })
