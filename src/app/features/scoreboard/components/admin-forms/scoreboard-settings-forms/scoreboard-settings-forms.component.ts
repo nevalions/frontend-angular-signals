@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TuiCheckbox, TuiSlider } from '@taiga-ui/kit';
+import { TuiSwitch, TuiSlider } from '@taiga-ui/kit';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 
 @Component({
   selector: 'app-scoreboard-settings-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, FormsModule, TuiCheckbox, TuiSlider, CollapsibleSectionComponent],
+  imports: [DecimalPipe, FormsModule, TuiSwitch, TuiSlider, CollapsibleSectionComponent],
   templateUrl: './scoreboard-settings-forms.component.html',
   styleUrl: './scoreboard-settings-forms.component.less',
 })

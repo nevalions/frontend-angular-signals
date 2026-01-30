@@ -7,62 +7,62 @@
         <div class="toggles-grid">
           <label>
             <input
-              tuiCheckbox
+              tuiSwitch
               type="checkbox"
               [(ngModel)]="localShowQtr"
               (ngModelChange)="onToggleQtr($event)"
             />
-            Show Quarter
+            Quarter
           </label>
 
           <label>
             <input
-              tuiCheckbox
+              tuiSwitch
               type="checkbox"
               [(ngModel)]="localShowTime"
               (ngModelChange)="onToggleTime($event)"
             />
-            Show Game Time
+            Time
           </label>
 
           <label>
             <input
-              tuiCheckbox
+              tuiSwitch
               type="checkbox"
               [(ngModel)]="localShowPlayClock"
               (ngModelChange)="onTogglePlayClock($event)"
             />
-            Show Play Clock
+            Play Clock
           </label>
 
           <label>
             <input
-              tuiCheckbox
+              tuiSwitch
               type="checkbox"
               [(ngModel)]="localShowDownDistance"
               (ngModelChange)="onToggleDownDistance($event)"
             />
-            Show Down & Distance
+            Down & Dist.
           </label>
 
           <label>
             <input
-              tuiCheckbox
+              tuiSwitch
               type="checkbox"
               [(ngModel)]="localShowTournamentLogo"
               (ngModelChange)="onToggleTournamentLogo($event)"
             />
-            Show Tournament Logo
+            Tourn. Logo
           </label>
 
           <label>
             <input
-              tuiCheckbox
+              tuiSwitch
               type="checkbox"
               [(ngModel)]="localShowMainSponsor"
               (ngModelChange)="onToggleMainSponsor($event)"
             />
-            Show Main Sponsor
+            Sponsor
           </label>
         </div>
       </div>
@@ -72,90 +72,100 @@
         <h4 class="section-title">Team Settings</h4>
 
         <div class="team-settings">
-          <div class="team-column">
-            <h5 class="team-label">Home Team</h5>
-
-            <div class="color-picker">
-              <label>Game Color:</label>
-              <input
-                type="color"
-                [value]="teamAColor()"
-                (change)="onTeamAColorChange($event)"
-              />
+          <!-- Home Team Panel -->
+          <div class="team-panel team-home">
+            <div class="team-header">
+              <span class="team-label">Home Team</span>
             </div>
 
-            <label>
-              <input
-                tuiCheckbox
-                type="checkbox"
-                [(ngModel)]="localUseTeamAColor"
-                (ngModelChange)="onToggleUseTeamAColor($event)"
-              />
-              Use Game Color
-            </label>
+            <div class="team-content">
+              <div class="color-picker">
+                <label>Game Color:</label>
+                <input
+                  type="color"
+                  [value]="teamAColor()"
+                  (change)="onTeamAColorChange($event)"
+                />
+              </div>
 
-            <label>
-              <input
-                tuiCheckbox
-                type="checkbox"
-                [(ngModel)]="localUseTeamATitle"
-                (ngModelChange)="onToggleUseTeamATitle($event)"
-              />
-              Use Game Title
-            </label>
+              <label>
+                <input
+                  tuiSwitch
+                  type="checkbox"
+                  [(ngModel)]="localUseTeamAColor"
+                  (ngModelChange)="onToggleUseTeamAColor($event)"
+                />
+                Color
+              </label>
 
-            <label>
-              <input
-                tuiCheckbox
-                type="checkbox"
-                [(ngModel)]="localUseTeamALogo"
-                (ngModelChange)="onToggleUseTeamALogo($event)"
-              />
-              Use Game Logo
-            </label>
+              <label>
+                <input
+                  tuiSwitch
+                  type="checkbox"
+                  [(ngModel)]="localUseTeamATitle"
+                  (ngModelChange)="onToggleUseTeamATitle($event)"
+                />
+                Title
+              </label>
+
+              <label>
+                <input
+                  tuiSwitch
+                  type="checkbox"
+                  [(ngModel)]="localUseTeamALogo"
+                  (ngModelChange)="onToggleUseTeamALogo($event)"
+                />
+                Logo
+              </label>
+            </div>
           </div>
 
-          <div class="team-column">
-            <h5 class="team-label">Away Team</h5>
-
-            <div class="color-picker">
-              <label>Game Color:</label>
-              <input
-                type="color"
-                [value]="teamBColor()"
-                (change)="onTeamBColorChange($event)"
-              />
+          <!-- Away Team Panel -->
+          <div class="team-panel team-away">
+            <div class="team-header">
+              <span class="team-label">Away Team</span>
             </div>
 
-            <label>
-              <input
-                tuiCheckbox
-                type="checkbox"
-                [(ngModel)]="localUseTeamBColor"
-                (ngModelChange)="onToggleUseTeamBColor($event)"
-              />
-              Use Game Color
-            </label>
+            <div class="team-content">
+              <div class="color-picker">
+                <label>Game Color:</label>
+                <input
+                  type="color"
+                  [value]="teamBColor()"
+                  (change)="onTeamBColorChange($event)"
+                />
+              </div>
 
-            <label>
-              <input
-                tuiCheckbox
-                type="checkbox"
-                [(ngModel)]="localUseTeamBTitle"
-                (ngModelChange)="onToggleUseTeamBTitle($event)"
-              />
-              Use Game Title
-            </label>
+              <label>
+                <input
+                  tuiSwitch
+                  type="checkbox"
+                  [(ngModel)]="localUseTeamBColor"
+                  (ngModelChange)="onToggleUseTeamBColor($event)"
+                />
+                Color
+              </label>
 
-            <label>
-              <input
-                tuiCheckbox
-                type="checkbox"
-                [(ngModel)]="localUseTeamBLogo"
-                (ngModelChange)="onToggleUseTeamBLogo($event)"
-              />
-              Use Game Logo
-            </label>
+              <label>
+                <input
+                  tuiSwitch
+                  type="checkbox"
+                  [(ngModel)]="localUseTeamBTitle"
+                  (ngModelChange)="onToggleUseTeamBTitle($event)"
+                />
+                Title
+              </label>
+
+              <label>
+                <input
+                  tuiSwitch
+                  type="checkbox"
+                  [(ngModel)]="localUseTeamBLogo"
+                  (ngModelChange)="onToggleUseTeamBLogo($event)"
+                />
+                Logo
+              </label>
+            </div>
           </div>
         </div>
       </div>
