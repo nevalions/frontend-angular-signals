@@ -45,6 +45,24 @@
   }
 }
 
+// Blinking animation for unsaved badge
+@keyframes blink-badge {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+tui-badged-content:has(tui-badge-notification) {
+  tui-badge-notification {
+    animation: blink-badge 1.5s ease-in-out infinite;
+  }
+}
+
 .form-section {
   display: flex;
   flex-direction: column;
