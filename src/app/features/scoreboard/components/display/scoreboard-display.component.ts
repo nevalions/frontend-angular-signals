@@ -169,7 +169,7 @@ export class ScoreboardDisplayComponent {
 
   protected readonly down = computed(() => {
     const d = this.data();
-    return d?.match_data?.down || '1st';
+    return d?.match_data?.down ?? '1st';
   });
 
   protected readonly distance = computed(() => {
@@ -178,7 +178,9 @@ export class ScoreboardDisplayComponent {
   });
 
   protected readonly downDistance = computed(() => {
-    return `${this.down()} & ${this.distance()}`;
+    const d = this.down();
+    const dist = this.distance();
+    return d ? `${d} & ${dist}` : dist;
   });
 
   // Formatted clock displays

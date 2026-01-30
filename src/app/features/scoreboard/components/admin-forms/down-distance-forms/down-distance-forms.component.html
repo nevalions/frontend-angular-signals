@@ -5,7 +5,13 @@
       <div class="down-distance-panel">
         <!-- Current Down & Distance Display -->
         <div class="current-values">
-          <span class="values">{{ currentDown() }} & {{ currentDistance() }}</span>
+          <span class="values">
+            @if (currentDown()) {
+              {{ currentDown() }} & {{ currentDistance() }}
+            } @else {
+              {{ currentDistance() }}
+            }
+          </span>
         </div>
 
         <!-- Down Selection -->
@@ -66,6 +72,80 @@
           >
             Save
           </button>
+        </div>
+
+        <!-- Quick Distance Buttons -->
+        <div class="distance-presets">
+          <button
+            tuiButton
+            type="button"
+            appearance="outline"
+            size="s"
+            (click)="pendingDistance.set('INCH')"
+          >
+            INCH
+          </button>
+          <button
+            tuiButton
+            type="button"
+            appearance="outline"
+            size="s"
+            (click)="pendingDistance.set('GOAL')"
+          >
+            GOAL
+          </button>
+          <button
+            tuiButton
+            type="button"
+            appearance="outline"
+            size="s"
+            (click)="pendingDistance.set('10')"
+          >
+            10
+          </button>
+        </div>
+
+        <!-- Special Game States -->
+        <div class="form-section">
+          <label class="section-label">Special States</label>
+          <div class="special-state-buttons">
+            <button
+              tuiButton
+              type="button"
+              [appearance]="isSpecialStateSelected('PAT 1') ? 'primary' : 'secondary'"
+              size="m"
+              (click)="onSpecialStateSelect('PAT 1')"
+            >
+              PAT 1
+            </button>
+            <button
+              tuiButton
+              type="button"
+              [appearance]="isSpecialStateSelected('PAT 2') ? 'primary' : 'secondary'"
+              size="m"
+              (click)="onSpecialStateSelect('PAT 2')"
+            >
+              PAT 2
+            </button>
+            <button
+              tuiButton
+              type="button"
+              [appearance]="isSpecialStateSelected('FG') ? 'primary' : 'secondary'"
+              size="m"
+              (click)="onSpecialStateSelect('FG')"
+            >
+              FG
+            </button>
+            <button
+              tuiButton
+              type="button"
+              [appearance]="isSpecialStateSelected('KICK OFF') ? 'primary' : 'secondary'"
+              size="m"
+              (click)="onSpecialStateSelect('KICK OFF')"
+            >
+              KICK OFF
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiDataListWrapper, TuiSelect } from '@taiga-ui/kit';
 import { MatchData } from '../../../../matches/models/match-data.model';
 import { Scoreboard } from '../../../../matches/models/scoreboard.model';
@@ -44,8 +44,10 @@ export class DownDistanceFormsComponent {
     { value: '4th', label: '4th' },
   ];
 
-  /** Distance options (1-20 and 20+) */
+  /** Distance options (INCH, GOAL, 1-20, 20+) */
   protected readonly distanceOptions = [
+    'INCH',
+    'GOAL',
     '1',
     '2',
     '3',
@@ -73,9 +75,9 @@ export class DownDistanceFormsComponent {
   protected readonly pendingDown = signal<string>('1st');
   protected readonly pendingDistance = signal<string>('10');
 
-  // Computed values from match data (displayed as "Current")
-  protected readonly currentDown = computed(() => this.matchData()?.down ?? '1st');
-  protected readonly currentDistance = computed(() => this.matchData()?.distance ?? '10');
+  // Computed values for display (based on pending values)
+  protected readonly currentDown = computed(() => this.pendingDown());
+  protected readonly currentDistance = computed(() => this.pendingDistance());
   protected readonly isFlagActive = computed(() => this.scoreboard()?.is_flag ?? false);
 
   // Check if there are unsaved changes
@@ -123,6 +125,21 @@ export class DownDistanceFormsComponent {
    */
   isDownSelected(down: string): boolean {
     return this.pendingDown() === down;
+  }
+
+  /**
+   * Handle special game state selection
+   */
+  onSpecialStateSelect(state: string): void {
+    this.pendingDown.set('');
+    this.pendingDistance.set(state);
+  }
+
+  /**
+   * Check if a special state is currently selected
+   */
+  isSpecialStateSelected(state: string): boolean {
+    return this.pendingDown() === '' && this.pendingDistance() === state;
   }
 
   constructor() {
