@@ -112,7 +112,7 @@
                 <label>Game Title:</label>
                 <input
                   type="text"
-                  [value]="teamAGameTitle() ?? ''"
+                  [value]="teamAGameTitle()"
                   (change)="onTeamAGameTitleChange($event)"
                   placeholder="Enter game title"
                 />
@@ -212,7 +212,7 @@
                 <label>Game Title:</label>
                 <input
                   type="text"
-                  [value]="teamBGameTitle() ?? ''"
+                  [value]="teamBGameTitle()"
                   (change)="onTeamBGameTitleChange($event)"
                   placeholder="Enter game title"
                 />
