@@ -98,6 +98,7 @@
 │  │  Home Team Game Logo:   [Upload File]                  │
 │  │                          [Preview Image]                │
 │  │                          [Remove Button]                │
+│  │  Logo Scale:           [Slider 0.5-2.0]               │
 │  └────────────────────────────────────────────────────────────┘     │
 │  ┌────────────────────────────────────────────────────────────┐     │
 │  │  AWAY TEAM                                              │
@@ -109,6 +110,12 @@
 │  │  Away Team Game Logo:   [Upload File]                  │
 │  │                          [Preview Image]                │
 │  │                          [Remove Button]                │
+│  │  Logo Scale:           [Slider 0.5-2.0]               │
+│  └────────────────────────────────────────────────────────────┘     │
+│  ┌────────────────────────────────────────────────────────────┐     │
+│  │  GLOBAL SCALES                                          │
+│  │  Tournament Logo Scale: [Slider 0.5-2.0]                │
+│  │  Main Sponsor Scale:     [Slider 0.5-2.0]                │
 │  └────────────────────────────────────────────────────────────┘     │
 └──────────────────────────────────────────────────────────────────────┘
 
@@ -183,7 +190,10 @@
       - Use game color switch + game color picker
       - Use game title switch + game title input
       - Use game logo switch + game logo upload (with preview and remove)
-      - Logo scale slider
+      - Logo scale slider (0.5-2.0)
+    - Global scales:
+      - Tournament logo scale slider (0.5-2.0)
+      - Main sponsor scale slider (0.5-2.0)
   - **Events Forms** → Football events tracking and statistics:
     - Team stats (offense yards, pass/run attempts, averages, down conversions, turnovers)
     - Quarterback stats (passing/rushing yards, TDs, QB rating)

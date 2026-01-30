@@ -156,6 +156,19 @@
                   </div>
                 }
               </div>
+
+              <div class="logo-scale">
+                <label>Logo Scale: {{ logoAScale() | number:'1.2-2' }}</label>
+                <input
+                  tuiSlider
+                  type="range"
+                  [min]="0.5"
+                  [max]="2"
+                  step="0.1"
+                  [ngModel]="logoAScale()"
+                  (ngModelChange)="onLogoAScaleChange($event)"
+                />
+              </div>
             </div>
           </div>
 
@@ -243,6 +256,19 @@
                   </div>
                 }
               </div>
+
+              <div class="logo-scale">
+                <label>Logo Scale: {{ logoBScale() | number:'1.2-2' }}</label>
+                <input
+                  tuiSlider
+                  type="range"
+                  [min]="0.5"
+                  [max]="2"
+                  step="0.1"
+                  [ngModel]="logoBScale()"
+                  (ngModelChange)="onLogoBScaleChange($event)"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -276,32 +302,6 @@
               step="0.1"
               [ngModel]="mainSponsorScale()"
               (ngModelChange)="onMainSponsorScaleChange($event)"
-            />
-          </div>
-
-          <div class="scale-control">
-            <label>Home Logo Scale: {{ logoAScale() | number:'1.2-2' }}</label>
-            <input
-              tuiSlider
-              type="range"
-              [min]="0.5"
-              [max]="2"
-              step="0.1"
-              [ngModel]="logoAScale()"
-              (ngModelChange)="onLogoAScaleChange($event)"
-            />
-          </div>
-
-          <div class="scale-control">
-            <label>Away Logo Scale: {{ logoBScale() | number:'1.2-2' }}</label>
-            <input
-              tuiSlider
-              type="range"
-              [min]="0.5"
-              [max]="2"
-              step="0.1"
-              [ngModel]="logoBScale()"
-              (ngModelChange)="onLogoBScaleChange($event)"
             />
           </div>
         </div>
