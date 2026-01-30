@@ -77,7 +77,11 @@ import { Observable } from 'rxjs';
                   </button>
                 </div>
                 <tui-badge appearance="neutral" size="s" class="match-players-tab__team-count">
-                  Available: {{ availablePlayersTeamA().length }}
+                  @if (availablePlayersLoadingTeamA()) {
+                    Loading...
+                  } @else {
+                    Available: {{ availablePlayersTeamA().length }}
+                  }
                 </tui-badge>
               </div>
 
@@ -328,7 +332,11 @@ import { Observable } from 'rxjs';
                   </button>
                 </div>
                 <tui-badge appearance="neutral" size="s" class="match-players-tab__team-count">
-                  Available: {{ availablePlayersTeamB().length }}
+                  @if (availablePlayersLoadingTeamB()) {
+                    Loading...
+                  } @else {
+                    Available: {{ availablePlayersTeamB().length }}
+                  }
                 </tui-badge>
               </div>
 
@@ -575,6 +583,18 @@ export class MatchPlayersTabComponent {
   selectedAvailablePlayerTeamB = signal<MatchAvailablePlayer | null>(null);
   teamASort = signal<'number' | 'name'>('number');
   teamBSort = signal<'number' | 'name'>('number');
+
+  private initiallyLoaded = signal(false);
+
+  // Load available players when comprehensiveData becomes available
+  private loadAvailablePlayersEffect = effect(() => {
+    const data = this.comprehensiveData();
+    if (data && !this.initiallyLoaded()) {
+      this.loadAvailablePlayers('A');
+      this.loadAvailablePlayers('B');
+      this.initiallyLoaded.set(true);
+    }
+  });
 
   // Validate comprehensiveData input
   private syncEffect = effect(() => {
