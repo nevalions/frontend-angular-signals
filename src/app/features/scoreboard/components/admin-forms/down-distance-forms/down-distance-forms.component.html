@@ -9,13 +9,11 @@
             <tui-badge-notification tuiSlot="top" appearance="negative">!</tui-badge-notification>
           }
           <div class="current-values">
-            <span class="values">
-              @if (currentDown()) {
-                {{ currentDown() }} & {{ currentDistance() }}
-              } @else {
-                {{ currentDistance() }}
-              }
-            </span>
+            @if (currentDown()) {
+              <span class="values">{{ currentDown() }} & {{ currentDistance() }}</span>
+            } @else {
+              <span class="values">{{ currentDistance() }}</span>
+            }
           </div>
         </tui-badged-content>
 
