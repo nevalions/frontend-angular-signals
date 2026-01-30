@@ -63,9 +63,9 @@
 
     <!-- Sponsor lines -->
     <div class="sponsor-layer">
-      @if (showMainSponsor() && mainSponsor()) {
+      @if (showMainSponsor() && mainSponsorLine()) {
         <app-sponsor-line
-          [sponsor]="mainSponsor()"
+          [line]="mainSponsorLine()"
           label="Tournament Sponsor"
         />
       }

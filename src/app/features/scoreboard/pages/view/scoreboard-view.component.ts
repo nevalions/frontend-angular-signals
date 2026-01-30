@@ -65,6 +65,17 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
     return d?.match?.tournament?.main_sponsor ?? null;
   });
 
+  protected readonly mainSponsorLine = computed(() => {
+    const sponsor = this.mainSponsor();
+    if (!sponsor) return null;
+    
+    return {
+      id: sponsor.id,
+      title: sponsor.title,
+      is_visible: true,
+    };
+  });
+
   protected readonly scoreboard = computed(() => this.data()?.scoreboard ?? null);
 
   protected readonly showMainSponsor = computed(() => this.scoreboard()?.is_main_sponsor ?? false);
