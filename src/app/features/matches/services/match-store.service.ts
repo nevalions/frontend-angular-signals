@@ -144,7 +144,7 @@ export class MatchStoreService {
   }
 
   updateMatch(matchId: number, data: MatchUpdate): Observable<Match> {
-    return this.apiService.put<Match>('/api/matches/', matchId, data);
+    return this.apiService.put<Match>('/api/matches/', matchId, data, true);
   }
 
   getComprehensiveMatchData(matchId: number): Observable<ComprehensiveMatchData> {

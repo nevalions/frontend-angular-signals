@@ -100,6 +100,14 @@ updateSport(id: number, sportData: SportUpdate): Observable<Sport> {
 }
 ```
 
+### Matches Endpoint
+
+```typescript
+updateMatch(matchId: number, data: MatchUpdate): Observable<Match> {
+  return this.apiService.put<Match>('/api/matches/', matchId, data, true);
+}
+```
+
 ## API Endpoint Reference
 
 | Resource  | PUT Endpoint Pattern          | Frontend Usage (`usePathParam`) | Backend View Reference        |
@@ -109,6 +117,7 @@ updateSport(id: number, sportData: SportUpdate): Observable<Sport> {
 | Tournaments| `PUT /api/tournaments/{id}/` | Path param in URL             | `src/tournaments/views.py`    |
 | Seasons   | `PUT /api/seasons/{id}/`      | `true`                       | `src/seasons/views.py:54`   |
 | Sports    | `PUT /api/sports/{id}/`       | `true`                       | `src/sports/views.py:41`    |
+| Matches   | `PUT /api/matches/{id}/`      | `true`                       | `src/matches/crud_router.py:157` |
 
 ## Players Endpoints
 
