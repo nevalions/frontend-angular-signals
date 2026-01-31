@@ -110,8 +110,9 @@ export class ClockPredictor {
       if (remaining > 0) {
         this.animationFrameId = requestAnimationFrame(tick);
       } else {
-        this.debugLog('[ClockPredictor] tick() stopping - remaining is 0');
+        this.debugLog('[ClockPredictor] tick() reached 0, auto-stopping');
         this.animationFrameId = null;
+        this.state!.status = 'stopped';
       }
     };
 
