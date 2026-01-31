@@ -269,6 +269,17 @@ export class ScoreboardClockService implements OnDestroy {
       playclock: seconds,
     });
 
+    const now = Date.now();
+    const rtt = this.wsService.lastRtt() ?? 100;
+    this.playClockPredictor.sync({
+      gameclock: seconds,
+      gameclock_max: seconds,
+      started_at_ms: now,
+      server_time_ms: now,
+      status: 'running',
+      rttMs: rtt,
+    });
+
     this.debugLog('[ClockService][ACTION] startPlayClock - calling API for pc.id:', pc.id, 'seconds:', seconds);
     this.scoreboardStore.startPlayClock(pc.id, seconds).subscribe({
       next: (updated) => {
