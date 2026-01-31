@@ -47,7 +47,9 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
 
   // Computed values
   protected readonly gameClockSeconds = computed(() => this.clockService.predictedGameClock());
-  protected readonly playClockSeconds = computed(() => this.clockService.predictedPlayClock());
+  protected readonly playClockDisplay = signal<number | null>(null);
+  private playClockClearTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private playClockHoldActive = signal<boolean>(false);
 
   // Tournament logo/sponsor (would come from tournament data)
   protected readonly tournamentLogo = computed(() => {
@@ -302,12 +304,54 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
     }
   });
 
+  private syncPlayClockDisplay = effect(() => {
+    const pc = this.clockService.playClock();
+    const status = pc?.playclock_status ?? null;
+    const predicted = this.clockService.predictedPlayClock();
+    const seconds = status === 'running' ? predicted : pc?.playclock ?? null;
+
+    if (seconds == null) {
+      if (this.playClockHoldActive()) {
+        this.playClockDisplay.set(0);
+        return;
+      }
+      this.clearPlayClockTimeout();
+      this.playClockDisplay.set(null);
+      return;
+    }
+
+    if (seconds == null || seconds > 0) {
+      this.clearPlayClockTimeout();
+      this.playClockHoldActive.set(false);
+      this.playClockDisplay.set(seconds);
+      return;
+    }
+
+    this.playClockDisplay.set(0);
+
+    if (this.playClockClearTimeoutId == null) {
+      this.playClockHoldActive.set(true);
+      this.playClockClearTimeoutId = setTimeout(() => {
+        const latest = this.clockService.playClock();
+        const latestStatus = latest?.playclock_status ?? null;
+        const latestPredicted = this.clockService.predictedPlayClock();
+        const latestSeconds = latestStatus === 'running' ? latestPredicted : latest?.playclock ?? null;
+        if (latestSeconds === 0) {
+          this.playClockDisplay.set(null);
+        }
+        this.playClockHoldActive.set(false);
+        this.playClockClearTimeoutId = null;
+      }, 3000);
+    }
+  });
+
   ngOnInit(): void {
     this.connectWebSocket();
     this.loadData();
   }
 
   ngOnDestroy(): void {
+    this.clearPlayClockTimeout();
     this.wsService.disconnect();
   }
 
@@ -354,5 +398,13 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
     }
 
     return null;
+  }
+
+  private clearPlayClockTimeout(): void {
+    if (this.playClockClearTimeoutId != null) {
+      clearTimeout(this.playClockClearTimeoutId);
+      this.playClockClearTimeoutId = null;
+    }
+    this.playClockHoldActive.set(false);
   }
 }

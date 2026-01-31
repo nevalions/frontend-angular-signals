@@ -213,7 +213,61 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   });
 
   protected readonly gameClockSeconds = computed(() => this.clockService.predictedGameClock());
-  protected readonly playClockSeconds = computed(() => this.clockService.predictedPlayClock());
+  protected readonly playClockDisplay = signal<number | null>(null);
+  private playClockClearTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private playClockHoldActive = signal<boolean>(false);
+  private playClockResetSuppressed = signal<boolean>(false);
+
+  private syncPlayClockDisplay = effect(() => {
+    const pc = this.clockService.playClock();
+    const status = pc?.playclock_status ?? null;
+    const predicted = this.clockService.predictedPlayClock();
+    const seconds = status === 'running' ? predicted : pc?.playclock ?? null;
+
+    if (this.playClockResetSuppressed() && status !== 'running') {
+      this.clearPlayClockTimeout();
+      this.playClockDisplay.set(null);
+      return;
+    }
+
+    if (this.playClockResetSuppressed() && status === 'running') {
+      this.playClockResetSuppressed.set(false);
+    }
+
+    if (seconds == null) {
+      if (this.playClockHoldActive()) {
+        this.playClockDisplay.set(0);
+        return;
+      }
+      this.clearPlayClockTimeout();
+      this.playClockDisplay.set(null);
+      return;
+    }
+
+    if (seconds > 0) {
+      this.clearPlayClockTimeout();
+      this.playClockHoldActive.set(false);
+      this.playClockDisplay.set(seconds);
+      return;
+    }
+
+    this.playClockDisplay.set(0);
+
+    if (this.playClockClearTimeoutId == null) {
+      this.playClockHoldActive.set(true);
+      this.playClockClearTimeoutId = setTimeout(() => {
+        const latest = this.clockService.playClock();
+        const latestStatus = latest?.playclock_status ?? null;
+        const latestPredicted = this.clockService.predictedPlayClock();
+        const latestSeconds = latestStatus === 'running' ? latestPredicted : latest?.playclock ?? null;
+        if (latestSeconds === 0) {
+          this.playClockDisplay.set(null);
+        }
+        this.playClockHoldActive.set(false);
+        this.playClockClearTimeoutId = null;
+      }, 3000);
+    }
+  });
 
   ngOnInit(): void {
     this.connectWebSocket();
@@ -221,6 +275,7 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.clearPlayClockTimeout();
     this.wsService.disconnect();
   }
 
@@ -337,6 +392,9 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
         }
         break;
       case 'reset':
+        this.playClockResetSuppressed.set(true);
+        this.clearPlayClockTimeout();
+        this.playClockDisplay.set(null);
         this.clockService.resetPlayClock();
         break;
     }
@@ -441,5 +499,13 @@ export class ScoreboardAdminComponent implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Failed to delete event', err),
     });
+  }
+
+  private clearPlayClockTimeout(): void {
+    if (this.playClockClearTimeoutId != null) {
+      clearTimeout(this.playClockClearTimeoutId);
+      this.playClockClearTimeoutId = null;
+    }
+    this.playClockHoldActive.set(false);
   }
 }

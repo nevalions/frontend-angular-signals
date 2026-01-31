@@ -51,6 +51,9 @@ export class TimeFormsComponent {
    protected readonly manualSeconds = signal<number>(0);
    protected readonly maxMinutes = signal<number>(12);
    protected readonly isEditingTime = signal<boolean>(false);
+   
+   // Flag to prevent sync from overwriting input immediately after Set is clicked
+   private readonly pendingSetUpdate = signal<boolean>(false);
 
 
 
@@ -69,7 +72,7 @@ export class TimeFormsComponent {
 
    // Sync manual time inputs with websocket gameclock when not editing
    private syncWithGameClock = effect(() => {
-     if (!this.isEditingTime()) {
+     if (!this.isEditingTime() && !this.pendingSetUpdate()) {
        const seconds = this.gameClockSeconds();
        const mins = Math.floor(seconds / 60);
        const secs = seconds % 60;
@@ -110,6 +113,49 @@ export class TimeFormsComponent {
 
     protected readonly playClockReady = computed(() => Boolean(this.playClock()?.id));
 
+    protected readonly playClockDisplay = signal<number | null>(null);
+
+    protected readonly playClockWarning = computed(() => {
+      const display = this.playClockDisplay();
+      return display != null && display <= 5;
+    });
+
+    private playClockClearTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    private resetSuppressed = signal<boolean>(false);
+
+    private readonly syncPlayClockDisplay = effect(() => {
+      const pc = this.playClock();
+      const seconds = pc?.playclock ?? null;
+
+      if (this.resetSuppressed() && !this.playClockRunning()) {
+        this.clearPlayClockTimeout();
+        this.playClockDisplay.set(null);
+        return;
+      }
+
+      if (this.resetSuppressed() && this.playClockRunning()) {
+        this.resetSuppressed.set(false);
+      }
+
+      if (seconds == null || seconds > 0) {
+        this.clearPlayClockTimeout();
+        this.playClockDisplay.set(seconds);
+        return;
+      }
+
+      this.playClockDisplay.set(0);
+
+      if (this.playClockClearTimeoutId == null) {
+        this.playClockClearTimeoutId = setTimeout(() => {
+          const currentSeconds = this.playClock()?.playclock ?? null;
+          if (currentSeconds === 0) {
+            this.playClockDisplay.set(null);
+          }
+          this.playClockClearTimeoutId = null;
+        }, 3000);
+      }
+    });
+
    /**
     * Format seconds to MM:SS display
     */
@@ -147,10 +193,14 @@ export class TimeFormsComponent {
     const mins = this.manualMinutes();
     const secs = this.manualSeconds();
     const totalSeconds = mins * 60 + secs;
+
+    this.pendingSetUpdate.set(true);
     this.gameClockAction.emit({
       action: 'update',
       data: { gameclock: totalSeconds },
     });
+
+    setTimeout(() => this.pendingSetUpdate.set(false), 500);
   }
 
   /**
@@ -178,7 +228,6 @@ export class TimeFormsComponent {
   onManualMinutesChange(minutes: number): void {
     this.isEditingTime.set(true);
     this.manualMinutes.set(minutes);
-    setTimeout(() => this.isEditingTime.set(false), 2000);
   }
 
   /**
@@ -187,7 +236,20 @@ export class TimeFormsComponent {
   onManualSecondsChange(seconds: number): void {
     this.isEditingTime.set(true);
     this.manualSeconds.set(seconds);
-    setTimeout(() => this.isEditingTime.set(false), 2000);
+  }
+
+  /**
+   * Handle input focus - prevent sync from overwriting user input
+   */
+  onInputFocus(): void {
+    this.isEditingTime.set(true);
+  }
+
+  /**
+   * Handle input blur - allow sync to resume
+   */
+  onInputBlur(): void {
+    setTimeout(() => this.isEditingTime.set(false), 0);
   }
 
   /**
@@ -201,7 +263,16 @@ export class TimeFormsComponent {
    * Reset play clock
    */
   onPlayClockReset(): void {
+    this.clearPlayClockTimeout();
+    this.playClockDisplay.set(null);
+    this.resetSuppressed.set(true);
     this.playClockAction.emit({ action: 'reset' });
   }
-}
 
+  private clearPlayClockTimeout(): void {
+    if (this.playClockClearTimeoutId != null) {
+      clearTimeout(this.playClockClearTimeoutId);
+      this.playClockClearTimeoutId = null;
+    }
+  }
+}

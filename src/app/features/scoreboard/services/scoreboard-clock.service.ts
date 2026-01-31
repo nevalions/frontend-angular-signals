@@ -225,15 +225,32 @@ export class ScoreboardClockService implements OnDestroy {
   updateGameClock(update: GameClockUpdate): void {
     const gc = this.gameClock();
     if (!gc) {
+      this.debugLog('[ClockService][ACTION] updateGameClock ABORTED - no gameClock', update);
       return;
     }
 
+    this.debugLog('[ClockService][ACTION] updateGameClock called, current gc:', JSON.stringify(gc, null, 2));
+    this.debugLog('[ClockService][ACTION] updateGameClock payload:', JSON.stringify(update, null, 2));
     this.applyGameClockUpdate(update);
+    this.debugLog('[ClockService][ACTION] updateGameClock optimistic state:', JSON.stringify(this.gameClock(), null, 2));
     this.scoreboardStore.updateGameClock(gc.id, update).subscribe({
       next: (updated) => {
+        this.debugLog('[ClockService][ACTION] updateGameClock API response:', JSON.stringify(updated, null, 2));
         const current = this.gameClock();
         if (current) {
-          this.gameClock.set(this.mergeGameClock(current, updated));
+          const merged = this.mergeGameClock(current, updated);
+          this.debugLog('[ClockService][ACTION] updateGameClock merged result:', JSON.stringify(merged, null, 2));
+          this.gameClock.set(merged);
+
+          const rtt = this.wsService.lastRtt() ?? 100;
+          this.gameClockPredictor.sync({
+            gameclock: merged.gameclock ?? 0,
+            gameclock_max: merged.gameclock_max ?? 720,
+            started_at_ms: merged.started_at_ms ?? null,
+            server_time_ms: merged.server_time_ms ?? null,
+            status: merged.gameclock_status ?? 'stopped',
+            rttMs: rtt,
+          });
         }
       },
     });
@@ -366,13 +383,25 @@ export class ScoreboardClockService implements OnDestroy {
     }
 
     this.setGameClockLock();
-    this.gameClock.set({
+    const updated = {
       ...current,
       ...update,
       id: current.id,
       match_id: current.match_id,
       // Bump version for optimistic update to prevent stale API response from overwriting
       version: (current.version ?? 0) + 1,
+    };
+    this.gameClock.set(updated);
+
+    // Sync predictor immediately for optimistic UI update
+    const rtt = this.wsService.lastRtt() ?? 100;
+    this.gameClockPredictor.sync({
+      gameclock: updated.gameclock ?? 0,
+      gameclock_max: updated.gameclock_max ?? 720,
+      started_at_ms: updated.started_at_ms ?? null,
+      server_time_ms: updated.server_time_ms ?? null,
+      status: updated.gameclock_status ?? 'stopped',
+      rttMs: rtt,
     });
   }
 

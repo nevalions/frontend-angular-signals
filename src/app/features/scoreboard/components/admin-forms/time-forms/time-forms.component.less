@@ -109,17 +109,10 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  flex: 1;
-  max-width: 100px;
-
-  tui-textfield {
-    height: 44px !important;
-    min-height: 44px !important;
-
-    input {
-      height: 44px;
-    }
-  }
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
 }
 
 .input-label {
@@ -143,15 +136,8 @@
   align-items: center;
   gap: 12px;
   justify-content: center;
-
-  tui-textfield {
-    height: 44px !important;
-    min-height: 44px !important;
-
-    input {
-      height: 44px;
-    }
-  }
+  width: 100%;
+  max-width: 100%;
 
   .save-button {
     height: 44px !important;
@@ -204,11 +190,13 @@
 .max-time-row,
 .time-inputs-compact {
   tui-textfield {
-    min-width: 70px;
+    min-width: 0;
+    width: 100%;
 
     input {
       text-align: center;
-      font-weight: 600;
+      width: 100%;
+      box-sizing: border-box;
     }
   }
 }
@@ -219,9 +207,36 @@
 
     input {
       text-align: center;
-      font-weight: 600;
+      width: 100%;
+      box-sizing: border-box;
     }
   }
+}
+
+.time-input {
+  width: 100%;
+  overflow: hidden;
+
+  input {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+
+.time-forms input[type='number'],
+.time-forms input[tuiInputNumber] {
+  appearance: textfield;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.time-forms input[type='number']::-webkit-inner-spin-button,
+.time-forms input[type='number']::-webkit-outer-spin-button,
+.time-forms input[tuiInputNumber]::-webkit-inner-spin-button,
+.time-forms input[tuiInputNumber]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 // Mobile breakpoint (450px) - Optimized for single screen view
@@ -303,8 +318,10 @@
     width: 100%;
 
     tui-textfield {
-      width: 60px;
-      flex-shrink: 0;
+      width: 100%;
+      flex: 1;
+      min-width: 0;
+      max-width: none;
       height: 36px !important;
       min-height: 36px !important;
 
@@ -312,6 +329,8 @@
         height: 36px;
         padding: 0 8px;
         text-align: center;
+        width: 100%;
+        box-sizing: border-box;
       }
     }
 
@@ -361,9 +380,9 @@
   }
 
   .time-input-group {
-    flex: 0 0 auto;
-    max-width: 60px;
-    min-width: 60px;
+    flex: 1;
+    max-width: none;
+    min-width: 0;
     gap: 2px;
 
     tui-textfield {
@@ -375,9 +394,11 @@
       input {
         text-align: center;
         font-size: 16px; // Prevents iOS zoom on focus
-        font-weight: 600;
+        font-weight: 700;
         height: 36px;
         padding: 0 8px;
+        width: 100%;
+        box-sizing: border-box;
       }
     }
   }
@@ -392,6 +413,7 @@
     input {
       font-size: 16px !important; // Prevents iOS zoom
       text-align: center;
+      font-weight: 700;
     }
   }
 }

@@ -9,12 +9,13 @@
         <div class="max-time-setting">
           <span class="setting-label">Quarter Length (min)</span>
           <div class="max-time-row">
-            <tui-textfield [tuiTextfieldCleaner]="false">
+            <tui-textfield [tuiTextfieldCleaner]="false" tuiTextfieldSize="m" class="time-input">
               <input
                 tuiInputNumber
                 [ngModel]="currentMaxMinutes()"
                 [min]="1"
                 [max]="20"
+                [step]="1"
                 [disabled]="inputsDisabled()"
                 (ngModelChange)="onMaxMinutesChange($event)"
               />
@@ -85,27 +86,33 @@
           <div class="time-inputs-compact">
             <div class="time-input-group">
               <span class="input-label">Min</span>
-              <tui-textfield [tuiTextfieldCleaner]="false">
+              <tui-textfield [tuiTextfieldCleaner]="false" tuiTextfieldSize="m" class="time-input">
                 <input
                   tuiInputNumber
                   [ngModel]="manualMinutes()"
                   [min]="0"
                   [max]="99"
+                  [step]="1"
                   [disabled]="inputsDisabled()"
                   (ngModelChange)="onManualMinutesChange($event)"
+                  (focus)="onInputFocus()"
+                  (blur)="onInputBlur()"
                 />
               </tui-textfield>
             </div>
             <div class="time-input-group">
               <span class="input-label">Sec</span>
-              <tui-textfield [tuiTextfieldCleaner]="false">
+              <tui-textfield [tuiTextfieldCleaner]="false" tuiTextfieldSize="m" class="time-input">
                 <input
                   tuiInputNumber
                   [ngModel]="manualSeconds()"
                   [min]="0"
                   [max]="59"
+                  [step]="1"
                   [disabled]="inputsDisabled()"
                   (ngModelChange)="onManualSecondsChange($event)"
+                  (focus)="onInputFocus()"
+                  (blur)="onInputBlur()"
                 />
               </tui-textfield>
             </div>
@@ -115,7 +122,7 @@
               appearance="primary"
               size="m"
               class="save-button"
-              (click)="onSetGameClock()"
+              (pointerdown)="onSetGameClock()"
               [disabled]="!gameClockReady() || inputsDisabled()"
             >
               Set
@@ -128,8 +135,8 @@
       <div class="time-section play-clock-section">
         <h4 class="section-title">Play Clock</h4>
 
-        <div class="clock-display play-clock-display" [class.warning]="playClockSeconds() <= 5">
-          <span class="clock-value">{{ playClockSeconds() }}</span>
+        <div class="clock-display play-clock-display" [class.warning]="playClockWarning()">
+          <span class="clock-value">{{ playClockDisplay() ?? '' }}</span>
           <span class="clock-status" [class.running]="playClockRunning()">
             {{ playClockRunning() ? 'Running' : 'Stopped' }}
           </span>
