@@ -50,8 +50,11 @@
 .sponsor-line-container {
   position: fixed;
   bottom: 70px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 15;
   pointer-events: none;
 }
@@ -67,6 +70,6 @@
   }
 
   .sponsor-line-container {
-    bottom: 40px;
+    bottom: 70px;
   }
 }
