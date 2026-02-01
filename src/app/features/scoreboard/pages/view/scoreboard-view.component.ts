@@ -13,7 +13,6 @@ import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-dis
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
 import { WebSocketService } from '../../../../core/services/websocket.service';
 import { SponsorLineComponent } from '../../components/sponsor-display/sponsor-line.component';
-import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.component';
 
 @Component({
   selector: 'app-scoreboard-view',
@@ -24,7 +23,6 @@ import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.
     PlayerMatchLowerDisplayComponent,
     FootballQbLowerStatsDisplayComponent,
     TeamMatchLowerFootballStatsDisplayComponent,
-    PlayByPlayComponent,
     SponsorLineComponent,
   ],
   templateUrl: './scoreboard-view.component.html',
@@ -150,7 +148,7 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
 
   // Effects must be created in injection context (constructor/field initializer)
   // Use untracked() to prevent infinite loop - we only want to react to wsService changes
-  
+
   // Handle initial-load message: sets all data at once
   private wsMatchDataEffect = effect(() => {
     const message = this.wsService.matchData();
