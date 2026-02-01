@@ -21,7 +21,7 @@
     </button>
 
     <nav class="navbar-nav" [class.mobile-open]="mobileMenuOpen()">
-      <a tuiLink routerLink="/persons" routerLinkActive="active">Persons</a>
+      <a tuiLink routerLink="/persons" routerLinkActive="active" (click)="closeMobileMenu()">Persons</a>
 
       <div class="dropdown">
         <button
