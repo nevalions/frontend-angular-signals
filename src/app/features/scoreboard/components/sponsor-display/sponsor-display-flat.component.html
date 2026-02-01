@@ -1,17 +1,13 @@
-    @if (hasContent()) {
-   <div class="sponsor-display-flat">
-     @if (logoSrc()) {
-       <img
-         [ngSrc]="logoSrc()"
-         width="220"
-         height="70"
-         [style.transform]="'scale(' + logoScale() + ')'"
-         [attr.alt]="displayTitle() || 'Sponsor logo'"
-       />
-     }
-
-     @if (displayTitle()) {
-       <span class="sponsor-title">{{ displayTitle() }}</span>
-     }
-   </div>
-   }
+@if (hasContent()) {
+  <div class="sponsor-display-flat">
+    @if (logoSrc()) {
+      <img
+        [ngSrc]="logoSrc()"
+        width="220"
+        height="70"
+        [style.transform]="'scale(' + logoScale() + ')'"
+        [attr.alt]="displayTitle() || 'Sponsor logo'"
+      />
+    }
+  </div>
+}

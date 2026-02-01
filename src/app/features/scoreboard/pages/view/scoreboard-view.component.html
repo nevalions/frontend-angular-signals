@@ -61,14 +61,11 @@
       <app-play-by-play />
     </div>
 
-    <!-- Sponsor lines -->
-    <div class="sponsor-layer">
-      @if (showMainSponsor() && mainSponsorLine()) {
-        <app-sponsor-line
-          [line]="mainSponsorLine()"
-          label="Tournament Sponsor"
-        />
-      }
-    </div>
+    <!-- Sponsor line - positioned under scoreboard -->
+    @if (showSponsorLine() && mainSponsor()) {
+      <div class="sponsor-line-container">
+        <app-sponsor-line [line]="sponsorLine()" [sponsor]="mainSponsor()" />
+      </div>
+    }
   }
 </div>

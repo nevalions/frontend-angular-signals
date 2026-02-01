@@ -15,7 +15,7 @@ export class SponsorLineComponent {
   scale = input<number | null>(null);
   label = input<string | null>(null);
 
-  protected readonly lineTitle = computed(() => this.label() ?? this.line()?.title ?? '');
+  protected readonly lineTitle = computed(() => this.label() ?? '');
   protected readonly isVisible = computed(() => this.line()?.is_visible ?? true);
   protected readonly hasContent = computed(() => Boolean(this.lineTitle() || this.sponsor()));
 }

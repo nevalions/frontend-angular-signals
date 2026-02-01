@@ -16,7 +16,7 @@ export class SponsorDisplayFlatComponent {
   logoUrl = input<string | null>(null);
   scale = input<number | null>(null);
 
-  protected readonly displayTitle = computed(() => this.title() ?? this.sponsor()?.title ?? '');
+  protected readonly displayTitle = computed(() => '');
   protected readonly logoPath = computed(() => this.logoUrl() ?? this.sponsor()?.logo_url ?? null);
   protected readonly logoScale = computed(() => this.scale() ?? this.sponsor()?.scale_logo ?? 1);
   protected readonly logoSrc = computed(() => {

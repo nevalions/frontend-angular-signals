@@ -14,5 +14,5 @@ export class MatchSponsorLineDisplayFlatComponent {
   sponsor = input<Sponsor | null>(null);
   scale = input<number | null>(null);
 
-  protected readonly matchLabel = computed(() => this.line()?.title ?? 'Match Sponsor');
+  protected readonly matchLabel = computed(() => '');
 }

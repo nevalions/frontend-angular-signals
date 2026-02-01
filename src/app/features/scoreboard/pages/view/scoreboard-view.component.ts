@@ -11,8 +11,8 @@ import { TeamStats } from '../../../matches/models/match-stats.model';
 import { PlayerMatchLowerDisplayComponent } from '../../components/lower-display/player-match-lower-display/player-match-lower-display.component';
 import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-display/football-qb-lower-stats-display/football-qb-lower-stats-display.component';
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
-import { SponsorLineComponent } from '../../components/sponsor-display/sponsor-line.component';
 import { WebSocketService } from '../../../../core/services/websocket.service';
+import { SponsorLineComponent } from '../../components/sponsor-display/sponsor-line.component';
 import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.component';
 
 @Component({
@@ -24,8 +24,8 @@ import { PlayByPlayComponent } from '../../components/play-by-play/play-by-play.
     PlayerMatchLowerDisplayComponent,
     FootballQbLowerStatsDisplayComponent,
     TeamMatchLowerFootballStatsDisplayComponent,
-    SponsorLineComponent,
     PlayByPlayComponent,
+    SponsorLineComponent,
   ],
   templateUrl: './scoreboard-view.component.html',
   styleUrl: './scoreboard-view.component.less',
@@ -62,26 +62,12 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
     return d?.match?.tournament?.main_sponsor?.logo_url || null;
   });
 
-  protected readonly mainSponsor = computed(() => {
-    const d = this.data();
-    return d?.match?.tournament?.main_sponsor ?? null;
-  });
-
-  protected readonly mainSponsorLine = computed(() => {
-    const sponsor = this.mainSponsor();
-    if (!sponsor) return null;
-    
-    return {
-      id: sponsor.id,
-      title: sponsor.title,
-      is_visible: true,
-    };
-  });
-
   protected readonly scoreboard = computed(() => this.data()?.scoreboard ?? null);
 
-  protected readonly showMainSponsor = computed(() => this.scoreboard()?.is_main_sponsor ?? false);
-  protected readonly showMatchSponsorLine = computed(() => this.scoreboard()?.is_match_sponsor_line ?? false);
+  // Sponsor line from tournament
+  protected readonly sponsorLine = computed(() => this.data()?.match?.tournament?.sponsor_line ?? null);
+  protected readonly showSponsorLine = computed(() => this.scoreboard()?.is_sponsor_line ?? false);
+  protected readonly mainSponsor = computed(() => this.data()?.match?.tournament?.main_sponsor ?? null);
 
   protected readonly teamAName = computed(() => {
     const sb = this.scoreboard();
