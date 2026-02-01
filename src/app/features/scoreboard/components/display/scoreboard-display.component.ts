@@ -9,8 +9,6 @@ import {
 import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-match.model';
 import { Scoreboard } from '../../../matches/models/scoreboard.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
-import { SponsorLineComponent } from '../sponsor-display/sponsor-line.component';
-import { MatchSponsorLineDisplayFlatComponent } from '../sponsor-display/match-sponsor-line-display-flat.component';
 import {
   breathingAnimation,
   fadeInOutAnimation,
@@ -24,7 +22,7 @@ export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
 @Component({
   selector: 'app-scoreboard-display',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SponsorLineComponent, MatchSponsorLineDisplayFlatComponent, AutoFitTextDirective],
+  imports: [AutoFitTextDirective],
   templateUrl: './scoreboard-display.component.html',
   styleUrl: './scoreboard-display.component.less',
   animations: [scoreChangeAnimation, fadeInOutAnimation, breathingAnimation],
