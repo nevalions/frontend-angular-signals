@@ -10,12 +10,13 @@ import { ActivatedRoute } from '@angular/router';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withCreateAlert } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
+import { ImageUploadComponent, type ImageUrls } from '../../../../shared/components/image-upload/image-upload.component';
 
 @Component({
   selector: 'app-tournament-create',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, TuiButton],
+  imports: [CommonModule, ReactiveFormsModule, TuiButton, ImageUploadComponent],
   templateUrl: './tournament-create.component.html',
   styleUrl: './tournament-create.component.less',
 })
@@ -37,7 +38,7 @@ export class TournamentCreateComponent {
   });
 
   logoUploadLoading = signal(false);
-  logoPreviewUrls = signal<{ original: string; icon: string; webview: string } | null>(null);
+  logoPreviewUrls = signal<ImageUrls | null>(null);
 
   sportId = Number(this.route.snapshot.paramMap.get('sportId')) || 0;
   year = Number(this.route.snapshot.paramMap.get('year')) || 0;
@@ -45,37 +46,25 @@ export class TournamentCreateComponent {
   sport = this.sportStore.sports().find((s) => s.id === this.sportId) || null;
   season = this.seasonStore.seasonByYear().get(this.year) || null;
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+  onLogoUpload(file: File): void {
+    this.logoUploadLoading.set(true);
+    this.tournamentStore.uploadTournamentLogo(file).subscribe({
+      next: (response) => {
+        this.logoPreviewUrls.set({
+          original: buildStaticUrl(response.original),
+          icon: buildStaticUrl(response.icon),
+          webview: buildStaticUrl(response.webview),
+        });
+        this.logoUploadLoading.set(false);
+      },
+      error: () => {
+        this.logoUploadLoading.set(false);
+      },
+    });
+  }
 
-      if (!file.type.startsWith('image/')) {
-        this.alerts.open('Please select an image file', { label: 'Error', appearance: 'negative' }).subscribe();
-        return;
-      }
-
-      const maxSize = 5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        this.alerts.open('File size must be less than 5MB', { label: 'Error', appearance: 'negative' }).subscribe();
-        return;
-      }
-
-      this.logoUploadLoading.set(true);
-      this.tournamentStore.uploadTournamentLogo(file).subscribe({
-        next: (response) => {
-          this.logoPreviewUrls.set({
-            original: buildStaticUrl(response.original),
-            icon: buildStaticUrl(response.icon),
-            webview: buildStaticUrl(response.webview),
-          });
-          this.logoUploadLoading.set(false);
-        },
-        error: () => {
-          this.logoUploadLoading.set(false);
-        },
-      });
-    }
+  onLogoRemove(): void {
+    this.logoPreviewUrls.set(null);
   }
 
   onSubmit(): void {
@@ -99,8 +88,12 @@ export class TournamentCreateComponent {
 
       if (newLogoUrls) {
         data.tournament_logo_url = newLogoUrls.original.replace(`${API_BASE_URL}/`, '');
-        data.tournament_logo_icon_url = newLogoUrls.icon.replace(`${API_BASE_URL}/`, '');
-        data.tournament_logo_web_url = newLogoUrls.webview.replace(`${API_BASE_URL}/`, '');
+        if (newLogoUrls.icon) {
+          data.tournament_logo_icon_url = newLogoUrls.icon.replace(`${API_BASE_URL}/`, '');
+        }
+        if (newLogoUrls.webview) {
+          data.tournament_logo_web_url = newLogoUrls.webview.replace(`${API_BASE_URL}/`, '');
+        }
       }
 
       withCreateAlert(

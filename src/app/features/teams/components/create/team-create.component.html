@@ -82,54 +82,46 @@
     </div>
 
     <div class="team-create__field team-create__field--logo">
-      <label for="team_logo" class="team-create__label">Team Logo</label>
-      <input
-        id="team_logo"
-        type="file"
-        (change)="onFileSelected($event)"
-        class="team-create__file"
-        accept="image/*"
-      />
-      @if (logoUploadLoading()) {
-        <div class="team-create__loading">Uploading logo...</div>
-      } @else if (logoPreviewUrls()) {
-        <div class="team-create__preview-logos">
-          <div class="team-create__logo-preview">
-            <img [src]="logoPreviewUrls()!.original" alt="Logo preview" />
-            <span>Original</span>
-          </div>
-          <div class="team-create__logo-preview">
-            <img [src]="logoPreviewUrls()!.icon" alt="Icon preview" />
-            <span>Icon</span>
-          </div>
-          <div class="team-create__logo-preview">
-            <img [src]="logoPreviewUrls()!.webview" alt="Web view preview" />
-            <span>Web View</span>
-          </div>
-        </div>
-      }
-    </div>
-
-    <div class="team-create__field">
-      <label for="sponsor_line_id" class="team-create__label">Sponsor Line ID</label>
-      <input
-        id="sponsor_line_id"
-        type="text"
-        formControlName="sponsor_line_id"
-        class="team-create__input"
-        placeholder="Enter sponsor line ID (optional)"
+      <app-image-upload
+        label="Team Logo"
+        mode="three-size"
+        [currentUrls]="logoPreviewUrls()"
+        [uploading]="logoUploadLoading()"
+        (upload)="onLogoUpload($event)"
+        (remove)="onLogoRemove()"
       />
     </div>
 
     <div class="team-create__field">
-      <label for="main_sponsor_id" class="team-create__label">Main Sponsor ID</label>
-      <input
-        id="main_sponsor_id"
-        type="text"
-        formControlName="main_sponsor_id"
-        class="team-create__input"
-        placeholder="Enter main sponsor ID (optional)"
-      />
+      <label class="team-create__label">Main Sponsor</label>
+      <tui-textfield tuiChevron [content]="sponsorContent" [stringify]="sponsorStringify">
+        <input
+          placeholder="Select Main Sponsor (optional)"
+          tuiSelect
+          formControlName="main_sponsor_id"
+        />
+        <tui-data-list *tuiTextfieldDropdown size="l">
+          @for (sponsor of sponsors(); track sponsor.id) {
+            <button new tuiOption type="button" [value]="sponsor.id" class="team-create__sponsor-option">{{ formatTitle(sponsor.title) }}</button>
+          }
+        </tui-data-list>
+      </tui-textfield>
+    </div>
+
+    <div class="team-create__field">
+      <label class="team-create__label">Sponsor Line</label>
+      <tui-textfield tuiChevron [content]="sponsorLineContent" [stringify]="sponsorLineStringify">
+        <input
+          placeholder="Select Sponsor Line (optional)"
+          tuiSelect
+          formControlName="sponsor_line_id"
+        />
+        <tui-data-list *tuiTextfieldDropdown size="l">
+          @for (line of sponsorLines(); track line.id) {
+            <button new tuiOption type="button" [value]="line.id" class="team-create__sponsor-line-option">{{ formatTitle(line.title) }}</button>
+          }
+        </tui-data-list>
+      </tui-textfield>
     </div>
   </form>
 </div>

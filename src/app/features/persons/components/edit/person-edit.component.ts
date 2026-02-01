@@ -10,12 +10,13 @@ import { PersonUpdate, PhotoUploadResponse } from '../../models/person.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
+import { ImageUploadComponent, type ImageUrls } from '../../../../shared/components/image-upload/image-upload.component';
 
 @Component({
   selector: 'app-person-edit',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, TuiButton],
+  imports: [CommonModule, ReactiveFormsModule, TuiButton, ImageUploadComponent],
   templateUrl: './person-edit.component.html',
   styleUrl: './person-edit.component.less',
 })
@@ -50,16 +51,21 @@ export class PersonEditComponent {
   loading = computed(() => this.personStore.loading());
 
   photoUploadLoading = signal(false);
-  photoPreviewUrls = signal<{ original: string; icon: string; webview: string } | null>(null);
+  photoPreviewUrls = signal<ImageUrls | null>(null);
 
-  currentPhotoUrls = computed(() => {
+  currentPhotoUrls = computed<ImageUrls | null>(() => {
     const person = this.person();
-    if (!person) return null;
-    return {
-      original: person.person_photo_url ? buildStaticUrl(person.person_photo_url) : null,
-      icon: person.person_photo_icon_url ? buildStaticUrl(person.person_photo_icon_url) : null,
-      webview: person.person_photo_web_url ? buildStaticUrl(person.person_photo_web_url) : null,
+    if (!person || !person.person_photo_url) return null;
+    const urls: ImageUrls = {
+      original: buildStaticUrl(person.person_photo_url),
     };
+    if (person.person_photo_icon_url) {
+      urls.icon = buildStaticUrl(person.person_photo_icon_url);
+    }
+    if (person.person_photo_web_url) {
+      urls.webview = buildStaticUrl(person.person_photo_web_url);
+    }
+    return urls;
   });
 
   displayPhotoUrls = computed(() => this.photoPreviewUrls() ?? this.currentPhotoUrls());
@@ -76,37 +82,25 @@ export class PersonEditComponent {
     }
   });
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+  onPhotoUpload(file: File): void {
+    this.photoUploadLoading.set(true);
+    this.personStore.uploadPersonPhoto(file).subscribe({
+      next: (response: PhotoUploadResponse) => {
+        this.photoPreviewUrls.set({
+          original: buildStaticUrl(response.original),
+          icon: buildStaticUrl(response.icon),
+          webview: buildStaticUrl(response.webview),
+        });
+        this.photoUploadLoading.set(false);
+      },
+      error: () => {
+        this.photoUploadLoading.set(false);
+      },
+    });
+  }
 
-      if (!file.type.startsWith('image/')) {
-        this.alerts.open('Please select an image file', { label: 'Error', appearance: 'negative' }).subscribe();
-        return;
-      }
-
-      const maxSize = 5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        this.alerts.open('File size must be less than 5MB', { label: 'Error', appearance: 'negative' }).subscribe();
-        return;
-      }
-
-      this.photoUploadLoading.set(true);
-      this.personStore.uploadPersonPhoto(file).subscribe({
-        next: (response: PhotoUploadResponse) => {
-          this.photoPreviewUrls.set({
-            original: buildStaticUrl(response.original),
-            icon: buildStaticUrl(response.icon),
-            webview: buildStaticUrl(response.webview),
-          });
-          this.photoUploadLoading.set(false);
-        },
-        error: () => {
-          this.photoUploadLoading.set(false);
-        },
-      });
-    }
+  onPhotoRemove(): void {
+    this.photoPreviewUrls.set(null);
   }
 
   onSubmit(): void {
@@ -132,8 +126,12 @@ export class PersonEditComponent {
 
       if (newPhotoUrls) {
         data.person_photo_url = newPhotoUrls.original.replace(`${API_BASE_URL}/`, '');
-        data.person_photo_icon_url = newPhotoUrls.icon.replace(`${API_BASE_URL}/`, '');
-        data.person_photo_web_url = newPhotoUrls.webview.replace(`${API_BASE_URL}/`, '');
+        if (newPhotoUrls.icon) {
+          data.person_photo_icon_url = newPhotoUrls.icon.replace(`${API_BASE_URL}/`, '');
+        }
+        if (newPhotoUrls.webview) {
+          data.person_photo_web_url = newPhotoUrls.webview.replace(`${API_BASE_URL}/`, '');
+        }
       }
 
       withUpdateAlert(

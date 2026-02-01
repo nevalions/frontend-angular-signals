@@ -88,7 +88,7 @@
 
       <div class="match-form__field">
         <label class="match-form__label">Main Sponsor</label>
-        <tui-textfield tuiChevron [stringify]="sponsorStringify">
+        <tui-textfield tuiChevron [content]="sponsorContent" [stringify]="sponsorStringify">
           <input
             placeholder="Select Main Sponsor (optional)"
             tuiSelect
@@ -104,7 +104,7 @@
 
       <div class="match-form__field">
         <label class="match-form__label">Sponsor Line</label>
-        <tui-textfield tuiChevron [stringify]="sponsorLineStringify">
+        <tui-textfield tuiChevron [content]="sponsorLineContent" [stringify]="sponsorLineStringify">
           <input
             placeholder="Select Sponsor Line (optional)"
             tuiSelect

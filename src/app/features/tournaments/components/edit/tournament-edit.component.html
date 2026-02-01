@@ -76,22 +76,14 @@
       </div>
 
       <div class="tournament-edit__field">
-        <label for="tournament_logo" class="tournament-edit__label">Logo</label>
-        @if (displayLogoUrls()?.webview) {
-          <div class="tournament-edit__current-logo">
-            <img [src]="displayLogoUrls()!.webview" alt="Current logo" class="tournament-edit__logo-preview" />
-          </div>
-        }
-        <input
-          id="tournament_logo"
-          type="file"
-          (change)="onFileSelected($event)"
-          class="tournament-edit__file"
-          accept="image/*"
+        <app-image-upload
+          label="Logo"
+          mode="three-size"
+          [currentUrls]="displayLogoUrls()"
+          [uploading]="logoUploadLoading()"
+          (upload)="onLogoUpload($event)"
+          (remove)="onLogoRemove()"
         />
-        @if (logoUploadLoading()) {
-          <div class="tournament-edit__loading">Uploading logo...</div>
-        }
       </div>
     </form>
   } @else {

@@ -17,7 +17,7 @@
           @if (teamALogoUrl(); as logo) {
             <img [src]="logo" alt="Team A Logo" class="match-detail__team-logo" />
           }
-          <div class="match-detail__team-name">{{ m.team_a?.title || 'Team A' }}</div>
+          <div class="match-detail__team-name">{{ comprehensiveData()?.teams?.team_a?.title || 'Team A' }}</div>
         </div>
 
         <div class="match-detail__score">
@@ -28,7 +28,7 @@
           @if (teamBLogoUrl(); as logo) {
             <img [src]="logo" alt="Team B Logo" class="match-detail__team-logo" />
           }
-          <div class="match-detail__team-name">{{ m.team_b?.title || 'Team B' }}</div>
+          <div class="match-detail__team-name">{{ comprehensiveData()?.teams?.team_b?.title || 'Team B' }}</div>
         </div>
       </div>
 

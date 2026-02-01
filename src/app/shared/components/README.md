@@ -579,3 +579,141 @@ cancel(): void {
 }
 ```
 
+### ImageUploadComponent
+
+**Location:** `src/app/shared/components/image-upload/`
+
+A reusable image upload component with polished UI, supporting both single and three-size image uploads.
+
+**Features:**
+- Drop-zone style file input with drag-and-drop visual
+- Loading state with spinner
+- Image preview with remove button
+- Configurable file size limit (default: 5MB)
+- Image type validation
+- Two upload modes: single image or three-size (original, icon, webview)
+- Signal-based reactive API
+- Built with Taiga UI components
+
+**Usage Example:**
+
+```typescript
+import { ImageUploadComponent, type ImageUrls } from '../../../../shared/components/image-upload/image-upload.component';
+
+@Component({
+  selector: 'app-team-create',
+  standalone: true,
+  imports: [ImageUploadComponent],
+  template: `
+    <app-image-upload
+      label="Team Logo"
+      mode="three-size"
+      [currentUrls]="logoPreviewUrls()"
+      [uploading]="logoUploadLoading()"
+      (upload)="onLogoUpload($event)"
+      (remove)="onLogoRemove()"
+    />
+  `,
+})
+export class TeamCreateComponent {
+  logoUploadLoading = signal(false);
+  logoPreviewUrls = signal<ImageUrls | null>(null);
+
+  onLogoUpload(file: File): void {
+    this.logoUploadLoading.set(true);
+    this.teamStore.uploadTeamLogo(file).subscribe({
+      next: (response) => {
+        this.logoPreviewUrls.set({
+          original: buildStaticUrl(response.original),
+          icon: buildStaticUrl(response.icon),
+          webview: buildStaticUrl(response.webview),
+        });
+        this.logoUploadLoading.set(false);
+      },
+      error: () => {
+        this.logoUploadLoading.set(false);
+      },
+    });
+  }
+
+  onLogoRemove(): void {
+    this.logoPreviewUrls.set(null);
+  }
+}
+```
+
+**Inputs:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|----------|-------------|
+| `label` | `string` | Yes | - | Label text for the upload field |
+| `mode` | `'single' \| 'three-size'` | No | `'single'` | Upload mode - single image or three-size (original, icon, webview) |
+| `maxFileSizeMB` | `number` | No | `5` | Maximum file size in megabytes |
+| `currentUrls` | `ImageUrls \| null` | No | `null` | Current image URLs to display (for edit mode) |
+| `uploading` | `boolean` | No | `false` | Loading state indicator |
+
+**Outputs:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `upload` | `EventEmitter<File>` | Emitted when a file is selected and passes validation |
+| `remove` | `EventEmitter<void>` | Emitted when the remove button is clicked |
+
+**ImageUrls Interface:**
+
+```typescript
+export interface ImageUrls {
+  original: string;   // Required - original/full-size image URL
+  icon?: string;      // Optional - icon/square thumbnail URL
+  webview?: string;   // Optional - webview/optimized URL
+}
+```
+
+**Mode-Specific Behavior:**
+
+**Single Mode (`mode="single"`):**
+- Displays one image preview card
+- Original URL is required
+- Reupload button clears the current image, allowing user to upload a new one
+
+**Three-Size Mode (`mode="three-size"`):**
+- Displays three preview cards in a grid: Original, Icon, Web View
+- All three URLs are required for preview display
+- Reupload button clears all three sizes, allowing user to upload a new one
+- Used for team logos, person photos, tournament logos
+
+**Validation:**
+
+- File must be an image type (`image/*`)
+- File size must be less than `maxFileSizeMB`
+- Validation errors are shown using `TuiAlertService`
+
+**Remove/Reupload Behavior:**
+
+- The "Reupload" button (Taiga UI `outline` button with `@tui.upload` icon) clears the current image URL(s)
+- Button is displayed below the image preview in a centered container
+- This resets the upload state, allowing the user to select and upload a new image
+- In parent component, this sets the preview URL signal to `null`
+- The form submit logic handles the new image upload when provided
+
+**File Size Display:**
+
+The component automatically displays the file size limit as "Max XMB" in the upload hint.
+
+**Examples Used In:**
+- Team create page (team logo upload)
+- Team edit page (team logo update)
+- Person create page (photo upload)
+- Person edit page (photo update)
+- Tournament create page (logo upload)
+- Tournament edit page (logo update)
+
+**Best Practices:**
+1. Use `mode="three-size"` for entities that support multiple image sizes (teams, persons, tournaments)
+2. Use `mode="single"` for single-size images (scoreboard logos, etc.)
+3. Set appropriate `maxFileSizeMB` based on entity requirements (teams/persons/tournaments: 5MB)
+4. Handle upload errors by checking the `loading` state and showing appropriate error messages
+5. Use `buildStaticUrl()` to convert backend paths to full URLs for preview display
+6. The component handles file type and size validation automatically, so no need to duplicate this logic
+7. For edit forms, pass the current URLs via `currentUrls` to show existing images
+

@@ -82,61 +82,46 @@
     </div>
 
     <div class="team-edit__field team-edit__field--logo">
-      <label for="team_logo" class="team-edit__label">Team Logo</label>
-      @if (displayLogoUrls()) {
-        <div class="team-edit__current-logos">
-          @if (displayLogoUrls()?.original) {
-            <div class="team-edit__logo-preview">
-              <img [src]="displayLogoUrls()!.original" alt="Current logo" />
-              <span>Original</span>
-            </div>
-          }
-          @if (displayLogoUrls()?.icon) {
-            <div class="team-edit__logo-preview">
-              <img [src]="displayLogoUrls()!.icon" alt="Current icon" />
-              <span>Icon</span>
-            </div>
-          }
-          @if (displayLogoUrls()?.webview) {
-            <div class="team-edit__logo-preview">
-              <img [src]="displayLogoUrls()!.webview" alt="Current web view" />
-              <span>Web View</span>
-            </div>
-          }
-        </div>
-      }
-      <input
-        id="team_logo"
-        type="file"
-        (change)="onFileSelected($event)"
-        class="team-edit__file"
-        accept="image/*"
-      />
-      @if (logoUploadLoading()) {
-        <div class="team-edit__loading">Uploading logo...</div>
-      }
-    </div>
-
-    <div class="team-edit__field">
-      <label for="sponsor_line_id" class="team-edit__label">Sponsor Line ID</label>
-      <input
-        id="sponsor_line_id"
-        type="text"
-        formControlName="sponsor_line_id"
-        class="team-edit__input"
-        placeholder="Enter sponsor line ID (optional)"
+      <app-image-upload
+        label="Team Logo"
+        mode="three-size"
+        [currentUrls]="displayLogoUrls()"
+        [uploading]="logoUploadLoading()"
+        (upload)="onLogoUpload($event)"
+        (remove)="onLogoRemove()"
       />
     </div>
 
     <div class="team-edit__field">
-      <label for="main_sponsor_id" class="team-edit__label">Main Sponsor ID</label>
-      <input
-        id="main_sponsor_id"
-        type="text"
-        formControlName="main_sponsor_id"
-        class="team-edit__input"
-        placeholder="Enter main sponsor ID (optional)"
-      />
+      <label class="team-edit__label">Main Sponsor</label>
+      <tui-textfield tuiChevron [content]="sponsorContent" [stringify]="sponsorStringify">
+        <input
+          placeholder="Select Main Sponsor (optional)"
+          tuiSelect
+          formControlName="main_sponsor_id"
+        />
+        <tui-data-list *tuiTextfieldDropdown size="l">
+          @for (sponsor of sponsors(); track sponsor.id) {
+            <button new tuiOption type="button" [value]="sponsor.id" class="team-edit__sponsor-option">{{ formatTitle(sponsor.title) }}</button>
+          }
+        </tui-data-list>
+      </tui-textfield>
+    </div>
+
+    <div class="team-edit__field">
+      <label class="team-edit__label">Sponsor Line</label>
+      <tui-textfield tuiChevron [content]="sponsorLineContent" [stringify]="sponsorLineStringify">
+        <input
+          placeholder="Select Sponsor Line (optional)"
+          tuiSelect
+          formControlName="sponsor_line_id"
+        />
+        <tui-data-list *tuiTextfieldDropdown size="l">
+          @for (line of sponsorLines(); track line.id) {
+            <button new tuiOption type="button" [value]="line.id" class="team-edit__sponsor-line-option">{{ formatTitle(line.title) }}</button>
+          }
+        </tui-data-list>
+      </tui-textfield>
     </div>
   </form>
 </div>

@@ -56,22 +56,14 @@
       </div>
 
       <div class="person-edit__field">
-        <label for="person_photo" class="person-edit__label">Photo</label>
-        @if (displayPhotoUrls()?.webview) {
-          <div class="person-edit__current-photo">
-            <img [src]="displayPhotoUrls()!.webview" alt="Current photo" class="person-edit__photo-preview" />
-          </div>
-        }
-        <input
-          id="person_photo"
-          type="file"
-          (change)="onFileSelected($event)"
-          class="person-edit__file"
-          accept="image/*"
+        <app-image-upload
+          label="Photo"
+          mode="three-size"
+          [currentUrls]="displayPhotoUrls()"
+          [uploading]="photoUploadLoading()"
+          (upload)="onPhotoUpload($event)"
+          (remove)="onPhotoRemove()"
         />
-        @if (photoUploadLoading()) {
-          <div class="person-edit__loading">Uploading photo...</div>
-        }
       </div>
     </form>
   }

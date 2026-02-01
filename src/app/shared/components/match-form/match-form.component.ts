@@ -121,6 +121,18 @@ export class MatchFormComponent {
     return team ? this.formatTeamTitle(team.title) : '';
   });
 
+  sponsorContent = computed(() => {
+    const id = this.matchForm.get('main_sponsor_id')?.value;
+    const sponsor = this.sponsors().find((s) => s.id === id);
+    return sponsor ? this.formatTeamTitle(sponsor.title) : '';
+  });
+
+  sponsorLineContent = computed(() => {
+    const id = this.matchForm.get('sponsor_line_id')?.value;
+    const line = this.sponsorLines().find((l) => l.id === id);
+    return line ? this.formatTeamTitle(line.title) : '';
+  });
+
   onSubmit(): void {
     if (this.matchForm.valid) {
       const formData = this.matchForm.value;

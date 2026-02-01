@@ -58,9 +58,11 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   });
 
   matchTitle = computed(() => {
-    const m = this.match();
-    if (!m) return '';
-    return `${m.team_a?.title || 'Team A'} vs ${m.team_b?.title || 'Team B'}`;
+    const data = this.comprehensiveData();
+    const teamA = data?.teams?.team_a;
+    const teamB = data?.teams?.team_b;
+
+    return `${teamA?.title || 'Team A'} vs ${teamB?.title || 'Team B'}`;
   });
 
   scoreDisplay = computed(() => {
@@ -85,13 +87,13 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   ];
 
   teamALogoUrl = computed(() => {
-    const m = this.match();
-    return m?.team_a?.team_logo_icon_url ? buildStaticUrl(m.team_a.team_logo_icon_url) : null;
+    const teamA = this.comprehensiveData()?.teams?.team_a;
+    return teamA?.team_logo_icon_url ? buildStaticUrl(teamA.team_logo_icon_url) : null;
   });
 
   teamBLogoUrl = computed(() => {
-    const m = this.match();
-    return m?.team_b?.team_logo_icon_url ? buildStaticUrl(m.team_b.team_logo_icon_url) : null;
+    const teamB = this.comprehensiveData()?.teams?.team_b;
+    return teamB?.team_logo_icon_url ? buildStaticUrl(teamB.team_logo_icon_url) : null;
   });
 
   tournamentLogoUrl = computed(() => {

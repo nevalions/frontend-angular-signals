@@ -1,0 +1,139 @@
+.image-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.image-upload__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--tui-text-primary);
+}
+
+.image-upload__area {
+  min-height: 100px;
+}
+
+.file-upload-label {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.file-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
+  border: 2px dashed var(--tui-border-normal);
+  border-radius: 10px;
+  background: var(--tui-background-neutral-1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--tui-text-action);
+    background: var(--tui-background-neutral-2);
+  }
+}
+
+.upload-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--tui-text-secondary);
+}
+
+.upload-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tui-text-primary);
+}
+
+.upload-hint {
+  font-size: 11px;
+  color: var(--tui-text-secondary);
+}
+
+.image-uploading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 16px;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 10px;
+  background: var(--tui-background-neutral-1);
+
+  span {
+    font-size: 13px;
+    color: var(--tui-text-secondary);
+  }
+}
+
+.image-preview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 10px;
+  background: var(--tui-background-neutral-1);
+  min-height: 100px;
+  min-width: 100px;
+}
+
+.image-img {
+  max-width: 100%;
+  max-height: 80px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.image-size-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--tui-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.reupload-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.image-preview-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .image-preview-grid {
+    grid-template-columns: 1fr;
+  }
+}

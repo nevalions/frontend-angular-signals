@@ -10,12 +10,13 @@ import { ActivatedRoute } from '@angular/router';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
+import { ImageUploadComponent, type ImageUrls } from '../../../../shared/components/image-upload/image-upload.component';
 
 @Component({
   selector: 'app-tournament-edit',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, TuiButton],
+  imports: [CommonModule, ReactiveFormsModule, TuiButton, ImageUploadComponent],
   templateUrl: './tournament-edit.component.html',
   styleUrl: './tournament-edit.component.less',
 })
@@ -37,16 +38,21 @@ export class TournamentEditComponent implements OnInit {
   });
 
   logoUploadLoading = signal(false);
-  logoPreviewUrls = signal<{ original: string; icon: string; webview: string } | null>(null);
+  logoPreviewUrls = signal<ImageUrls | null>(null);
 
-  currentLogoUrls = computed(() => {
+  currentLogoUrls = computed<ImageUrls | null>(() => {
     const tournament = this.tournament;
-    if (!tournament) return null;
-    return {
-      original: tournament.tournament_logo_url ? buildStaticUrl(tournament.tournament_logo_url) : null,
-      icon: tournament.tournament_logo_icon_url ? buildStaticUrl(tournament.tournament_logo_icon_url) : null,
-      webview: tournament.tournament_logo_web_url ? buildStaticUrl(tournament.tournament_logo_web_url) : null,
+    if (!tournament || !tournament.tournament_logo_url) return null;
+    const urls: ImageUrls = {
+      original: buildStaticUrl(tournament.tournament_logo_url),
     };
+    if (tournament.tournament_logo_icon_url) {
+      urls.icon = buildStaticUrl(tournament.tournament_logo_icon_url);
+    }
+    if (tournament.tournament_logo_web_url) {
+      urls.webview = buildStaticUrl(tournament.tournament_logo_web_url);
+    }
+    return urls;
   });
 
   displayLogoUrls = computed(() => this.logoPreviewUrls() ?? this.currentLogoUrls());
@@ -72,37 +78,25 @@ export class TournamentEditComponent implements OnInit {
     }
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+  onLogoUpload(file: File): void {
+    this.logoUploadLoading.set(true);
+    this.tournamentStore.uploadTournamentLogo(file).subscribe({
+      next: (response) => {
+        this.logoPreviewUrls.set({
+          original: buildStaticUrl(response.original),
+          icon: buildStaticUrl(response.icon),
+          webview: buildStaticUrl(response.webview),
+        });
+        this.logoUploadLoading.set(false);
+      },
+      error: () => {
+        this.logoUploadLoading.set(false);
+      },
+    });
+  }
 
-      if (!file.type.startsWith('image/')) {
-        this.alerts.open('Please select an image file', { label: 'Error', appearance: 'negative' }).subscribe();
-        return;
-      }
-
-      const maxSize = 5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        this.alerts.open('File size must be less than 5MB', { label: 'Error', appearance: 'negative' }).subscribe();
-        return;
-      }
-
-      this.logoUploadLoading.set(true);
-      this.tournamentStore.uploadTournamentLogo(file).subscribe({
-        next: (response) => {
-          this.logoPreviewUrls.set({
-            original: buildStaticUrl(response.original),
-            icon: buildStaticUrl(response.icon),
-            webview: buildStaticUrl(response.webview),
-          });
-          this.logoUploadLoading.set(false);
-        },
-        error: () => {
-          this.logoUploadLoading.set(false);
-        },
-      });
-    }
+  onLogoRemove(): void {
+    this.logoPreviewUrls.set(null);
   }
 
   onSubmit(): void {
@@ -126,8 +120,12 @@ export class TournamentEditComponent implements OnInit {
       const newLogoUrls = this.logoPreviewUrls();
       if (newLogoUrls) {
         updateData.tournament_logo_url = newLogoUrls.original.replace(`${API_BASE_URL}/`, '');
-        updateData.tournament_logo_icon_url = newLogoUrls.icon.replace(`${API_BASE_URL}/`, '');
-        updateData.tournament_logo_web_url = newLogoUrls.webview.replace(`${API_BASE_URL}/`, '');
+        if (newLogoUrls.icon) {
+          updateData.tournament_logo_icon_url = newLogoUrls.icon.replace(`${API_BASE_URL}/`, '');
+        }
+        if (newLogoUrls.webview) {
+          updateData.tournament_logo_web_url = newLogoUrls.webview.replace(`${API_BASE_URL}/`, '');
+        }
       }
 
       if (formData.main_sponsor_id) {

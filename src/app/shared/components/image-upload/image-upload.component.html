@@ -1,0 +1,102 @@
+<div class="image-upload">
+  <label class="image-upload__label">{{ label() }}</label>
+
+  @if (mode() === 'single') {
+    <div class="image-upload__area">
+      @if (!hasOriginal() && !uploading()) {
+        <label class="file-upload-label">
+          <input
+            type="file"
+            accept="image/*"
+            class="file-input-hidden"
+            (change)="onFileSelected($event)"
+          />
+          <div class="upload-content">
+            <tui-icon icon="@tui.upload" class="upload-icon" />
+            <span class="upload-text">Drop image here or click to upload</span>
+            <span class="upload-hint">Max {{ maxFileSizeText() }}, image files only</span>
+          </div>
+        </label>
+      }
+      @if (uploading()) {
+        <div class="image-uploading">
+          <tui-loader size="m" />
+          <span>Uploading image...</span>
+        </div>
+      }
+      @if (hasOriginal()) {
+        <div class="image-preview-card">
+          <img [src]="displayUrls()!.original" alt="Preview" class="image-img" />
+          <div class="reupload-actions">
+            <button
+              tuiButton
+              type="button"
+              appearance="outline"
+              iconStart="@tui.upload"
+              size="s"
+              (click)="removeImage()"
+            >
+              Reupload
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (mode() === 'three-size') {
+    <div class="image-upload__area">
+      @if (!hasThreeSize() && !uploading()) {
+        <label class="file-upload-label">
+          <input
+            type="file"
+            accept="image/*"
+            class="file-input-hidden"
+            (change)="onFileSelected($event)"
+          />
+          <div class="upload-content">
+            <tui-icon icon="@tui.upload" class="upload-icon" />
+            <span class="upload-text">Drop image here or click to upload</span>
+            <span class="upload-hint">Max {{ maxFileSizeText() }}, image files only</span>
+          </div>
+        </label>
+      }
+      @if (uploading()) {
+        <div class="image-uploading">
+          <tui-loader size="m" />
+          <span>Uploading image...</span>
+        </div>
+      }
+      @if (hasThreeSize()) {
+        <div class="image-preview-wrapper">
+          <div class="image-preview-grid">
+            <div class="image-preview-card">
+              <img [src]="displayUrls()!.original" alt="Original" class="image-img" />
+              <span class="image-size-label">Original</span>
+            </div>
+            <div class="image-preview-card">
+              <img [src]="displayUrls()!.icon" alt="Icon" class="image-img" />
+              <span class="image-size-label">Icon</span>
+            </div>
+            <div class="image-preview-card">
+              <img [src]="displayUrls()!.webview" alt="Web View" class="image-img" />
+              <span class="image-size-label">Web View</span>
+            </div>
+          </div>
+          <div class="reupload-actions">
+            <button
+              tuiButton
+              type="button"
+              appearance="outline"
+              iconStart="@tui.upload"
+              size="s"
+              (click)="removeImage()"
+            >
+              Reupload
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
