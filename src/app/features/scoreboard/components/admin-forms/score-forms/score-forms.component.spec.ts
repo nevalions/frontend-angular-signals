@@ -50,7 +50,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'ooo',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     expect(component['selectedQtr']()).toBe('3rd');
@@ -67,7 +67,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'ooo',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     component['pendingScoreTeamA'].set(0);
@@ -90,7 +90,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'ooo',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     component['pendingScoreTeamB'].set(3);
@@ -113,7 +113,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'ooo',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     const emitSpy = vi.spyOn(component.timeoutChange, 'emit');
@@ -133,7 +133,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'ooo',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     const emitSpy = vi.spyOn(component.timeoutChange, 'emit');
@@ -153,7 +153,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'oo●',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     const emitSpy = vi.spyOn(component.timeoutChange, 'emit');
@@ -173,7 +173,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'ooo',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     component['pendingScoreTeamA'].set(0);
@@ -196,7 +196,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'ooo',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     const indicators = component['indicatorsTeamA']();
@@ -214,7 +214,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'o●●',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     const indicators = component['indicatorsTeamB']();
@@ -248,7 +248,7 @@ describe('ScoreFormsComponent', () => {
       timeout_team_b: 'ooo',
     };
 
-    component.matchData = vi.fn(() => matchData) as any;
+    component.matchData = vi.fn(() => matchData) as unknown as typeof component.matchData;
     fixture.detectChanges();
 
     component['pendingScoreTeamA'].set(10);

@@ -335,7 +335,7 @@ describe('WebSocketService', () => {
       const message = {
         type: 'event-update',
         match_id: 123,
-        events: 'invalid' as any,
+        events: 'invalid' as unknown as FootballEvent[],
       };
 
       const consoleSpy = vi.spyOn(console, 'error');
@@ -475,7 +475,7 @@ describe('WebSocketService', () => {
       const message = {
         type: 'statistics-update',
         match_id: 123,
-        statistics: 'invalid' as any,
+        statistics: 'invalid' as unknown as MatchStats,
       };
 
       const consoleSpy = vi.spyOn(console, 'error');

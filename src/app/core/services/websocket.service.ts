@@ -2,7 +2,7 @@ import { DestroyRef, computed, inject, Injectable, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { catchError, tap } from 'rxjs/operators';
-import { EMPTY, Subject } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import { buildWsUrl } from '../config/api.constants';
 import { GameClock } from '../../features/matches/models/gameclock.model';
 import { PlayClock } from '../../features/matches/models/playclock.model';
@@ -78,7 +78,6 @@ export class WebSocketService {
   private socket$: WebSocketSubject<WebSocketMessage> | null = null;
   private currentMatchId: number | null = null;
   private readonly clientId: string;
-  private closing$ = new Subject<void>();
 
   // Reconnection configuration
   private readonly maxRetryAttempts = 3;
@@ -255,9 +254,6 @@ export class WebSocketService {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
     }
-
-    // Signal closing
-    this.closing$.next();
 
     // Close socket
     if (this.socket$) {

@@ -18,8 +18,6 @@ describe('ClockPredictor', () => {
 
   describe('sync', () => {
     it('should emit frozen value when status is stopped', () => {
-      const now = Date.now();
-
       predictor.sync({
         gameclock: 40,
         gameclock_max: 40,
