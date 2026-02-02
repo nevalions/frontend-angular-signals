@@ -354,7 +354,7 @@ export class MatchPlayersTabComponent {
     return team === 'A' ? this.selectedAvailablePlayerTeamA() : this.selectedAvailablePlayerTeamB();
   }
 
-  private setSelectedAvailablePlayer(team: 'A' | 'B', player: MatchAvailablePlayer | null): void {
+  setSelectedAvailablePlayer(team: 'A' | 'B', player: MatchAvailablePlayer | null): void {
     if (team === 'A') {
       this.selectedAvailablePlayerTeamA.set(player);
     } else {

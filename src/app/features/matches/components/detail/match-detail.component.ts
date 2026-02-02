@@ -38,6 +38,8 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   private wsService = inject(WebSocketService);
   private destroyRef = inject(DestroyRef);
 
+  private previousMatchId: number | null = null;
+
   sportId = createNumberParamSignal(this.route, 'sportId');
 
   matchId = createNumberParamSignal(this.route, 'id');
@@ -55,6 +57,27 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   activeTab = createStringParamSignal(this.route, 'tab', {
     source: 'queryParamMap',
     defaultValue: 'players',
+  });
+
+  matchIdChangeEffect = effect(() => {
+    const id = this.matchId();
+    if (!id) return;
+
+    if (this.previousMatchId === id) return;
+
+    if (this.previousMatchId !== null) {
+      untracked(() => {
+        this.loading.set(true);
+        this.error.set(null);
+        this.match.set(null);
+        this.comprehensiveData.set(null);
+        this.scoreboard.set(null);
+      });
+
+      this.wsService.connect(id);
+    }
+
+    this.previousMatchId = id;
   });
 
   matchTitle = computed(() => {
