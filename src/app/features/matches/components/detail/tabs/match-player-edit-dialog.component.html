@@ -16,8 +16,7 @@
           tuiTextfield
           type="text"
           placeholder="Enter number"
-          [ngModel]="playerNumber()"
-          (ngModelChange)="playerNumber.set($event)" />
+          [(ngModel)]="playerNumberValue" />
       </tui-textfield>
     </div>
 

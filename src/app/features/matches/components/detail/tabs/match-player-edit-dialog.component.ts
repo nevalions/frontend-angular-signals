@@ -61,6 +61,14 @@ export class MatchPlayerEditDialogComponent {
     return position ? position.title : 'Unknown position';
   };
 
+  get playerNumberValue(): string {
+    return this.playerNumber();
+  }
+
+  set playerNumberValue(value: string) {
+    this.playerNumber.set(value);
+  }
+
   close(): void {
     this.context.completeWith({});
   }

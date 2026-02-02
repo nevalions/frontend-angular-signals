@@ -563,7 +563,15 @@ Sent when: match, matchdata, scoreboard, or teams change
     },
 
     // Players (if included)
-    "players": [...],
+    "players": [
+      {
+        "id": 100,
+        "match_number": "12",
+        "player_team_tournament": {
+          "player_number": "12"
+        }
+      }
+    ],
 
     // Events (if included)
     "events": [...]
@@ -1019,6 +1027,13 @@ async def match_data_listener(self, connection, pid, channel, payload):
     # Invalidate cache when data changes
     if self._cache_service:
         self._cache_service.invalidate_match_data(match_id)
+```
+
+Player match updates also invalidate match cache to avoid stale players payloads:
+```python
+if self._cache_service:
+    self._cache_service.invalidate_players(match_id)
+    self._cache_service.invalidate_match_data(match_id)
 ```
 
 **Cache services:**
