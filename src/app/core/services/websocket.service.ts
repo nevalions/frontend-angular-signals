@@ -207,6 +207,9 @@ export class WebSocketService {
       this.resetClockSignals();
       this.disconnect();
     }
+    if (!isReconnect) {
+      this.resetData();
+    }
     this.connectionManager.connect(matchId, isReconnect);
   }
 

@@ -415,7 +415,7 @@ ngOnDestroy() {
 
  ```typescript
 // Connection management
-connect(matchId: number): void
+connect(matchId: number, isReconnect = false): void
 disconnect(): void
 sendMessage(message: unknown): void
 resetData(): void
