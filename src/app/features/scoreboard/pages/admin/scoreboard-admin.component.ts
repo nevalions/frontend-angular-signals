@@ -1,14 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, OnInit, signal, untracked } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
-import { createNumberParamSignal } from '../../../../core/utils/route-param-helper.util';
-import { ScoreboardStoreService } from '../../services/scoreboard-store.service';
-import { ScoreboardClockService } from '../../services/scoreboard-clock.service';
-import { WebSocketService } from '../../../../core/services/websocket.service';
-import { ComprehensiveMatchData } from '../../../matches/models/comprehensive-match.model';
-import { FootballEventCreate, FootballEventUpdate } from '../../../matches/models/football-event.model';
-import { Scoreboard, ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
-import { PlayerMatchUpdate } from '../../../matches/models/player-match.model';
 import { ScoreboardDisplayComponent } from '../../components/display/scoreboard-display.component';
 import { ScoreFormsComponent, ScoreChangeEvent, TimeoutChangeEvent, QuarterChangeEvent } from '../../components/admin-forms/score-forms/score-forms.component';
 import { TimeFormsComponent, GameClockActionEvent, PlayClockActionEvent } from '../../components/admin-forms/time-forms/time-forms.component';
@@ -16,8 +7,10 @@ import { DownDistanceFormsComponent, DownDistanceChangeEvent } from '../../compo
 import { ScoreboardSettingsFormsComponent } from '../../components/admin-forms/scoreboard-settings-forms/scoreboard-settings-forms.component';
 import { EventsFormsComponent } from '../../components/admin-forms/events-forms/events-forms.component';
 import { ConnectionIndicatorComponent } from '../../../../shared/components/connection-indicator/connection-indicator.component';
-import { CollapsibleSectionService } from '../../components/admin-forms/collapsible-section/collapsible-section.service';
-import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
+import { FootballEventCreate, FootballEventUpdate } from '../../../matches/models/football-event.model';
+import { PlayerMatchUpdate } from '../../../matches/models/player-match.model';
+import { ScoreboardUpdate } from '../../../matches/models/scoreboard.model';
+import { ScoreboardAdminFacade } from './scoreboard-admin.facade';
 
 @Component({
   selector: 'app-scoreboard-admin',
@@ -33,479 +26,92 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
     EventsFormsComponent,
     ConnectionIndicatorComponent,
   ],
+  providers: [ScoreboardAdminFacade],
   templateUrl: './scoreboard-admin.component.html',
   styleUrl: './scoreboard-admin.component.less',
 })
-export class ScoreboardAdminComponent implements OnInit, OnDestroy {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private scoreboardStore = inject(ScoreboardStoreService);
-  private clockService = inject(ScoreboardClockService);
-  private wsService = inject(WebSocketService);
-  private readonly collapsibleSectionService = inject(CollapsibleSectionService);
-  private readonly navigationHelper = inject(NavigationHelperService);
+export class ScoreboardAdminComponent implements OnInit {
+  private readonly facade = inject(ScoreboardAdminFacade);
 
-  matchId = createNumberParamSignal(this.route, 'matchId');
+  protected readonly data = this.facade.data;
+  protected readonly scoreboard = this.facade.scoreboard;
+  protected readonly matchStats = this.facade.matchStats;
+  protected readonly loading = this.facade.loading;
+  protected readonly error = this.facade.error;
 
-  // Data signals
-  protected readonly data = signal<ComprehensiveMatchData | null>(null);
-  protected readonly scoreboard = signal<Scoreboard | null>(null);
-  protected readonly matchStats = computed(() => this.wsService.statistics());
-  protected readonly loading = signal(true);
-  protected readonly error = signal<string | null>(null);
+  protected readonly gameClock = this.facade.gameClock;
+  protected readonly playClock = this.facade.playClock;
+  protected readonly gameClockLocked = this.facade.gameClockLocked;
+  protected readonly playClockLocked = this.facade.playClockLocked;
+  protected readonly gameClockWithPredictedValue = this.facade.gameClockWithPredictedValue;
+  protected readonly playClockWithPredictedValue = this.facade.playClockWithPredictedValue;
 
-  protected readonly gameClock = computed(() => this.clockService.gameClock());
-  protected readonly playClock = computed(() => this.clockService.playClock());
-  protected readonly gameClockLocked = computed(() => this.clockService.gameClockActionLocked());
-  protected readonly playClockLocked = computed(() => this.clockService.playClockActionLocked());
+  protected readonly hideAllForms = this.facade.hideAllForms;
 
-  protected readonly gameClockWithPredictedValue = computed(() => {
-    const gc = this.clockService.gameClock();
-    const predicted = this.clockService.predictedGameClock();
-    if (!gc) return null;
-    return { ...gc, gameclock: predicted };
-  });
-
-  protected readonly playClockWithPredictedValue = computed(() => {
-    const pc = this.clockService.playClock();
-    const predicted = this.clockService.predictedPlayClock();
-    if (!pc) return null;
-    return { ...pc, playclock: predicted };
-  });
-
-  // UI state
-  protected readonly hideAllForms = signal(false);
-
-  // WebSocket effects - update data in real-time
-
-  // Handle initial-load message: sets all data at once
-  private wsMatchDataEffect = effect(() => {
-    const message = this.wsService.matchData();
-    if (!message) return;
-
-    const current = untracked(() => this.data());
-
-    // Handle initial-load message: use as initial dataset if current is null and has teams
-    if (!current && message['teams']) {
-      this.data.set({
-        ...message,
-        players: message['players'] || [],
-        events: message['events'] || [],
-      } as unknown as ComprehensiveMatchData);
-      this.loading.set(false);
-
-      // Also update scoreboard signal if present in message
-      if (message.scoreboard) {
-        this.scoreboard.set(message.scoreboard as Scoreboard);
-      }
-      return;
-    }
-
-    // Skip if no current data yet (waiting for initial-load or HTTP load)
-    if (!current) return;
-
-    // Note: Subsequent updates (match_data, scoreboard) are handled by partial effects
-    // Don't merge here to avoid type conflicts and data loss
-  });
-
-  // Handle partial match_data updates (e.g., score, quarter changes)
-  private wsMatchDataPartialEffect = effect(() => {
-    const partial = this.wsService.matchDataPartial();
-    if (!partial) return;
-
-    const current = untracked(() => this.data());
-    if (!current) return;
-
-    // Merge only match_data field
-    this.data.set({
-      ...current,
-      match_data: partial,
-    });
-  });
-
-  // Handle partial scoreboard_data updates (e.g., scoreboard settings)
-  private wsScoreboardPartialEffect = effect(() => {
-    const partial = this.wsService.scoreboardPartial();
-    if (!partial) return;
-
-    const current = untracked(() => this.data());
-    if (!current) return;
-
-    // Merge only scoreboard field
-    this.data.set({
-      ...current,
-      scoreboard: partial as ComprehensiveMatchData['scoreboard'],
-    });
-
-    // Also update separate scoreboard signal (admin-specific)
-    this.scoreboard.set(partial as Scoreboard);
-  });
-
-  // Handle partial match updates (team IDs, dates, sponsors)
-  private wsMatchPartialEffect = effect(() => {
-    const partial = this.wsService.matchPartial();
-    if (!partial) return;
-
-    const current = untracked(() => this.data());
-    if (!current) return;
-
-    // Merge match field
-    this.data.set({
-      ...current,
-      match: partial,
-    });
-  });
-
-  // Handle partial teams updates (colors, logos, names)
-  private wsTeamsPartialEffect = effect(() => {
-    const partial = this.wsService.teamsPartial();
-    if (!partial) return;
-
-    const current = untracked(() => this.data());
-    if (!current) return;
-
-    // Merge teams field
-    this.data.set({
-      ...current,
-      teams: partial,
-    });
-  });
-
-  // Handle players updates (from match-update messages)
-  private wsPlayersFromMatchUpdateEffect = effect(() => {
-    const players = this.wsService.playersPartial();
-    if (!players) return;
-
-    const current = untracked(() => this.data());
-    if (!current) return;
-
-    // Merge players only if different
-    if (JSON.stringify(current.players) !== JSON.stringify(players)) {
-      this.data.set({
-        ...current,
-        players,
-      });
-    }
-  });
-
-  // Handle events updates (from match-update messages)
-  private wsEventsFromMatchUpdateEffect = effect(() => {
-    const events = this.wsService.eventsPartial();
-    if (!events) return;
-
-    const current = untracked(() => this.data());
-    if (!current) return;
-
-    // Merge events only if different
-    if (JSON.stringify(current.events) !== JSON.stringify(events)) {
-      this.data.set({
-        ...current,
-        events,
-      });
-    }
-  });
-
-  // Computed values
-  protected readonly matchTitle = computed(() => {
-    const d = this.data();
-    if (!d?.teams) return 'Loading...';
-    return `${d.teams.team_a?.title || 'Team A'} vs ${d.teams.team_b?.title || 'Team B'}`;
-  });
-
-  protected readonly gameClockSeconds = computed(() => this.clockService.predictedGameClock());
-  protected readonly playClockDisplay = signal<number | null>(null);
-  private playClockClearTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  private playClockHoldActive = signal<boolean>(false);
-  private playClockResetSuppressed = signal<boolean>(false);
-
-  private syncPlayClockDisplay = effect(() => {
-    const pc = this.clockService.playClock();
-    const status = pc?.playclock_status ?? null;
-    const predicted = this.clockService.predictedPlayClock();
-    const seconds = status === 'running' ? predicted : pc?.playclock ?? null;
-
-    if (this.playClockResetSuppressed() && status !== 'running') {
-      this.clearPlayClockTimeout();
-      this.playClockDisplay.set(null);
-      return;
-    }
-
-    if (this.playClockResetSuppressed() && status === 'running') {
-      this.playClockResetSuppressed.set(false);
-    }
-
-    if (seconds == null) {
-      if (this.playClockHoldActive()) {
-        this.playClockDisplay.set(0);
-        return;
-      }
-      this.clearPlayClockTimeout();
-      this.playClockDisplay.set(null);
-      return;
-    }
-
-    if (seconds > 0) {
-      this.clearPlayClockTimeout();
-      this.playClockHoldActive.set(false);
-      this.playClockDisplay.set(seconds);
-      return;
-    }
-
-    this.playClockDisplay.set(0);
-
-    if (this.playClockClearTimeoutId == null) {
-      this.playClockHoldActive.set(true);
-      this.playClockClearTimeoutId = setTimeout(() => {
-        const latest = this.clockService.playClock();
-        const latestStatus = latest?.playclock_status ?? null;
-        const latestPredicted = this.clockService.predictedPlayClock();
-        const latestSeconds = latestStatus === 'running' ? latestPredicted : latest?.playclock ?? null;
-        if (latestSeconds === 0) {
-          this.playClockDisplay.set(null);
-        }
-        this.playClockHoldActive.set(false);
-        this.playClockClearTimeoutId = null;
-      }, 3000);
-    }
-  });
+  protected readonly gameClockSeconds = this.facade.gameClockSeconds;
+  protected readonly playClockDisplay = this.facade.playClockDisplay;
 
   ngOnInit(): void {
-    this.connectWebSocket();
-    this.loadData();
-  }
-
-  ngOnDestroy(): void {
-    this.clearPlayClockTimeout();
-    this.wsService.disconnect();
-  }
-
-  private connectWebSocket(): void {
-    const id = this.matchId();
-    if (id) {
-      this.wsService.connect(id);
-    }
-  }
-
-  private loadData(): void {
-    const id = this.matchId();
-    if (!id) {
-      this.error.set('Invalid match ID');
-      this.loading.set(false);
-      return;
-    }
-
-    this.loading.set(true);
-    this.error.set(null);
-
-    // Data will be loaded via WebSocket initial-load message
-    // No HTTP calls needed here
+    this.facade.init();
   }
 
   navigateBack(): void {
-    const matchId = this.matchId();
-    const data = this.data();
-    const sportId = data?.teams?.team_a?.sport_id;
-    const tournamentId = data?.match?.tournament_id?.toString();
-    
-    if (sportId && matchId) {
-      this.navigationHelper.toMatchDetail(sportId, matchId, undefined, tournamentId);
-    } else {
-      this.navigationHelper.toSportsList();
-    }
+    this.facade.navigateBack();
   }
 
   openHdView(): void {
-    const id = this.matchId();
-    if (id) {
-      // Open HD view in new window
-      window.open(`/scoreboard/match/${id}/hd`, '_blank');
-    }
+    this.facade.openHdView();
   }
 
-  // Event handlers for admin forms
-  // Note: We don't call loadData() after updates - WebSocket will push the changes
   onScoreChange(event: ScoreChangeEvent): void {
-    const matchData = this.data()?.match_data;
-    if (!matchData) return;
-
-    const update = event.team === 'a'
-      ? { score_team_a: event.score }
-      : { score_team_b: event.score };
-
-    this.scoreboardStore.updateMatchData(matchData.id, update).subscribe({
-      error: (err) => console.error('Failed to update score', err),
-    });
+    this.facade.onScoreChange(event);
   }
 
   onQtrChange(event: QuarterChangeEvent): void {
-    const matchData = this.data()?.match_data;
-    if (!matchData) return;
-
-    this.scoreboardStore.updateMatchData(matchData.id, { qtr: event.qtr }).subscribe({
-      error: (err) => console.error('Failed to update quarter', err),
-    });
+    this.facade.onQtrChange(event);
   }
 
   onDownDistanceChange(event: DownDistanceChangeEvent): void {
-    const matchData = this.data()?.match_data;
-    if (!matchData) return;
-
-    this.scoreboardStore.updateMatchData(matchData.id, event).subscribe({
-      error: (err) => console.error('Failed to update down/distance', err),
-    });
+    this.facade.onDownDistanceChange(event);
   }
 
   onFlagToggle(isFlag: boolean): void {
-    const sb = this.scoreboard();
-    if (!sb) return;
-
-    this.scoreboardStore.updateScoreboard(sb.id, { is_flag: isFlag }).subscribe({
-      next: (updated) => this.scoreboard.set(updated),
-      error: (err) => console.error('Failed to update flag', err),
-    });
+    this.facade.onFlagToggle(isFlag);
   }
 
   onGameClockAction(event: GameClockActionEvent): void {
-    switch (event.action) {
-      case 'start':
-        this.clockService.startGameClock();
-        break;
-      case 'pause':
-        this.clockService.pauseGameClock();
-        break;
-      case 'reset':
-        this.clockService.resetGameClock();
-        break;
-      case 'update':
-        if (event.data) {
-          this.clockService.updateGameClock(event.data);
-        }
-        break;
-    }
+    this.facade.onGameClockAction(event);
   }
 
   onPlayClockAction(event: PlayClockActionEvent): void {
-    switch (event.action) {
-      case 'start':
-        if (event.seconds !== undefined) {
-          this.clockService.startPlayClock(event.seconds);
-        }
-        break;
-      case 'reset':
-        this.playClockResetSuppressed.set(true);
-        this.clearPlayClockTimeout();
-        this.playClockDisplay.set(null);
-        this.clockService.resetPlayClock();
-        break;
-    }
+    this.facade.onPlayClockAction(event);
   }
 
   onTimeoutChange(event: TimeoutChangeEvent): void {
-    const matchData = this.data()?.match_data;
-    if (!matchData) return;
-
-    const update = event.team === 'a'
-      ? { timeout_team_a: event.timeouts }
-      : { timeout_team_b: event.timeouts };
-
-    this.scoreboardStore.updateMatchData(matchData.id, update).subscribe({
-      error: (err) => console.error('Failed to update timeout', err),
-    });
+    this.facade.onTimeoutChange(event);
   }
 
   onScoreboardSettingsChange(update: Partial<ScoreboardUpdate>): void {
-    const sb = this.scoreboard();
-    if (!sb) return;
-
-    this.scoreboardStore.updateScoreboard(sb.id, update).subscribe({
-      next: (updated) => this.scoreboard.set(updated),
-      error: (err) => console.error('Failed to update scoreboard settings', err),
-    });
+    this.facade.onScoreboardSettingsChange(update);
   }
 
   onPlayerUpdate(update: PlayerMatchUpdate): void {
-    const playerId = update.id;
-    const currentData = this.data();
-    if (!playerId || !currentData) return;
-
-    const payload: PlayerMatchUpdate = { ...update };
-    if ('id' in payload) {
-      delete payload.id;
-    }
-    const updatedPlayers = currentData.players.map((player) =>
-      player.id === playerId ? { ...player, ...payload } : player
-    );
-
-    this.data.set({ ...currentData, players: updatedPlayers });
-
-    this.scoreboardStore.updatePlayerMatch(playerId, payload).subscribe({
-      error: (err) => {
-        console.error('Failed to update player', err);
-      },
-    });
+    this.facade.onPlayerUpdate(update);
   }
 
   toggleHideAllForms(): void {
-    this.hideAllForms.update((v) => !v);
-    const targetState = !this.hideAllForms();
-
-    const sectionKeys = [
-      'scoreboard-score',
-      'scoreboard-qtr',
-      'scoreboard-time',
-      'scoreboard-down-distance',
-      'scoreboard-settings',
-      'scoreboard-events',
-    ] as const;
-
-    sectionKeys.forEach((key) => {
-      localStorage.setItem(key, String(targetState));
-    });
-
-    this.collapsibleSectionService.setGlobalExpanded(targetState);
+    this.facade.toggleHideAllForms();
   }
 
   onEventCreate(event: FootballEventCreate): void {
-    const matchId = this.matchId();
-    if (!matchId) return;
-
-    const eventData = { ...event, match_id: matchId };
-    this.scoreboardStore.createFootballEvent(eventData).subscribe({
-      next: (createdEvent) => {
-        const currentEvents = this.wsService.events();
-        this.wsService.events.set([...currentEvents, createdEvent]);
-      },
-      error: (err) => console.error('Failed to create event', err),
-    });
+    this.facade.onEventCreate(event);
   }
 
   onEventUpdate(payload: { id: number; data: FootballEventUpdate }): void {
-    this.scoreboardStore.updateFootballEvent(payload.id, payload.data).subscribe({
-      next: (updatedEvent) => {
-        const currentEvents = this.wsService.events();
-        this.wsService.events.set(
-          currentEvents.map((e) => (e.id === payload.id ? updatedEvent : e))
-        );
-      },
-      error: (err) => console.error('Failed to update event', err),
-    });
+    this.facade.onEventUpdate(payload);
   }
 
   onEventDelete(eventId: number): void {
-    this.scoreboardStore.deleteFootballEvent(eventId).subscribe({
-      next: () => {
-        const currentEvents = this.wsService.events();
-        this.wsService.events.set(currentEvents.filter((e) => e.id !== eventId));
-      },
-      error: (err) => console.error('Failed to delete event', err),
-    });
-  }
-
-  private clearPlayClockTimeout(): void {
-    if (this.playClockClearTimeoutId != null) {
-      clearTimeout(this.playClockClearTimeoutId);
-      this.playClockClearTimeoutId = null;
-    }
-    this.playClockHoldActive.set(false);
+    this.facade.onEventDelete(eventId);
   }
 }

@@ -788,9 +788,9 @@ private handleMessage(message: WebSocketMessage): void {
 }
 ```
 
-#### Component Effects for Merging
+#### Facade Effects for Merging
 
-**Location:** `src/app/features/scoreboard/pages/admin/scoreboard-admin.component.ts:117-212`
+**Location:** `src/app/features/scoreboard/pages/admin/scoreboard-admin.facade.ts`
 
 ```typescript
 // Merge match_data updates
