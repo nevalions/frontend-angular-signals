@@ -260,10 +260,10 @@ async def send_initial_data(self, websocket: WebSocket, client_id: str, match_id
 
 ### Frontend Handling
 
-**Location:** `src/app/core/services/websocket.service.ts:376-421`
+**Location:** `src/app/core/services/websocket-message-handlers.ts`
 
 ```typescript
-private handleMessage(message: WebSocketMessage): void {
+handleMessage(message: WebSocketMessage): void {
   if (messageType === 'initial-load') {
     const data = message['data'];
     const matchData: ComprehensiveMatchData = {
@@ -277,19 +277,19 @@ private handleMessage(message: WebSocketMessage): void {
     };
 
     // Set main match data signal
-    this.matchData.set(matchData);
+    this.context.matchData.set(matchData);
 
     // Set separate clock signals for predictor sync
     if (matchData.gameclock) {
-      this.gameClock.set(this.mergeGameClock(matchData.gameclock));
+      this.context.gameClock.set(this.context.mergeGameClock(matchData.gameclock));
     }
     if (matchData.playclock) {
-      this.playClock.set(this.mergePlayClock(matchData.playclock));
+      this.context.playClock.set(this.context.mergePlayClock(matchData.playclock));
     }
 
     // Set events and stats
-    this.events.set(matchData.events);
-    this.statistics.set(data['statistics']);
+    this.context.events.set(matchData.events);
+    this.context.statistics.set(data['statistics']);
   }
 }
 ```
@@ -714,61 +714,61 @@ readonly lastEventsUpdate = signal<number | null>(null);
 
 #### Message Handler
 
-**Location:** `src/app/core/services/websocket.service.ts:301-520`
+**Location:** `src/app/core/services/websocket-message-handlers.ts`
 
 ```typescript
-private handleMessage(message: WebSocketMessage): void {
+handleMessage(message: WebSocketMessage): void {
   const messageType = message['type'];
   const data = message['data'];
 
   // Handle initial-load
   if (messageType === 'initial-load') {
-    this.matchData.set(comprehensiveData);
-    this.gameClock.set(comprehensiveData.gameclock);
-    this.playClock.set(comprehensiveData.playclock);
-    this.events.set(comprehensiveData.events);
-    this.statistics.set(data['statistics']);
+    this.context.matchData.set(comprehensiveData);
+    this.context.gameClock.set(comprehensiveData.gameclock);
+    this.context.playClock.set(comprehensiveData.playclock);
+    this.context.events.set(comprehensiveData.events);
+    this.context.statistics.set(data['statistics']);
   }
 
   // Handle match-update (partial updates)
   if (messageType === 'message-update' || messageType === 'match-update') {
     if (data['match_data']) {
-      this.matchDataPartial.set(data['match_data']);
-      this.lastMatchDataUpdate.set(Date.now());
+      this.context.matchDataPartial.set(data['match_data']);
+      this.context.lastMatchDataUpdate.set(Date.now());
     }
     if (data['scoreboard_data']) {
-      this.scoreboardPartial.set(data['scoreboard_data']);
+      this.context.scoreboardPartial.set(data['scoreboard_data']);
     }
     if (data['match']) {
-      this.matchPartial.set(data['match']);
-      this.lastMatchUpdate.set(Date.now());
+      this.context.matchPartial.set(data['match']);
+      this.context.lastMatchUpdate.set(Date.now());
     }
     if (data['teams_data']) {
-      this.teamsPartial.set(data['teams_data']);
-      this.lastTeamsUpdate.set(Date.now());
+      this.context.teamsPartial.set(data['teams_data']);
+      this.context.lastTeamsUpdate.set(Date.now());
     }
     if (data['players']) {
-      this.playersPartial.set(data['players']);
-      this.lastPlayersUpdate.set(Date.now());
+      this.context.playersPartial.set(data['players']);
+      this.context.lastPlayersUpdate.set(Date.now());
     }
     if (data['events']) {
-      this.eventsPartial.set(data['events']);
-      this.lastEventsUpdate.set(Date.now());
+      this.context.eventsPartial.set(data['events']);
+      this.context.lastEventsUpdate.set(Date.now());
     }
   }
 
   // Handle gameclock-update
   if (messageType === 'gameclock-update') {
     const gameclock = message['gameclock'];
-    const merged = this.mergeGameClock(gameclock);
-    this.gameClock.set(merged);
+    const merged = this.context.mergeGameClock(gameclock);
+    this.context.gameClock.set(merged);
   }
 
   // Handle playclock-update
   if (messageType === 'playclock-update') {
     const playclock = message['playclock'];
-    const merged = this.mergePlayClock(playclock);
-    this.playClock.set(merged);
+    const merged = this.context.mergePlayClock(playclock);
+    this.context.playClock.set(merged);
   }
 
   // Handle event-update
@@ -784,7 +784,7 @@ private handleMessage(message: WebSocketMessage): void {
   // Handle ping
   if (messageType === 'ping') {
     this.handlePing(message);
-  }
+}
 }
 ```
 
@@ -891,15 +891,17 @@ private wsEventsFromMatchUpdateEffect = effect(() => {
 
 **Client-Side Handling:**
 ```typescript
-// websocket.service.ts
-this.socket$.pipe(
-  catchError((error) => {
-    console.error('[WebSocket] Error:', error);
-    this.lastError.set(error?.message || 'WebSocket error');
-    this.handleDisconnect();  // Attempt reconnection
-    return EMPTY;
-  })
-).subscribe();
+// websocket-connection-manager.ts
+this.socket$
+  .pipe(
+    catchError((error) => {
+      console.error('[WebSocket] Error:', error);
+      this.options.setLastError(error?.message || 'WebSocket error');
+      this.handleDisconnect(); // Attempt reconnection
+      return EMPTY;
+    })
+  )
+  .subscribe();
 ```
 
 **Backend-Side Handling:**
