@@ -1,0 +1,21 @@
+@import '../scoreboard-settings-shared.less';
+
+.scale-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.scale-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .scale-controls {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

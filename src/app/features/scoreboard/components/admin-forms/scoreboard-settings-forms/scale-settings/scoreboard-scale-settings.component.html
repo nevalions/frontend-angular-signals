@@ -1,0 +1,55 @@
+<div class="settings-section">
+  <div class="section-header">
+    <tui-icon icon="@tui.maximize-2" class="section-icon" />
+    <h4 class="section-title">Global Scale Settings</h4>
+  </div>
+  <p class="section-description">Adjust the size of branding elements</p>
+
+  <div class="scale-controls">
+    <div class="scale-control">
+      <div class="slider-header">
+        <span class="slider-label">Tournament Logo Scale</span>
+        <span class="slider-value">{{ tournamentLogoScale() | number:'1.1-1' }}x</span>
+      </div>
+      <input
+        tuiSlider
+        type="range"
+        [min]="0.5"
+        [max]="2"
+        step="0.1"
+        [segments]="3"
+        [ngModel]="tournamentLogoScale()"
+        (ngModelChange)="tournamentLogoScaleChange.emit($event)"
+      />
+      <div class="slider-labels">
+        <span>0.5x</span>
+        <span>1x</span>
+        <span>1.5x</span>
+        <span>2x</span>
+      </div>
+    </div>
+
+    <div class="scale-control">
+      <div class="slider-header">
+        <span class="slider-label">Main Sponsor Scale</span>
+        <span class="slider-value">{{ mainSponsorScale() | number:'1.1-1' }}x</span>
+      </div>
+      <input
+        tuiSlider
+        type="range"
+        [min]="0.5"
+        [max]="2"
+        step="0.1"
+        [segments]="3"
+        [ngModel]="mainSponsorScale()"
+        (ngModelChange)="mainSponsorScaleChange.emit($event)"
+      />
+      <div class="slider-labels">
+        <span>0.5x</span>
+        <span>1x</span>
+        <span>1.5x</span>
+        <span>2x</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { TuiSwitch, TuiSlider, TuiBlock, TuiInputColor } from '@taiga-ui/kit';
-import { TuiAlertService, TuiIcon, TuiLoader, TuiTextfield, TuiTitle, TuiButton } from '@taiga-ui/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { TuiAlertService } from '@taiga-ui/core';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
+import { ScoreboardDisplaySettingsComponent } from './display-settings/scoreboard-display-settings.component';
+import { ScoreboardScaleSettingsComponent } from './scale-settings/scoreboard-scale-settings.component';
+import { ScoreboardTeamSettingsComponent } from './team-settings/scoreboard-team-settings.component';
 import { ScoreboardStoreService } from '../../../services/scoreboard-store.service';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
 
@@ -12,19 +13,11 @@ import { buildStaticUrl } from '../../../../../core/config/api.constants';
   selector: 'app-scoreboard-settings-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DecimalPipe,
-    FormsModule,
     ReactiveFormsModule,
-    TuiSwitch,
-    TuiSlider,
-    TuiBlock,
-    TuiInputColor,
-    TuiIcon,
-    TuiLoader,
-    TuiTextfield,
-    TuiTitle,
-    TuiButton,
     CollapsibleSectionComponent,
+    ScoreboardDisplaySettingsComponent,
+    ScoreboardTeamSettingsComponent,
+    ScoreboardScaleSettingsComponent,
   ],
   templateUrl: './scoreboard-settings-forms.component.html',
   styleUrl: './scoreboard-settings-forms.component.less',

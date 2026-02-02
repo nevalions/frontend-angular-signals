@@ -1,0 +1,107 @@
+<div class="settings-section">
+  <div class="section-header">
+    <tui-icon icon="@tui.tv" class="section-icon" />
+    <h4 class="section-title">Display Elements</h4>
+  </div>
+  <p class="section-description">Toggle visibility of scoreboard elements</p>
+
+  <div class="toggles-grid">
+    <label tuiBlock="m" class="toggle-block">
+      <input
+        tuiSwitch
+        type="checkbox"
+        size="s"
+        [ngModel]="localShowQtr()"
+        (ngModelChange)="toggleQtr.emit($event)"
+      />
+      <span tuiTitle>
+        Quarter
+        <span tuiSubtitle>Show current quarter</span>
+      </span>
+    </label>
+
+    <label tuiBlock="m" class="toggle-block">
+      <input
+        tuiSwitch
+        type="checkbox"
+        size="s"
+        [ngModel]="localShowTime()"
+        (ngModelChange)="toggleTime.emit($event)"
+      />
+      <span tuiTitle>
+        Game Clock
+        <span tuiSubtitle>Display time remaining</span>
+      </span>
+    </label>
+
+    <label tuiBlock="m" class="toggle-block">
+      <input
+        tuiSwitch
+        type="checkbox"
+        size="s"
+        [ngModel]="localShowPlayClock()"
+        (ngModelChange)="togglePlayClock.emit($event)"
+      />
+      <span tuiTitle>
+        Play Clock
+        <span tuiSubtitle>Show play clock timer</span>
+      </span>
+    </label>
+
+    <label tuiBlock="m" class="toggle-block">
+      <input
+        tuiSwitch
+        type="checkbox"
+        size="s"
+        [ngModel]="localShowDownDistance()"
+        (ngModelChange)="toggleDownDistance.emit($event)"
+      />
+      <span tuiTitle>
+        Down & Distance
+        <span tuiSubtitle>Show current down info</span>
+      </span>
+    </label>
+
+    <label tuiBlock="m" class="toggle-block">
+      <input
+        tuiSwitch
+        type="checkbox"
+        size="s"
+        [ngModel]="localShowTournamentLogo()"
+        (ngModelChange)="toggleTournamentLogo.emit($event)"
+      />
+      <span tuiTitle>
+        Tournament Logo
+        <span tuiSubtitle>Display league branding</span>
+      </span>
+    </label>
+
+    <label tuiBlock="m" class="toggle-block">
+      <input
+        tuiSwitch
+        type="checkbox"
+        size="s"
+        [ngModel]="localShowMainSponsor()"
+        (ngModelChange)="toggleMainSponsor.emit($event)"
+      />
+      <span tuiTitle>
+        Sponsor Logo
+        <span tuiSubtitle>Show sponsor branding</span>
+      </span>
+    </label>
+
+    <label tuiBlock="m" class="toggle-block">
+      <input
+        tuiSwitch
+        type="checkbox"
+        size="s"
+        [ngModel]="localShowSponsorLine()"
+        (ngModelChange)="toggleSponsorLine.emit($event)"
+      />
+      <span tuiTitle>
+        Sponsor Line
+        <span tuiSubtitle>Show sponsor line</span>
+      </span>
+    </label>
+  </div>
+</div>
