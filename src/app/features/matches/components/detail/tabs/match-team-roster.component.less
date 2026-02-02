@@ -1,0 +1,195 @@
+@import '@taiga-ui/core/styles/taiga-ui-local';
+
+.match-players-tab {
+  &__team-card {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  &__team-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--tui-border-normal);
+  }
+
+  &__team-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0 1rem;
+    background: var(--tui-background-neutral-1);
+    border-radius: 12px;
+    border: 1px solid var(--tui-border-normal);
+  }
+
+  &__add-button {
+    min-width: 160px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+  }
+
+  &__team-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  &__sort-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  &__sort-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--tui-text-secondary);
+  }
+
+  &__sort-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem;
+    border-radius: 999px;
+    background: var(--tui-background-base);
+    border: 1px solid var(--tui-border-normal);
+  }
+
+  &__sort-button {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+
+    &--active {
+      background: var(--tui-background-accent-1);
+      color: var(--tui-text-primary-on-accent-1);
+    }
+  }
+
+  &__team-count {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  &__add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.5rem 0 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed var(--tui-border-normal);
+  }
+
+  &__add-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__add-submit {
+    width: 100%;
+    justify-content: center;
+  }
+
+  &__dropdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+
+  &__dropdown-loading,
+  &__dropdown-error,
+  &__dropdown-empty {
+    padding: 0.75rem;
+    text-align: center;
+    color: var(--tui-text-secondary);
+    font-style: italic;
+  }
+
+  &__dropdown-error {
+    color: var(--tui-text-negative);
+  }
+
+  &__dropdown-option {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+  }
+
+  &__team-avatar {
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &__roster-section {
+    margin-top: 1.25rem;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+  }
+
+  &__section-icon {
+    font-size: 1.125rem;
+    color: var(--tui-text-secondary);
+
+    &--starter {
+      color: var(--tui-status-positive);
+    }
+  }
+
+  &__section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--tui-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex: 1;
+  }
+
+  &__players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+
+    &--bench {
+      gap: 0.5rem;
+    }
+  }
+
+  &__empty-roster {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem 1rem;
+    color: var(--tui-text-secondary);
+  }
+
+  &__empty-icon {
+    font-size: 2.5rem;
+    color: var(--tui-text-tertiary);
+  }
+}

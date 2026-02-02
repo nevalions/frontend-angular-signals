@@ -1,551 +1,74 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ComprehensiveMatchData, PlayerMatchWithDetails } from '../../../models/comprehensive-match.model';
 import { MatchStoreService } from '../../../services/match-store.service';
-import { TuiAvatar, TuiBadge, TuiStatus, TuiSwitch, TuiChevron, TuiComboBox, TuiFilterByInputPipe } from '@taiga-ui/kit';
-import { TuiAppearance, TuiIcon, TuiSurface, TuiTitle, TuiAlertService, TuiButton, TuiTextfield, TuiDataList, tuiDialog } from '@taiga-ui/core';
-import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
+import { TuiAlertService, TuiIcon, tuiDialog } from '@taiga-ui/core';
 import { buildStaticUrl as buildStaticUrlUtil } from '../../../../../core/config/api.constants';
 import { PlayerMatchCreate, PlayerMatchUpdate } from '../../../models/player-match.model';
 import { MatchAvailablePlayer } from '../../../models/available-player.model';
-import { capitalizeName as capitalizeNameUtil } from '../../../../../core/utils/string-helper.util';
 import { withCreateAlert } from '../../../../../core/utils/alert-helper.util';
 import { MatchPlayerEditDialogComponent, MatchPlayerEditDialogResult, MatchPlayerEditDialogData } from './match-player-edit-dialog.component';
 import { Observable } from 'rxjs';
+import { MatchTeamRosterComponent } from './match-team-roster.component';
 
 @Component({
   selector: 'app-match-players-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormsModule,
-    CommonModule,
-    TuiAvatar,
-    TuiBadge,
-    TuiStatus,
-    TuiTitle,
-    TuiIcon,
-    TuiAppearance,
-    TuiSurface,
-    TuiCardLarge,
-    TuiHeader,
-    TuiSwitch,
-    TuiTextfield,
-    TuiButton,
-    TuiDataList,
-    TuiChevron,
-    TuiComboBox,
-    TuiFilterByInputPipe,
-  ],
+  imports: [TuiIcon, MatchTeamRosterComponent],
   template: `
     @if (comprehensiveData()) {
       <div class="match-players-tab">
-        <!-- Side-by-side team comparison layout -->
         <div class="match-players-tab__comparison">
-          <!-- Team A Section -->
           <div class="match-players-tab__team-column">
-            <div tuiCardLarge tuiSurface="floating" class="match-players-tab__team-card">
-              <header tuiHeader class="match-players-tab__team-header">
-                <tui-avatar
-                  [src]="getTeamLogo(comprehensiveData()!.teams.team_a)"
-                  size="l"
-                  class="match-players-tab__team-avatar"
-                >
-                  {{ getInitials(comprehensiveData()!.teams.team_a.title) }}
-                </tui-avatar>
-                <hgroup tuiTitle>
-                  <h3>{{ comprehensiveData()!.teams.team_a.title.toUpperCase() }}</h3>
-                </hgroup>
-              </header>
-
-              <div class="match-players-tab__team-actions">
-                <div class="match-players-tab__team-controls">
-                  <button
-                    type="button"
-                    tuiButton
-                    appearance="primary"
-                    size="s"
-                    [iconStart]="addPlayerTeamAOpen() ? '@tui.x' : '@tui.plus'"
-                    class="match-players-tab__add-button"
-                    (click)="toggleAddPlayerForm('A')">
-                    @if (addPlayerTeamAOpen()) {
-                      Cancel
-                    } @else {
-                      Add Player
-                    }
-                  </button>
-                </div>
-                <tui-badge appearance="neutral" size="s" class="match-players-tab__team-count">
-                  @if (availablePlayersLoadingTeamA()) {
-                    Loading...
-                  } @else {
-                    Available: {{ availablePlayersTeamA().length }}
-                  }
-                </tui-badge>
-              </div>
-
-              @if (addPlayerTeamAOpen()) {
-                <div class="match-players-tab__add-form">
-                  <div class="match-players-tab__add-field">
-                    <tui-textfield
-                      tuiChevron
-                      iconStart="@tui.search"
-                      [stringify]="stringifyAvailablePlayer"
-                      tuiTextfieldSize="m">
-                      <label tuiLabel>Search available players</label>
-                      <input
-                        placeholder="Search by number or name..."
-                        tuiComboBox
-                        [(ngModel)]="selectedAvailablePlayerTeamA"
-                        [disabled]="availablePlayersLoadingTeamA()" />
-                      <tui-data-list *tuiTextfieldDropdown size="l" class="match-players-tab__dropdown-list">
-                        @if (availablePlayersLoadingTeamA()) {
-                          <div class="match-players-tab__dropdown-loading">Loading available players...</div>
-                        } @else if (availablePlayersErrorTeamA()) {
-                          <div class="match-players-tab__dropdown-error">{{ availablePlayersErrorTeamA() }}</div>
-                        } @else if (availablePlayersTeamA().length === 0) {
-                          <div class="match-players-tab__dropdown-empty">No available players</div>
-                        } @else {
-                          @for (player of availablePlayersTeamA() | tuiFilterByInput; track player.id) {
-                            <button
-                              new
-                              tuiOption
-                              type="button"
-                              [value]="player"
-                              class="match-players-tab__dropdown-option">
-                              {{ stringifyAvailablePlayer(player) }}
-                            </button>
-                          }
-                        }
-                      </tui-data-list>
-                    </tui-textfield>
-                  </div>
-                  <div class="match-players-tab__add-actions">
-                    <button
-                      type="button"
-                      tuiButton
-                      appearance="primary"
-                      class="match-players-tab__add-submit"
-                      size="s"
-                      [disabled]="!selectedAvailablePlayerTeamA()"
-                      (click)="addPlayerToMatch('A')">
-                      Add to Match
-                    </button>
-                  </div>
-                </div>
-              }
-
-              <div class="match-players-tab__sort-bar">
-                <span class="match-players-tab__sort-label">Sort:</span>
-                <div class="match-players-tab__sort-group">
-                  <button
-                    type="button"
-                    tuiButton
-                    appearance="flat"
-                    size="s"
-                    class="match-players-tab__sort-button"
-                    [class.match-players-tab__sort-button--active]="teamASort() === 'number'"
-                    (click)="setTeamSort('A', 'number')">
-                    Number
-                  </button>
-                  <button
-                    type="button"
-                    tuiButton
-                    appearance="flat"
-                    size="s"
-                    class="match-players-tab__sort-button"
-                    [class.match-players-tab__sort-button--active]="teamASort() === 'name'"
-                    (click)="setTeamSort('A', 'name')">
-                    Name
-                  </button>
-                </div>
-              </div>
-
-              <!-- Starters Section -->
-              @if (teamAStarters().length > 0) {
-                <div class="match-players-tab__roster-section">
-                  <div class="match-players-tab__section-header">
-                    <tui-icon icon="@tui.star" class="match-players-tab__section-icon match-players-tab__section-icon--starter" />
-                    <span class="match-players-tab__section-title">Starting Lineup</span>
-                    <tui-badge appearance="positive" size="s" tuiStatus>
-                      {{ teamAStarters().length }}
-                    </tui-badge>
-                  </div>
-                  <div class="match-players-tab__players-list">
-                    @for (player of teamAStarters(); track player.id) {
-                        <div
-                          tuiSurface="neutral"
-                          class="match-players-tab__player-card"
-                          (click)="openPlayerDialog(player)">
-                          <div class="match-players-tab__player-main">
-                          <div class="match-players-tab__player-meta">
-                            <div class="match-players-tab__number-row">
-                              <div
-                                class="match-players-tab__player-number-badge"
-                                [class.match-players-tab__player-number-badge--duplicate]="hasDuplicateNumber(player, 'A')">
-                                {{ getPlayerNumber(player) }}
-                              </div>
-                            </div>
-                            @if (player.position) {
-                              <span class="match-players-tab__position-text match-players-tab__position-text--under-number">
-                                {{ player.position.title }}
-                              </span>
-                            }
-                          </div>
-                          <div class="match-players-tab__player-details">
-                            <div class="match-players-tab__name-row">
-                              <span class="match-players-tab__player-name">
-                                {{ getFullName(player.person).toUpperCase() }}
-                              </span>
-                              @if (hasDuplicateNumber(player, 'A')) {
-                                <tui-badge appearance="warning" size="s" class="match-players-tab__duplicate-badge">!</tui-badge>
-                              }
-                            </div>
-                          <div class="match-players-tab__player-switch">
-                            <input
-                              type="checkbox"
-                              tuiSwitch
-                              [ngModel]="player.is_starting || false"
-                              (ngModelChange)="togglePlayerStarting(player.id, $event)"
-                              (click)="$event.stopPropagation()"
-                              class="match-players-tab__switch" 
-                            />
-                            <span class="match-players-tab__player-switch-label">
-                              {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-
-              <!-- Bench Section -->
-              @if (teamABench().length > 0) {
-                <div class="match-players-tab__roster-section">
-                  <div class="match-players-tab__section-header">
-                    <tui-icon icon="@tui.users" class="match-players-tab__section-icon" />
-                    <span class="match-players-tab__section-title">Bench</span>
-                    <tui-badge appearance="neutral" size="s">
-                      {{ teamABench().length }}
-                    </tui-badge>
-                  </div>
-                  <div class="match-players-tab__players-list match-players-tab__players-list--bench">
-                    @for (player of teamABench(); track player.id) {
-                      <div
-                        tuiSurface
-                        class="match-players-tab__player-card match-players-tab__player-card--bench"
-                        (click)="openPlayerDialog(player)">
-                        <div class="match-players-tab__player-main">
-                          <div class="match-players-tab__player-meta match-players-tab__player-meta--bench">
-                            <div class="match-players-tab__number-row match-players-tab__number-row--bench">
-                              <div
-                                class="match-players-tab__player-number-badge match-players-tab__player-number-badge--bench"
-                                [class.match-players-tab__player-number-badge--duplicate]="hasDuplicateNumber(player, 'A')">
-                                {{ getPlayerNumber(player) }}
-                              </div>
-                            </div>
-                            @if (player.position) {
-                              <span class="match-players-tab__position-text match-players-tab__position-text--under-number">
-                                {{ player.position.title }}
-                              </span>
-                            }
-                          </div>
-                          <div class="match-players-tab__player-details">
-                            <div class="match-players-tab__name-row">
-                              <span class="match-players-tab__player-name match-players-tab__player-name--bench">
-                                {{ getFullName(player.person).toUpperCase() }}
-                              </span>
-                              @if (hasDuplicateNumber(player, 'A')) {
-                                <tui-badge appearance="warning" size="s" class="match-players-tab__duplicate-badge">!</tui-badge>
-                              }
-                            </div>
-                          <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
-                            <input
-                              type="checkbox"
-                              tuiSwitch
-                              [ngModel]="player.is_starting || false"
-                              (ngModelChange)="togglePlayerStarting(player.id, $event)"
-                              (click)="$event.stopPropagation()"
-                              class="match-players-tab__switch"
-                            />
-                            <span class="match-players-tab__player-switch-label">
-                              {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-
-              @if (teamAPlayers().length === 0) {
-                <div class="match-players-tab__empty-roster">
-                  <tui-icon icon="@tui.users" class="match-players-tab__empty-icon" />
-                  <span>No players registered</span>
-                </div>
-              }
-            </div>
+            <app-match-team-roster
+              [team]="comprehensiveData()!.teams.team_a"
+              [teamLogoUrl]="getTeamLogo(comprehensiveData()!.teams.team_a)"
+              [teamInitials]="getInitials(comprehensiveData()!.teams.team_a.title)"
+              [addPlayerOpen]="addPlayerTeamAOpen()"
+              [availablePlayers]="availablePlayersTeamA()"
+              [availablePlayersLoading]="availablePlayersLoadingTeamA()"
+              [availablePlayersError]="availablePlayersErrorTeamA()"
+              [selectedAvailablePlayer]="selectedAvailablePlayerTeamA()"
+              [sort]="teamASort()"
+              [starters]="teamAStarters()"
+              [bench]="teamABench()"
+              [totalPlayers]="teamAPlayers().length"
+              [hasDuplicateNumber]="hasDuplicateNumberTeamA"
+              (toggleAddPlayer)="toggleAddPlayerForm('A')"
+              (addPlayer)="addPlayerToMatch('A')"
+              (sortChange)="setTeamSort('A', $event)"
+              (selectedAvailablePlayerChange)="setSelectedAvailablePlayer('A', $event)"
+              (openPlayer)="openPlayerDialog($event)"
+              (togglePlayerStarting)="togglePlayerStarting($event.playerId, $event.isStarting)"
+            />
           </div>
 
-          <!-- VS Divider -->
           <div class="match-players-tab__vs-divider">
             <span class="match-players-tab__vs-text">VS</span>
           </div>
 
-          <!-- Team B Section -->
           <div class="match-players-tab__team-column">
-            <div tuiCardLarge tuiSurface="floating" class="match-players-tab__team-card">
-              <header tuiHeader class="match-players-tab__team-header">
-                <tui-avatar
-                  [src]="getTeamLogo(comprehensiveData()!.teams.team_b)"
-                  size="l"
-                  class="match-players-tab__team-avatar"
-                >
-                  {{ getInitials(comprehensiveData()!.teams.team_b.title) }}
-                </tui-avatar>
-                <hgroup tuiTitle>
-                  <h3>{{ comprehensiveData()!.teams.team_b.title.toUpperCase() }}</h3>
-                </hgroup>
-              </header>
-
-              <div class="match-players-tab__team-actions">
-                <div class="match-players-tab__team-controls">
-                  <button
-                    type="button"
-                    tuiButton
-                    appearance="primary"
-                    size="s"
-                    [iconStart]="addPlayerTeamBOpen() ? '@tui.x' : '@tui.plus'"
-                    class="match-players-tab__add-button"
-                    (click)="toggleAddPlayerForm('B')">
-                    @if (addPlayerTeamBOpen()) {
-                      Cancel
-                    } @else {
-                      Add Player
-                    }
-                  </button>
-                </div>
-                <tui-badge appearance="neutral" size="s" class="match-players-tab__team-count">
-                  @if (availablePlayersLoadingTeamB()) {
-                    Loading...
-                  } @else {
-                    Available: {{ availablePlayersTeamB().length }}
-                  }
-                </tui-badge>
-              </div>
-
-              @if (addPlayerTeamBOpen()) {
-                <div class="match-players-tab__add-form">
-                  <div class="match-players-tab__add-field">
-                    <tui-textfield
-                      tuiChevron
-                      iconStart="@tui.search"
-                      [stringify]="stringifyAvailablePlayer"
-                      tuiTextfieldSize="m">
-                      <label tuiLabel>Search available players</label>
-                      <input
-                        placeholder="Search by number or name..."
-                        tuiComboBox
-                        [(ngModel)]="selectedAvailablePlayerTeamB"
-                        [disabled]="availablePlayersLoadingTeamB()" />
-                      <tui-data-list *tuiTextfieldDropdown size="l" class="match-players-tab__dropdown-list">
-                        @if (availablePlayersLoadingTeamB()) {
-                          <div class="match-players-tab__dropdown-loading">Loading available players...</div>
-                        } @else if (availablePlayersErrorTeamB()) {
-                          <div class="match-players-tab__dropdown-error">{{ availablePlayersErrorTeamB() }}</div>
-                        } @else if (availablePlayersTeamB().length === 0) {
-                          <div class="match-players-tab__dropdown-empty">No available players</div>
-                        } @else {
-                          @for (player of availablePlayersTeamB() | tuiFilterByInput; track player.id) {
-                            <button
-                              new
-                              tuiOption
-                              type="button"
-                              [value]="player"
-                              class="match-players-tab__dropdown-option">
-                              {{ stringifyAvailablePlayer(player) }}
-                            </button>
-                          }
-                        }
-                      </tui-data-list>
-                    </tui-textfield>
-                  </div>
-                  <div class="match-players-tab__add-actions">
-                    <button
-                      type="button"
-                      tuiButton
-                      appearance="primary"
-                      class="match-players-tab__add-submit"
-                      size="s"
-                      [disabled]="!selectedAvailablePlayerTeamB()"
-                      (click)="addPlayerToMatch('B')">
-                      Add to Match
-                    </button>
-                  </div>
-                </div>
-              }
-
-              <div class="match-players-tab__sort-bar">
-                <span class="match-players-tab__sort-label">Sort:</span>
-                <div class="match-players-tab__sort-group">
-                  <button
-                    type="button"
-                    tuiButton
-                    appearance="flat"
-                    size="s"
-                    class="match-players-tab__sort-button"
-                    [class.match-players-tab__sort-button--active]="teamBSort() === 'number'"
-                    (click)="setTeamSort('B', 'number')">
-                    Number
-                  </button>
-                  <button
-                    type="button"
-                    tuiButton
-                    appearance="flat"
-                    size="s"
-                    class="match-players-tab__sort-button"
-                    [class.match-players-tab__sort-button--active]="teamBSort() === 'name'"
-                    (click)="setTeamSort('B', 'name')">
-                    Name
-                  </button>
-                </div>
-              </div>
-
-              <!-- Starters Section -->
-              @if (teamBStarters().length > 0) {
-                <div class="match-players-tab__roster-section">
-                  <div class="match-players-tab__section-header">
-                    <tui-icon icon="@tui.star" class="match-players-tab__section-icon match-players-tab__section-icon--starter" />
-                    <span class="match-players-tab__section-title">Starting Lineup</span>
-                    <tui-badge appearance="positive" size="s" tuiStatus>
-                      {{ teamBStarters().length }}
-                    </tui-badge>
-                  </div>
-                  <div class="match-players-tab__players-list">
-                    @for (player of teamBStarters(); track player.id) {
-                        <div
-                          tuiSurface="neutral"
-                          class="match-players-tab__player-card"
-                          (click)="openPlayerDialog(player)">
-                          <div class="match-players-tab__player-main">
-                          <div class="match-players-tab__player-meta">
-                            <div class="match-players-tab__number-row">
-                              <div
-                                class="match-players-tab__player-number-badge"
-                                [class.match-players-tab__player-number-badge--duplicate]="hasDuplicateNumber(player, 'B')">
-                                {{ getPlayerNumber(player) }}
-                              </div>
-                            </div>
-                            @if (player.position) {
-                              <span class="match-players-tab__position-text match-players-tab__position-text--under-number">
-                                {{ player.position.title }}
-                              </span>
-                            }
-                          </div>
-                          <div class="match-players-tab__player-details">
-                            <div class="match-players-tab__name-row">
-                              <span class="match-players-tab__player-name">
-                                {{ getFullName(player.person).toUpperCase() }}
-                              </span>
-                              @if (hasDuplicateNumber(player, 'B')) {
-                                <tui-badge appearance="warning" size="s" class="match-players-tab__duplicate-badge">!</tui-badge>
-                              }
-                            </div>
-                          <div class="match-players-tab__player-switch">
-                            <input
-                              type="checkbox"
-                              tuiSwitch
-                              [ngModel]="player.is_starting || false"
-                              (ngModelChange)="togglePlayerStarting(player.id, $event)"
-                              (click)="$event.stopPropagation()"
-                              class="match-players-tab__switch"
-                            />
-                            <span class="match-players-tab__player-switch-label">
-                              {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-
-              <!-- Bench Section -->
-              @if (teamBBench().length > 0) {
-                <div class="match-players-tab__roster-section">
-                  <div class="match-players-tab__section-header">
-                    <tui-icon icon="@tui.users" class="match-players-tab__section-icon" />
-                    <span class="match-players-tab__section-title">Bench</span>
-                    <tui-badge appearance="neutral" size="s">
-                      {{ teamBBench().length }}
-                    </tui-badge>
-                  </div>
-                  <div class="match-players-tab__players-list match-players-tab__players-list--bench">
-                    @for (player of teamBBench(); track player.id) {
-                      <div
-                        tuiSurface
-                        class="match-players-tab__player-card match-players-tab__player-card--bench"
-                        (click)="openPlayerDialog(player)">
-                        <div class="match-players-tab__player-main">
-                          <div class="match-players-tab__player-meta match-players-tab__player-meta--bench">
-                            <div class="match-players-tab__number-row match-players-tab__number-row--bench">
-                              <div
-                                class="match-players-tab__player-number-badge match-players-tab__player-number-badge--bench"
-                                [class.match-players-tab__player-number-badge--duplicate]="hasDuplicateNumber(player, 'B')">
-                                {{ getPlayerNumber(player) }}
-                              </div>
-                            </div>
-                            @if (player.position) {
-                              <span class="match-players-tab__position-text match-players-tab__position-text--under-number">
-                                {{ player.position.title }}
-                              </span>
-                            }
-                          </div>
-                          <div class="match-players-tab__player-details">
-                            <div class="match-players-tab__name-row">
-                              <span class="match-players-tab__player-name match-players-tab__player-name--bench">
-                                {{ getFullName(player.person).toUpperCase() }}
-                              </span>
-                              @if (hasDuplicateNumber(player, 'B')) {
-                                <tui-badge appearance="warning" size="s" class="match-players-tab__duplicate-badge">!</tui-badge>
-                              }
-                            </div>
-                          <div class="match-players-tab__player-switch match-players-tab__player-switch--bench">
-                            <input
-                              type="checkbox"
-                              tuiSwitch
-                              [ngModel]="player.is_starting || false"
-                              (ngModelChange)="togglePlayerStarting(player.id, $event)"
-                              (click)="$event.stopPropagation()"
-                              class="match-players-tab__switch"
-                            />
-                            <span class="match-players-tab__player-switch-label">
-                              {{ player.is_starting ? 'Remove from starters' : 'Add to starters' }}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-
-              @if (teamBPlayers().length === 0) {
-                <div class="match-players-tab__empty-roster">
-                  <tui-icon icon="@tui.users" class="match-players-tab__empty-icon" />
-                  <span>No players registered</span>
-                </div>
-              }
-            </div>
+            <app-match-team-roster
+              [team]="comprehensiveData()!.teams.team_b"
+              [teamLogoUrl]="getTeamLogo(comprehensiveData()!.teams.team_b)"
+              [teamInitials]="getInitials(comprehensiveData()!.teams.team_b.title)"
+              [addPlayerOpen]="addPlayerTeamBOpen()"
+              [availablePlayers]="availablePlayersTeamB()"
+              [availablePlayersLoading]="availablePlayersLoadingTeamB()"
+              [availablePlayersError]="availablePlayersErrorTeamB()"
+              [selectedAvailablePlayer]="selectedAvailablePlayerTeamB()"
+              [sort]="teamBSort()"
+              [starters]="teamBStarters()"
+              [bench]="teamBBench()"
+              [totalPlayers]="teamBPlayers().length"
+              [hasDuplicateNumber]="hasDuplicateNumberTeamB"
+              (toggleAddPlayer)="toggleAddPlayerForm('B')"
+              (addPlayer)="addPlayerToMatch('B')"
+              (sortChange)="setTeamSort('B', $event)"
+              (selectedAvailablePlayerChange)="setSelectedAvailablePlayer('B', $event)"
+              (openPlayer)="openPlayerDialog($event)"
+              (togglePlayerStarting)="togglePlayerStarting($event.playerId, $event.isStarting)"
+            />
           </div>
         </div>
       </div>
@@ -654,13 +177,10 @@ export class MatchPlayersTabComponent {
     )
   );
 
-  getFullName(person: { first_name?: string | null; second_name?: string | null } | null | undefined): string {
-    if (!person) return 'Unknown';
-    const firstName = person.first_name || '';
-    const secondName = person.second_name || '';
-    const fullName = `${firstName} ${secondName}`.trim();
-    return fullName || 'Unknown';
-  }
+  readonly hasDuplicateNumberTeamA = (player: PlayerMatchWithDetails): boolean =>
+    this.hasDuplicateNumber(player, 'A');
+  readonly hasDuplicateNumberTeamB = (player: PlayerMatchWithDetails): boolean =>
+    this.hasDuplicateNumber(player, 'B');
 
   compareByPlayerNumber(a: PlayerMatchWithDetails, b: PlayerMatchWithDetails): number {
     const numA = this.getPlayerNumberValue(a);
@@ -674,10 +194,6 @@ export class MatchPlayersTabComponent {
     const numberB = parseInt(numB.toString(), 10);
 
     return numberA - numberB;
-  }
-
-  getPlayerNumber(player: PlayerMatchWithDetails): string {
-    return player.match_number || player.player_team_tournament?.player_number || '-';
   }
 
   private getPlayerNumberValue(player: PlayerMatchWithDetails): string | null {
@@ -743,17 +259,6 @@ export class MatchPlayersTabComponent {
       sorted.sort((a, b) => this.compareByPlayerNumber(a, b));
     }
     return sorted;
-  }
-
-  stringifyAvailablePlayer(player: MatchAvailablePlayer | null): string {
-    if (!player) return '';
-    const number = player.player_team_tournament?.player_number;
-    const firstName = capitalizeNameUtil(player.person?.first_name ?? null);
-    const secondName = capitalizeNameUtil(player.person?.second_name ?? null);
-    const name = `${secondName} ${firstName}`.trim();
-    const position = player.position?.title ? ` — ${player.position.title}` : '';
-    const numberLabel = number ? `#${number}` : '#-';
-    return `${numberLabel} ${name}${position}`.trim();
   }
 
   toggleAddPlayerForm(team: 'A' | 'B'): void {
