@@ -265,15 +265,15 @@ export class TournamentEditComponent implements OnInit {
             move_conflicting_tournaments: hasConflicts
           }
         ).pipe(
-          tap(() => {
+          tap((response) => {
             this.sportStore.reload();
             this.tournamentStore.reload();
-            const preview = this.previewData();
-            const message = `Successfully moved ${preview?.moved_tournaments.length || 1} tournament(s)`;
-            this.alerts.open(message, { label: 'Success', appearance: 'positive', autoClose: 3000 }).subscribe(() => {
-              const newSportId = String(targetSportId);
-              this.navigationHelper.toTournamentDetail(newSportId, this.year, this.tournamentId);
-            });
+            const movedIds = response.moved_tournaments || [];
+            const movedId = movedIds[0] ?? this.tournamentId;
+            const message = `Successfully moved ${movedIds.length || 1} tournament(s)`;
+            this.alerts.open(message, { label: 'Success', appearance: 'positive', autoClose: 3000 }).subscribe();
+            const newSportId = String(targetSportId);
+            this.navigationHelper.toTournamentDetail(newSportId, this.year, movedId);
           }),
           catchError((error) => {
             if (error.status === 409) {
