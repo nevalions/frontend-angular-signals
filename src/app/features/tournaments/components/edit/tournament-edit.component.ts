@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { EMPTY, throwError } from 'rxjs';
+import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
-import { TUI_CONFIRM } from '@taiga-ui/kit';
+import { tuiDialog, TuiAlertService, TuiButton } from '@taiga-ui/core';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
@@ -15,6 +14,7 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
 import { ImageUploadComponent, type ImageUrls } from '../../../../shared/components/image-upload/image-upload.component';
+import { TournamentMoveDialogComponent, type TournamentMoveDialogData } from './tournament-move-dialog.component';
 
 @Component({
   selector: 'app-tournament-edit',
@@ -33,7 +33,12 @@ export class TournamentEditComponent implements OnInit {
   private sportStore = inject(SportStoreService);
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
-  private dialogs = inject(TuiDialogService);
+
+  private readonly moveDialog = tuiDialog(TournamentMoveDialogComponent, {
+    size: 'm',
+    dismissible: true,
+    label: 'Move Tournament to Another Sport',
+  }) as unknown as (data: TournamentMoveDialogData) => Observable<boolean>;
 
   tournamentForm = this.fb.group({
     title: ['', [Validators.required]],
@@ -244,14 +249,10 @@ export class TournamentEditComponent implements OnInit {
       content += `\nConfirming will move this tournament and all related tournaments to "${sportName}".`;
     }
 
-    this.dialogs.open<boolean>(TUI_CONFIRM, {
-      label: 'Move Tournament to Another Sport',
-      size: 'm',
-      data: {
-        content,
-        yes: hasConflicts ? 'Move All Related Tournaments' : 'Confirm Move',
-        no: 'Cancel',
-      },
+    this.moveDialog({
+      content,
+      confirmLabel: hasConflicts ? 'Move All Related Tournaments' : 'Confirm Move',
+      confirmText: 'I understand this will move the tournament and related data to another sport.',
     }).pipe(
       switchMap((confirmed) => {
         if (!confirmed) return EMPTY;

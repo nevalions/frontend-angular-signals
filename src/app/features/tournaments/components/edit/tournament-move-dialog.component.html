@@ -1,0 +1,18 @@
+<div class="tournament-move-dialog">
+  <div class="tournament-move-dialog__content">{{ data.content }}</div>
+  <label class="tournament-move-dialog__confirm">
+    <input
+      type="checkbox"
+      [checked]="confirmed()"
+      (change)="toggle($any($event.target).checked)"
+      class="tournament-move-dialog__checkbox"
+    />
+    {{ data.confirmText }}
+  </label>
+  <div class="tournament-move-dialog__actions">
+    <button tuiButton type="button" appearance="secondary" (click)="cancel()">Cancel</button>
+    <button tuiButton type="button" [disabled]="!confirmed()" (click)="confirm()">
+      {{ data.confirmLabel }}
+    </button>
+  </div>
+</div>

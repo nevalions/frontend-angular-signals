@@ -84,6 +84,30 @@ export class ExampleComponent {
 }
 ```
 
+## Acknowledgement Confirmation Dialog
+
+Use a custom dialog with a required checkbox when the user must explicitly acknowledge a destructive or multi-entity action (for example, moving a tournament and related records).
+
+```typescript
+import { tuiDialog } from '@taiga-ui/core';
+import { TournamentMoveDialogComponent, type TournamentMoveDialogData } from '../components/edit/tournament-move-dialog.component';
+
+private readonly moveDialog = tuiDialog(TournamentMoveDialogComponent, {
+  size: 'm',
+  dismissible: true,
+  label: 'Move Tournament to Another Sport',
+}) as unknown as (data: TournamentMoveDialogData) => Observable<boolean>;
+
+this.moveDialog({
+  content: 'Summary of what will change',
+  confirmLabel: 'Confirm Move',
+  confirmText: 'I understand this will move the tournament and related data to another sport.',
+}).subscribe((confirmed) => {
+  if (!confirmed) return;
+  // Execute operation
+});
+```
+
 ## Benefits
 
 - ✅ Consistent UX across all CRUD operations
