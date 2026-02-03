@@ -109,3 +109,51 @@ export function withDeleteConfirm<T>(
       next: onSuccess,
     });
 }
+
+export function withConfirmAlert<T>(
+  dialogs: TuiDialogService,
+  alerts: TuiAlertService,
+  confirmConfig: {
+    label: string;
+    content: string;
+  },
+  operation: () => Observable<T>,
+  onSuccess: () => void,
+  successMessage: string,
+): void {
+  dialogs
+    .open<boolean>(TUI_CONFIRM, {
+      label: confirmConfig.label,
+      size: 's',
+      data: {
+        content: confirmConfig.content,
+        yes: 'Confirm',
+        no: 'Cancel',
+      },
+    })
+    .pipe(
+      switchMap((confirmed) => {
+        if (!confirmed) return EMPTY;
+        return operation().pipe(
+          tap(() => {
+            alerts.open(successMessage, {
+              label: 'Success',
+              appearance: 'positive',
+              autoClose: 3000,
+            }).subscribe();
+          }),
+          catchError((err) => {
+            alerts.open(`Failed to complete operation: ${err.message || 'Unknown error'}`, {
+              label: 'Error',
+              appearance: 'negative',
+              autoClose: 0,
+            }).subscribe();
+            return throwError(() => err);
+          })
+        );
+      })
+    )
+    .subscribe({
+      next: onSuccess,
+    });
+}

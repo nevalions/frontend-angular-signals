@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
-import { Tournament, TournamentCreate, TournamentUpdate } from '../models/tournament.model';
+import { Tournament, TournamentCreate, TournamentUpdate, MoveTournamentToSportRequest, MoveTournamentToSportResponse } from '../models/tournament.model';
 import { Team } from '../../teams/models/team.model';
 
 @Injectable({
@@ -99,5 +99,12 @@ export class TournamentStoreService {
   parseEESLTournamentTeams(eeslTournamentId: number): Observable<Team[]> {
     return this.apiService.post<[Team[], unknown]>(`/api/teams/pars_and_create/tournament/${eeslTournamentId}`, null)
       .pipe(map(([teams]) => teams));
+  }
+
+  moveTournamentToSport(tournamentId: number, request: MoveTournamentToSportRequest): Observable<MoveTournamentToSportResponse> {
+    return this.http.post<MoveTournamentToSportResponse>(
+      buildApiUrl(`/api/tournaments/id/${tournamentId}/move-sport`),
+      request
+    ).pipe(tap(() => this.reload()));
   }
 }

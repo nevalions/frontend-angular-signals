@@ -1,11 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { TuiAlertService, TuiButton } from '@taiga-ui/core';
+import { EMPTY, throwError } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
+import { TuiAlertService, TuiButton, TuiDialogService } from '@taiga-ui/core';
+import { TUI_CONFIRM } from '@taiga-ui/kit';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
-import { TournamentUpdate } from '../../models/tournament.model';
+import { TeamStoreService } from '../../../teams/services/team-store.service';
+import { TournamentUpdate, MoveTournamentToSportResponse } from '../../models/tournament.model';
 import { ActivatedRoute } from '@angular/router';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
@@ -24,10 +28,12 @@ export class TournamentEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private navigationHelper = inject(NavigationHelperService);
   private tournamentStore = inject(TournamentStoreService);
+  private teamStore = inject(TeamStoreService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
+  private dialogs = inject(TuiDialogService);
 
   tournamentForm = this.fb.group({
     title: ['', [Validators.required]],
@@ -39,6 +45,9 @@ export class TournamentEditComponent implements OnInit {
 
   logoUploadLoading = signal(false);
   logoPreviewUrls = signal<ImageUrls | null>(null);
+  
+  moveSportLoading = signal(false);
+  previewData = signal<MoveTournamentToSportResponse | null>(null);
 
   currentLogoUrls = computed<ImageUrls | null>(() => {
     const tournament = this.tournament;
@@ -56,6 +65,16 @@ export class TournamentEditComponent implements OnInit {
   });
 
   displayLogoUrls = computed(() => this.logoPreviewUrls() ?? this.currentLogoUrls());
+
+  availableSports = computed(() => {
+    const sports = this.sportStore.sports();
+    if (!this.tournament) return sports;
+    return sports.filter(s => s.id !== this.tournament?.sport_id);
+  });
+
+  moveSportForm = this.fb.group({
+    target_sport_id: [null as number | null, Validators.required],
+  });
 
   sportId = this.route.snapshot.paramMap.get('sportId') || '';
   year = this.route.snapshot.paramMap.get('year') || '';
@@ -151,5 +170,139 @@ export class TournamentEditComponent implements OnInit {
 
   cancel(): void {
     this.navigationHelper.toTournamentDetail(this.sportId, this.year, this.tournamentId);
+  }
+
+  onMoveToSport(): void {
+    if (!this.tournamentId || !this.tournament) return;
+
+    const targetSportId = this.moveSportForm.value.target_sport_id;
+    if (!targetSportId) return;
+
+    this.previewData.set(null);
+    this.fetchPreview(targetSportId);
+  }
+
+  fetchPreview(targetSportId: number): void {
+    if (!this.tournamentId) return;
+
+    this.moveSportLoading.set(true);
+
+    this.tournamentStore.moveTournamentToSport(
+      Number(this.tournamentId),
+      {
+        target_sport_id: targetSportId,
+        preview: true,
+        move_conflicting_tournaments: false
+      }
+    ).subscribe({
+      next: (preview) => {
+        this.previewData.set(preview);
+        this.moveSportLoading.set(false);
+        this.showConfirmDialog(targetSportId);
+      },
+      error: () => {
+        this.moveSportLoading.set(false);
+        this.alerts.open('Failed to load preview', { label: 'Error', appearance: 'negative' }).subscribe();
+      }
+    });
+  }
+
+  showConfirmDialog(targetSportId: number): void {
+    const preview = this.previewData();
+    if (!preview) return;
+
+    const targetSport = this.sportStore.sports().find(s => s.id === targetSportId);
+    const sportName = targetSport?.title || 'selected sport';
+
+    let content = `Move Tournament to "${sportName}"\n\nThis will move:\n`;
+    content += `• ${preview.updated_counts.tournament} tournament(s)\n`;
+    content += `• ${preview.updated_counts.teams} team(s)\n`;
+    content += `• ${preview.updated_counts.players} player(s)\n`;
+
+    const hasConflicts = preview.conflicts.teams.length > 0 || preview.conflicts.players.length > 0;
+    if (hasConflicts) {
+      content += `\n⚠️ Conflicts Detected:\n`;
+      
+      if (preview.conflicts.teams.length > 0) {
+        content += `\nTeams shared with other tournaments:\n`;
+        preview.conflicts.teams.forEach(conflict => {
+          const team = this.getTeamName(conflict.entity_id);
+          const tournamentNames = conflict.tournament_ids.map(id => this.getTournamentName(id)).filter(Boolean);
+          content += `• ${team} is shared with: ${tournamentNames.join(', ')}\n`;
+        });
+      }
+
+      if (preview.conflicts.players.length > 0) {
+        content += `\nPlayers shared with other tournaments:\n`;
+        preview.conflicts.players.forEach(conflict => {
+          const player = this.getPlayerName(conflict.entity_id);
+          const tournamentNames = conflict.tournament_ids.map(id => this.getTournamentName(id)).filter(Boolean);
+          content += `• ${player} is shared with: ${tournamentNames.join(', ')}\n`;
+        });
+      }
+
+      content += `\nConfirming will move this tournament and all related tournaments to "${sportName}".`;
+    }
+
+    this.dialogs.open<boolean>(TUI_CONFIRM, {
+      label: 'Move Tournament to Another Sport',
+      size: 'm',
+      data: {
+        content,
+        yes: hasConflicts ? 'Move All Related Tournaments' : 'Confirm Move',
+        no: 'Cancel',
+      },
+    }).pipe(
+      switchMap((confirmed) => {
+        if (!confirmed) return EMPTY;
+
+        return this.tournamentStore.moveTournamentToSport(
+          Number(this.tournamentId),
+          {
+            target_sport_id: targetSportId,
+            preview: false,
+            move_conflicting_tournaments: hasConflicts
+          }
+        ).pipe(
+          tap(() => {
+            this.sportStore.reload();
+            this.tournamentStore.reload();
+            const preview = this.previewData();
+            const message = `Successfully moved ${preview?.moved_tournaments.length || 1} tournament(s)`;
+            this.alerts.open(message, { label: 'Success', appearance: 'positive', autoClose: 3000 }).subscribe(() => {
+              const newSportId = String(targetSportId);
+              this.navigationHelper.toTournamentDetail(newSportId, this.year, this.tournamentId);
+            });
+          }),
+          catchError((error) => {
+            if (error.status === 409) {
+              this.alerts.open(
+                'Conflict detected. Please use "Move all related tournaments" to resolve conflicts.',
+                { label: 'Error', appearance: 'negative' }
+              ).subscribe();
+            } else if (error.status === 404) {
+              this.alerts.open('Tournament or sport not found', { label: 'Error', appearance: 'negative' }).subscribe();
+            } else {
+              this.alerts.open('Failed to move tournament', { label: 'Error', appearance: 'negative' }).subscribe();
+            }
+            return throwError(() => error);
+          })
+        );
+      })
+    ).subscribe();
+  }
+
+  getTeamName(teamId: number): string {
+    const team = this.teamStore.teams().find((t: { id: number; title: string }) => t.id === teamId);
+    return team?.title || `Team ${teamId}`;
+  }
+
+  getPlayerName(playerId: number): string {
+    return `Player ${playerId}`;
+  }
+
+  getTournamentName(tournamentId: number): string {
+    const tournament = this.tournamentStore.tournaments().find(t => t.id === tournamentId);
+    return tournament?.title || `Tournament ${tournamentId}`;
   }
 }

@@ -85,6 +85,39 @@
           (remove)="onLogoRemove()"
         />
       </div>
+
+      <div class="tournament-edit__section tournament-edit__section--warning">
+        <h2 class="tournament-edit__section-title">Move Tournament to Another Sport</h2>
+        <p class="tournament-edit__warning-text">
+          ⚠️ Moving this tournament will also move all associated teams, players, matches, and statistics to the new sport.
+        </p>
+        <form class="tournament-edit__move-form" [formGroup]="moveSportForm">
+          <div class="tournament-edit__field">
+            <label for="target_sport_id" class="tournament-edit__label">Target Sport</label>
+            <select
+              id="target_sport_id"
+              formControlName="target_sport_id"
+              class="tournament-edit__select"
+            >
+              <option [value]="null">Select a sport...</option>
+              @for (sport of availableSports(); track sport.id) {
+                <option [value]="sport.id">{{ sport.title }}</option>
+              }
+            </select>
+          </div>
+          <div class="tournament-edit__actions tournament-edit__actions--move">
+            <button
+              tuiButton
+              type="button"
+              (click)="onMoveToSport()"
+              [disabled]="moveSportForm.invalid"
+              class="tournament-edit__button--move"
+            >
+              Move Tournament
+            </button>
+          </div>
+        </form>
+      </div>
     </form>
   } @else {
     <div class="tournament-edit__not-found">Tournament not found</div>
