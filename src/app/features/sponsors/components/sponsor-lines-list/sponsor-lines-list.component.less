@@ -43,8 +43,26 @@
   }
 
   &__card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     background: var(--tui-background-base);
     border: 1px solid var(--tui-border-normal);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      border-color: var(--tui-primary);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--tui-primary);
+      outline-offset: 2px;
+    }
   }
 
   &__info {

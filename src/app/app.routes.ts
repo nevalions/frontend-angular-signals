@@ -25,6 +25,8 @@ import { SponsorLinesListComponent } from './features/sponsors/components/sponso
 import { SponsorDetailComponent } from './features/sponsors/components/detail/sponsor-detail.component';
 import { SponsorCreateComponent } from './features/sponsors/components/create/sponsor-create.component';
 import { SponsorEditComponent } from './features/sponsors/components/edit/sponsor-edit.component';
+import { SponsorLineDetailComponent } from './features/sponsors/components/sponsor-line-detail/sponsor-line-detail.component';
+import { SponsorLineEditComponent } from './features/sponsors/components/sponsor-line-edit/sponsor-line-edit.component';
 import { PlayerDetailComponent } from './features/players/components/detail/player-detail.component';
 import { HomeComponent } from './features/home/components/home.component';
 import { UserProfileComponent } from './features/users/components/profile/user-profile.component';
@@ -158,6 +160,14 @@ export const routes: Routes = [
   {
     path: 'sponsor-lines',
     component: SponsorLinesListComponent,
+  },
+  {
+    path: 'sponsor-lines/:id/edit',
+    component: SponsorLineEditComponent,
+  },
+  {
+    path: 'sponsor-lines/:id',
+    component: SponsorLineDetailComponent,
   },
   {
     path: 'users/:userId',

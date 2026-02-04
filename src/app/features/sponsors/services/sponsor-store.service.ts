@@ -12,9 +12,9 @@ import { Sponsor, SponsorLogoUploadResponse, SponsorsPaginatedResponse } from '.
 import type { Match } from '../../matches/models/match.model';
 import type { Team } from '../../teams/models/team.model';
 import type { Tournament } from '../../tournaments/models/tournament.model';
-import { SponsorLine, SponsorLinesPaginatedResponse } from '../models/sponsor-line.model';
+import { SponsorLine, SponsorLineUpdate, SponsorLinesPaginatedResponse } from '../models/sponsor-line.model';
 
-type SponsorLineConnectionsResponse = {
+export type SponsorLineConnectionsResponse = {
   sponsor_line: SponsorLine | null;
   sponsors: Array<{ sponsor: Sponsor; position: number | null }>;
 };
@@ -134,6 +134,11 @@ export class SponsorStoreService {
     this.sponsorsPaginatedResource.reload();
   }
 
+  reloadSponsorLinesList(): void {
+    this.sponsorLinesLookupResource.reload();
+    this.sponsorLinesPaginatedResource.reload();
+  }
+
   setSponsorsPage(page: number): void {
     this.sponsorsPagination.setPage(page);
   }
@@ -193,8 +198,22 @@ export class SponsorStoreService {
     return this.apiService.post<SponsorLine>('/api/sponsor_lines', data).pipe(tap(() => this.reload()));
   }
 
+  getSponsorLineById(id: number): Observable<SponsorLine> {
+    return this.apiService.get<SponsorLine>(`/api/sponsor_lines/id/${id}/`);
+  }
+
+  updateSponsorLine(id: number, data: SponsorLineUpdate): Observable<SponsorLine> {
+    return this.apiService.put<SponsorLine>('/api/sponsor_lines/', id, data, true).pipe(
+      tap(() => this.reloadSponsorLinesList())
+    );
+  }
+
   deleteSponsor(id: number): Observable<void> {
     return this.apiService.delete('/api/sponsors', id).pipe(tap(() => this.reloadSponsorsList()));
+  }
+
+  deleteSponsorLine(id: number): Observable<void> {
+    return this.apiService.delete('/api/sponsor_lines', id).pipe(tap(() => this.reloadSponsorLinesList()));
   }
 
   deleteSponsorWithConnections(sponsorId: number, sponsorLines: SponsorLine[]): Observable<void> {
@@ -246,6 +265,74 @@ export class SponsorStoreService {
         );
       })
     );
+  }
+
+  getSponsorsInSponsorLine(sponsorLineId: number): Observable<SponsorLineConnectionsResponse> {
+    return this.http.get<SponsorLineConnectionsResponse>(
+      buildApiUrl(`/api/sponsor_in_sponsor_line/sponsor_line/id/${sponsorLineId}/sponsors`)
+    );
+  }
+
+  deleteSponsorLineWithConnections(sponsorLineId: number): Observable<void> {
+    return forkJoin({
+      teams: this.apiService.get<Team[]>('/api/teams/').pipe(catchError(() => of([]))),
+      tournaments: this.apiService.get<Tournament[]>('/api/tournaments/').pipe(catchError(() => of([]))),
+      matches: this.apiService.get<Match[]>('/api/matches/').pipe(catchError(() => of([]))),
+    }).pipe(
+      switchMap(({ teams, tournaments, matches }) => {
+        const updates = [
+          ...teams
+            .filter((team) => team.sponsor_line_id === sponsorLineId)
+            .map((team) =>
+              this.apiService.put('/api/teams/', team.id, { sponsor_line_id: null }, true)
+                .pipe(catchError(() => of(null)))
+            ),
+          ...tournaments
+            .filter((tournament) => tournament.sponsor_line_id === sponsorLineId)
+            .map((tournament) =>
+              this.apiService.put('/api/tournaments/', tournament.id, { sponsor_line_id: null }, true)
+                .pipe(catchError(() => of(null)))
+            ),
+          ...matches
+            .filter((match) => match.sponsor_line_id === sponsorLineId)
+            .map((match) =>
+              this.apiService.put('/api/matches/', match.id, { sponsor_line_id: null }, true)
+                .pipe(catchError(() => of(null)))
+            ),
+        ];
+
+        return this.getSponsorsInSponsorLine(sponsorLineId).pipe(
+          catchError(() => of({ sponsor_line: null, sponsors: [] })),
+          switchMap((response) => {
+            const deletions = response.sponsors.map((entry) =>
+              this.http
+                .delete<void>(buildApiUrl(`/api/sponsor_in_sponsor_line/${entry.sponsor.id}in${sponsorLineId}`))
+                .pipe(catchError(() => of(null)))
+            );
+
+            if (updates.length === 0 && deletions.length === 0) {
+              return this.deleteSponsorLine(sponsorLineId);
+            }
+
+            return forkJoin([...updates, ...deletions]).pipe(
+              switchMap(() => this.deleteSponsorLine(sponsorLineId))
+            );
+          })
+        );
+      })
+    );
+  }
+
+  addSponsorToLine(sponsorId: number, sponsorLineId: number): Observable<void> {
+    return this.apiService.post<void>(`/api/sponsor_in_sponsor_line/${sponsorId}in${sponsorLineId}`, {}).pipe(
+      tap(() => this.reload())
+    );
+  }
+
+  removeSponsorFromLine(sponsorId: number, sponsorLineId: number): Observable<void> {
+    return this.http
+      .delete<void>(buildApiUrl(`/api/sponsor_in_sponsor_line/${sponsorId}in${sponsorLineId}`))
+      .pipe(tap(() => this.reload()));
   }
 
   getSponsorLineConnections(sponsorId: number, sponsorLines: SponsorLine[]): Observable<SponsorLine[]> {

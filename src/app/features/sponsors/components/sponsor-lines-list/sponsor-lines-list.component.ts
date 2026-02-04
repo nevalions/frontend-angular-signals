@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { TuiLoader } from '@taiga-ui/core';
 import { TuiBadge, TuiPagination } from '@taiga-ui/kit';
@@ -8,7 +9,7 @@ import type { SponsorLine } from '../../models/sponsor-line.model';
 @Component({
   selector: 'app-sponsor-lines-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiBadge, TuiCardLarge, TuiCell, TuiLoader, TuiPagination],
+  imports: [RouterLink, TuiBadge, TuiCardLarge, TuiCell, TuiLoader, TuiPagination],
   templateUrl: './sponsor-lines-list.component.html',
   styleUrl: './sponsor-lines-list.component.less',
 })

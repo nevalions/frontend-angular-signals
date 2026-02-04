@@ -1,13 +1,16 @@
 @if (hasContent()) {
   <div class="sponsor-display-flat">
     @if (logoSrc()) {
-      <img
-        [ngSrc]="logoSrc()"
-        width="220"
-        height="70"
-        [style.transform]="'scale(' + logoScale() + ')'"
-        [attr.alt]="displayTitle() || 'Sponsor logo'"
-      />
+      <div class="sponsor-display-flat__logo">
+        <img
+          [ngSrc]="logoSrc()"
+          fill
+          sizes="100vw"
+          [style.transform]="'scale(' + logoScale() + ')'"
+          [attr.alt]="displayTitle() || 'Sponsor logo'"
+          [priority]="priority()"
+        />
+      </div>
     }
   </div>
 }

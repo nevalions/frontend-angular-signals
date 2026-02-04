@@ -1,0 +1,37 @@
+<div class="sponsor-line-edit">
+  <header class="sponsor-line-edit__header">
+    <h1 class="sponsor-line-edit__title">Edit Sponsor Line</h1>
+    <div class="sponsor-line-edit__actions">
+      <button tuiButton type="button" (click)="navigateToDetail()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="sponsorLineForm.invalid">Save</button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="sponsor-line-edit__loading">Loading sponsor line...</div>
+  } @else {
+    <form class="sponsor-line-edit__form" [formGroup]="sponsorLineForm">
+      <div class="sponsor-line-edit__field">
+        <label for="title" class="sponsor-line-edit__label">Sponsor Line Title *</label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          class="sponsor-line-edit__input"
+          [class.sponsor-line-edit__input--invalid]="sponsorLineForm.get('title')?.touched && sponsorLineForm.get('title')?.invalid"
+        />
+        @if (sponsorLineForm.get('title')?.touched && sponsorLineForm.get('title')?.errors?.['required']) {
+          <div class="sponsor-line-edit__error">Title is required</div>
+        }
+      </div>
+
+      <div class="sponsor-line-edit__field">
+        <span class="sponsor-line-edit__label">Visibility</span>
+        <label class="sponsor-line-edit__toggle">
+          <input type="checkbox" formControlName="is_visible" class="sponsor-line-edit__checkbox" />
+          <span>Visible on sponsor line</span>
+        </label>
+      </div>
+    </form>
+  }
+</div>

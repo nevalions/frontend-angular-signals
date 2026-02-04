@@ -65,6 +65,18 @@ export class NavigationHelperService {
     this.router.navigate(['/sponsors', id, 'edit']);
   }
 
+  toSponsorLinesList(): void {
+    this.router.navigate(['/sponsor-lines']);
+  }
+
+  toSponsorLineDetail(id: number | string): void {
+    this.router.navigate(['/sponsor-lines', id]);
+  }
+
+  toSponsorLineEdit(id: number | string): void {
+    this.router.navigate(['/sponsor-lines', id, 'edit']);
+  }
+
   toPersonDetail(id: number | string): void {
     this.router.navigate(['/persons', id]);
   }

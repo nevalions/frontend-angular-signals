@@ -1,0 +1,103 @@
+<div class="sponsor-line-detail">
+  @if (loading()) {
+    <div class="sponsor-line-detail__loading">
+      <tui-loader size="l" />
+    </div>
+  } @else if (sponsorLine(); as line) {
+    <app-entity-header
+      [title]="line.title || 'Sponsor Line'"
+      [showEdit]="true"
+      [showDelete]="true"
+      [showGear]="true"
+      (navigateBack)="navigateBack()"
+      (edit)="onEdit()"
+      (delete)="onDelete()"
+    />
+
+    <div class="sponsor-line-detail__content">
+      <section class="sponsor-line-detail__card" tuiAppearance="floating" tuiCardLarge>
+        <header class="sponsor-line-detail__card-header">
+          <div class="sponsor-line-detail__header-text">
+            <h2 class="sponsor-line-detail__section-title">Details</h2>
+            <p class="sponsor-line-detail__subtitle">Sponsor line settings and connections</p>
+          </div>
+        </header>
+
+        <div class="sponsor-line-detail__details">
+          <div class="sponsor-line-detail__detail" tuiCell>
+            <span class="sponsor-line-detail__label">Sponsor Line Title</span>
+            <span class="sponsor-line-detail__value">{{ line.title || 'Sponsor Line' }}</span>
+          </div>
+          <div class="sponsor-line-detail__detail" tuiCell>
+            <span class="sponsor-line-detail__label">Visibility</span>
+            <tui-badge
+              size="s"
+              tuiStatus
+              [appearance]="line.is_visible ? 'positive' : 'negative'">
+              {{ visibilityLabel(line) }}
+            </tui-badge>
+          </div>
+          <div class="sponsor-line-detail__detail" tuiCell>
+            <span class="sponsor-line-detail__label">Sponsors</span>
+            <div class="sponsor-line-detail__value sponsor-line-detail__value--sponsors">
+              @if (connectedSponsorsLoading()) {
+                <tui-loader size="s" />
+              } @else if (connectedSponsors().length > 0) {
+                @for (entry of connectedSponsors(); track entry.sponsor.id) {
+                  <tui-badge appearance="neutral" size="s">
+                    {{ entry.sponsor.title }}
+                    @if (entry.position !== null && entry.position !== undefined) {
+                      ({{ entry.position }})
+                    }
+                  </tui-badge>
+                }
+              } @else {
+                <span class="sponsor-line-detail__muted">Not connected</span>
+              }
+            </div>
+          </div>
+          <div class="sponsor-line-detail__detail sponsor-line-detail__detail--selector" tuiCell>
+            <span class="sponsor-line-detail__label">Manage Sponsors</span>
+            <div class="sponsor-line-detail__selector">
+              <tui-textfield multi tuiChevron tuiTextfieldSize="m">
+                <label tuiLabel>Select sponsors</label>
+                <select
+                  tuiMultiSelect
+                  [items]="sponsors()"
+                  [ngModel]="selectedSponsorsValue"
+                  (ngModelChange)="onSponsorsSelectionChange($event)"
+                  placeholder="Select sponsors">
+                </select>
+              </tui-textfield>
+              @if (sponsors().length === 0) {
+                <span class="sponsor-line-detail__muted">No sponsors available</span>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="sponsor-line-detail__preview">
+          <div class="sponsor-line-detail__label">Preview</div>
+          <div class="sponsor-line-detail__preview-frame">
+            @if (previewLine(); as preview) {
+              <div class="sponsor-line-detail__preview-line">
+                @if (preview.title) {
+                  <span class="sponsor-line-detail__preview-title">{{ preview.title }}</span>
+                }
+                <div class="sponsor-line-detail__preview-logos">
+                  @for (sponsor of previewSponsors(); track sponsor.id) {
+                    <app-sponsor-display-flat
+                      [sponsor]="sponsor"
+                      [priority]="true"
+                    />
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    </div>
+  } @else {
+    <div class="sponsor-line-detail__not-found">Sponsor line not found</div>
+  }
+</div>
