@@ -1,0 +1,81 @@
+<div class="sponsor-detail">
+  @if (loading()) {
+    <div class="sponsor-detail__loading">
+      <tui-loader size="l" />
+    </div>
+  } @else if (sponsor(); as sponsor) {
+    <app-entity-header
+      [title]="sponsor.title"
+      [showEdit]="true"
+      [showDelete]="true"
+      [showGear]="true"
+      (navigateBack)="navigateBack()"
+      (edit)="onEdit()"
+      (delete)="onDelete()"
+    />
+
+    <div class="sponsor-detail__content">
+      <section class="sponsor-detail__card" tuiAppearance="floating" tuiCardLarge>
+        <header class="sponsor-detail__card-header">
+          <tui-avatar
+            size="xl"
+            [round]="false"
+            [src]="logoUrl()"
+            class="sponsor-detail__avatar"
+            [style.--logo-scale]="logoScale()">
+            @if (!logoUrl()) {
+              {{ sponsor.title[0] }}
+            }
+          </tui-avatar>
+          <div class="sponsor-detail__header-text">
+            <h2 class="sponsor-detail__section-title">Details</h2>
+            <p class="sponsor-detail__subtitle">Sponsor assets and identifiers</p>
+          </div>
+        </header>
+
+        <div class="sponsor-detail__details">
+          <div class="sponsor-detail__detail" tuiCell>
+            <span class="sponsor-detail__label">Sponsor Title</span>
+            <span class="sponsor-detail__value">{{ sponsor.title }}</span>
+          </div>
+          <div class="sponsor-detail__detail sponsor-detail__detail--logo" tuiCell>
+            <span class="sponsor-detail__label">Logo</span>
+            @if (logoUrl()) {
+              <div class="sponsor-detail__logo" [style.--logo-scale]="logoScale()">
+                <img [src]="logoUrl()" [alt]="sponsor.title + ' logo'" />
+              </div>
+            } @else {
+              <span class="sponsor-detail__muted">Not provided</span>
+            }
+          </div>
+          @if (sponsor.scale_logo !== null && sponsor.scale_logo !== undefined) {
+            <div class="sponsor-detail__detail" tuiCell>
+              <span class="sponsor-detail__label">Logo Scale</span>
+              <tui-badge appearance="neutral" size="s">
+                {{ sponsor.scale_logo }}
+              </tui-badge>
+            </div>
+          }
+          <div class="sponsor-detail__detail" tuiCell>
+            <span class="sponsor-detail__label">Sponsor Lines</span>
+            <div class="sponsor-detail__value sponsor-detail__value--lines">
+              @if (connectedSponsorLinesLoading()) {
+                <tui-loader size="s" />
+              } @else if (connectedSponsorLines().length > 0) {
+                @for (line of connectedSponsorLines(); track line.id) {
+                  <tui-badge appearance="neutral" size="s">
+                    {{ line.title || 'Sponsor Line' }}
+                  </tui-badge>
+                }
+              } @else {
+                <span class="sponsor-detail__muted">Not connected</span>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  } @else {
+    <div class="sponsor-detail__not-found">Sponsor not found</div>
+  }
+</div>

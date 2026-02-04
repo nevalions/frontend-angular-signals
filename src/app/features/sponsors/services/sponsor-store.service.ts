@@ -2,14 +2,22 @@ import { computed, inject, Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
+import { Observable, catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { buildApiUrl } from '../../../core/config/api.constants';
 import { buildPaginationParams, createPaginationState } from '../../../core/utils/pagination-helper.util';
 import { SortOrder } from '../../../core/models';
-import { Sponsor, SponsorsPaginatedResponse } from '../models/sponsor.model';
+import { Sponsor, SponsorLogoUploadResponse, SponsorsPaginatedResponse } from '../models/sponsor.model';
+import type { Match } from '../../matches/models/match.model';
+import type { Team } from '../../teams/models/team.model';
+import type { Tournament } from '../../tournaments/models/tournament.model';
 import { SponsorLine, SponsorLinesPaginatedResponse } from '../models/sponsor-line.model';
+
+type SponsorLineConnectionsResponse = {
+  sponsor_line: SponsorLine | null;
+  sponsors: Array<{ sponsor: Sponsor; position: number | null }>;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -121,6 +129,11 @@ export class SponsorStoreService {
     this.sponsorLinesLookupResource.reload();
   }
 
+  reloadSponsorsList(): void {
+    this.sponsorsResource.reload();
+    this.sponsorsPaginatedResource.reload();
+  }
+
   setSponsorsPage(page: number): void {
     this.sponsorsPagination.setPage(page);
   }
@@ -165,10 +178,92 @@ export class SponsorStoreService {
   }
 
   createSponsor(data: { title: string; logo_url?: string | null; scale_logo?: number | null }): Observable<Sponsor> {
-    return this.apiService.post<Sponsor>('/api/sponsors/', data).pipe(tap(() => this.reload()));
+    return this.apiService.post<Sponsor>('/api/sponsors/', data).pipe(tap(() => this.reloadSponsorsList()));
+  }
+
+  updateSponsor(id: number, data: { title?: string; logo_url?: string | null; scale_logo?: number | null }): Observable<Sponsor> {
+    return this.apiService.put<Sponsor>('/api/sponsors/', id, data, true).pipe(tap(() => this.reloadSponsorsList()));
+  }
+
+  uploadSponsorLogo(file: File): Observable<SponsorLogoUploadResponse> {
+    return this.apiService.uploadFile<SponsorLogoUploadResponse>('/api/sponsors/upload_logo', file);
   }
 
   createSponsorLine(data: { title?: string | null; is_visible?: boolean | null }): Observable<SponsorLine> {
     return this.apiService.post<SponsorLine>('/api/sponsor_lines', data).pipe(tap(() => this.reload()));
+  }
+
+  deleteSponsor(id: number): Observable<void> {
+    return this.apiService.delete('/api/sponsors', id).pipe(tap(() => this.reloadSponsorsList()));
+  }
+
+  deleteSponsorWithConnections(sponsorId: number, sponsorLines: SponsorLine[]): Observable<void> {
+    const resolvedSponsorLines = sponsorLines.length > 0 ? sponsorLines : this.sponsorLines();
+
+    return forkJoin({
+      teams: this.apiService.get<Team[]>('/api/teams/').pipe(catchError(() => of([]))),
+      tournaments: this.apiService.get<Tournament[]>('/api/tournaments/').pipe(catchError(() => of([]))),
+      matches: this.apiService.get<Match[]>('/api/matches/').pipe(catchError(() => of([]))),
+    }).pipe(
+      switchMap(({ teams, tournaments, matches }) => {
+        const updates = [
+          ...teams
+            .filter((team) => team.main_sponsor_id === sponsorId)
+            .map((team) =>
+              this.apiService.put('/api/teams/', team.id, { main_sponsor_id: null }, true)
+                .pipe(catchError(() => of(null)))
+            ),
+          ...tournaments
+            .filter((tournament) => tournament.main_sponsor_id === sponsorId)
+            .map((tournament) =>
+              this.apiService.put('/api/tournaments/', tournament.id, { main_sponsor_id: null }, true)
+                .pipe(catchError(() => of(null)))
+            ),
+          ...matches
+            .filter((match) => match.main_sponsor_id === sponsorId)
+            .map((match) =>
+              this.apiService.put('/api/matches/', match.id, { main_sponsor_id: null }, true)
+                .pipe(catchError(() => of(null)))
+            ),
+        ];
+
+        return this.getSponsorLineConnections(sponsorId, resolvedSponsorLines).pipe(
+          switchMap((connectedLines) => {
+            const deletions = connectedLines.map((line) =>
+              this.http
+                .delete<void>(buildApiUrl(`/api/sponsor_in_sponsor_line/${sponsorId}in${line.id}`))
+                .pipe(catchError(() => of(null)))
+            );
+
+            if (updates.length === 0 && deletions.length === 0) {
+              return this.deleteSponsor(sponsorId);
+            }
+
+            return forkJoin([...updates, ...deletions]).pipe(
+              switchMap(() => this.deleteSponsor(sponsorId))
+            );
+          })
+        );
+      })
+    );
+  }
+
+  getSponsorLineConnections(sponsorId: number, sponsorLines: SponsorLine[]): Observable<SponsorLine[]> {
+    if (sponsorLines.length === 0) {
+      return of([]);
+    }
+
+    const requests = sponsorLines.map((line) =>
+      this.http
+        .get<SponsorLineConnectionsResponse>(buildApiUrl(`/api/sponsor_in_sponsor_line/sponsor_line/id/${line.id}/sponsors`))
+        .pipe(
+          map((response) => (response.sponsors.some((entry) => entry.sponsor.id === sponsorId) ? line : null)),
+          catchError(() => of(null))
+        )
+    );
+
+    return forkJoin(requests).pipe(
+      map((results) => results.filter((line): line is SponsorLine => line !== null))
+    );
   }
 }

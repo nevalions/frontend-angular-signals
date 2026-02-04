@@ -1,20 +1,23 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
-import { TuiLoader } from '@taiga-ui/core';
-import { TuiPagination } from '@taiga-ui/kit';
+import { TuiButton, TuiLoader } from '@taiga-ui/core';
+import { TuiBadge, TuiPagination } from '@taiga-ui/kit';
 import { SponsorStoreService } from '../../services/sponsor-store.service';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import type { Sponsor } from '../../models/sponsor.model';
+import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 
 @Component({
   selector: 'app-sponsor-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiCardLarge, TuiCell, TuiLoader, TuiPagination],
+  imports: [RouterLink, TuiBadge, TuiButton, TuiCardLarge, TuiCell, TuiLoader, TuiPagination],
   templateUrl: './sponsor-list.component.html',
   styleUrl: './sponsor-list.component.less',
 })
-export class SponsorListComponent {
+export class SponsorListComponent implements OnInit {
   private sponsorStore = inject(SponsorStoreService);
+  private navigationHelper = inject(NavigationHelperService);
 
   sponsors = this.sponsorStore.sponsorsPaginated;
   loading = this.sponsorStore.sponsorsPaginatedLoading;
@@ -34,11 +37,19 @@ export class SponsorListComponent {
     return sponsor.scale_logo ?? 1;
   }
 
+  ngOnInit(): void {
+    this.sponsorStore.reloadSponsorsList();
+  }
+
   onPageChange(pageIndex: number): void {
     this.sponsorStore.setSponsorsPage(pageIndex + 1);
   }
 
   onItemsPerPageChange(itemsPerPage: number): void {
     this.sponsorStore.setSponsorsItemsPerPage(itemsPerPage);
+  }
+
+  navigateToCreate(): void {
+    this.navigationHelper.toSponsorCreate();
   }
 }

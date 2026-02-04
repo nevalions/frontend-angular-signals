@@ -49,6 +49,22 @@ export class NavigationHelperService {
     this.router.navigate(['/persons']);
   }
 
+  toSponsorsList(): void {
+    this.router.navigate(['/sponsors']);
+  }
+
+  toSponsorDetail(id: number | string): void {
+    this.router.navigate(['/sponsors', id]);
+  }
+
+  toSponsorCreate(): void {
+    this.router.navigate(['/sponsors', 'new']);
+  }
+
+  toSponsorEdit(id: number | string): void {
+    this.router.navigate(['/sponsors', id, 'edit']);
+  }
+
   toPersonDetail(id: number | string): void {
     this.router.navigate(['/persons', id]);
   }

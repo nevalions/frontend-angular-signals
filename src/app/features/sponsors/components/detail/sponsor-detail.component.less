@@ -1,0 +1,125 @@
+.sponsor-detail {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__loading,
+  &__not-found {
+    text-align: center;
+    padding: 2rem;
+    color: var(--tui-text-secondary);
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  &__card {
+    padding: 1.5rem;
+  }
+
+  &__card-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--tui-border-normal);
+    margin-bottom: 1rem;
+  }
+
+  &__avatar {
+    background: var(--tui-background-neutral-1);
+    color: var(--tui-text-secondary);
+    border-radius: var(--tui-radius-m);
+    overflow: hidden;
+
+    ::ng-deep img {
+      transform: scale(var(--logo-scale, 1));
+    }
+  }
+
+  &__header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__section-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--tui-text-primary);
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: var(--tui-text-secondary);
+    font-size: 0.95rem;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+
+    &.sponsor-detail__detail--logo {
+      align-items: flex-start;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__label {
+    font-weight: 500;
+    color: var(--tui-text-secondary);
+    white-space: nowrap;
+  }
+
+  &__value {
+    color: var(--tui-text-primary);
+  }
+
+  &__value--lines {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__logo {
+    max-width: 220px;
+    max-height: 120px;
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--tui-border-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tui-base-01);
+
+    img {
+      max-width: 200px;
+      max-height: 100px;
+      object-fit: contain;
+      transform: scale(var(--logo-scale, 1));
+      transform-origin: center;
+    }
+  }
+
+  &__muted {
+    color: var(--tui-text-secondary);
+  }
+}

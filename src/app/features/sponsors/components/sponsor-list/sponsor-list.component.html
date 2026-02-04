@@ -6,6 +6,9 @@
         <div class="sponsor-list__subtitle">Total: {{ totalCount() }}</div>
       }
     </div>
+    <button tuiButton type="button" class="add-button" (click)="navigateToCreate()">
+      Add Sponsor
+    </button>
   </header>
 
   @if (loading()) {
@@ -19,23 +22,31 @@
   } @else {
     <div class="sponsor-list__items">
       @for (sponsor of sponsors(); track sponsor.id) {
-        <div class="sponsor-list__card" tuiAppearance="floating" tuiCardLarge tuiCell="l">
+        <a
+          class="sponsor-list__card"
+          tuiAppearance="floating"
+          tuiCardLarge
+          tuiCell="l"
+          [routerLink]="['/sponsors', sponsor.id]"
+        >
           @if (logoUrl(sponsor)) {
             <div class="sponsor-list__logo" [style.--logo-scale]="logoScale(sponsor)">
               <img [src]="logoUrl(sponsor)" [alt]="sponsor.title + ' logo'" loading="lazy" />
             </div>
           } @else {
             <div class="sponsor-list__logo sponsor-list__logo--placeholder">
-              {{ sponsor.title?.[0] }}
+              {{ sponsor.title[0] }}
             </div>
           }
           <div class="sponsor-list__info">
             <div class="sponsor-list__name">{{ sponsor.title }}</div>
             @if (sponsor.scale_logo) {
-              <div class="sponsor-list__meta">Logo scale: {{ sponsor.scale_logo }}</div>
+              <div class="sponsor-list__meta">
+                <tui-badge appearance="neutral" size="s">Scale: {{ sponsor.scale_logo }}</tui-badge>
+              </div>
             }
           </div>
-        </div>
+        </a>
       }
     </div>
 

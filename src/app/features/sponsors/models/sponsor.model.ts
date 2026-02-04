@@ -15,4 +15,8 @@ export interface SponsorUpdate {
   scale_logo?: number | null;
 }
 
+export interface SponsorLogoUploadResponse {
+  logoUrl: string;
+}
+
 export type SponsorsPaginatedResponse = PaginatedResponse<Sponsor>;

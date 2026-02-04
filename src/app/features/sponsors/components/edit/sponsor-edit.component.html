@@ -1,0 +1,52 @@
+<div class="sponsor-edit">
+  <header class="sponsor-edit__header">
+    <h1 class="sponsor-edit__title">Edit Sponsor</h1>
+    <div class="sponsor-edit__actions">
+      <button tuiButton type="button" (click)="navigateToDetail()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="sponsorForm.invalid">Save Changes</button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="sponsor-edit__loading">Loading sponsor...</div>
+  } @else {
+    <form class="sponsor-edit__form" [formGroup]="sponsorForm">
+      <div class="sponsor-edit__field">
+        <label for="title" class="sponsor-edit__label">Sponsor Title *</label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          class="sponsor-edit__input"
+          [class.sponsor-edit__input--invalid]="sponsorForm.get('title')?.touched && sponsorForm.get('title')?.invalid"
+        />
+        @if (sponsorForm.get('title')?.touched && sponsorForm.get('title')?.errors?.['required']) {
+          <div class="sponsor-edit__error">Title is required</div>
+        }
+      </div>
+
+      <div class="sponsor-edit__field">
+        <app-image-upload
+          label="Logo"
+          mode="single"
+          [currentUrls]="displayLogoUrls()"
+          [uploading]="logoUploadLoading()"
+          (upload)="onLogoUpload($event)"
+          (remove)="onLogoRemove()"
+        />
+      </div>
+
+      <div class="sponsor-edit__field">
+        <label for="scale_logo" class="sponsor-edit__label">Logo Scale</label>
+        <input
+          id="scale_logo"
+          type="number"
+          step="0.1"
+          formControlName="scale_logo"
+          class="sponsor-edit__input"
+          placeholder="1.0"
+        />
+      </div>
+    </form>
+  }
+</div>

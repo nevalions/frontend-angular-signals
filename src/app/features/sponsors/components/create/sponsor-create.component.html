@@ -1,0 +1,48 @@
+<div class="sponsor-create">
+  <header class="sponsor-create__header">
+    <h1 class="sponsor-create__title">Create New Sponsor</h1>
+    <div class="sponsor-create__actions">
+      <button tuiButton type="button" (click)="cancel()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="sponsorForm.invalid">Create Sponsor</button>
+    </div>
+  </header>
+
+  <form class="sponsor-create__form" [formGroup]="sponsorForm">
+    <div class="sponsor-create__field">
+      <label for="title" class="sponsor-create__label">Sponsor Title *</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        class="sponsor-create__input"
+        [class.sponsor-create__input--invalid]="sponsorForm.get('title')?.touched && sponsorForm.get('title')?.invalid"
+      />
+      @if (sponsorForm.get('title')?.touched && sponsorForm.get('title')?.errors?.['required']) {
+        <div class="sponsor-create__error">Title is required</div>
+      }
+    </div>
+
+    <div class="sponsor-create__field">
+      <app-image-upload
+        label="Logo"
+        mode="single"
+        [currentUrls]="logoPreviewUrls()"
+        [uploading]="logoUploadLoading()"
+        (upload)="onLogoUpload($event)"
+        (remove)="onLogoRemove()"
+      />
+    </div>
+
+    <div class="sponsor-create__field">
+      <label for="scale_logo" class="sponsor-create__label">Logo Scale</label>
+      <input
+        id="scale_logo"
+        type="number"
+        step="0.1"
+        formControlName="scale_logo"
+        class="sponsor-create__input"
+        placeholder="1.0"
+      />
+    </div>
+  </form>
+</div>

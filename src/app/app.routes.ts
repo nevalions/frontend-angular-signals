@@ -22,6 +22,9 @@ import { PersonCreateComponent } from './features/persons/components/create/pers
 import { PersonEditComponent } from './features/persons/components/edit/person-edit.component';
 import { SponsorListComponent } from './features/sponsors/components/sponsor-list/sponsor-list.component';
 import { SponsorLinesListComponent } from './features/sponsors/components/sponsor-lines-list/sponsor-lines-list.component';
+import { SponsorDetailComponent } from './features/sponsors/components/detail/sponsor-detail.component';
+import { SponsorCreateComponent } from './features/sponsors/components/create/sponsor-create.component';
+import { SponsorEditComponent } from './features/sponsors/components/edit/sponsor-edit.component';
 import { PlayerDetailComponent } from './features/players/components/detail/player-detail.component';
 import { HomeComponent } from './features/home/components/home.component';
 import { UserProfileComponent } from './features/users/components/profile/user-profile.component';
@@ -139,6 +142,18 @@ export const routes: Routes = [
   {
     path: 'sponsors',
     component: SponsorListComponent,
+  },
+  {
+    path: 'sponsors/new',
+    component: SponsorCreateComponent,
+  },
+  {
+    path: 'sponsors/:id/edit',
+    component: SponsorEditComponent,
+  },
+  {
+    path: 'sponsors/:id',
+    component: SponsorDetailComponent,
   },
   {
     path: 'sponsor-lines',

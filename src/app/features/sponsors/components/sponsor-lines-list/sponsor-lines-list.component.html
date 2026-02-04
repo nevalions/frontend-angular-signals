@@ -23,7 +23,13 @@
           <div class="sponsor-lines-list__info">
             <div class="sponsor-lines-list__name">{{ line.title || 'Sponsor Line' }}</div>
             <div class="sponsor-lines-list__meta">
-              Visibility: {{ visibilityLabel(line) }}
+              <span class="sponsor-lines-list__meta-label">Visibility</span>
+              <tui-badge
+                size="s"
+                tuiStatus
+                [appearance]="line.is_visible ? 'positive' : 'negative'">
+                {{ visibilityLabel(line) }}
+              </tui-badge>
             </div>
           </div>
         </div>
