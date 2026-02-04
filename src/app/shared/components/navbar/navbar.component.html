@@ -21,6 +21,40 @@
     </button>
 
     <nav class="navbar-nav" [class.mobile-open]="mobileMenuOpen()">
+      <div class="dropdown">
+        <button
+          class="dropdown-toggle"
+          (click)="toggleDropdown(1); $event.stopPropagation()"
+          [class.open]="isDropdownOpen(1)"
+          aria-haspopup="true"
+          [attr.aria-expanded]="isDropdownOpen(1)"
+          type="button"
+        >
+          <span class="dropdown-text">Sponsors</span>
+          <span class="dropdown-icon">
+            @if (isDropdownOpen(1)) {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            }
+          </span>
+        </button>
+        @if (isDropdownOpen(1)) {
+          <div class="dropdown-menu">
+            <a class="dropdown-item" routerLink="/sponsors" (click)="closeMobileMenu(); $event.stopPropagation()">
+              <span class="dropdown-item-text">Sponsors</span>
+            </a>
+            <a class="dropdown-item" routerLink="/sponsor-lines" (click)="closeMobileMenu(); $event.stopPropagation()">
+              <span class="dropdown-item-text">Sponsor Lines</span>
+            </a>
+          </div>
+        }
+      </div>
+
       <a tuiLink routerLink="/persons" routerLinkActive="active" (click)="closeMobileMenu()">Persons</a>
 
       <div class="dropdown">

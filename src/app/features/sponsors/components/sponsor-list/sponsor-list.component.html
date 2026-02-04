@@ -1,0 +1,67 @@
+<div class="sponsor-list">
+  <header class="sponsor-list__header">
+    <div>
+      <h1 class="sponsor-list__title">Sponsors</h1>
+      @if (totalCount() > 0) {
+        <div class="sponsor-list__subtitle">Total: {{ totalCount() }}</div>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="sponsor-list__loading">
+      <tui-loader size="l" />
+    </div>
+  } @else if (error()) {
+    <div class="sponsor-list__error">Error loading sponsors</div>
+  } @else if (sponsors().length === 0) {
+    <div class="sponsor-list__empty">No sponsors found</div>
+  } @else {
+    <div class="sponsor-list__items">
+      @for (sponsor of sponsors(); track sponsor.id) {
+        <div class="sponsor-list__card" tuiAppearance="floating" tuiCardLarge tuiCell="l">
+          @if (logoUrl(sponsor)) {
+            <div class="sponsor-list__logo" [style.--logo-scale]="logoScale(sponsor)">
+              <img [src]="logoUrl(sponsor)" [alt]="sponsor.title + ' logo'" loading="lazy" />
+            </div>
+          } @else {
+            <div class="sponsor-list__logo sponsor-list__logo--placeholder">
+              {{ sponsor.title?.[0] }}
+            </div>
+          }
+          <div class="sponsor-list__info">
+            <div class="sponsor-list__name">{{ sponsor.title }}</div>
+            @if (sponsor.scale_logo) {
+              <div class="sponsor-list__meta">Logo scale: {{ sponsor.scale_logo }}</div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="sponsor-list__pagination">
+        <div class="sponsor-list__items-per-page">
+          <span>Items per page:</span>
+          @for (option of itemsPerPageOptions; track option) {
+            <button
+              type="button"
+              class="sponsor-list__items-option"
+              [class.active]="itemsPerPage() === option"
+              (click)="onItemsPerPageChange(option)"
+            >
+              {{ option }}
+            </button>
+          }
+        </div>
+        <div class="sponsor-list__pagination-control">
+          <tui-pagination
+            [length]="totalPages()"
+            [index]="page() - 1"
+            (indexChange)="onPageChange($event)"
+          />
+        </div>
+      </div>
+    }
+  }
+</div>

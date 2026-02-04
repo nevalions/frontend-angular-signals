@@ -1,0 +1,120 @@
+.sponsor-list {
+  padding: 20px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__subtitle {
+    color: var(--tui-text-secondary);
+    margin-top: 4px;
+  }
+
+  &__loading,
+  &__error,
+  &__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+
+  &__error {
+    color: var(--tui-text-negative);
+  }
+
+  &__empty {
+    color: var(--tui-text-secondary);
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--tui-background-base);
+    border: 1px solid var(--tui-border-normal);
+  }
+
+  &__logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: var(--tui-background-neutral-1);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform: scale(var(--logo-scale, 1));
+    }
+  }
+
+  &__logo--placeholder {
+    color: var(--tui-text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  &__meta {
+    font-size: 0.9rem;
+    color: var(--tui-text-secondary);
+  }
+
+  &__pagination {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__items-per-page {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--tui-text-secondary);
+  }
+
+  &__items-option {
+    border: 1px solid var(--tui-border-normal);
+    background: transparent;
+    color: inherit;
+    padding: 4px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+
+    &.active {
+      border-color: var(--tui-primary);
+      color: var(--tui-primary);
+      font-weight: 600;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+<div class="sponsor-lines-list">
+  <header class="sponsor-lines-list__header">
+    <div>
+      <h1 class="sponsor-lines-list__title">Sponsor Lines</h1>
+      @if (totalCount() > 0) {
+        <div class="sponsor-lines-list__subtitle">Total: {{ totalCount() }}</div>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="sponsor-lines-list__loading">
+      <tui-loader size="l" />
+    </div>
+  } @else if (error()) {
+    <div class="sponsor-lines-list__error">Error loading sponsor lines</div>
+  } @else if (sponsorLines().length === 0) {
+    <div class="sponsor-lines-list__empty">No sponsor lines found</div>
+  } @else {
+    <div class="sponsor-lines-list__items">
+      @for (line of sponsorLines(); track line.id) {
+        <div class="sponsor-lines-list__card" tuiAppearance="floating" tuiCardLarge tuiCell="l">
+          <div class="sponsor-lines-list__info">
+            <div class="sponsor-lines-list__name">{{ line.title || 'Sponsor Line' }}</div>
+            <div class="sponsor-lines-list__meta">
+              Visibility: {{ visibilityLabel(line) }}
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="sponsor-lines-list__pagination">
+        <div class="sponsor-lines-list__items-per-page">
+          <span>Items per page:</span>
+          @for (option of itemsPerPageOptions; track option) {
+            <button
+              type="button"
+              class="sponsor-lines-list__items-option"
+              [class.active]="itemsPerPage() === option"
+              (click)="onItemsPerPageChange(option)"
+            >
+              {{ option }}
+            </button>
+          }
+        </div>
+        <div class="sponsor-lines-list__pagination-control">
+          <tui-pagination
+            [length]="totalPages()"
+            [index]="page() - 1"
+            (indexChange)="onPageChange($event)"
+          />
+        </div>
+      </div>
+    }
+  }
+</div>
