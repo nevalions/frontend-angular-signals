@@ -44,7 +44,6 @@
 - [Interface: `SponsorLine`](../../../src/app/shared/types/entities.types.ts)
 - [Backend Schema: `SponsorLineSchema`](../../../../statsboards-backend/src/sponsor_lines/schemas.py)
 - **Backend API Endpoint:** `GET /api/sponsor_lines/paginated`
-- **TODO:** Add paginated sponsor lines endpoint (only `GET /api/sponsor_lines/` exists in backend BaseRouter)
 
 **Pagination metadata:**
 - Page
