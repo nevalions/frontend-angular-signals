@@ -20,9 +20,9 @@ export class SponsorStoreService {
   private readonly injector = inject(Injector);
   private sponsorsPagination = createPaginationState();
   private sponsorLinesPagination = createPaginationState();
+  private sponsorLinesLookupPagination = createPaginationState({ itemsPerPage: 100 });
 
   sponsorsResource = httpResource<Sponsor[]>(() => buildApiUrl('/api/sponsors/'), { injector: this.injector });
-  sponsorLinesResource = httpResource<SponsorLine[]>(() => buildApiUrl('/api/sponsor_lines'), { injector: this.injector });
 
   sponsorsPaginatedResource = rxResource({
     params: computed(() => ({
@@ -68,12 +68,34 @@ export class SponsorStoreService {
     injector: this.injector,
   });
 
+  sponsorLinesLookupResource = rxResource({
+    params: computed(() => ({
+      page: this.sponsorLinesLookupPagination.page(),
+      itemsPerPage: this.sponsorLinesLookupPagination.itemsPerPage(),
+      sortOrder: this.sponsorLinesLookupPagination.sortOrder(),
+      search: this.sponsorLinesLookupPagination.search(),
+    })),
+    stream: ({ params }) => {
+      const httpParams = buildPaginationParams({
+        page: params.page,
+        itemsPerPage: params.itemsPerPage,
+        sortOrder: params.sortOrder,
+        search: params.search,
+      })
+        .set('order_by', 'title')
+        .set('order_by_two', 'id');
+
+      return this.http.get<SponsorLinesPaginatedResponse>(buildApiUrl('/api/sponsor_lines/paginated'), { params: httpParams });
+    },
+    injector: this.injector,
+  });
+
   sponsors = computed(() => this.sponsorsResource.value() ?? []);
-  sponsorLines = computed(() => this.sponsorLinesResource.value() ?? []);
+  sponsorLines = computed(() => this.sponsorLinesLookupResource.value()?.data ?? []);
   sponsorsPaginated = computed(() => this.sponsorsPaginatedResource.value()?.data ?? []);
   sponsorLinesPaginated = computed(() => this.sponsorLinesPaginatedResource.value()?.data ?? []);
-  loading = computed(() => this.sponsorsResource.isLoading() || this.sponsorLinesResource.isLoading());
-  error = computed(() => this.sponsorsResource.error() || this.sponsorLinesResource.error());
+  loading = computed(() => this.sponsorsResource.isLoading() || this.sponsorLinesLookupResource.isLoading());
+  error = computed(() => this.sponsorsResource.error() || this.sponsorLinesLookupResource.error());
   sponsorsPaginatedLoading = computed(() => this.sponsorsPaginatedResource.isLoading());
   sponsorsPaginatedError = computed(() => this.sponsorsPaginatedResource.error());
   sponsorLinesPaginatedLoading = computed(() => this.sponsorLinesPaginatedResource.isLoading());
@@ -96,7 +118,7 @@ export class SponsorStoreService {
 
   reload(): void {
     this.sponsorsResource.reload();
-    this.sponsorLinesResource.reload();
+    this.sponsorLinesLookupResource.reload();
   }
 
   setSponsorsPage(page: number): void {
