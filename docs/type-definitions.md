@@ -8,7 +8,7 @@ Common entity types used across multiple features are centralized in `src/app/sh
 
 - **Import shared types:** `import { Person, Team, Sport, Tournament, Sponsor, SponsorLine, Position, Season } from '../../../shared/types';`
 - **Available entities:** Person, Sport, Team, Tournament, Sponsor, SponsorLine, Position, Season
-- **Documentation:** See [Shared Types README](../app/shared/types/README.md) for detailed usage guidelines
+- **Documentation:** See [Shared Types README](../src/app/shared/types/README.md) for detailed usage guidelines
 
 **When to use shared types:**
 - When a type is used in 2 or more different features

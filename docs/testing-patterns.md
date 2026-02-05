@@ -349,7 +349,7 @@ beforeEach(() => {
 ## Signal Testing Utilities
 
 ```typescript
-import { createMockSignal, createMockComputed } from '@your-org/signal-testing-utils';
+import { createMockSignal, createMockComputed } from '@statsboard/signal-testing-utils';
 
 const mockSeasons = createMockSignal([]);
 const mockLoading = createMockComputed(false);

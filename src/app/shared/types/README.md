@@ -12,10 +12,10 @@ Centralizing type definitions:
 
 ## Usage
 
-Import shared types using the barrel export:
+Import shared types using the barrel export (relative path):
 
 ```typescript
-import { Person, Team, Tournament, Sport, Sponsor, SponsorLine, Position, Season } from '@shared/types';
+import { Person, Team, Tournament, Sport, Sponsor, SponsorLine, Position, Season } from '../../../shared/types';
 ```
 
 ## Available Types
@@ -53,7 +53,7 @@ Feature-specific types should extend shared types in their respective model file
 
 ```typescript
 // In src/app/features/teams/models/team.model.ts
-import { Team } from '@shared/types';
+import { Team } from '../../../shared/types';
 
 export interface TeamCreate extends Omit<Partial<Team>, 'id'> {}
 

@@ -6,7 +6,11 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 
 - **[Angular Signals Best Practices](./angular-signals-best-practices.md)** - Signal-based development patterns and requirements
 - **[Component Patterns](./component-patterns.md)** - Component structure, inputs/outputs, and template patterns
-- **[Service Patterns](./service-patterns.md)** - Service patterns, httpResource vs rxResource decision matrix, mixed schemas
+- **[Service Patterns: httpResource vs rxResource](./service-patterns/httpresource-vs-rxresource.md)** - Decision matrix and criteria
+- **[Service Patterns: Canonical Store Pattern](./service-patterns/canonical-service-pattern.md)** - Store structure and mutations
+- **[Service Patterns: Mixed Schemas](./service-patterns/mixed-schemas.md)** - Flattened vs nested data models
+- **[Service Patterns: Polling and Heartbeat](./service-patterns/polling-and-heartbeat.md)** - Periodic refresh and online status
+- **[Service Patterns: WebSocket Service Pattern](./service-patterns/websocket-service-pattern.md)** - Real-time service usage
 - **[Template Requirements](./template-requirements.md)** - Modern control flow (@if, @for, @switch), signal bindings
 
 ## Patterns & Anti-Patterns
@@ -31,12 +35,17 @@ Welcome to the Frontend Angular Signals project documentation. This folder conta
 ## Testing
 
 - **[Testing Patterns](./testing-patterns.md)** - Testing patterns for components, services, and models
+- **[Testing Common Mistakes](./testing-common-mistakes.md)** - Overview of common testing errors
+- **[Testing Common Mistakes: Component Tests](./testing-common-mistakes/component-tests.md)** - Component test pitfalls
+- **[Testing Common Mistakes: HTTP/API Tests](./testing-common-mistakes/http-api-tests.md)** - HTTP mock pitfalls
 
 ## Configuration
 
 - **[API Configuration](./api-configuration.md)** - API endpoints, static assets, PUT endpoint patterns, backend docs
 - **[Backend Integration Patterns](./backend-integration-patterns.md)** - Schema strategy, mixed vs nested schemas, ordering with joined tables
-- **[WebSocket Data Flow](./websocket-data-flow.md)** - Real-time updates via WebSocket, message types, data flow patterns
+- **[WebSocket Data Flow Overview](./websocket-data-flow/overview.md)** - Real-time updates via WebSocket
+- **[WebSocket Data Flow: Connection Flow](./websocket-data-flow/connection-flow.md)** - Connection sequence and endpoints
+- **[WebSocket Data Flow: Message Schemas](./websocket-data-flow/message-schemas.md)** - Payload shapes for updates
 - **[Page Schemas](./schemas/)** - Page layouts, UI elements, and backend data requirements
 
 ## Page Schemas & Backend Requirements
