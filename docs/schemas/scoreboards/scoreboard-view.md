@@ -55,7 +55,8 @@
 ┌──────────────────────────────────────────────────────────────────────┐
 │                    SPONSOR LINE                                 │
 │  ┌────────────────────────────────────────────────────────────┐   │
-│  │  [Match Sponsor Logo]                                  │   │
+│  │  [Sponsor Line Title] [if visible]                      │   │
+│  │  [Sponsor Logo 1] [Sponsor Logo 2] [Sponsor Logo 3] ...   │   │
 │  └────────────────────────────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────────────────────┘
 ```
@@ -105,8 +106,10 @@
   - Timeout indicators (if `is_timeout_team_a` / `is_timeout_team_b` is true)
 
 - **Sponsor line**
-  - Main sponsor line (if `is_sponsor_line` is true)
-  - Match sponsor line (if `is_match_sponsor_line` is true)
+   - Sponsor line title (if `is_sponsor_line` is true and sponsor line has a title)
+   - Multiple sponsor logos (if `is_sponsor_line` is true and sponsor line has sponsors)
+   - Sponsors displayed in order by position
+   - Visibility controlled by `is_visible` on sponsor line
 
 - **Football stats lower display** (optional)
   - Team lower stats (if `is_home_match_team_lower` or `is_away_match_team_lower` is true)
@@ -116,6 +119,26 @@
 **Real-time updates:**
 
 All scoreboard elements update in real-time via WebSocket connection. Rosters animate in/out based on visibility toggles.
+
+## Data Types
+
+**SponsorLineSponsor:**
+- position: number | null (display order)
+- sponsor: Sponsor object (id, title, logo_url, scale_logo)
+
+**SponsorLine:**
+- id: number
+- title: string | null (optional line title to display)
+- is_visible: boolean | null (visibility toggle)
+- sponsors: SponsorLineSponsor[] (array of sponsors with positions)
+
+**SponsorsData:**
+- match:
+  - main_sponsor: SponsorPublic | null
+  - sponsor_line: SponsorLinePublic | null
+- tournament:
+  - main_sponsor: SponsorPublic | null
+  - sponsor_line: SponsorLinePublic | null
 
 ## What we need from backend
 
@@ -131,6 +154,7 @@ All scoreboard elements update in real-time via WebSocket connection. Rosters an
 - Scoreboard settings: all visibility toggles, team colors/titles/logos, scaling factors, indicators
 - Players in match (home/away offense/defense rosters) with: id, player number, position, person name, team_id, match_id
 - Main tournament sponsor: id, title, logo icon URL, logo web URL
+- Sponsor line data: id, title, is_visible, sponsors array (with position and sponsor details)
 - Sport (id) for positions lookup
 - Match stats (team, QB, offense, defense stats) if showing lower displays
 
@@ -191,6 +215,7 @@ All scoreboard elements update in real-time via WebSocket connection. Rosters an
   - Scoreboard settings (visibility, colors, toggles)
   - Football events (if applicable)
   - Match statistics (team, QB, offense, defense stats)
+  - Sponsors data (main sponsor, sponsor line with multiple sponsors)
 
 ## TODOs
 

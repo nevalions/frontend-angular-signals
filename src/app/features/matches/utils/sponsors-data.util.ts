@@ -1,6 +1,6 @@
-import { Sponsor, SponsorLine } from '../../../shared/types';
+import { Sponsor, SponsorLine, SponsorLineSponsor } from '../../../shared/types';
 import { ComprehensiveMatchData } from '../models/comprehensive-match.model';
-import { SponsorLinePublic, SponsorPublic, SponsorsData } from '../models/sponsors-data.model';
+import { SponsorLinePublic, SponsorLineSponsorPublic, SponsorPublic, SponsorsData } from '../models/sponsors-data.model';
 
 export function toSponsor(sponsor: SponsorPublic | null | undefined): Sponsor | null {
   if (!sponsor) return null;
@@ -16,10 +16,20 @@ export function toSponsor(sponsor: SponsorPublic | null | undefined): Sponsor | 
 export function toSponsorLine(line: SponsorLinePublic | null | undefined): SponsorLine | null {
   if (!line) return null;
 
+  const sponsors: SponsorLineSponsor[] = (line.sponsors || [])
+    .filter((item): item is Required<SponsorLineSponsorPublic> => 
+      item.sponsor !== null && item.sponsor !== undefined
+    )
+    .map((item) => ({
+      position: item.position ?? null,
+      sponsor: toSponsor(item.sponsor)!,
+    }));
+
   return {
     id: line.id ?? 0,
     title: line.title ?? '',
     is_visible: line.is_visible ?? null,
+    sponsors,
   };
 }
 

@@ -30,6 +30,7 @@ export interface ComprehensiveMatchData {
   players?: PlayerMatchWithDetails[];
   events?: FootballEvent[];
   statistics?: MatchStats;
+  sponsors_data?: unknown;
   [key: string]: unknown;
 }
 

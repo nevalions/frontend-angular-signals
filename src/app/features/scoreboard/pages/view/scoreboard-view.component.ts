@@ -12,7 +12,7 @@ import { PlayerMatchLowerDisplayComponent } from '../../components/lower-display
 import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-display/football-qb-lower-stats-display/football-qb-lower-stats-display.component';
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
 import { WebSocketService } from '../../../../core/services/websocket.service';
-import { SponsorLineComponent } from '../../components/sponsor-display/sponsor-line.component';
+import { MatchSponsorLineDisplayFlatComponent } from '../../components/sponsor-display/match-sponsor-line-display-flat.component';
 import {
   selectMatchMainSponsor,
   selectMatchSponsorLine,
@@ -29,7 +29,7 @@ import {
     PlayerMatchLowerDisplayComponent,
     FootballQbLowerStatsDisplayComponent,
     TeamMatchLowerFootballStatsDisplayComponent,
-    SponsorLineComponent,
+    MatchSponsorLineDisplayFlatComponent,
   ],
   templateUrl: './scoreboard-view.component.html',
   styleUrl: './scoreboard-view.component.less',

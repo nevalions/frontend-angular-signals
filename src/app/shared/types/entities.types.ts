@@ -57,10 +57,16 @@ export interface Sponsor {
   scale_logo?: number | null;
 }
 
+export interface SponsorLineSponsor {
+  position: number | null;
+  sponsor: Sponsor;
+}
+
 export interface SponsorLine {
   id: number;
   title: string;
   is_visible?: boolean | null;
+  sponsors?: SponsorLineSponsor[];
 }
 
 export interface Position {

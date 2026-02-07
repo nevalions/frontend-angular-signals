@@ -6,6 +6,7 @@ import { FootballEvent } from '../../features/matches/models/football-event.mode
 import { MatchStats } from '../../features/matches/models/match-stats.model';
 import { MatchWithDetails, Team } from '../../features/matches/models/match.model';
 import { PlayerMatchWithDetails } from '../../features/matches/models/comprehensive-match.model';
+import { SponsorsData } from '../../features/matches/models/sponsors-data.model';
 import type { ComprehensiveMatchData, WebSocketMessage } from './websocket.service';
 
 export interface WebSocketMessageHandlerContext {
@@ -137,6 +138,7 @@ export class WebSocketMessageHandlers {
           playclock: initialData['playclock'] as PlayClock | undefined,
           events: initialData['events'] as FootballEvent[] | undefined,
           players: (initialData['players'] as PlayerMatchWithDetails[] | undefined) || [],
+          sponsors_data: initialData['sponsors_data'] as SponsorsData | undefined,
         };
 
         this.context.matchData.set(matchData);

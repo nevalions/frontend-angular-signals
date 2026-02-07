@@ -58,9 +58,9 @@
     />
 
     <!-- Sponsor line - positioned under scoreboard -->
-    @if (showSponsorLine() && mainSponsor()) {
+    @if (showSponsorLine() && sponsorLine()) {
       <div class="sponsor-line-container">
-        <app-sponsor-line [line]="sponsorLine()" [sponsor]="mainSponsor()" [scale]="sponsorLineScale()" />
+        <app-match-sponsor-line-display-flat [line]="sponsorLine()" [scale]="sponsorLineScale()" />
       </div>
     }
   }
