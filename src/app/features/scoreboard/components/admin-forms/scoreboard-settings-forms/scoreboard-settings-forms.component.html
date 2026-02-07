@@ -6,16 +6,10 @@
         [localShowTime]="localShowTime()"
         [localShowPlayClock]="localShowPlayClock()"
         [localShowDownDistance]="localShowDownDistance()"
-        [localShowTournamentLogo]="localShowTournamentLogo()"
-        [localShowMainSponsor]="localShowMainSponsor()"
-        [localShowSponsorLine]="localShowSponsorLine()"
         (toggleQtr)="onToggleQtr($event)"
         (toggleTime)="onToggleTime($event)"
         (togglePlayClock)="onTogglePlayClock($event)"
         (toggleDownDistance)="onToggleDownDistance($event)"
-        (toggleTournamentLogo)="onToggleTournamentLogo($event)"
-        (toggleMainSponsor)="onToggleMainSponsor($event)"
-        (toggleSponsorLine)="onToggleSponsorLine($event)"
       />
 
       <app-scoreboard-team-settings
@@ -53,9 +47,17 @@
         (logoBScaleChange)="onLogoBScaleChange($event)"
       />
 
-      <app-scoreboard-scale-settings
+      <app-scoreboard-sponsor-settings
+        [localShowTournamentLogo]="localShowTournamentLogo()"
+        [localShowMainSponsor]="localShowMainSponsor()"
+        [localShowSponsorLine]="localShowSponsorLine()"
+        [localUseMatchSponsors]="localUseMatchSponsors()"
         [tournamentLogoScale]="tournamentLogoScale()"
         [mainSponsorScale]="mainSponsorScale()"
+        (toggleTournamentLogo)="onToggleTournamentLogo($event)"
+        (toggleMainSponsor)="onToggleMainSponsor($event)"
+        (toggleSponsorLine)="onToggleSponsorLine($event)"
+        (toggleUseMatchSponsors)="onToggleUseMatchSponsors($event)"
         (tournamentLogoScaleChange)="onTournamentLogoScaleChange($event)"
         (mainSponsorScaleChange)="onMainSponsorScaleChange($event)"
       />

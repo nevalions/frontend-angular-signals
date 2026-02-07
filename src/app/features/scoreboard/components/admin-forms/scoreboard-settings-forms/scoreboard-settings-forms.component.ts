@@ -4,7 +4,7 @@ import { TuiAlertService } from '@taiga-ui/core';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 import { ScoreboardDisplaySettingsComponent } from './display-settings/scoreboard-display-settings.component';
-import { ScoreboardScaleSettingsComponent } from './scale-settings/scoreboard-scale-settings.component';
+import { ScoreboardSponsorSettingsComponent } from './sponsor-settings/scoreboard-sponsor-settings.component';
 import { ScoreboardTeamSettingsComponent } from './team-settings/scoreboard-team-settings.component';
 import { ScoreboardStoreService } from '../../../services/scoreboard-store.service';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
@@ -17,7 +17,7 @@ import { buildStaticUrl } from '../../../../../core/config/api.constants';
     CollapsibleSectionComponent,
     ScoreboardDisplaySettingsComponent,
     ScoreboardTeamSettingsComponent,
-    ScoreboardScaleSettingsComponent,
+    ScoreboardSponsorSettingsComponent,
   ],
   templateUrl: './scoreboard-settings-forms.component.html',
   styleUrl: './scoreboard-settings-forms.component.less',
@@ -47,6 +47,7 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly showTournamentLogo = computed(() => this.scoreboard()?.is_tournament_logo ?? true);
   protected readonly showMainSponsor = computed(() => this.scoreboard()?.is_main_sponsor ?? true);
   protected readonly showSponsorLine = computed(() => this.scoreboard()?.is_sponsor_line ?? true);
+  protected readonly useMatchSponsors = computed(() => this.scoreboard()?.is_match_sponsor_line ?? false);
 
   // Local state for display toggles
   protected readonly localShowQtr = signal(true);
@@ -56,6 +57,7 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly localShowTournamentLogo = signal(true);
   protected readonly localShowMainSponsor = signal(true);
   protected readonly localShowSponsorLine = signal(true);
+  protected readonly localUseMatchSponsors = signal(false);
 
   // Local state for team settings
   protected readonly localUseTeamAColor = signal(false);
@@ -77,6 +79,7 @@ export class ScoreboardSettingsFormsComponent {
         this.localShowTournamentLogo.set(sb.is_tournament_logo ?? true);
         this.localShowMainSponsor.set(sb.is_main_sponsor ?? true);
         this.localShowSponsorLine.set(sb.is_sponsor_line ?? true);
+        this.localUseMatchSponsors.set(sb.is_match_sponsor_line ?? false);
 
         this.localUseTeamAColor.set(sb.use_team_a_game_color ?? false);
         this.localUseTeamBColor.set(sb.use_team_b_game_color ?? false);
@@ -106,7 +109,7 @@ export class ScoreboardSettingsFormsComponent {
     return logoUrl ? buildStaticUrl(logoUrl) : '';
   });
 
-  // Scale settings
+  // Sponsor + tournament scale settings (independent sliders)
   protected readonly tournamentLogoScale = computed(() => this.scoreboard()?.scale_tournament_logo ?? 1);
   protected readonly mainSponsorScale = computed(() => this.scoreboard()?.scale_main_sponsor ?? 1);
   protected readonly logoAScale = computed(() => this.scoreboard()?.scale_logo_a ?? 1);
@@ -146,6 +149,11 @@ export class ScoreboardSettingsFormsComponent {
   onToggleSponsorLine(value: boolean): void {
     this.localShowSponsorLine.set(value);
     this.scoreboardChange.emit({ is_sponsor_line: value });
+  }
+
+  onToggleUseMatchSponsors(value: boolean): void {
+    this.localUseMatchSponsors.set(value);
+    this.scoreboardChange.emit({ is_match_sponsor_line: value });
   }
 
   // Team settings handlers

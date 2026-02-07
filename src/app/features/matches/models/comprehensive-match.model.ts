@@ -4,6 +4,7 @@ import { PlayerMatch } from './player-match.model';
 import { FootballEvent } from './football-event.model';
 import { Team } from './match.model';
 import { Scoreboard } from './scoreboard.model';
+import { SponsorsData } from './sponsors-data.model';
 
 export interface ComprehensiveMatchData {
   match: MatchWithDetails;
@@ -15,6 +16,7 @@ export interface ComprehensiveMatchData {
   players: PlayerMatchWithDetails[];
   events: FootballEvent[];
   scoreboard: Scoreboard | null;
+  sponsors_data?: SponsorsData | null;
 }
 
 export interface PlayerMatchWithDetails extends PlayerMatch {

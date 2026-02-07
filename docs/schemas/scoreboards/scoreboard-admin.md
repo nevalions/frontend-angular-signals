@@ -117,17 +117,23 @@
 │  │  Away Team Game Color:  [Color Picker]   [Submit]        │
 │  │  [✓] Use Game Title      [Toggle]                     │
 │  │  Away Team Game Title:  [Title Input]   [Submit]        │
-│  │  [✓] Use Game Logo       [Toggle]                     │
-│  │  Away Team Game Logo:   [Upload File]                  │
-│  │                          [Preview Image]                │
-│  │                          [Remove Button]                │
-│  │  Logo Scale:           [Slider 0.5-2.0]               │
-│  └────────────────────────────────────────────────────────────┘     │
-│  ┌────────────────────────────────────────────────────────────┐     │
-│  │  GLOBAL SCALES                                          │
-│  │  Tournament Logo Scale: [Slider 0.5-2.0]                │
-│  │  Main Sponsor Scale:     [Slider 0.5-2.0]                │
-│  └────────────────────────────────────────────────────────────┘     │
+  │  │  [✓] Use Game Logo       [Toggle]                     │
+  │  │  Away Team Game Logo:   [Upload File]                  │
+  │  │                          [Preview Image]                │
+  │  │                          [Remove Button]                │
+  │  │  Logo Scale:           [Slider 0.5-2.0]               │
+  │  └────────────────────────────────────────────────────────────┘     │
+  │  ┌────────────────────────────────────────────────────────────┐     │
+  │  │  SPONSOR SETTINGS                                       │
+  │  │  [✓] Tournament Logo       [Toggle] Show tournament      │
+  │  │  [✓] Sponsor Logo          [Toggle] Show main sponsor  │
+  │  │  [✓] Sponsor Line          [Toggle] Show sponsor line   │
+  │  │  [✓] Use Match Sponsors    [Toggle] Use match instead of │
+  │  │                                 tournament sponsors     │
+  │  │  Tournament Logo Scale: [Slider 0.5-2.0]                │
+  │  │  Sponsor Scale:         [Slider 0.5-2.0]                │
+  │  │                           (affects logo and line)       │
+  │  └────────────────────────────────────────────────────────────┘     │
 └──────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -199,16 +205,18 @@
      - Special game states (PAT 1, PAT 2, FG, KICK OFF) - when selected, down is hidden and only special state displays
   - **Timeout Forms** → Manage timeouts for each team
   - **Change Teams Forms** → Select different teams for the match
-   - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility and team settings:
-     - Display toggles: Qtr, Time, Play Clock, Down/Distance, Tournament Logo, Sponsor Logo, Sponsor Line
-    - Team settings (Home and Away):
-      - Use game color switch + game color picker
-      - Use game title switch + game title input
-      - Use game logo switch + game logo upload (with preview and remove)
-      - Logo scale slider (0.5-2.0)
-    - Global scales:
-      - Tournament logo scale slider (0.5-2.0)
-      - Main sponsor scale slider (0.5-2.0)
+    - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility and team settings:
+      - Display toggles: Qtr, Time, Play Clock, Down/Distance
+     - Team settings (Home and Away):
+       - Use game color switch + game color picker
+       - Use game title switch + game title input
+       - Use game logo switch + game logo upload (with preview and remove)
+       - Logo scale slider (0.5-2.0)
+     - Sponsor settings:
+       - Display toggles: Tournament Logo, Sponsor Logo, Sponsor Line
+       - Sponsor source toggle: Use match sponsors instead of tournament sponsors
+       - Tournament logo scale slider (0.5-2.0)
+       - Sponsor scale slider (0.5-2.0) - affects both sponsor logo and sponsor line
   - **Events Forms** → Football events tracking and statistics:
     - Team stats (offense yards, pass/run attempts, averages, down conversions, turnovers)
     - Quarterback stats (passing/rushing yards, TDs, QB rating)

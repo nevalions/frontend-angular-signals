@@ -22,7 +22,8 @@ export class SponsorDisplayFlatComponent {
   protected readonly logoScale = computed(() => this.scale() ?? this.sponsor()?.scale_logo ?? 1);
   protected readonly logoSrc = computed(() => {
     const path = this.logoPath();
-    return path ? buildStaticUrl(path) : '';
+    if (!path) return '';
+    return /^https?:\/\//i.test(path) ? path : buildStaticUrl(path);
   });
   protected readonly hasContent = computed(() => Boolean(this.logoSrc() || this.displayTitle()));
 }

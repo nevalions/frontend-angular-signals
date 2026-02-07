@@ -15,15 +15,9 @@ export class ScoreboardDisplaySettingsComponent {
   localShowTime = input.required<boolean>();
   localShowPlayClock = input.required<boolean>();
   localShowDownDistance = input.required<boolean>();
-  localShowTournamentLogo = input.required<boolean>();
-  localShowMainSponsor = input.required<boolean>();
-  localShowSponsorLine = input.required<boolean>();
 
   toggleQtr = output<boolean>();
   toggleTime = output<boolean>();
   togglePlayClock = output<boolean>();
   toggleDownDistance = output<boolean>();
-  toggleTournamentLogo = output<boolean>();
-  toggleMainSponsor = output<boolean>();
-  toggleSponsorLine = output<boolean>();
 }

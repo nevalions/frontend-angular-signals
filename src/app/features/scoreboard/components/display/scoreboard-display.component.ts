@@ -16,6 +16,12 @@ import {
 } from '../../animations';
 import { AutoFitTextDirective } from '../../../../shared/directives/auto-fit-text.directive';
 import { Sponsor } from '../../../../shared/types';
+import {
+  selectMatchMainSponsor,
+  selectMatchSponsorLine,
+  selectTournamentMainSponsor,
+  selectTournamentSponsorLine,
+} from '../../../matches/utils/sponsors-data.util';
 
 export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
 
@@ -214,28 +220,31 @@ export class ScoreboardDisplayComponent {
   protected readonly showSponsorLine = computed(() => this.scoreboard()?.is_sponsor_line ?? false);
   protected readonly showMatchSponsorLine = computed(() => this.scoreboard()?.is_match_sponsor_line ?? false);
 
-  protected readonly sponsorLine = computed(() => this.data()?.match?.tournament?.sponsor_line ?? null);
-  protected readonly matchSponsorLine = computed(() => this.data()?.match?.sponsor_line ?? null);
-  protected readonly tournamentSponsor = computed(() => {
+  protected readonly sponsorLine = computed(() => {
+    const sb = this.scoreboard();
+    return sb?.is_match_sponsor_line ? selectMatchSponsorLine(this.data()) : selectTournamentSponsorLine(this.data());
+  });
+
+  protected readonly mainSponsor = computed(() => {
     const inputSponsor = this.tournamentSponsorLogo();
-    const dataSponsor = this.data()?.match?.tournament?.main_sponsor ?? null;
     if (inputSponsor && typeof inputSponsor === 'string') {
       return { id: 0, title: '', logo_url: inputSponsor } as Sponsor;
     }
-    return dataSponsor;
+
+    const sb = this.scoreboard();
+    return sb?.is_match_sponsor_line ? selectMatchMainSponsor(this.data()) : selectTournamentMainSponsor(this.data());
   });
-  protected readonly matchSponsor = computed(() => this.data()?.match?.main_sponsor ?? null);
 
   // Logo URLs
   protected readonly tournamentLogoUrl = computed(() => {
     const logo = this.tournamentLogo() ?? this.data()?.match?.tournament?.tournament_logo_web_url ?? null;
-    return logo ? buildStaticUrl(logo) : null;
+    return logo ? this.toAssetUrl(logo) : null;
   });
 
   protected readonly sponsorLogoUrl = computed(() => {
-    const sponsor = this.tournamentSponsor();
+    const sponsor = this.mainSponsor();
     const logoUrl = typeof sponsor === 'string' ? sponsor : sponsor?.logo_url ?? null;
-    return logoUrl ? buildStaticUrl(logoUrl) : null;
+    return logoUrl ? this.toAssetUrl(logoUrl) : null;
   });
 
   // Logo scaling
@@ -308,6 +317,10 @@ export class ScoreboardDisplayComponent {
       result.push(char === 'o');
     }
     return result;
+  }
+
+  private toAssetUrl(urlOrPath: string): string {
+    return /^https?:\/\//i.test(urlOrPath) ? urlOrPath : buildStaticUrl(urlOrPath);
   }
 
   // Lower display data is handled by dedicated lower display components in the view.

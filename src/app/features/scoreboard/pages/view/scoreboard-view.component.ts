@@ -13,6 +13,12 @@ import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-dis
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
 import { WebSocketService } from '../../../../core/services/websocket.service';
 import { SponsorLineComponent } from '../../components/sponsor-display/sponsor-line.component';
+import {
+  selectMatchMainSponsor,
+  selectMatchSponsorLine,
+  selectTournamentMainSponsor,
+  selectTournamentSponsorLine,
+} from '../../../matches/utils/sponsors-data.util';
 
 @Component({
   selector: 'app-scoreboard-view',
@@ -55,17 +61,28 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
     return d?.match?.tournament?.tournament_logo_web_url || null;
   });
 
+  protected readonly useMatchSponsors = computed(() => this.scoreboard()?.is_match_sponsor_line ?? false);
+
   protected readonly tournamentSponsorLogo = computed(() => {
     const d = this.data();
-    return d?.match?.tournament?.main_sponsor?.logo_url || null;
+    const sponsor = this.useMatchSponsors() ? selectMatchMainSponsor(d) : selectTournamentMainSponsor(d);
+    return sponsor?.logo_url ?? null;
   });
 
   protected readonly scoreboard = computed(() => this.data()?.scoreboard ?? null);
 
-  // Sponsor line from tournament
-  protected readonly sponsorLine = computed(() => this.data()?.match?.tournament?.sponsor_line ?? null);
+  // Sponsor line (tournament or match based on scoreboard settings)
+  protected readonly sponsorLine = computed(() => {
+    const d = this.data();
+    return this.useMatchSponsors() ? selectMatchSponsorLine(d) : selectTournamentSponsorLine(d);
+  });
   protected readonly showSponsorLine = computed(() => this.scoreboard()?.is_sponsor_line ?? false);
-  protected readonly mainSponsor = computed(() => this.data()?.match?.tournament?.main_sponsor ?? null);
+  protected readonly mainSponsor = computed(() => {
+    const d = this.data();
+    return this.useMatchSponsors() ? selectMatchMainSponsor(d) : selectTournamentMainSponsor(d);
+  });
+
+  protected readonly sponsorLineScale = computed(() => this.scoreboard()?.scale_main_sponsor ?? 1);
 
   protected readonly teamAName = computed(() => {
     const sb = this.scoreboard();
