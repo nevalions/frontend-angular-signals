@@ -13,7 +13,6 @@ export class MatchSponsorLineDisplayFlatComponent {
   line = input<SponsorLine | null>(null);
   scale = input<number | null>(null);
 
-  protected readonly lineTitle = computed(() => this.line()?.title ?? '');
   protected readonly isVisible = computed(() => this.line()?.is_visible ?? true);
   protected readonly sponsors = computed<Sponsor[]>(() => {
     const line = this.line();

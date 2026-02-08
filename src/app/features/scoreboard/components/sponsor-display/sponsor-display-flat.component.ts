@@ -17,7 +17,6 @@ export class SponsorDisplayFlatComponent {
   scale = input<number | null>(null);
   priority = input<boolean>(false);
 
-  protected readonly displayTitle = computed(() => '');
   protected readonly logoPath = computed(() => this.logoUrl() ?? this.sponsor()?.logo_url ?? null);
   protected readonly logoScale = computed(() => this.scale() ?? this.sponsor()?.scale_logo ?? 1);
   protected readonly logoSrc = computed(() => {
@@ -25,5 +24,5 @@ export class SponsorDisplayFlatComponent {
     if (!path) return '';
     return /^https?:\/\//i.test(path) ? path : buildStaticUrl(path);
   });
-  protected readonly hasContent = computed(() => Boolean(this.logoSrc() || this.displayTitle()));
+  protected readonly hasContent = computed(() => Boolean(this.logoSrc()));
 }

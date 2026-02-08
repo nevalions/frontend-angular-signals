@@ -1,3 +1,26 @@
 :host {
   display: block;
 }
+
+.match-sponsor-line-display {
+  .sponsor-line {
+    display: flex;
+    justify-content: center;
+
+    .sponsor-logos {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+
+      app-sponsor-display-flat {
+        margin-left: -22px;
+      }
+
+      app-sponsor-display-flat:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+}

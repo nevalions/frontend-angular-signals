@@ -1,9 +1,6 @@
 <div class="match-sponsor-line-display">
   @if (isVisible()) {
     <div class="sponsor-line">
-      @if (lineTitle()) {
-        <span class="line-title">{{ lineTitle() }}</span>
-      }
       <div class="sponsor-logos">
         @for (sponsor of sponsors(); track sponsor.id) {
           <app-sponsor-display-flat [sponsor]="sponsor" [scale]="scale()" />
