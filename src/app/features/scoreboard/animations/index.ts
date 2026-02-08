@@ -1,5 +1,6 @@
 export {
   scoreChangeAnimation,
+  infoValueChangeAnimation,
   fadeInOutAnimation,
   breathingAnimation,
   dissolveAnimation,

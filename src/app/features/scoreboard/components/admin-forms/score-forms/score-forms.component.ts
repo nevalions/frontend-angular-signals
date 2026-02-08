@@ -77,6 +77,16 @@ export class ScoreFormsComponent {
   // Manual edit section expanded state
   protected readonly manualEditExpanded = signal(false);
 
+  // Click pulse state for +/- controls (quick score + timeout +/-)
+  protected readonly lastPulse = signal<{
+    kind: 'score' | 'timeout';
+    team: 'a' | 'b';
+    delta: number;
+    seq: number;
+  } | null>(null);
+
+  private pulseSeq = 0;
+
   // Check if there are unsaved changes
   protected readonly hasChanges = computed(() => {
     const data = this.matchData();
@@ -200,6 +210,8 @@ export class ScoreFormsComponent {
    * Handle quick score button click - applies immediately without save
    */
   onQuickScore(team: 'a' | 'b', points: number): void {
+    this.pulse('score', team, points);
+
     const currentScore = team === 'a' ? this.pendingScoreTeamA() : this.pendingScoreTeamB();
     const newScore = Math.max(0, currentScore + points);
     
@@ -287,6 +299,7 @@ export class ScoreFormsComponent {
   onUseTimeout(team: 'a' | 'b'): void {
     const current = team === 'a' ? this.timeoutsTeamA() : this.timeoutsTeamB();
     if (current > 0) {
+      this.pulse('timeout', team, -1);
       this.timeoutChange.emit({
         team,
         timeouts: this.createTimeoutString(current - 1),
@@ -300,6 +313,7 @@ export class ScoreFormsComponent {
   onRestoreTimeout(team: 'a' | 'b'): void {
     const current = team === 'a' ? this.timeoutsTeamA() : this.timeoutsTeamB();
     if (current < 3) {
+      this.pulse('timeout', team, +1);
       this.timeoutChange.emit({
         team,
         timeouts: this.createTimeoutString(current + 1),
@@ -315,6 +329,19 @@ export class ScoreFormsComponent {
       team,
       timeouts: 'ooo',
     });
+  }
+
+  private pulse(kind: 'score' | 'timeout', team: 'a' | 'b', delta: number): void {
+    const seq = ++this.pulseSeq;
+    this.lastPulse.set({ kind, team, delta, seq });
+
+    // Clear after animation window so the next click can retrigger cleanly.
+    window.setTimeout(() => {
+      const p = this.lastPulse();
+      if (p?.seq === seq) {
+        this.lastPulse.set(null);
+      }
+    }, 260);
   }
 
  }

@@ -30,6 +30,22 @@ export const scoreChangeAnimation: AnimationTriggerMetadata = trigger('scoreChan
 ]);
 
 /**
+ * Info Value Change Animation
+ * Clean feedback when quarter or down&distance changes.
+ * Usage: [@infoValueChange]="value" where value changes.
+ */
+export const infoValueChangeAnimation: AnimationTriggerMetadata = trigger('infoValueChange', [
+  // Use enter/leave so old + new values can cross-fade without a "blink"
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate('130ms ease-in-out', style({ opacity: 1 })),
+  ]),
+  transition(':leave', [
+    animate('130ms ease-in-out', style({ opacity: 0 })),
+  ]),
+]);
+
+/**
  * Fade In/Out Animation
  * Smooth fade for visibility toggles
  * Usage: [@fadeInOut]="isVisible"
@@ -245,6 +261,7 @@ export const teamTitleSwapAnimation: AnimationTriggerMetadata = trigger('teamTit
 // Export all animations as a collection for easy import
 export const SCOREBOARD_ANIMATIONS = [
   scoreChangeAnimation,
+  infoValueChangeAnimation,
   fadeInOutAnimation,
   breathingAnimation,
   dissolveAnimation,

@@ -179,6 +179,51 @@
   padding: 8px 4px !important;
 }
 
+// +/- click feedback (quick score and timeout +/- buttons)
+.pulse-plus {
+  animation: pulse-plus 260ms ease-out;
+}
+
+.pulse-minus {
+  animation: pulse-minus 260ms ease-out;
+}
+
+@keyframes pulse-plus {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
+  45% {
+    transform: scale(1.04);
+    filter: brightness(1.08);
+    box-shadow: 0 0 0 6px rgba(22, 163, 74, 0.22);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
+}
+
+@keyframes pulse-minus {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+  45% {
+    transform: scale(1.04);
+    filter: brightness(1.08);
+    box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.20);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
 // Timeout Controls
 .timeout-controls {
   display: flex;

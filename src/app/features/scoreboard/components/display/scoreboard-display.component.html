@@ -110,7 +110,11 @@
   <div class="game-info-row">
     @if (showQuarter()) {
       <div class="info-box quarter">
-        <span class="info-value">{{ quarter() }}</span>
+        <div class="info-value-swap">
+          @for (q of [quarter()]; track q) {
+            <span class="info-value info-value-layer" [@infoValueChange]="true">{{ q }}</span>
+          }
+        </div>
       </div>
     }
 
@@ -131,7 +135,11 @@
         @if (showFlag()) {
           <div class="flag-indicator" [@fadeInOut]="true">FLAG</div>
         } @else {
-          <span class="info-value">{{ downDistance() }}</span>
+          <div class="info-value-swap">
+            @for (dd of [downDistance()]; track dd) {
+              <span class="info-value info-value-layer" [@infoValueChange]="true">{{ dd }}</span>
+            }
+          </div>
         }
       </div>
     }

@@ -12,6 +12,7 @@ import { buildStaticUrl } from '../../../../core/config/api.constants';
 import {
   breathingAnimation,
   fadeInOutAnimation,
+  infoValueChangeAnimation,
   scoreChangeAnimation,
   teamTitleSwapAnimation,
 } from '../../animations';
@@ -32,7 +33,13 @@ export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
   imports: [AutoFitTextDirective],
   templateUrl: './scoreboard-display.component.html',
   styleUrl: './scoreboard-display.component.less',
-  animations: [scoreChangeAnimation, fadeInOutAnimation, breathingAnimation, teamTitleSwapAnimation],
+  animations: [
+    scoreChangeAnimation,
+    infoValueChangeAnimation,
+    fadeInOutAnimation,
+    breathingAnimation,
+    teamTitleSwapAnimation,
+  ],
 })
 export class ScoreboardDisplayComponent {
   /** Comprehensive match data containing teams, scores, and scoreboard settings */
