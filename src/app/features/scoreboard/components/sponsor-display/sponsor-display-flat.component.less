@@ -1,10 +1,13 @@
 :host {
-  display: flex;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
 }
 
 .sponsor-display-flat {
   --logo-scale: 1;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #fff;
@@ -29,13 +32,14 @@
     img {
       width: auto;
       height: 100%;
-      max-width: calc(220px * var(--logo-scale));
+      max-width: 100%;
       display: block;
+      object-fit: contain;
+      object-position: center;
     }
   }
 
   img {
-    object-fit: contain;
     transition: none;
   }
 }
