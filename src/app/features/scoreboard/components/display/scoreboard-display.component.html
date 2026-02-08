@@ -137,7 +137,14 @@
         } @else {
           <div class="info-value-swap">
             @for (dd of [downDistance()]; track dd) {
-              <span class="info-value info-value-layer" [@infoValueChange]="true">{{ dd }}</span>
+              <span
+                class="info-value info-value-layer"
+                [appAutoFitText]="true"
+                [maxFontSize]="26"
+                [minFontSize]="14"
+                [containerPadding]="0"
+                [@infoValueChange]="true"
+              >{{ dd }}</span>
             }
           </div>
         }

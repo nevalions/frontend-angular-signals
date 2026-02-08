@@ -286,6 +286,7 @@
 .info-box {
   font-family: 'Noto Sans Black', monospace;
   display: grid;
+  grid-template-columns: 1fr;
   height: 100%;
   letter-spacing: 0.1em;
   align-items: center;
@@ -351,6 +352,7 @@
   display: grid;
   align-items: center;
   justify-content: center;
+  justify-self: stretch;
 }
 
 .info-value-layer {
@@ -359,6 +361,9 @@
   display: grid;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
+  line-height: 1;
+  overflow: hidden;
 }
 
 .flag-indicator {
