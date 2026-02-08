@@ -13,6 +13,7 @@ import {
   breathingAnimation,
   fadeInOutAnimation,
   scoreChangeAnimation,
+  teamTitleSwapAnimation,
 } from '../../animations';
 import { AutoFitTextDirective } from '../../../../shared/directives/auto-fit-text.directive';
 import { Sponsor } from '../../../../shared/types';
@@ -31,7 +32,7 @@ export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
   imports: [AutoFitTextDirective],
   templateUrl: './scoreboard-display.component.html',
   styleUrl: './scoreboard-display.component.less',
-  animations: [scoreChangeAnimation, fadeInOutAnimation, breathingAnimation],
+  animations: [scoreChangeAnimation, fadeInOutAnimation, breathingAnimation, teamTitleSwapAnimation],
 })
 export class ScoreboardDisplayComponent {
   /** Comprehensive match data containing teams, scores, and scoreboard settings */

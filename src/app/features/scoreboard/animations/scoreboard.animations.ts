@@ -226,6 +226,22 @@ export const slideDownAnimation: AnimationTriggerMetadata = trigger('slideDown',
   transition('true => void, true => false', [animate('300ms ease-in')]),
 ]);
 
+/**
+ * Team Title Swap Animation
+ * Smooth in/out when swapping TEAM NAME <-> TOUCHDOWN <-> TIMEOUT.
+ * Usage: [@teamTitleSwap]="true" on the swapped element.
+ * Note: Keep transform light to avoid interfering with AutoFitText calculations.
+ */
+export const teamTitleSwapAnimation: AnimationTriggerMetadata = trigger('teamTitleSwap', [
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate('180ms cubic-bezier(0.2, 0.8, 0.2, 1)', style({ opacity: 1 })),
+  ]),
+  transition(':leave', [
+    animate('120ms cubic-bezier(0.4, 0, 1, 1)', style({ opacity: 0 })),
+  ]),
+]);
+
 // Export all animations as a collection for easy import
 export const SCOREBOARD_ANIMATIONS = [
   scoreChangeAnimation,
@@ -241,4 +257,5 @@ export const SCOREBOARD_ANIMATIONS = [
   clockFlashAnimation,
   slideUpAnimation,
   slideDownAnimation,
+  teamTitleSwapAnimation,
 ];

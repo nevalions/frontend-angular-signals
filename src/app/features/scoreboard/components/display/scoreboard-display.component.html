@@ -32,11 +32,13 @@
       <div class="team-info">
         <div class="team-name-block">
           @if (showGoalTeamA()) {
-            <div class="goal-indicator" [appAutoFitText]="true" [maxFontSize]="35" [@breathing]="goalAnimationState()">TOUCHDOWN</div>
+            <div class="goal-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">
+              <span [@breathing]="goalAnimationState()">TOUCHDOWN</span>
+            </div>
           } @else if (showTimeoutTeamA()) {
-            <div class="timeout-indicator" [appAutoFitText]="true" [maxFontSize]="35">TIMEOUT</div>
+            <div class="timeout-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">TIMEOUT</div>
           } @else {
-            <span class="team-name" [appAutoFitText]="true" [maxFontSize]="32">{{ teamAName() }}</span>
+            <span class="team-name team-title-layer" [appAutoFitText]="true" [maxFontSize]="32" [@teamTitleSwap]="true">{{ teamAName() }}</span>
           }
         </div>
 
@@ -71,11 +73,13 @@
       <div class="team-info">
         <div class="team-name-block">
           @if (showGoalTeamB()) {
-            <div class="goal-indicator" [appAutoFitText]="true" [maxFontSize]="35" [@breathing]="goalAnimationState()">TOUCHDOWN</div>
+            <div class="goal-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">
+              <span [@breathing]="goalAnimationState()">TOUCHDOWN</span>
+            </div>
           } @else if (showTimeoutTeamB()) {
-            <div class="timeout-indicator" [appAutoFitText]="true" [maxFontSize]="35">TIMEOUT</div>
+            <div class="timeout-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">TIMEOUT</div>
           } @else {
-            <span class="team-name" [appAutoFitText]="true" [maxFontSize]="32">{{ teamBName() }}</span>
+            <span class="team-name team-title-layer" [appAutoFitText]="true" [maxFontSize]="32" [@teamTitleSwap]="true">{{ teamBName() }}</span>
           }
         </div>
 

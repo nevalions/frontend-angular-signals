@@ -12,5 +12,6 @@ export {
   clockFlashAnimation,
   slideUpAnimation,
   slideDownAnimation,
+  teamTitleSwapAnimation,
   SCOREBOARD_ANIMATIONS,
 } from './scoreboard.animations';

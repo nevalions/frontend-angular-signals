@@ -147,10 +147,21 @@
 
 .team-name-block {
   height: 35px; // Fixed height to prevent timeout dots from moving
+  position: relative;
+  --title-justify: flex-end;
   display: flex;
   align-items: center; // Center vertically within fixed height
   justify-content: flex-end;
   width: 100%;
+}
+
+.team-title-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: var(--title-justify);
+  pointer-events: none;
 }
 
 .team-name {
@@ -167,6 +178,10 @@
   text-transform: uppercase;
   line-height: 1; // Consistent line height to prevent vertical shifts
   // Font size set by autoFitText directive (max 35px)
+}
+
+.goal-indicator > span {
+  display: inline-block;
 }
 
 .goal-indicator {
@@ -444,6 +459,7 @@
 
   .team-name-block {
     justify-content: center;
+    --title-justify: center;
   }
 
   .timeout-dots {
