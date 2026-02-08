@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiDataListWrapper, TuiInputNumber, TuiSelect } from '@taiga-ui/kit';
 import { MatchData } from '../../../../matches/models/match-data.model';
+import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 
 export interface ScoreChangeEvent {
@@ -30,6 +31,9 @@ export class ScoreFormsComponent {
   /** Match data containing current scores */
   matchData = input<MatchData | null>(null);
 
+  /** Scoreboard settings (touchdown/timeout indicators) */
+  scoreboard = input<Scoreboard | null>(null);
+
   /** Team A color */
   teamColorA = input<string>('#ffffff');
 
@@ -44,6 +48,9 @@ export class ScoreFormsComponent {
 
   /** Emits when quarter changes */
   qtrChange = output<QuarterChangeEvent>();
+
+  /** Emits when scoreboard indicator changes (touchdown/timeout called) */
+  scoreboardIndicatorChange = output<Partial<ScoreboardUpdate>>();
 
   /** Available quarter options */
   protected readonly quarterOptions = [
@@ -61,13 +68,11 @@ export class ScoreFormsComponent {
   protected readonly pendingScoreTeamA = signal(0);
   protected readonly pendingScoreTeamB = signal(0);
 
-  // Toggle state for touchdown called
-  protected readonly touchdownCalledTeamA = signal(false);
-  protected readonly touchdownCalledTeamB = signal(false);
-
-  // Toggle state for timeout called
-  protected readonly timeoutCalledTeamA = signal(false);
-  protected readonly timeoutCalledTeamB = signal(false);
+  // Scoreboard-driven toggle state (single source of truth)
+  protected readonly touchdownCalledTeamA = computed(() => this.scoreboard()?.is_goal_team_a ?? false);
+  protected readonly touchdownCalledTeamB = computed(() => this.scoreboard()?.is_goal_team_b ?? false);
+  protected readonly timeoutCalledTeamA = computed(() => this.scoreboard()?.is_timeout_team_a ?? false);
+  protected readonly timeoutCalledTeamB = computed(() => this.scoreboard()?.is_timeout_team_b ?? false);
 
   // Manual edit section expanded state
   protected readonly manualEditExpanded = signal(false);
@@ -120,9 +125,9 @@ export class ScoreFormsComponent {
       pendingScore: this.pendingScoreTeamA,
       onChange: (score: number) => this.onScoreAChange(score),
       touchdownCalled: this.touchdownCalledTeamA,
-      toggleTouchdown: () => this.toggleTouchdownCalled('a'),
+      toggleTouchdown: () => this.onTouchdownIndicatorToggle('a'),
       timeoutCalled: this.timeoutCalledTeamA,
-      toggleTimeout: () => this.toggleTimeoutCalled('a'),
+      toggleTimeout: () => this.onTimeoutIndicatorToggle('a'),
       onQuickScore: (points: number) => this.onQuickScore('a', points),
     },
     {
@@ -132,9 +137,9 @@ export class ScoreFormsComponent {
       pendingScore: this.pendingScoreTeamB,
       onChange: (score: number) => this.onScoreBChange(score),
       touchdownCalled: this.touchdownCalledTeamB,
-      toggleTouchdown: () => this.toggleTouchdownCalled('b'),
+      toggleTouchdown: () => this.onTouchdownIndicatorToggle('b'),
       timeoutCalled: this.timeoutCalledTeamB,
-      toggleTimeout: () => this.toggleTimeoutCalled('b'),
+      toggleTimeout: () => this.onTimeoutIndicatorToggle('b'),
       onQuickScore: (points: number) => this.onQuickScore('b', points),
     },
   ];
@@ -209,25 +214,55 @@ export class ScoreFormsComponent {
   }
 
   /**
-    * Toggle touchdown called for a team
-    */
-   toggleTouchdownCalled(team: 'a' | 'b'): void {
-     if (team === 'a') {
-       this.touchdownCalledTeamA.update(value => !value);
-     } else {
-       this.touchdownCalledTeamB.update(value => !value);
-     }
-   }
+   * Toggle touchdown called for a team (shows TOUCHDOWN instead of team title)
+   * Stored in Scoreboard as is_goal_team_a / is_goal_team_b.
+   */
+  onTouchdownIndicatorToggle(team: 'a' | 'b'): void {
+    const sb = this.scoreboard();
+
+    const current = team === 'a'
+      ? (sb?.is_goal_team_a ?? false)
+      : (sb?.is_goal_team_b ?? false);
+
+    const next = !current;
+
+    const update: Partial<ScoreboardUpdate> = team === 'a'
+      ? {
+        is_goal_team_a: next,
+        ...(next ? { is_timeout_team_a: false } : {}),
+      }
+      : {
+        is_goal_team_b: next,
+        ...(next ? { is_timeout_team_b: false } : {}),
+      };
+
+    this.scoreboardIndicatorChange.emit(update);
+  }
 
   /**
-   * Toggle timeout called for a team
+   * Toggle timeout called for a team (shows TIMEOUT instead of team title)
+   * Stored in Scoreboard as is_timeout_team_a / is_timeout_team_b.
    */
-  toggleTimeoutCalled(team: 'a' | 'b'): void {
-    if (team === 'a') {
-      this.timeoutCalledTeamA.update(value => !value);
-    } else {
-      this.timeoutCalledTeamB.update(value => !value);
-    }
+  onTimeoutIndicatorToggle(team: 'a' | 'b'): void {
+    const sb = this.scoreboard();
+
+    const current = team === 'a'
+      ? (sb?.is_timeout_team_a ?? false)
+      : (sb?.is_timeout_team_b ?? false);
+
+    const next = !current;
+
+    const update: Partial<ScoreboardUpdate> = team === 'a'
+      ? {
+        is_timeout_team_a: next,
+        ...(next ? { is_goal_team_a: false } : {}),
+      }
+      : {
+        is_timeout_team_b: next,
+        ...(next ? { is_goal_team_b: false } : {}),
+      };
+
+    this.scoreboardIndicatorChange.emit(update);
   }
 
    /**
@@ -283,4 +318,3 @@ export class ScoreFormsComponent {
   }
 
  }
-

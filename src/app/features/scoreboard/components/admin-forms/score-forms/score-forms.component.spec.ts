@@ -6,6 +6,7 @@ import { TuiChevron, TuiDataListWrapper, TuiInputNumber, TuiSelect } from '@taig
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 import { ScoreFormsComponent } from './score-forms.component';
 import { MatchData } from '../../../../matches/models/match-data.model';
+import { Scoreboard } from '../../../../matches/models/scoreboard.model';
 
 describe('ScoreFormsComponent', () => {
   let component: ScoreFormsComponent;
@@ -221,20 +222,40 @@ describe('ScoreFormsComponent', () => {
     expect(indicators).toEqual([true, false, false]);
   });
 
-  it('should toggle touchdown called for team A', () => {
-    component.toggleTouchdownCalled('a');
-    expect(component['touchdownCalledTeamA']()).toBe(true);
+  it('should emit scoreboardIndicatorChange when toggling touchdown for team A', () => {
+    component.scoreboard = vi.fn(() => ({
+      is_goal_team_a: false,
+      is_timeout_team_a: true,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
 
-    component.toggleTouchdownCalled('a');
-    expect(component['touchdownCalledTeamA']()).toBe(false);
+    const emitSpy = vi.spyOn(component.scoreboardIndicatorChange, 'emit');
+    component.onTouchdownIndicatorToggle('a');
+
+    expect(emitSpy).toHaveBeenCalledWith({ is_goal_team_a: true, is_timeout_team_a: false });
   });
 
-  it('should toggle timeout called for team B', () => {
-    component.toggleTimeoutCalled('b');
-    expect(component['timeoutCalledTeamB']()).toBe(true);
+  it('should emit scoreboardIndicatorChange when toggling timeout for team B', () => {
+    component.scoreboard = vi.fn(() => ({
+      is_timeout_team_b: false,
+      is_goal_team_b: true,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
 
-    component.toggleTimeoutCalled('b');
-    expect(component['timeoutCalledTeamB']()).toBe(false);
+    const emitSpy = vi.spyOn(component.scoreboardIndicatorChange, 'emit');
+    component.onTimeoutIndicatorToggle('b');
+
+    expect(emitSpy).toHaveBeenCalledWith({ is_timeout_team_b: true, is_goal_team_b: false });
+  });
+
+  it('should emit minimal update when turning touchdown off for team A', () => {
+    component.scoreboard = vi.fn(() => ({
+      is_goal_team_a: true,
+      is_timeout_team_a: false,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    const emitSpy = vi.spyOn(component.scoreboardIndicatorChange, 'emit');
+    component.onTouchdownIndicatorToggle('a');
+
+    expect(emitSpy).toHaveBeenCalledWith({ is_goal_team_a: false });
   });
 
   it('should calculate hasChanges correctly', () => {

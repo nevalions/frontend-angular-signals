@@ -63,11 +63,13 @@
 
           <app-score-forms
             [matchData]="data()?.match_data ?? null"
+            [scoreboard]="scoreboard()"
             [teamColorA]="data()?.teams?.team_a?.team_color ?? '#ffffff'"
             [teamColorB]="data()?.teams?.team_b?.team_color ?? '#ffffff'"
             (scoreChange)="onScoreChange($event)"
             (timeoutChange)="onTimeoutChange($event)"
             (qtrChange)="onQtrChange($event)"
+            (scoreboardIndicatorChange)="onScoreboardSettingsChange($event)"
           />
 
           <app-time-forms
