@@ -289,10 +289,14 @@
   grid-template-columns: 1fr;
   height: 100%;
   letter-spacing: 0.1em;
-  align-items: center;
-  justify-content: center;
+  place-items: center;
   margin: 0;
   padding: 0 5px;
+
+  .info-value {
+    width: 100%;
+    text-align: center;
+  }
 
   &.quarter {
     width: 70px;
@@ -329,6 +333,14 @@
 
     &.warning .info-value {
       color: #ee3030;
+    }
+  }
+
+  // Keep the play clock box in the grid even when toggled off.
+  // The value itself fades out via `fadeInOut`.
+  &.play-clock.play-clock-off {
+    .info-value {
+      visibility: hidden;
     }
   }
 

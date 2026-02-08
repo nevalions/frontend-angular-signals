@@ -124,11 +124,13 @@
       </div>
     }
 
-    @if (showPlayClock() && playClock() !== null) {
-      <div class="info-box play-clock" [class.warning]="playClockWarning()">
-        <span class="info-value">{{ playClockDisplay() }}</span>
-      </div>
-    }
+    <div
+      class="info-box play-clock"
+      [class.warning]="showPlayClock() && playClockWarning()"
+      [class.play-clock-off]="!(showPlayClock() && playClock() !== null)"
+    >
+      <span class="info-value" [@fadeInOut]="showPlayClock() && playClock() !== null">{{ playClockDisplay() }}</span>
+    </div>
 
     @if (showDownDistance()) {
       <div class="info-box down-distance">
