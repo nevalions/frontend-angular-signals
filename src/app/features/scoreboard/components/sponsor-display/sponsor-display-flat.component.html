@@ -1,11 +1,11 @@
 @if (hasContent()) {
   <div class="sponsor-display-flat">
     @if (logoSrc()) {
-      <div class="sponsor-display-flat__logo">
+      <div class="sponsor-display-flat__logo" [style.--logo-scale]="logoScale()">
         <img
           [ngSrc]="logoSrc()"
-          fill
-          [style.transform]="'scale(' + logoScale() + ')'"
+          width="220"
+          height="70"
           [attr.alt]="'Sponsor logo'"
           [priority]="priority()"
         />

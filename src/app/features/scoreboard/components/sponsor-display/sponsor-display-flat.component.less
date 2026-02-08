@@ -3,6 +3,7 @@
 }
 
 .sponsor-display-flat {
+  --logo-scale: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,24 +15,28 @@
   padding: 0;
 
   &__logo {
-    width: 220px;
-    height: 70px;
-    position: relative;
-    display: flex;
+    height: calc(70px * var(--logo-scale));
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: auto;
+    max-width: calc(220px * var(--logo-scale));
+    flex: 0 0 auto;
     margin: 0;
     padding: 0;
+    line-height: 0;
 
     img {
-      width: 100%;
+      width: auto;
       height: 100%;
+      max-width: calc(220px * var(--logo-scale));
+      display: block;
     }
   }
 
   img {
     object-fit: contain;
-    transition: transform 0.2s ease;
+    transition: none;
   }
 }
 
