@@ -140,8 +140,17 @@ export class NavigationHelperService {
     this.router.navigate(['/sports', sportId, 'matches', matchId, 'edit']);
   }
 
-  toScoreboardAdmin(matchId: number | string): void {
-    this.router.navigate(['/scoreboard', 'match', matchId, 'admin']);
+  toScoreboardAdmin(
+    matchId: number | string,
+    context?: { sportId?: number | string; year?: number | string; tournamentId?: number | string }
+  ): void {
+    const queryParams: { sportId?: string; year?: string; tournamentId?: string } = {};
+    if (context?.sportId != null) queryParams.sportId = context.sportId.toString();
+    if (context?.year != null) queryParams.year = context.year.toString();
+    if (context?.tournamentId != null) queryParams.tournamentId = context.tournamentId.toString();
+
+    const params = Object.keys(queryParams).length ? { queryParams } : {};
+    this.router.navigate(['/scoreboard', 'match', matchId, 'admin'], params);
   }
 
   toScoreboardView(matchId: number | string): void {

@@ -193,8 +193,16 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
 
   navigateToScoreboardAdmin(): void {
     const matchId = this.matchId();
+    const sportId = this.sportId();
+    const year = this.year();
+    const tournamentId = this.tournamentId();
+
     if (matchId) {
-      this.navigationHelper.toScoreboardAdmin(matchId);
+      this.navigationHelper.toScoreboardAdmin(matchId, {
+        sportId: sportId ?? undefined,
+        year: year ?? undefined,
+        tournamentId: tournamentId ?? undefined,
+      });
     }
   }
 

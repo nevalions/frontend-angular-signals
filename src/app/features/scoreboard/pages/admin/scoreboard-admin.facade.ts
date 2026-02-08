@@ -25,6 +25,11 @@ export class ScoreboardAdminFacade implements OnDestroy {
 
   readonly matchId = createNumberParamSignal(this.route, 'matchId');
 
+  // Optional context (when navigated from match/tournament pages)
+  readonly sportId = createNumberParamSignal(this.route, 'sportId', { source: 'queryParamMap' });
+  readonly year = createNumberParamSignal(this.route, 'year', { source: 'queryParamMap' });
+  readonly tournamentId = createNumberParamSignal(this.route, 'tournamentId', { source: 'queryParamMap' });
+
   // Data signals
   readonly data = signal<ComprehensiveMatchData | null>(null);
   readonly scoreboard = signal<Scoreboard | null>(null);
@@ -254,11 +259,26 @@ export class ScoreboardAdminFacade implements OnDestroy {
   navigateBack(): void {
     const matchId = this.matchId();
     const data = this.data();
-    const sportId = data?.teams?.team_a?.sport_id;
-    const tournamentId = data?.match?.tournament_id?.toString();
+
+    const sportId = this.sportId() ?? data?.teams?.team_a?.sport_id;
+    const tournamentId = this.tournamentId() ?? data?.match?.tournament_id;
+
+    const yearFromQuery = this.year();
+    const yearFromMatchDate = (() => {
+      const matchDate = data?.match?.match_date;
+      if (!matchDate) return null;
+      const d = new Date(matchDate);
+      return Number.isFinite(d.getTime()) ? d.getFullYear() : null;
+    })();
+    const year = yearFromQuery ?? yearFromMatchDate ?? undefined;
 
     if (sportId && matchId) {
-      this.navigationHelper.toMatchDetail(sportId, matchId, undefined, tournamentId);
+      this.navigationHelper.toMatchDetail(
+        sportId,
+        matchId,
+        year,
+        tournamentId ?? undefined
+      );
     } else {
       this.navigationHelper.toSportsList();
     }

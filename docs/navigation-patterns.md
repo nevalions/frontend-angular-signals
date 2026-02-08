@@ -63,9 +63,14 @@ toPlayerDetail(sportId: number | string, playerId: number | string, fromSport?: 
 ```typescript
 toMatchDetail(sportId: number | string, matchId: number | string, year?: number | string, tournamentId?: number | string)
 toMatchEdit(sportId: number | string, matchId: number | string)
-toScoreboardAdmin(matchId: number | string)
+toScoreboardAdmin(
+  matchId: number | string,
+  context?: { sportId?: number | string; year?: number | string; tournamentId?: number | string }
+)
 toScoreboardView(matchId: number | string)
 ```
+
+Note: pass `context` when navigating from match/tournament pages so the admin page can navigate back to the same match detail with preserved `year`/`tournamentId` query params.
 
 ### Persons
 
