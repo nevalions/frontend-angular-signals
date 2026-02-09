@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -9,6 +9,7 @@ import { SportStoreService } from '../../services/sport-store.service';
 import { SportUpdate } from '../../models/sport.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
+import { SportScoreboardPresetStoreService } from '../../../sport-scoreboard-presets/services/sport-scoreboard-preset-store.service';
 
 @Component({
   selector: 'app-sport-edit',
@@ -22,13 +23,17 @@ export class SportEditComponent {
   private route = inject(ActivatedRoute);
   private navigationHelper = inject(NavigationHelperService);
   private sportStore = inject(SportStoreService);
+  private presetStore = inject(SportScoreboardPresetStoreService);
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
 
   sportForm = this.fb.group({
     title: ['', [Validators.required]],
     description: [''],
+    scoreboard_preset_id: [null as number | null],
   });
+
+  presets = this.presetStore.presets;
 
   sportId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -52,6 +57,7 @@ export class SportEditComponent {
       this.sportForm.patchValue({
         title: sport.title,
         description: sport.description || '',
+        scoreboard_preset_id: sport.scoreboard_preset_id || null,
       });
     }
   });
@@ -69,6 +75,10 @@ export class SportEditComponent {
 
       if (formData.description) {
         data.description = formData.description as string;
+      }
+
+      if (formData.scoreboard_preset_id !== null && formData.scoreboard_preset_id !== undefined) {
+        data.scoreboard_preset_id = formData.scoreboard_preset_id as number | null;
       }
 
       withUpdateAlert(

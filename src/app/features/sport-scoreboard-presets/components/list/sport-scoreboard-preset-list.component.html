@@ -1,0 +1,39 @@
+<div class="preset-list">
+  <header class="preset-list__header">
+    <h1 class="preset-list__title">Sport Scoreboard Presets</h1>
+    <button tuiButton type="button" class="add-button" (click)="navigateToCreate()">
+      Create New Preset
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="preset-list__loading">
+      <tui-loader size="l" />
+    </div>
+  } @else if (error()) {
+    <div class="preset-list__error">Error loading presets</div>
+  } @else if (presets().length === 0) {
+    <div class="preset-list__empty">No presets found</div>
+  } @else {
+    <div class="preset-list__items">
+      @for (preset of presets(); track preset.id) {
+        <a
+          class="preset-list__card"
+          tuiAppearance="floating"
+          tuiCardLarge
+          tuiCell="l"
+          [routerLink]="['/sport-scoreboard-presets', preset.id]"
+        >
+          <div class="preset-list__info">
+            <div class="preset-list__name">{{ preset.title }}</div>
+            <div class="preset-list__meta">
+              <span>Max Gameclock: {{ preset.gameclock_max ?? 'N/A' }}s</span>
+              <span>Direction: {{ preset.direction }}</span>
+              <span>Stop: {{ preset.on_stop_behavior }}</span>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

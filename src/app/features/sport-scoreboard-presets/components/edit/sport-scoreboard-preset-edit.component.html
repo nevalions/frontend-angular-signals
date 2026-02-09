@@ -1,0 +1,111 @@
+<div class="preset-edit">
+  <header class="preset-edit__header">
+    <h1 class="preset-edit__title">Edit Preset</h1>
+    <div class="preset-edit__actions">
+      <button tuiButton type="button" appearance="flat" (click)="navigateToDetail()">
+        Cancel
+      </button>
+      <button tuiButton type="button" appearance="primary" (click)="onSubmit()" [disabled]="presetForm.invalid || loading()">
+        Save Changes
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="preset-edit__loading">
+      <tui-loader size="l" />
+    </div>
+  } @else {
+    <form [formGroup]="presetForm" class="preset-edit__form">
+      <div class="preset-edit__section">
+        <h3 class="preset-edit__section-title">Basic Information</h3>
+      <div class="preset-edit__field">
+        <label class="preset-edit__label" for="title">Title *</label>
+        <input
+          id="title"
+          type="text"
+          placeholder="Enter preset title"
+          formControlName="title"
+          class="preset-edit__input"
+        />
+      </div>
+      </div>
+
+      <div class="preset-edit__section">
+        <h3 class="preset-edit__section-title">Gameclock Configuration</h3>
+      <div class="preset-edit__field">
+        <label class="preset-edit__label" for="gameclock_max">Max Gameclock (seconds)</label>
+        <input
+          id="gameclock_max"
+          type="number"
+          placeholder="720"
+          formControlName="gameclock_max"
+          class="preset-edit__input"
+        />
+      </div>
+      <div class="preset-edit__field">
+        <label class="preset-edit__label" for="direction">Clock Direction</label>
+        <select
+          id="direction"
+          formControlName="direction"
+          class="preset-edit__select"
+        >
+          @for (option of directionOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="preset-edit__field">
+        <label class="preset-edit__label" for="on_stop_behavior">On Stop Behavior</label>
+        <select
+          id="on_stop_behavior"
+          formControlName="on_stop_behavior"
+          class="preset-edit__select"
+        >
+          @for (option of onStopBehaviorOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      </div>
+
+      <div class="preset-edit__section">
+        <h3 class="preset-edit__section-title">Scoreboard Configuration</h3>
+        <div class="preset-edit__checkboxes">
+          <label class="preset-edit__checkbox">
+            <input
+              type="checkbox"
+              tuiCheckbox
+              formControlName="is_qtr"
+            />
+            <span>Show Quarter Indicator</span>
+          </label>
+          <label class="preset-edit__checkbox">
+            <input
+              type="checkbox"
+              tuiCheckbox
+              formControlName="is_time"
+            />
+            <span>Show Time Display</span>
+          </label>
+          <label class="preset-edit__checkbox">
+            <input
+              type="checkbox"
+              tuiCheckbox
+              formControlName="is_playclock"
+            />
+            <span>Show Playclock</span>
+          </label>
+          <label class="preset-edit__checkbox">
+            <input
+              type="checkbox"
+              tuiCheckbox
+              formControlName="is_downdistance"
+            />
+            <span>Show Down & Distance</span>
+          </label>
+        </div>
+      </div>
+    </form>
+  }
+</div>

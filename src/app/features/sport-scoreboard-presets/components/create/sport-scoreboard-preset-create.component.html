@@ -1,0 +1,105 @@
+<div class="preset-create">
+  <header class="preset-create__header">
+    <h1 class="preset-create__title">Create New Preset</h1>
+    <div class="preset-create__actions">
+      <button tuiButton type="button" appearance="flat" (click)="navigateToList()">
+        Cancel
+      </button>
+      <button tuiButton type="button" appearance="primary" (click)="onSubmit()" [disabled]="presetForm.invalid">
+        Create Preset
+      </button>
+    </div>
+  </header>
+
+  <form [formGroup]="presetForm" class="preset-create__form">
+    <div class="preset-create__section">
+      <h3 class="preset-create__section-title">Basic Information</h3>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="title">Title *</label>
+        <input
+          id="title"
+          type="text"
+          placeholder="Enter preset title"
+          formControlName="title"
+          class="preset-create__input"
+        />
+      </div>
+    </div>
+
+    <div class="preset-create__section">
+      <h3 class="preset-create__section-title">Gameclock Configuration</h3>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="gameclock_max">Max Gameclock (seconds)</label>
+        <input
+          id="gameclock_max"
+          type="number"
+          placeholder="720"
+          formControlName="gameclock_max"
+          class="preset-create__input"
+        />
+      </div>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="direction">Clock Direction</label>
+        <select
+          id="direction"
+          formControlName="direction"
+          class="preset-create__select"
+        >
+          @for (option of directionOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="on_stop_behavior">On Stop Behavior</label>
+        <select
+          id="on_stop_behavior"
+          formControlName="on_stop_behavior"
+          class="preset-create__select"
+        >
+          @for (option of onStopBehaviorOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="preset-create__section">
+      <h3 class="preset-create__section-title">Scoreboard Configuration</h3>
+      <div class="preset-create__checkboxes">
+        <label class="preset-create__checkbox">
+          <input
+            type="checkbox"
+            tuiCheckbox
+            formControlName="is_qtr"
+          />
+          <span>Show Quarter Indicator</span>
+        </label>
+        <label class="preset-create__checkbox">
+          <input
+            type="checkbox"
+            tuiCheckbox
+            formControlName="is_time"
+          />
+          <span>Show Time Display</span>
+        </label>
+        <label class="preset-create__checkbox">
+          <input
+            type="checkbox"
+            tuiCheckbox
+            formControlName="is_playclock"
+          />
+          <span>Show Playclock</span>
+        </label>
+        <label class="preset-create__checkbox">
+          <input
+            type="checkbox"
+            tuiCheckbox
+            formControlName="is_downdistance"
+          />
+          <span>Show Down & Distance</span>
+        </label>
+      </div>
+    </div>
+  </form>
+</div>

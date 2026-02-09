@@ -10,4 +10,5 @@ export interface SportCreate {
 export interface SportUpdate {
   title?: string;
   description?: string | null;
+  scoreboard_preset_id?: number | null;
 }

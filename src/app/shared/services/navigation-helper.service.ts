@@ -165,4 +165,20 @@ export class NavigationHelperService {
     const queryParams = fromSettings !== undefined ? { queryParams: { fromSettings: fromSettings.toString() } } : {};
     this.router.navigate(['/users', userId], queryParams);
   }
+
+  toSportScoreboardPresetList(): void {
+    this.router.navigate(['/sport-scoreboard-presets']);
+  }
+
+  toSportScoreboardPresetDetail(id: number | string): void {
+    this.router.navigate(['/sport-scoreboard-presets', id]);
+  }
+
+  toSportScoreboardPresetCreate(): void {
+    this.router.navigate(['/sport-scoreboard-presets', 'new']);
+  }
+
+  toSportScoreboardPresetEdit(id: number | string): void {
+    this.router.navigate(['/sport-scoreboard-presets', id, 'edit']);
+  }
 }

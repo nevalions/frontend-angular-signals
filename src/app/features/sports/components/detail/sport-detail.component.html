@@ -11,6 +11,21 @@
       />
     </div>
 
+    @if (s.description) {
+      <div class="sport-detail__description">{{ s.description }}</div>
+    }
+
+    <div class="sport-detail__info">
+      @if (preset(); as p) {
+        <div class="sport-detail__preset">
+          <span class="sport-detail__preset-label">Scoreboard Preset:</span>
+          <a [routerLink]="['/sport-scoreboard-presets', p.id]" class="sport-detail__preset-link">
+            {{ p.title }}
+          </a>
+        </div>
+      }
+    </div>
+
     <div class="sport-detail__subnav">
       <app-tabs-nav
         class="sport-detail__tabs"

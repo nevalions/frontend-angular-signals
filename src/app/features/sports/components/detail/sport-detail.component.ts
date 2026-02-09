@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TuiAlertService, TuiDialogService, TuiTextfield } from '@taiga-ui/core';
 import { TuiSelect } from '@taiga-ui/kit';
@@ -7,6 +7,7 @@ import { TuiDataList } from '@taiga-ui/core';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../services/sport-store.service';
 import { PlayerStoreService } from '../../../players/services/player-store.service';
+import { SportScoreboardPresetStoreService } from '../../../sport-scoreboard-presets/services/sport-scoreboard-preset-store.service';
 import { Sport } from '../../models/sport.model';
 import { Season } from '../../../seasons/models/season.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
@@ -25,6 +26,7 @@ import { SportPositionsTabComponent } from './tabs/sport-positions-tab.component
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    RouterLink,
     TuiTextfield,
     TuiSelect,
     TuiDataList,
@@ -44,6 +46,7 @@ export class SportDetailComponent {
   private sportStore = inject(SportStoreService);
   private seasonStore = inject(SeasonStoreService);
   private playerStore = inject(PlayerStoreService);
+  private presetStore = inject(SportScoreboardPresetStoreService);
   private readonly navigationHelper = inject(NavigationHelperService);
   private readonly alerts = inject(TuiAlertService);
   private readonly dialogs = inject(TuiDialogService);
@@ -66,6 +69,12 @@ export class SportDetailComponent {
     const id = this.sportId();
     if (!id) return null;
     return this.sportStore.sports().find((s: Sport) => s.id === id) || null;
+  });
+
+  preset = computed(() => {
+    const sport = this.sport();
+    if (!sport?.scoreboard_preset_id) return null;
+    return this.presetStore.presets().find((p) => p.id === sport.scoreboard_preset_id) || null;
   });
 
   seasons = this.seasonStore.seasons;

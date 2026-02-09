@@ -28,6 +28,10 @@ import { SponsorEditComponent } from './features/sponsors/components/edit/sponso
 import { SponsorLineDetailComponent } from './features/sponsors/components/sponsor-line-detail/sponsor-line-detail.component';
 import { SponsorLineEditComponent } from './features/sponsors/components/sponsor-line-edit/sponsor-line-edit.component';
 import { PlayerDetailComponent } from './features/players/components/detail/player-detail.component';
+import { SportScoreboardPresetListComponent } from './features/sport-scoreboard-presets/components/list/sport-scoreboard-preset-list.component';
+import { SportScoreboardPresetDetailComponent } from './features/sport-scoreboard-presets/components/detail/sport-scoreboard-preset-detail.component';
+import { SportScoreboardPresetEditComponent } from './features/sport-scoreboard-presets/components/edit/sport-scoreboard-preset-edit.component';
+import { SportScoreboardPresetCreateComponent } from './features/sport-scoreboard-presets/components/create/sport-scoreboard-preset-create.component';
 import { HomeComponent } from './features/home/components/home.component';
 import { UserProfileComponent } from './features/users/components/profile/user-profile.component';
 import { SettingsComponent } from './features/settings/components/settings.component';
@@ -42,6 +46,27 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+  },
+  {
+    path: 'sport-scoreboard-presets',
+    children: [
+      {
+        path: '',
+        component: SportScoreboardPresetListComponent,
+      },
+      {
+        path: 'new',
+        component: SportScoreboardPresetCreateComponent,
+      },
+      {
+        path: ':id',
+        component: SportScoreboardPresetDetailComponent,
+      },
+      {
+        path: ':id/edit',
+        component: SportScoreboardPresetEditComponent,
+      },
+    ],
   },
   {
     path: 'sports',

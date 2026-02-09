@@ -1,0 +1,94 @@
+@if (loading()) {
+  <div class="preset-detail__loading">
+    <tui-loader size="l" />
+  </div>
+} @else if (!preset()) {
+  <div class="preset-detail__not-found">Preset not found</div>
+} @else {
+  <div class="preset-detail">
+    <app-entity-header
+      [title]="preset()!.title"
+      [showEdit]="true"
+      [showDelete]="true"
+      [showGear]="true"
+      (edit)="onEdit()"
+      (delete)="onDelete()"
+      (navigateBack)="navigateBack()"
+    />
+
+    <div class="preset-detail__content">
+      <div class="preset-detail__section">
+        <h3 class="preset-detail__section-title">Gameclock Configuration</h3>
+        <div class="preset-detail__fields">
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Max Gameclock:</span>
+            <span class="preset-detail__field-value">{{ preset()!.gameclock_max ?? 'N/A' }} seconds</span>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Direction:</span>
+            <tui-badge appearance="neutral">{{ preset()!.direction }}</tui-badge>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">On Stop Behavior:</span>
+            <tui-badge appearance="neutral">{{ preset()!.on_stop_behavior }}</tui-badge>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-detail__section">
+        <h3 class="preset-detail__section-title">Scoreboard Configuration</h3>
+        <div class="preset-detail__fields">
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Show Quarter:</span>
+            <tui-badge [appearance]="preset()!.is_qtr ? 'success' : 'error'">
+              {{ preset()!.is_qtr ? 'Yes' : 'No' }}
+            </tui-badge>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Show Time:</span>
+            <tui-badge [appearance]="preset()!.is_time ? 'success' : 'error'">
+              {{ preset()!.is_time ? 'Yes' : 'No' }}
+            </tui-badge>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Show Playclock:</span>
+            <tui-badge [appearance]="preset()!.is_playclock ? 'success' : 'error'">
+              {{ preset()!.is_playclock ? 'Yes' : 'No' }}
+            </tui-badge>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Show Down & Distance:</span>
+            <tui-badge [appearance]="preset()!.is_downdistance ? 'success' : 'error'">
+              {{ preset()!.is_downdistance ? 'Yes' : 'No' }}
+            </tui-badge>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-detail__section">
+        <h3 class="preset-detail__section-title">Sports Using This Preset</h3>
+        @if (sportsLoading()) {
+          <div class="preset-detail__sports-loading">
+            <tui-loader size="m" />
+          </div>
+        } @else if (sports().length === 0) {
+          <div class="preset-detail__no-sports">No sports are using this preset</div>
+        } @else {
+          <div class="preset-detail__sports">
+            @for (sport of sports(); track sport.id) {
+              <a
+                class="preset-detail__sport-card"
+                tuiAppearance="floating"
+                tuiCardLarge
+                tuiCell="l"
+                [routerLink]="['/sports', sport.id]"
+              >
+                <div class="preset-detail__sport-name">{{ sport.title }}</div>
+              </a>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

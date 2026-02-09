@@ -15,6 +15,7 @@ export interface Sport {
   id: number;
   title: string;
   description?: string | null;
+  scoreboard_preset_id?: number | null;
 }
 
 export interface Team {

@@ -73,6 +73,43 @@
     color: var(--tui-text-primary);
   }
 
+  &__description {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    color: var(--tui-text-secondary);
+    line-height: 1.5;
+  }
+
+  &__info {
+    padding: 1rem 2rem;
+    background: var(--tui-background-elevation-1);
+    border-bottom: 1px solid var(--tui-border-normal);
+  }
+
+  &__preset {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+  }
+
+  &__preset-label {
+    font-weight: 500;
+    color: var(--tui-text-secondary);
+  }
+
+  &__preset-link {
+    color: var(--tui-background-accent-1);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--tui-background-accent-2);
+      text-decoration: underline;
+    }
+  }
+
   &__subnav {
     display: flex;
     align-items: center;

@@ -34,6 +34,20 @@
           rows="4"
         ></textarea>
       </div>
+
+      <div class="sport-edit__field">
+        <label for="scoreboard_preset_id" class="sport-edit__label">Scoreboard Preset</label>
+        <select
+          id="scoreboard_preset_id"
+          class="sport-edit__input"
+          formControlName="scoreboard_preset_id"
+        >
+          <option [value]="null">None</option>
+          @for (preset of presets(); track preset.id) {
+            <option [value]="preset.id">{{ preset.title }}</option>
+          }
+        </select>
+      </div>
     </form>
   }
 </div>
