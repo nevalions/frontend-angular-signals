@@ -28,9 +28,10 @@
   │  [Choose file...]                                           │
   │  [Original] [Icon] [Web View]                            │
   │                                                             │
-  │  EESL ID                                                   │
-  │  [Enter EESL ID (optional)]                              │
-  │                                                             │
+   │  EESL ID                                                   │
+   │  [Enter EESL ID (optional)]                              │
+   │  [Update from EESL] (shown only when EESL ID exists)       │
+   │                                                             │
   │  Main Sponsor                                              │
   │  [Select Main Sponsor ▼]                                  │
   │                                                             │
@@ -93,6 +94,13 @@
   - [Backend Schema: `TournamentSchemaUpdate`](../../../../statsboards-backend/src/tournaments/schemas.py)
   - **Backend API Endpoint:** `PUT /api/tournaments/id/{tournament_id}/`
   - **Backend File Upload Endpoint:** `POST /api/tournaments/upload_resize_logo` (optional)
+
+  **To parse and update tournament from EESL:**
+  - Tournament EESL ID
+  - [Interface: `Tournament`](../../../src/app/features/tournaments/models/tournament.model.ts)
+  - [Backend Schema: `TournamentSchema`](../../../../statsboards-backend/src/tournaments/schemas.py)
+  - **Backend API Endpoint:** `POST /api/tournaments/pars_and_create/tournament/{eesl_tournament_id}`
+  - Updates: title, description, and logo URLs from EESL source
 
 
 **For seasons dropdown:**

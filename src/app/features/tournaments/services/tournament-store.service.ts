@@ -107,4 +107,11 @@ export class TournamentStoreService {
       request
     ).pipe(tap(() => this.reload()));
   }
+
+  parseAndUpdateTournamentFromEesl(eeslTournamentId: number): Observable<Tournament> {
+    return this.http.post<Tournament>(
+      buildApiUrl(`/api/tournaments/pars_and_create/tournament/${eeslTournamentId}`),
+      null
+    ).pipe(tap(() => this.reload()));
+  }
 }

@@ -56,21 +56,24 @@ export class TournamentEditComponent implements OnInit {
 
   logoUploadLoading = signal(false);
   logoPreviewUrls = signal<ImageUrls | null>(null);
-  
+  logoCacheBuster = signal(Date.now());
+
   moveSportLoading = signal(false);
   previewData = signal<MoveTournamentToSportResponse | null>(null);
+  parseFromEeslLoading = signal(false);
 
   currentLogoUrls = computed<ImageUrls | null>(() => {
     const tournament = this.tournament;
     if (!tournament || !tournament.tournament_logo_url) return null;
+    const bust = this.logoCacheBuster();
     const urls: ImageUrls = {
-      original: buildStaticUrl(tournament.tournament_logo_url),
+      original: `${buildStaticUrl(tournament.tournament_logo_url)}?t=${bust}`,
     };
     if (tournament.tournament_logo_icon_url) {
-      urls.icon = buildStaticUrl(tournament.tournament_logo_icon_url);
+      urls.icon = `${buildStaticUrl(tournament.tournament_logo_icon_url)}?t=${bust}`;
     }
     if (tournament.tournament_logo_web_url) {
-      urls.webview = buildStaticUrl(tournament.tournament_logo_web_url);
+      urls.webview = `${buildStaticUrl(tournament.tournament_logo_web_url)}?t=${bust}`;
     }
     return urls;
   });
@@ -351,4 +354,33 @@ export class TournamentEditComponent implements OnInit {
     const line = this.getSponsorLineById(id);
     return line ? this.formatTitle(line.title) : '';
   });
+
+  onParseFromEesl(): void {
+    if (!this.tournament?.tournament_eesl_id) return;
+
+    this.parseFromEeslLoading.set(true);
+    this.tournamentStore.parseAndUpdateTournamentFromEesl(this.tournament.tournament_eesl_id).subscribe({
+      next: (updatedTournament) => {
+        this.parseFromEeslLoading.set(false);
+        this.logoCacheBuster.set(Date.now());
+        this.tournamentForm.patchValue({
+          title: updatedTournament.title,
+          description: updatedTournament.description || '',
+        });
+        if (updatedTournament.tournament_logo_url) {
+          const bust = Date.now();
+          this.logoPreviewUrls.set({
+            original: `${buildStaticUrl(updatedTournament.tournament_logo_url)}?t=${bust}`,
+            ...(updatedTournament.tournament_logo_icon_url && { icon: `${buildStaticUrl(updatedTournament.tournament_logo_icon_url)}?t=${bust}` }),
+            ...(updatedTournament.tournament_logo_web_url && { webview: `${buildStaticUrl(updatedTournament.tournament_logo_web_url)}?t=${bust}` }),
+          });
+        }
+        this.alerts.open('Tournament info updated from EESL', { label: 'Success', appearance: 'positive' }).subscribe();
+      },
+      error: () => {
+        this.parseFromEeslLoading.set(false);
+        this.alerts.open('Failed to update tournament info from EESL', { label: 'Error', appearance: 'negative' }).subscribe();
+      },
+    });
+  }
 }

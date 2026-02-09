@@ -53,6 +53,21 @@
           formControlName="tournament_eesl_id"
           class="tournament-edit__input"
         />
+        @if (tournament.tournament_eesl_id) {
+          <button
+            tuiButton
+            type="button"
+            (click)="onParseFromEesl()"
+            [disabled]="parseFromEeslLoading()"
+            class="tournament-edit__button--parse"
+          >
+            @if (parseFromEeslLoading()) {
+              Updating...
+            } @else {
+              Update from EESL
+            }
+          </button>
+        }
       </div>
 
       <div class="tournament-edit__field">

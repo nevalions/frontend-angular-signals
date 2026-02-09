@@ -82,6 +82,11 @@ Uses direct HttpClient:
 updateTournament(id: number, data: TournamentUpdate): Observable<Tournament> {
   return this.http.put<Tournament>(buildApiUrl(`/api/tournaments/${id}`), data).pipe(tap(() => this.reload()));
 }
+
+parseAndUpdateTournamentFromEesl(eeslTournamentId: number): Observable<Tournament> {
+  return this.http.post<Tournament>(buildApiUrl(`/api/tournaments/pars_and_create/tournament/${eeslTournamentId}`), null)
+    .pipe(tap(() => this.reload()));
+}
 ```
 
 ### Seasons Endpoint
@@ -115,6 +120,7 @@ updateMatch(matchId: number, data: MatchUpdate): Observable<Match> {
 | Teams     | `PUT /api/teams/{id}/`       | `true`                       | `src/teams/views.py:103`   |
 | Persons   | `PUT /api/persons/{id}/`     | `true`                       | `src/person/views.py`        |
 | Tournaments| `PUT /api/tournaments/{id}/` | Path param in URL             | `src/tournaments/views.py`    |
+| Tournaments| `POST /api/tournaments/pars_and_create/tournament/{eesl_id}` | Direct HttpClient | `src/tournaments/views.py`    |
 | Seasons   | `PUT /api/seasons/{id}/`      | `true`                       | `src/seasons/views.py:54`   |
 | Sports    | `PUT /api/sports/{id}/`       | `true`                       | `src/sports/views.py:41`    |
 | Matches   | `PUT /api/matches/{id}/`      | `true`                       | `src/matches/crud_router.py:157` |
