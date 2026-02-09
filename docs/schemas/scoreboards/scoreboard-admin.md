@@ -89,16 +89,25 @@
 └──────────────────────────────────────────────────────────────────────┘
 
  ┌──────────────────────────────────────────────────────────────────────┐
- │  [👁️🗑️] Scoreboard Settings Forms                            │
- │  ┌────────────────────────────────────────────────────────────┐     │
- │  │  [Show/Hide] Qtr Field              [Submit]          │
- │  │  [Show/Hide] Game Time Field         [Submit]          │
- │  │  [Show/Hide] Play Clock            [Submit]          │
- │  │  [Show/Hide] Down & Distance Field  [Submit]          │
- │  │  [Show/Hide] Tournament Logo       [Submit]          │
- │  │  [Show/Hide] Sponsor Logo          [Submit]          │
- │  │  [Show/Hide] Sponsor Line          [Submit]          │
- │  └────────────────────────────────────────────────────────────┘     │
+  │  [👁️🗑️] Scoreboard Settings Forms                            │
+  │  ┌────────────────────────────────────────────────────────────┐     │
+  │  │  [✓] Use Sport Preset       [Toggle] Inherit settings │
+  │  │                                 from sport's default │
+  │  │                                 preset              │
+  │  │  [Show/Hide] Qtr Field              [Submit]          │
+  │  │  [Show/Hide] Game Time Field         [Submit]          │
+  │  │  [Show/Hide] Play Clock            [Submit]          │
+  │  │  [Show/Hide] Down & Distance Field  [Submit]          │
+  │  │  [Show/Hide] Tournament Logo       [Submit]          │
+  │  │  [Show/Hide] Sponsor Logo          [Submit]          │
+  │  │  [Show/Hide] Sponsor Line          [Submit]          │
+  │  │  [✓] Use Match Sponsors    [Toggle] Use match instead of │
+  │  │                                 tournament sponsors     │
+  │  │  Tournament Logo Scale: [Slider 0.5-2.0]                │
+  │  │  Sponsor Scale:         [Slider 0.5-2.0]                │
+  │  │                           (affects logo and line)       │
+  │  └────────────────────────────────────────────────────────────┘     │
+
 │  ┌────────────────────────────────────────────────────────────┐     │
 │  │  HOME TEAM                                              │
 │  │  [✓] Use Game Color      [Toggle]                     │
@@ -205,18 +214,20 @@
      - Special game states (PAT 1, PAT 2, FG, KICK OFF) - when selected, down is hidden and only special state displays
   - **Timeout Forms** → Manage timeouts for each team
   - **Change Teams Forms** → Select different teams for the match
-    - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility and team settings:
-      - Display toggles: Qtr, Time, Play Clock, Down/Distance
-     - Team settings (Home and Away):
-       - Use game color switch + game color picker
-       - Use game title switch + game title input
-       - Use game logo switch + game logo upload (with preview and remove)
-       - Logo scale slider (0.5-2.0)
-     - Sponsor settings:
-       - Display toggles: Tournament Logo, Sponsor Logo, Sponsor Line
-       - Sponsor source toggle: Use match sponsors instead of tournament sponsors
-       - Tournament logo scale slider (0.5-2.0)
-       - Sponsor scale slider (0.5-2.0) - affects both sponsor logo and sponsor line
+   - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility and team settings:
+       - **Use Sport Preset toggle**: When enabled, match inherits all settings from sport's default scoreboard preset. When disabled, match uses custom scoreboard settings independent of sport preset.
+       - Display toggles: Qtr, Time, Play Clock, Down/Distance
+       - Team settings (Home and Away):
+         - Use game color switch + game color picker
+         - Use game title switch + game title input
+         - Use game logo switch + game logo upload (with preview and remove)
+         - Logo scale slider (0.5-2.0)
+       - Sponsor settings:
+         - Display toggles: Tournament Logo, Sponsor Logo, Sponsor Line
+         - Sponsor source toggle: Use match sponsors instead of tournament sponsors
+         - Tournament logo scale slider (0.5-2.0)
+         - Sponsor scale slider (0.5-2.0) - affects both sponsor logo and sponsor line
+
   - **Events Forms** → Football events tracking and statistics:
     - Team stats (offense yards, pass/run attempts, averages, down conversions, turnovers)
     - Quarterback stats (passing/rushing yards, TDs, QB rating)
@@ -242,6 +253,7 @@
 - **Event deleted**: Event disappears from Events table immediately
 - **Statistics recalculated**: Team/QB/Offense stats update when events change
 - **Clock updates**: Game clock and play clock update via WebSocket `gameclock-update` and `playclock-update` messages
+- **Scoreboard settings updates**: Scoreboard settings (toggles, colors, titles, logos, scales, use_sport_preset) update via WebSocket `scoreboard-data` partial message
 - **Score updates**: Match scores update via WebSocket `match-update` message with updated match_data
 - **Team data updates**: Team colors, logos, and names update via WebSocket `teams-data` message
 
@@ -249,6 +261,7 @@
 
 - `events` → Full FootballEvent array replacement (not partial updates)
 - `statistics` → Full MatchStats object replacement
+- `scoreboardPartial` → Partial scoreboard settings updates (use_sport_preset, toggles, colors, titles, logos, scales, flags)
 - `matchDataPartial` → Partial match_data updates (scores, quarter, down/distance)
 - `teamsPartial` → Full teams object replacement
 - Updates arrive via `event-update`, `statistics-update`, and `match-update` messages
@@ -266,7 +279,7 @@
 - Match Data: score_team_a, score_team_b, qtr, down, distance, ball_on, timeout_team_a, timeout_team_b, game_status, field_length
 - Gameclock: id, gameclock, gameclock_max, gameclock_status
 - Playclock: id, playclock, playclock_status
-- Scoreboard settings: visibility toggles, team colors, team titles/logos usage, scaling factors, flag/goal/timeout indicators
+- Scoreboard settings: visibility toggles, team colors, team titles/logos usage, scaling factors, flag/goal/timeout indicators, use_sport_preset toggle
 - Players in match (home and away rosters) with: id, player number, position, is_start, team_id, match_id
 - Main tournament sponsor (id, title, logo icon URL, logo web URL)
 - Football events in match with all player assignments and stats data
