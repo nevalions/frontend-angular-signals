@@ -51,23 +51,35 @@
     </div>
 
     <div class="tournament-create__field">
-      <label for="main_sponsor_id" class="tournament-create__label">Main Sponsor ID</label>
-      <input
-        id="main_sponsor_id"
-        type="number"
-        formControlName="main_sponsor_id"
-        class="tournament-create__input"
-      />
+      <label class="tournament-create__label">Main Sponsor</label>
+      <tui-textfield tuiChevron [content]="sponsorContent" [stringify]="sponsorStringify">
+        <input
+          placeholder="Select Main Sponsor (optional)"
+          tuiSelect
+          formControlName="main_sponsor_id"
+        />
+        <tui-data-list *tuiTextfieldDropdown size="l">
+          @for (sponsor of sponsors(); track sponsor.id) {
+            <button new tuiOption type="button" [value]="sponsor.id" class="tournament-create__sponsor-option">{{ formatTitle(sponsor.title) }}</button>
+          }
+        </tui-data-list>
+      </tui-textfield>
     </div>
 
     <div class="tournament-create__field">
-      <label for="sponsor_line_id" class="tournament-create__label">Sponsor Line ID</label>
-      <input
-        id="sponsor_line_id"
-        type="number"
-        formControlName="sponsor_line_id"
-        class="tournament-create__input"
-      />
+      <label class="tournament-create__label">Sponsor Line</label>
+      <tui-textfield tuiChevron [content]="sponsorLineContent" [stringify]="sponsorLineStringify">
+        <input
+          placeholder="Select Sponsor Line (optional)"
+          tuiSelect
+          formControlName="sponsor_line_id"
+        />
+        <tui-data-list *tuiTextfieldDropdown size="l">
+          @for (line of sponsorLines(); track line.id) {
+            <button new tuiOption type="button" [value]="line.id" class="tournament-create__sponsor-line-option">{{ formatTitle(line.title) }}</button>
+          }
+        </tui-data-list>
+      </tui-textfield>
     </div>
 
     <div class="tournament-create__field">

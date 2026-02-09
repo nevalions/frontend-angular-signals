@@ -1,22 +1,27 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { TuiAlertService, TuiButton } from '@taiga-ui/core';
+import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
+import { type TuiStringHandler } from '@taiga-ui/cdk';
+import { TuiAlertService, TuiButton, TuiDataList, TuiTextfield } from '@taiga-ui/core';
+import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { TournamentStoreService } from '../../services/tournament-store.service';
 import { SeasonStoreService } from '../../../seasons/services/season-store.service';
 import { SportStoreService } from '../../../sports/services/sport-store.service';
+import { SponsorStoreService } from '../../../sponsors/services/sponsor-store.service';
 import { TournamentCreate } from '../../models/tournament.model';
 import { ActivatedRoute } from '@angular/router';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withCreateAlert } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
 import { ImageUploadComponent, type ImageUrls } from '../../../../shared/components/image-upload/image-upload.component';
+import type { Sponsor } from '../../../../shared/types';
+import type { SponsorLine } from '../../../sponsors/models/sponsor-line.model';
 
 @Component({
   selector: 'app-tournament-create',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, TuiButton, ImageUploadComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TuiButton, TuiSelect, TuiDataList, TuiTextfield, TuiChevron, ImageUploadComponent],
   templateUrl: './tournament-create.component.html',
   styleUrl: './tournament-create.component.less',
 })
@@ -26,6 +31,7 @@ export class TournamentCreateComponent {
   private tournamentStore = inject(TournamentStoreService);
   private seasonStore = inject(SeasonStoreService);
   private sportStore = inject(SportStoreService);
+  private sponsorStore = inject(SponsorStoreService);
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
 
@@ -108,4 +114,43 @@ export class TournamentCreateComponent {
   cancel(): void {
     this.navigationHelper.toTournamentsList(this.sportId, this.year);
   }
+
+  sponsors = computed(() => this.sponsorStore.sponsors());
+  sponsorLines = computed(() => this.sponsorStore.sponsorLines());
+
+  getSponsorById(id: number | null | undefined): Sponsor | null {
+    if (!id) return null;
+    return this.sponsors().find((sponsor) => sponsor.id === id) || null;
+  }
+
+  getSponsorLineById(id: number | null | undefined): SponsorLine | null {
+    if (!id) return null;
+    return this.sponsorLines().find((line) => line.id === id) || null;
+  }
+
+  formatTitle(title: string | null | undefined): string {
+    return title?.toUpperCase() || '';
+  }
+
+  sponsorStringify: TuiStringHandler<number> = (id) => {
+    const sponsor = this.getSponsorById(id);
+    return sponsor ? this.formatTitle(sponsor.title) : '';
+  };
+
+  sponsorLineStringify: TuiStringHandler<number> = (id) => {
+    const line = this.getSponsorLineById(id);
+    return line ? this.formatTitle(line.title) : '';
+  };
+
+  sponsorContent = computed(() => {
+    const id = this.tournamentForm.get('main_sponsor_id')?.value;
+    const sponsor = this.getSponsorById(id);
+    return sponsor ? this.formatTitle(sponsor.title) : '';
+  });
+
+  sponsorLineContent = computed(() => {
+    const id = this.tournamentForm.get('sponsor_line_id')?.value;
+    const line = this.getSponsorLineById(id);
+    return line ? this.formatTitle(line.title) : '';
+  });
 }
