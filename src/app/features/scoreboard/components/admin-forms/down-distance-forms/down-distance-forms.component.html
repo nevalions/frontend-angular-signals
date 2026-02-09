@@ -10,11 +10,7 @@
               <tui-badge-notification tuiSlot="top" appearance="negative">!</tui-badge-notification>
             }
             <div class="current-values">
-              @if (currentDown()) {
-                <span class="values">{{ currentDown() }} & {{ currentDistance() }}</span>
-              } @else {
-                <span class="values">{{ currentDistance() }}</span>
-              }
+              <span class="values">{{ currentDownDistance() }}</span>
             </div>
           </tui-badged-content>
         </div>
@@ -23,7 +19,7 @@
         <div class="form-section">
           <label class="section-label">Down</label>
           <div class="down-buttons">
-            @for (option of downOptions; track option.value) {
+            @for (option of downOptions(); track option.value) {
               <button
                 tuiButton
                 type="button"
@@ -53,7 +49,7 @@
         <!-- Distance Select & Save Row -->
         <div class="distance-save-row">
           <div class="distance-select-wrapper">
-            <tui-textfield tuiChevron [tuiTextfieldCleaner]="false">
+            <tui-textfield tuiChevron [tuiTextfieldCleaner]="false" [stringify]="distanceStringify">
               <label tuiLabel>Distance</label>
               <input
                 tuiSelect
@@ -61,7 +57,11 @@
                 (ngModelChange)="pendingDistance.set($event)"
                 placeholder="Select distance"
               />
-              <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="distanceOptions" />
+              <tui-data-list *tuiTextfieldDropdown size="l">
+                @for (opt of distanceOptions(); track opt.value) {
+                  <button new tuiOption type="button" [value]="opt.value">{{ opt.label }}</button>
+                }
+              </tui-data-list>
             </tui-textfield>
           </div>
 
@@ -88,7 +88,7 @@
             size="s"
             (click)="pendingDistance.set('INCH')"
           >
-            INCH
+            {{ quickPresetInchLabel() }}
           </button>
           <button
             tuiButton
@@ -97,7 +97,7 @@
             size="s"
             (click)="pendingDistance.set('GOAL')"
           >
-            GOAL
+            {{ quickPresetGoalLabel() }}
           </button>
           <button
             tuiButton
@@ -106,7 +106,7 @@
             size="s"
             (click)="onDownSelect('1st'); pendingDistance.set('10')"
           >
-            1&10
+            {{ quickPresetOneTenLabel() }}
           </button>
         </div>
 
@@ -114,42 +114,17 @@
         <div class="form-section">
           <label class="section-label">Special States</label>
           <div class="special-state-buttons">
-            <button
-              tuiButton
-              type="button"
-              [appearance]="isSpecialStateSelected('PAT 1') ? 'primary' : 'secondary'"
-              size="m"
-              (click)="onSpecialStateSelect('PAT 1')"
-            >
-              PAT 1
-            </button>
-            <button
-              tuiButton
-              type="button"
-              [appearance]="isSpecialStateSelected('PAT 2') ? 'primary' : 'secondary'"
-              size="m"
-              (click)="onSpecialStateSelect('PAT 2')"
-            >
-              PAT 2
-            </button>
-            <button
-              tuiButton
-              type="button"
-              [appearance]="isSpecialStateSelected('FG') ? 'primary' : 'secondary'"
-              size="m"
-              (click)="onSpecialStateSelect('FG')"
-            >
-              FG
-            </button>
-            <button
-              tuiButton
-              type="button"
-              [appearance]="isSpecialStateSelected('KICK OFF') ? 'primary' : 'secondary'"
-              size="m"
-              (click)="onSpecialStateSelect('KICK OFF')"
-            >
-              KICK OFF
-            </button>
+            @for (opt of specialStateOptions(); track opt.value) {
+              <button
+                tuiButton
+                type="button"
+                [appearance]="isSpecialStateSelected(opt.value) ? 'primary' : 'secondary'"
+                size="m"
+                (click)="onSpecialStateSelect(opt.value)"
+              >
+                {{ opt.label }}
+              </button>
+            }
           </div>
         </div>
       </div>

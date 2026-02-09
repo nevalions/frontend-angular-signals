@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
-import { TuiChevron, TuiDataListWrapper, TuiInputNumber, TuiSelect } from '@taiga-ui/kit';
+import { TuiButton, TuiDataList, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiChevron, TuiInputNumber, TuiSelect } from '@taiga-ui/kit';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 import { ScoreFormsComponent } from './score-forms.component';
 import { MatchData } from '../../../../matches/models/match-data.model';
@@ -17,12 +17,12 @@ describe('ScoreFormsComponent', () => {
       imports: [
         FormsModule,
         TuiButton,
+        TuiDataList,
         TuiIcon,
         TuiTextfield,
         TuiInputNumber,
         TuiSelect,
         TuiChevron,
-        TuiDataListWrapper,
         CollapsibleSectionComponent,
         ScoreFormsComponent,
       ],

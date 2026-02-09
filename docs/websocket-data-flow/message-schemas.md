@@ -40,6 +40,7 @@ Sent when: match, matchdata, scoreboard, or teams change.
     "scoreboard_data": {
       "id": 456,
       "match_id": 5,
+      "language_code": "en",
       "is_flag": true,
       "team_a_game_color": "#FF0000",
       "team_b_game_color": "#0000FF"

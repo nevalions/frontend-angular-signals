@@ -6,10 +6,12 @@
         [localShowTime]="localShowTime()"
         [localShowPlayClock]="localShowPlayClock()"
         [localShowDownDistance]="localShowDownDistance()"
+        [localLanguageCode]="localLanguage()"
         (toggleQtr)="onToggleQtr($event)"
         (toggleTime)="onToggleTime($event)"
         (togglePlayClock)="onTogglePlayClock($event)"
         (toggleDownDistance)="onToggleDownDistance($event)"
+        (languageChange)="onLanguageChange($event)"
       />
 
       <app-scoreboard-team-settings

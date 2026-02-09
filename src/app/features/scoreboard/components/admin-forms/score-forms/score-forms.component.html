@@ -3,7 +3,7 @@
     <div class="score-forms">
       <!-- Quarter Selection -->
       <div class="quarter-section">
-        <tui-textfield tuiChevron class="quarter-select">
+        <tui-textfield tuiChevron class="quarter-select" [stringify]="quarterStringify">
           <label tuiLabel>Quarter</label>
           <input
             tuiSelect
@@ -11,7 +11,11 @@
             (ngModelChange)="selectedQtr.set($event)"
             placeholder="Select quarter"
           />
-          <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="quarterOptions" />
+          <tui-data-list *tuiTextfieldDropdown size="l">
+            @for (qtr of quarterOptions; track qtr) {
+              <button new tuiOption type="button" [value]="qtr">{{ quarterStringify(qtr) }}</button>
+            }
+          </tui-data-list>
         </tui-textfield>
       </div>
 

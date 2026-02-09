@@ -8,6 +8,11 @@ import { ScoreboardSponsorSettingsComponent } from './sponsor-settings/scoreboar
 import { ScoreboardTeamSettingsComponent } from './team-settings/scoreboard-team-settings.component';
 import { ScoreboardStoreService } from '../../../services/scoreboard-store.service';
 import { buildStaticUrl } from '../../../../../core/config/api.constants';
+import {
+  coerceScoreboardLanguageCode,
+  ScoreboardLanguage,
+  type ScoreboardLanguageCode,
+} from '../../../../../core/enums/scoreboard-language.enum';
 
 @Component({
   selector: 'app-scoreboard-settings-forms',
@@ -44,6 +49,9 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly showTime = computed(() => this.scoreboard()?.is_time ?? true);
   protected readonly showPlayClock = computed(() => this.scoreboard()?.is_playclock ?? true);
   protected readonly showDownDistance = computed(() => this.scoreboard()?.is_downdistance ?? true);
+  protected readonly currentLanguage = computed(() => {
+    return coerceScoreboardLanguageCode(this.scoreboard()?.language_code, ScoreboardLanguage.En);
+  });
   protected readonly showTournamentLogo = computed(() => this.scoreboard()?.is_tournament_logo ?? true);
   protected readonly showMainSponsor = computed(() => this.scoreboard()?.is_main_sponsor ?? true);
   protected readonly showSponsorLine = computed(() => this.scoreboard()?.is_sponsor_line ?? true);
@@ -54,6 +62,7 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly localShowTime = signal(true);
   protected readonly localShowPlayClock = signal(true);
   protected readonly localShowDownDistance = signal(true);
+  protected readonly localLanguage = signal<ScoreboardLanguageCode>(ScoreboardLanguage.En);
   protected readonly localShowTournamentLogo = signal(true);
   protected readonly localShowMainSponsor = signal(true);
   protected readonly localShowSponsorLine = signal(true);
@@ -72,6 +81,7 @@ export class ScoreboardSettingsFormsComponent {
     effect(() => {
       const sb = this.scoreboard();
       if (sb) {
+        this.localLanguage.set(this.currentLanguage());
         this.localShowQtr.set(sb.is_qtr ?? true);
         this.localShowTime.set(sb.is_time ?? true);
         this.localShowPlayClock.set(sb.is_playclock ?? true);
@@ -89,6 +99,11 @@ export class ScoreboardSettingsFormsComponent {
         this.localUseTeamBLogo.set(sb.use_team_b_game_logo ?? false);
       }
     });
+  }
+
+  onLanguageChange(code: ScoreboardLanguageCode): void {
+    this.localLanguage.set(code);
+    this.scoreboardChange.emit({ language_code: code });
   }
 
   // Team color settings

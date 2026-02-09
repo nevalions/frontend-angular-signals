@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   effect,
+  inject,
   input,
   signal,
 } from '@angular/core';
@@ -24,6 +25,7 @@ import {
   selectTournamentMainSponsor,
   selectTournamentSponsorLine,
 } from '../../../matches/utils/sponsors-data.util';
+import { ScoreboardTranslationService } from '../../services/scoreboard-translation.service';
 
 export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
 
@@ -33,6 +35,7 @@ export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
   imports: [AutoFitTextDirective],
   templateUrl: './scoreboard-display.component.html',
   styleUrl: './scoreboard-display.component.less',
+  providers: [ScoreboardTranslationService],
   animations: [
     scoreChangeAnimation,
     infoValueChangeAnimation,
@@ -42,6 +45,8 @@ export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
   ],
 })
 export class ScoreboardDisplayComponent {
+  private readonly translations = inject(ScoreboardTranslationService);
+
   /** Comprehensive match data containing teams, scores, and scoreboard settings */
   data = input<ComprehensiveMatchData | null>(null);
 
@@ -74,6 +79,7 @@ export class ScoreboardDisplayComponent {
     // Map comprehensive match scoreboard to full Scoreboard interface
     return {
       ...scoreboard,
+      language_code: scoreboard.language_code ?? 'en',
       is_qtr: scoreboard.is_qtr ?? true,
       is_time: scoreboard.is_time ?? true,
       is_playclock: scoreboard.is_playclock ?? true,
@@ -176,12 +182,12 @@ export class ScoreboardDisplayComponent {
   // Game info computed values
   protected readonly quarter = computed(() => {
     const d = this.data();
-    return d?.match_data?.qtr || '1st';
+    return this.translations.getQuarterLabel(d?.match_data?.qtr ?? '1st');
   });
 
   protected readonly down = computed(() => {
     const d = this.data();
-    return d?.match_data?.down ?? '1st';
+    return this.translations.getDownLabel(d?.match_data?.down ?? '1st');
   });
 
   protected readonly distance = computed(() => {
@@ -190,10 +196,13 @@ export class ScoreboardDisplayComponent {
   });
 
   protected readonly downDistance = computed(() => {
-    const d = this.down();
-    const dist = this.distance();
-    return d ? `${d} & ${dist}` : dist;
+    const matchData = this.data()?.match_data;
+    return this.translations.formatDownDistance(matchData?.down ?? '1st', matchData?.distance ?? '10');
   });
+
+  protected readonly goalText = computed(() => this.translations.getGoalText());
+  protected readonly flagText = computed(() => this.translations.getFlagText());
+  protected readonly timeoutText = computed(() => this.translations.getTimeoutText());
 
   // Formatted clock displays
   protected readonly gameClockDisplay = computed(() => {
@@ -294,6 +303,10 @@ export class ScoreboardDisplayComponent {
   });
 
   constructor() {
+    effect(() => {
+      this.translations.setLanguage(this.scoreboard()?.language_code ?? 'en');
+    });
+
     // Track score changes for animation
     effect(() => {
       const newScoreA = this.scoreA();

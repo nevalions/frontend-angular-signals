@@ -5,6 +5,23 @@
   </div>
   <p class="section-description">Toggle visibility of scoreboard elements</p>
 
+  <div class="language-row">
+    <tui-textfield tuiChevron [content]="languageContent()" [stringify]="languageStringify">
+      <label tuiLabel>Language</label>
+      <input
+        tuiSelect
+        [ngModel]="localLanguageCode()"
+        (ngModelChange)="languageChange.emit($event)"
+        placeholder="Select language"
+      />
+      <tui-data-list *tuiTextfieldDropdown size="l">
+        @for (opt of languageOptions; track opt.code) {
+          <button new tuiOption type="button" [value]="opt.code">{{ opt.label }}</button>
+        }
+      </tui-data-list>
+    </tui-textfield>
+  </div>
+
   <div class="toggles-grid">
     <label tuiBlock="m" class="toggle-block">
       <input

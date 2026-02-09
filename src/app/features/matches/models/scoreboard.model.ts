@@ -1,5 +1,6 @@
 export interface Scoreboard {
   id: number;
+  language_code: string;
   is_qtr: boolean;
   is_time: boolean;
   is_playclock: boolean;
@@ -43,6 +44,7 @@ export interface Scoreboard {
 }
 
 export interface ScoreboardCreate {
+  language_code?: string;
   is_qtr?: boolean;
   is_time?: boolean;
   is_playclock?: boolean;
@@ -86,6 +88,7 @@ export interface ScoreboardCreate {
 }
 
 export interface ScoreboardUpdate {
+  language_code?: string;
   is_qtr?: boolean;
   is_time?: boolean;
   is_playclock?: boolean;

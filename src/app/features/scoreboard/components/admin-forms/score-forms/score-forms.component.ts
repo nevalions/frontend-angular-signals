@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
-import { TuiChevron, TuiDataListWrapper, TuiInputNumber, TuiSelect } from '@taiga-ui/kit';
+import { type TuiStringHandler } from '@taiga-ui/cdk';
+import { TuiButton, TuiDataList, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { TuiChevron, TuiInputNumber, TuiSelect } from '@taiga-ui/kit';
 import { MatchData } from '../../../../matches/models/match-data.model';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
+import { ScoreboardTranslationService } from '../../../services/scoreboard-translation.service';
 
 export interface ScoreChangeEvent {
   team: 'a' | 'b';
@@ -23,11 +25,23 @@ export interface QuarterChangeEvent {
 @Component({
   selector: 'app-score-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TuiButton, TuiTextfield, TuiInputNumber, TuiIcon, TuiSelect, TuiChevron, TuiDataListWrapper, CollapsibleSectionComponent],
+  imports: [
+    FormsModule,
+    TuiButton,
+    TuiTextfield,
+    TuiInputNumber,
+    TuiIcon,
+    TuiSelect,
+    TuiChevron,
+    TuiDataList,
+    CollapsibleSectionComponent,
+  ],
+  providers: [ScoreboardTranslationService],
   templateUrl: './score-forms.component.html',
   styleUrl: './score-forms.component.less',
 })
 export class ScoreFormsComponent {
+  private readonly translations = inject(ScoreboardTranslationService);
   /** Match data containing current scores */
   matchData = input<MatchData | null>(null);
 
@@ -60,6 +74,10 @@ export class ScoreFormsComponent {
     '4th',
     'OT',
   ] as const;
+
+  protected readonly quarterStringify: TuiStringHandler<string> = (value) => {
+    return this.translations.getQuarterLabel(value);
+  };
 
   /** Selected quarter (local state) */
   protected readonly selectedQtr = signal<string>('1st');
@@ -172,6 +190,10 @@ export class ScoreFormsComponent {
   }
 
   constructor() {
+    effect(() => {
+      this.translations.setLanguage(this.scoreboard()?.language_code ?? 'en');
+    });
+
     // Sync local state when match data changes
     effect(() => {
       const data = this.matchData();

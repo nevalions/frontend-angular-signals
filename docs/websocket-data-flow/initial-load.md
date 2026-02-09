@@ -88,6 +88,7 @@ async def send_initial_data(self, websocket: WebSocket, client_id: str, match_id
     "scoreboard_data": {
       "id": 456,
       "match_id": 5,
+      "language_code": "en",
       "is_flag": false,
       "team_a_game_color": "#FF0000",
       "team_b_game_color": "#0000FF",

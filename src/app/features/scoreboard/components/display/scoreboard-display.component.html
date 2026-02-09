@@ -33,10 +33,10 @@
         <div class="team-name-block">
           @if (showGoalTeamA()) {
             <div class="goal-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">
-              <span [@breathing]="goalAnimationState()">TOUCHDOWN</span>
+              <span [@breathing]="goalAnimationState()">{{ goalText() }}</span>
             </div>
           } @else if (showTimeoutTeamA()) {
-            <div class="timeout-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">TIMEOUT</div>
+            <div class="timeout-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">{{ timeoutText() }}</div>
           } @else {
             <span class="team-name team-title-layer" [appAutoFitText]="true" [maxFontSize]="32" [@teamTitleSwap]="true">{{ teamAName() }}</span>
           }
@@ -74,10 +74,10 @@
         <div class="team-name-block">
           @if (showGoalTeamB()) {
             <div class="goal-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">
-              <span [@breathing]="goalAnimationState()">TOUCHDOWN</span>
+              <span [@breathing]="goalAnimationState()">{{ goalText() }}</span>
             </div>
           } @else if (showTimeoutTeamB()) {
-            <div class="timeout-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">TIMEOUT</div>
+            <div class="timeout-indicator team-title-layer" [appAutoFitText]="true" [maxFontSize]="35" [@teamTitleSwap]="true">{{ timeoutText() }}</div>
           } @else {
             <span class="team-name team-title-layer" [appAutoFitText]="true" [maxFontSize]="32" [@teamTitleSwap]="true">{{ teamBName() }}</span>
           }
@@ -137,7 +137,7 @@
     @if (showDownDistance()) {
       <div class="info-box down-distance">
         @if (showFlag()) {
-          <div class="flag-indicator" [@fadeInOut]="true">FLAG</div>
+          <div class="flag-indicator" [@fadeInOut]="true">{{ flagText() }}</div>
         } @else {
           <div class="info-value-swap">
             @for (dd of [downDistance()]; track dd) {

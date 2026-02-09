@@ -39,7 +39,7 @@ Get and update play clock (time, status).
 GET /api/matches/id/{match_id}/scoreboard_data/
 PUT /api/scoreboards/{id}
 ```
-Get and update scoreboard display settings (visibility toggles, team colors, scaling factors).
+Get and update scoreboard display settings (visibility toggles, team colors, scaling factors, `language_code` for EN/RU label rendering).
 
 ### Players in Match
 ```
@@ -195,6 +195,7 @@ Real-time updates for match data, game clock, play clock, scoreboard settings, a
 
 ##### Scoreboard Settings Forms (`ScoreboardSettingsFormsComponent`)
 - Display toggles (quarter, time, play clock, down/distance, logos)
+- Language selector (`language_code`: `en` | `ru`) to translate scoreboard labels and admin form options
 - Team color pickers
 - Use game color/title/logo toggles
 - Scale sliders for logos (tournament, sponsor, team)
