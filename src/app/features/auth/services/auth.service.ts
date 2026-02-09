@@ -114,7 +114,7 @@ export class AuthService {
       headers: this.getAuthHeaders(),
     }).pipe(
       tap((user) => {
-        console.log('[AuthService] Fetched user info:', user);
+        // console.log('[AuthService] Fetched user info:', user);
         this.currentUserSignal.set(user);
         localStorage.setItem(this.USER_KEY, JSON.stringify(user));
       }),
