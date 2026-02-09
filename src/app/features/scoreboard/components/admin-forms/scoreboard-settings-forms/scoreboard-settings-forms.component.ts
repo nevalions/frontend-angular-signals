@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TuiAlertService } from '@taiga-ui/core';
+import { TuiBlock, TuiSwitch } from '@taiga-ui/kit';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 import { ScoreboardDisplaySettingsComponent } from './display-settings/scoreboard-display-settings.component';
@@ -20,6 +21,8 @@ import {
   imports: [
     ReactiveFormsModule,
     FormsModule,
+    TuiBlock,
+    TuiSwitch,
     CollapsibleSectionComponent,
     ScoreboardDisplaySettingsComponent,
     ScoreboardTeamSettingsComponent,
