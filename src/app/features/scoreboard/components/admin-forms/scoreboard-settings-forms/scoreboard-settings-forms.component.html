@@ -1,6 +1,22 @@
 <app-collapsible-section title="Display Settings" sectionKey="scoreboard-settings">
-  <ng-template>
+   <ng-template>
     <div class="settings-forms">
+      <div class="settings-forms__preset-toggle">
+        <label tuiBlock="m" class="settings-forms__preset-block">
+          <input
+            tuiSwitch
+            type="checkbox"
+            size="s"
+            [ngModel]="localUseSportPreset()"
+            (ngModelChange)="onToggleUseSportPreset($event)"
+          />
+          <span tuiTitle>
+            Use Sport Preset
+            <span tuiSubtitle>Inherit settings from sport's default preset</span>
+          </span>
+        </label>
+      </div>
+
       <app-scoreboard-display-settings
         [localShowQtr]="localShowQtr()"
         [localShowTime]="localShowTime()"
@@ -13,6 +29,7 @@
         (toggleDownDistance)="onToggleDownDistance($event)"
         (languageChange)="onLanguageChange($event)"
       />
+
 
       <app-scoreboard-team-settings
         [teamAColor]="teamAColor()"

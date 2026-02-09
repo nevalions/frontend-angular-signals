@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TuiAlertService } from '@taiga-ui/core';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
@@ -19,6 +19,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     CollapsibleSectionComponent,
     ScoreboardDisplaySettingsComponent,
     ScoreboardTeamSettingsComponent,
@@ -45,6 +46,7 @@ export class ScoreboardSettingsFormsComponent {
   uploadingTeamBLogo = signal(false);
 
   // Display toggles computed from scoreboard
+  protected readonly useSportPreset = computed(() => this.scoreboard()?.use_sport_preset ?? true);
   protected readonly showQtr = computed(() => this.scoreboard()?.is_qtr ?? true);
   protected readonly showTime = computed(() => this.scoreboard()?.is_time ?? true);
   protected readonly showPlayClock = computed(() => this.scoreboard()?.is_playclock ?? true);
@@ -58,6 +60,7 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly useMatchSponsors = computed(() => this.scoreboard()?.is_match_sponsor_line ?? false);
 
   // Local state for display toggles
+  protected readonly localUseSportPreset = signal(true);
   protected readonly localShowQtr = signal(true);
   protected readonly localShowTime = signal(true);
   protected readonly localShowPlayClock = signal(true);
@@ -81,6 +84,7 @@ export class ScoreboardSettingsFormsComponent {
     effect(() => {
       const sb = this.scoreboard();
       if (sb) {
+        this.localUseSportPreset.set(sb.use_sport_preset ?? true);
         this.localLanguage.set(this.currentLanguage());
         this.localShowQtr.set(sb.is_qtr ?? true);
         this.localShowTime.set(sb.is_time ?? true);
@@ -131,6 +135,11 @@ export class ScoreboardSettingsFormsComponent {
   protected readonly logoBScale = computed(() => this.scoreboard()?.scale_logo_b ?? 1);
 
   // Toggle handlers
+  onToggleUseSportPreset(value: boolean): void {
+    this.localUseSportPreset.set(value);
+    this.scoreboardChange.emit({ use_sport_preset: value });
+  }
+
   onToggleQtr(value: boolean): void {
     this.localShowQtr.set(value);
     this.scoreboardChange.emit({ is_qtr: value });
