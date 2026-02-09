@@ -79,6 +79,21 @@
         class="team-edit__input"
         placeholder="Enter EESL ID (optional)"
       />
+      @if (team()?.team_eesl_id) {
+        <button
+          tuiButton
+          type="button"
+          (click)="onParseFromEesl()"
+          [disabled]="parseFromEeslLoading()"
+          class="team-edit__button--parse"
+        >
+          @if (parseFromEeslLoading()) {
+            Updating...
+          } @else {
+            Update from EESL
+          }
+        </button>
+      }
     </div>
 
     <div class="team-edit__field team-edit__field--logo">

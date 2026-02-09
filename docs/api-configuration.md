@@ -89,6 +89,36 @@ parseAndUpdateTournamentFromEesl(eeslTournamentId: number): Observable<Tournamen
 }
 ```
 
+### Teams Endpoint
+
+Uses direct HttpClient:
+
+```typescript
+updateTeam(id: number, data: TeamUpdate): Observable<Team> {
+  return this.apiService.put<Team>('/api/teams/', id, teamData, true).pipe(tap(() => this.reload()));
+}
+
+parseAndUpdateTeamFromEesl(eeslTeamId: number): Observable<Team> {
+  return this.http.post<Team>(buildApiUrl(`/api/teams/pars_and_create/team/${eeslTeamId}`), null)
+    .pipe(tap(() => this.reload()));
+}
+```
+
+### Matches Endpoint
+
+Uses direct HttpClient:
+
+```typescript
+updateMatch(matchId: number, data: MatchUpdate): Observable<Match> {
+  return this.apiService.put<Match>('/api/matches/', matchId, data, true);
+}
+
+parseAndUpdateMatchFromEesl(eeslMatchId: number): Observable<Match> {
+  return this.http.post<Match>(buildApiUrl(`/api/matches/pars_and_create/match/${eeslMatchId}`), null)
+    .pipe(tap(() => this.reload()));
+}
+```
+
 ### Seasons Endpoint
 
 ```typescript
@@ -115,15 +145,17 @@ updateMatch(matchId: number, data: MatchUpdate): Observable<Match> {
 
 ## API Endpoint Reference
 
-| Resource  | PUT Endpoint Pattern          | Frontend Usage (`usePathParam`) | Backend View Reference        |
+| Resource  | PUT/POST Endpoint Pattern          | Frontend Usage (`usePathParam`) | Backend View Reference        |
 | --------- | ---------------------------- | ---------------------------- | --------------------------- |
 | Teams     | `PUT /api/teams/{id}/`       | `true`                       | `src/teams/views.py:103`   |
+| Teams     | `POST /api/teams/pars_and_create/team/{eesl_id}` | Direct HttpClient | `src/teams/views.py`        |
 | Persons   | `PUT /api/persons/{id}/`     | `true`                       | `src/person/views.py`        |
 | Tournaments| `PUT /api/tournaments/{id}/` | Path param in URL             | `src/tournaments/views.py`    |
 | Tournaments| `POST /api/tournaments/pars_and_create/tournament/{eesl_id}` | Direct HttpClient | `src/tournaments/views.py`    |
 | Seasons   | `PUT /api/seasons/{id}/`      | `true`                       | `src/seasons/views.py:54`   |
 | Sports    | `PUT /api/sports/{id}/`       | `true`                       | `src/sports/views.py:41`    |
 | Matches   | `PUT /api/matches/{id}/`      | `true`                       | `src/matches/crud_router.py:157` |
+| Matches   | `POST /api/matches/pars_and_create/match/{eesl_id}` | Direct HttpClient | `src/matches/parser_router.py`    |
 
 ## Players Endpoints
 

@@ -29,10 +29,11 @@
 │  Team B *                                                  │
 │  [Select team ▼]                                          │
 │                                                             │
-│  EESL ID                                                   │
-│  [EESL ID]                                                │
-└─────────────────────────────────────────────────────────────┘
-```
+  │  EESL ID                                                   │
+  │  [EESL ID]                                                │
+  │  [Update from EESL] (shown only when EESL ID exists and in edit mode) |
+  └─────────────────────────────────────────────────────────────┘
+  ```
 
 ## What's on the page
 
@@ -59,6 +60,13 @@
 - [Interface: `MatchCreate`](../../../src/app/features/matches/models/match.model.ts)
 - [Backend Schema: `MatchSchemaCreate`](../../../../statsboards-backend/src/matches/schemas.py)
 - **Backend API Endpoint:** `POST /api/matches/`
+
+**To parse and update match from EESL (edit mode only):**
+- Match EESL ID
+- [Interface: `Match`](../../../src/app/features/matches/models/match.model.ts)
+- [Backend Schema: `MatchSchema`](../../../../statsboards-backend/src/matches/schemas.py)
+- **Backend API Endpoint:** `POST /api/matches/pars_and_create/match/{eesl_match_id}`
+- Updates: match date, week, team IDs, and sponsor info from EESL source
 
 **For tournaments dropdown:**
 - Tournament id

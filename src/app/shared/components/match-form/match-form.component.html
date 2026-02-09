@@ -84,6 +84,21 @@
           formControlName="match_eesl_id"
           class="match-form__input"
         />
+        @if (match()?.match_eesl_id) {
+          <button
+            tuiButton
+            type="button"
+            (click)="onParseFromEesl()"
+            [disabled]="parseFromEeslLoading()"
+            class="match-form__button--parse"
+          >
+            @if (parseFromEeslLoading()) {
+              Updating...
+            } @else {
+              Update from EESL
+            }
+          </button>
+        }
       </div>
 
       <div class="match-form__field">

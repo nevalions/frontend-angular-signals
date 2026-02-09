@@ -42,18 +42,21 @@ export class TeamEditComponent {
 
   logoUploadLoading = signal(false);
   logoPreviewUrls = signal<ImageUrls | null>(null);
+  logoCacheBuster = signal(Date.now());
+  parseFromEeslLoading = signal(false);
 
   currentLogoUrls = computed<ImageUrls | null>(() => {
     const team = this.team();
     if (!team || !team.team_logo_url) return null;
+    const bust = this.logoCacheBuster();
     const urls: ImageUrls = {
-      original: buildStaticUrl(team.team_logo_url),
+      original: `${buildStaticUrl(team.team_logo_url)}?t=${bust}`,
     };
     if (team.team_logo_icon_url) {
-      urls.icon = buildStaticUrl(team.team_logo_icon_url);
+      urls.icon = `${buildStaticUrl(team.team_logo_icon_url)}?t=${bust}`;
     }
     if (team.team_logo_web_url) {
-      urls.webview = buildStaticUrl(team.team_logo_web_url);
+      urls.webview = `${buildStaticUrl(team.team_logo_web_url)}?t=${bust}`;
     }
     return urls;
   });
@@ -150,6 +153,38 @@ export class TeamEditComponent {
 
   onLogoRemove(): void {
     this.logoPreviewUrls.set(null);
+  }
+
+  onParseFromEesl(): void {
+    const team = this.team();
+    if (!team?.team_eesl_id) return;
+
+    this.parseFromEeslLoading.set(true);
+    this.teamStore.parseAndUpdateTeamFromEesl(team.team_eesl_id).subscribe({
+      next: (updatedTeam) => {
+        this.parseFromEeslLoading.set(false);
+        this.logoCacheBuster.set(Date.now());
+        this.teamForm.patchValue({
+          title: updatedTeam.title,
+          city: updatedTeam.city || '',
+          description: updatedTeam.description || '',
+          team_color: updatedTeam.team_color,
+        });
+        if (updatedTeam.team_logo_url) {
+          const bust = Date.now();
+          this.logoPreviewUrls.set({
+            original: `${buildStaticUrl(updatedTeam.team_logo_url)}?t=${bust}`,
+            ...(updatedTeam.team_logo_icon_url && { icon: `${buildStaticUrl(updatedTeam.team_logo_icon_url)}?t=${bust}` }),
+            ...(updatedTeam.team_logo_web_url && { webview: `${buildStaticUrl(updatedTeam.team_logo_web_url)}?t=${bust}` }),
+          });
+        }
+        this.alerts.open('Team info updated from EESL', { label: 'Success', appearance: 'positive' }).subscribe();
+      },
+      error: () => {
+        this.parseFromEeslLoading.set(false);
+        this.alerts.open('Failed to update team info from EESL', { label: 'Error', appearance: 'negative' }).subscribe();
+      },
+    });
   }
 
   onSubmit(): void {

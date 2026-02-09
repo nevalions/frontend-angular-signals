@@ -30,9 +30,10 @@
 │  Team Color                                                │
 │  [Color picker]                                           │
 │                                                             │
-│  EESL ID                                                   │
-│  [EESL ID]                                                │
-│                                                             │
+  │  EESL ID                                                   │
+  │  [EESL ID]                                                │
+  │  [Update from EESL] (shown only when EESL ID exists)    │
+  │                                                             │
 │  Sponsor Line ID                                           │
 │  [Sponsor Line ID]                                        │
 │                                                             │
@@ -99,5 +100,13 @@
 - Team logo icon URL (optional)
 - Team logo web URL (optional)
 - [Interface: `TeamUpdate`](../../../src/app/features/teams/models/team.model.ts)
-- [Backend Schema: `TeamSchemaUpdate`](../../../../statsboards-backend/src/teams/schemas.py)
-- **Backend API Endpoint:** `PUT /api/teams/id/{team_id}/`
+  - [Backend Schema: `TeamSchemaUpdate`](../../../../statsboards-backend/src/teams/schemas.py)
+  - **Backend API Endpoint:** `PUT /api/teams/id/{team_id}/`
+
+  **To parse and update team from EESL:**
+  - Team EESL ID
+  - [Interface: `Team`](../../../src/app/features/teams/models/team.model.ts)
+  - [Backend Schema: `TeamSchema`](../../../../statsboards-backend/src/teams/schemas.py)
+  - **Backend API Endpoint:** `POST /api/teams/pars_and_create/team/{eesl_team_id}`
+  - Updates: title, city, description, team color, and logo URLs from EESL source
+

@@ -72,4 +72,11 @@ export class TeamStoreService {
   removeTeamFromTournament(tournamentId: number, teamId: number): Observable<void> {
     return this.http.delete<void>(buildApiUrl(`/api/team_in_tournament/${teamId}in${tournamentId}`)).pipe(tap(() => this.reload()));
   }
+
+  parseAndUpdateTeamFromEesl(eeslTeamId: number): Observable<Team> {
+    return this.http.post<Team>(
+      buildApiUrl(`/api/teams/pars_and_create/team/${eeslTeamId}`),
+      null
+    ).pipe(tap(() => this.reload()));
+  }
 }

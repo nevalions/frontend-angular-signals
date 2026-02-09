@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { type TuiStringHandler } from '@taiga-ui/cdk';
-import { TuiButton, TuiDataList, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiTextfield, TuiAlertService } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { MatchCreate, MatchUpdate, MatchWithDetails, Team } from '../../../features/matches/models/match.model';
+import { MatchStoreService } from '../../../features/matches/services/match-store.service';
 
 export type MatchFormMode = 'create' | 'edit';
 
@@ -40,6 +41,7 @@ export class MatchFormComponent {
   sponsorLines = input.required<{ id: number; title?: string | null }[]>();
   match = input<MatchWithDetails | null>(null);
   loading = input(false);
+  parseFromEeslLoading = signal(false);
 
   submitted = output<MatchCreate | MatchUpdate>();
   cancelled = output<void>();
@@ -53,6 +55,9 @@ export class MatchFormComponent {
     main_sponsor_id: [null as number | null],
     sponsor_line_id: [null as number | null],
   });
+
+  private matchStore = inject(MatchStoreService);
+  private alerts = inject(TuiAlertService);
 
   title = computed(() => {
     return this.mode() === 'create' ? 'Create New Match' : 'Edit Match';
@@ -167,5 +172,30 @@ export class MatchFormComponent {
 
   onCancel(): void {
     this.cancelled.emit();
+  }
+
+  onParseFromEesl(): void {
+    const match = this.match();
+    if (!match?.match_eesl_id) return;
+
+    this.parseFromEeslLoading.set(true);
+    this.matchStore.parseAndUpdateMatchFromEesl(match.match_eesl_id).subscribe({
+      next: (updatedMatch) => {
+        this.parseFromEeslLoading.set(false);
+        this.matchForm.patchValue({
+          match_date: updatedMatch.match_date,
+          week: updatedMatch.week,
+          team_a_id: updatedMatch.team_a_id,
+          team_b_id: updatedMatch.team_b_id,
+          main_sponsor_id: updatedMatch.main_sponsor_id,
+          sponsor_line_id: updatedMatch.sponsor_line_id,
+        });
+        this.alerts.open('Match info updated from EESL', { label: 'Success', appearance: 'positive' }).subscribe();
+      },
+      error: () => {
+        this.parseFromEeslLoading.set(false);
+        this.alerts.open('Failed to update match info from EESL', { label: 'Error', appearance: 'negative' }).subscribe();
+      },
+    });
   }
 }
