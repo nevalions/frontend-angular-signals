@@ -39,6 +39,9 @@ export class ScoreboardSettingsFormsComponent {
   /** Emits partial updates to scoreboard settings */
   scoreboardChange = output<Partial<ScoreboardUpdate>>();
 
+  /** Whether user is actively toggling settings (to prevent effect overwrites) */
+  private userIsToggling = signal(false);
+
   teamALogoForm = this.fb.control<File | null>(null);
   teamBLogoForm = this.fb.control<File | null>(null);
 
@@ -84,7 +87,6 @@ export class ScoreboardSettingsFormsComponent {
     effect(() => {
       const sb = this.scoreboard();
       if (sb) {
-        this.localUseSportPreset.set(sb.use_sport_preset ?? true);
         this.localLanguage.set(this.currentLanguage());
         this.localShowQtr.set(sb.is_qtr ?? true);
         this.localShowTime.set(sb.is_time ?? true);
@@ -101,6 +103,11 @@ export class ScoreboardSettingsFormsComponent {
         this.localUseTeamBTitle.set(sb.use_team_b_game_title ?? false);
         this.localUseTeamALogo.set(sb.use_team_a_game_logo ?? false);
         this.localUseTeamBLogo.set(sb.use_team_b_game_logo ?? false);
+
+        // Only reset use_sport_preset if not user toggling
+        if (!this.userIsToggling()) {
+          this.localUseSportPreset.set(sb.use_sport_preset ?? true);
+        }
       }
     });
   }
@@ -136,8 +143,10 @@ export class ScoreboardSettingsFormsComponent {
 
   // Toggle handlers
   onToggleUseSportPreset(value: boolean): void {
+    this.userIsToggling.set(true);
     this.localUseSportPreset.set(value);
     this.scoreboardChange.emit({ use_sport_preset: value });
+    setTimeout(() => this.userIsToggling.set(false), 100);
   }
 
   onToggleQtr(value: boolean): void {

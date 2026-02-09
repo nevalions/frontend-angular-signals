@@ -384,12 +384,19 @@ export class ScoreboardAdminFacade implements OnDestroy {
   }
 
   onScoreboardSettingsChange(update: Partial<ScoreboardUpdate>): void {
+    console.log('[Facade] onScoreboardSettingsChange called with:', update);
     const sb = this.scoreboard();
     if (!sb) return;
 
+    console.log('[Facade] Updating scoreboard id:', sb.id);
     this.scoreboardStore.updateScoreboard(sb.id, update).subscribe({
-      next: (updated) => this.scoreboard.set(updated),
-      error: (err) => console.error('Failed to update scoreboard settings', err),
+      next: (updated) => {
+        console.log('[Facade] Scoreboard updated successfully:', updated);
+        this.scoreboard.set(updated);
+      },
+      error: (err) => {
+        console.error('[Facade] Failed to update scoreboard settings', err);
+      },
     });
   }
 
