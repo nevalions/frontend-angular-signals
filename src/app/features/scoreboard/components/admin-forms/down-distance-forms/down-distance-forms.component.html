@@ -16,35 +16,22 @@
         </div>
 
         <!-- Down Selection -->
-        <div class="form-section">
-          <label class="section-label">Down</label>
-          <div class="down-buttons">
-            @for (option of downOptions(); track option.value) {
-              <button
-                tuiButton
-                type="button"
-                [appearance]="isDownSelected(option.value) ? 'primary' : 'secondary'"
-                size="m"
-                (click)="onDownSelect(option.value)"
-              >
-                {{ option.label }}
-              </button>
-            }
-
-            <!-- Flag Toggle Button -->
-            <button
-              tuiButton
-              type="button"
-              [appearance]="isFlagActive() ? 'accent' : 'outline'"
-              size="m"
-              class="flag-toggle-button"
-              [class.flag-active]="isFlagActive()"
-              (click)="onFlagToggle()"
-            >
-              <span class="flag-icon">&#x2691;&#xFE0E;</span>
-            </button>
+          <div class="form-section">
+            <label class="section-label">Down</label>
+            <div class="down-buttons">
+              @for (option of downOptions(); track option.value) {
+                <button
+                  tuiButton
+                  type="button"
+                  [appearance]="isDownSelected(option.value) ? 'primary' : 'secondary'"
+                  size="m"
+                  (click)="onDownSelect(option.value)"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
           </div>
-        </div>
 
         <!-- Distance Select & Save Row -->
         <div class="distance-save-row">
@@ -107,6 +94,18 @@
             (click)="onDownSelect('1st'); pendingDistance.set('10')"
           >
             {{ quickPresetOneTenLabel() }}
+          </button>
+
+          <button
+            tuiButton
+            type="button"
+            [appearance]="isFlagActive() ? 'accent' : 'outline'"
+            size="s"
+            class="flag-toggle-button"
+            [class.flag-active]="isFlagActive()"
+            (click)="onFlagToggle()"
+          >
+            <span class="flag-icon">&#x2691;&#xFE0E;</span>
           </button>
         </div>
 

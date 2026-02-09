@@ -115,7 +115,7 @@ tui-badged-content:has(tui-badge-notification) {
 
 .down-buttons {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 6px;
 
   button {
@@ -129,16 +129,23 @@ tui-badged-content:has(tui-badge-notification) {
 
 .special-state-buttons {
   display: grid;
-  grid-template-columns: repeat(5, auto);
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
   gap: 6px;
 
   button {
     min-height: 52px !important;
-    height: 52px !important;
+    height: auto !important;
     font-weight: 700 !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
+    line-height: 1.05 !important;
     padding: 8px 4px !important;
-    min-width: auto !important;
+    min-width: 0 !important;
+    white-space: normal !important;
+    text-align: center;
+    word-break: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -151,11 +158,11 @@ tui-badged-content:has(tui-badge-notification) {
   gap: 4px;
   min-height: 52px !important;
   height: 52px !important;
-  font-size: 18px !important;
+  font-size: 14px !important;
   padding: 8px 4px !important;
 
   .flag-icon {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1;
     color: #f2c200;
   }
@@ -192,15 +199,27 @@ tui-badged-content:has(tui-badge-notification) {
 
 .distance-presets {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 6px;
 
   button {
     min-height: 52px !important;
     height: 52px !important;
     font-weight: 700 !important;
-    font-size: 18px !important;
+    font-size: 14px !important;
+    line-height: 1.05 !important;
     padding: 8px 4px !important;
+    min-width: 0 !important;
+    white-space: normal !important;
+    text-align: center;
+  }
+
+  .flag-toggle-button {
+    font-size: 14px !important;
+
+    .flag-icon {
+      font-size: 18px;
+    }
   }
 }
 
@@ -252,7 +271,7 @@ tui-badged-content:has(tui-badge-notification) {
   .flag-toggle-button {
     min-height: 48px !important;
     height: 48px !important;
-    font-size: 16px !important;
+    font-size: 13px !important;
   }
 }
 
@@ -272,7 +291,7 @@ tui-badged-content:has(tui-badge-notification) {
   .flag-toggle-button {
     min-height: 52px !important;
     height: 52px !important;
-    font-size: 18px !important;
+    font-size: 14px !important;
     font-weight: 700 !important;
     padding: 8px 4px !important;
   }
@@ -283,7 +302,7 @@ tui-badged-content:has(tui-badge-notification) {
     button {
       min-height: 52px !important;
       height: 52px !important;
-      font-size: 18px !important;
+      font-size: 14px !important;
       font-weight: 700 !important;
       padding: 8px 4px !important;
     }
