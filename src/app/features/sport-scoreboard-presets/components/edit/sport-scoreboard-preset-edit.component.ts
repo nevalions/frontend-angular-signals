@@ -10,6 +10,12 @@ import { SportScoreboardPresetStoreService } from '../../services/sport-scoreboa
 import { SportScoreboardPresetUpdate } from '../../models/sport-scoreboard-preset.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
+import {
+  hasInvalidCustomPeriodLabelsInput,
+  parseCustomPeriodLabelsInput,
+  PERIOD_MODE_OPTIONS,
+  serializeCustomPeriodLabelsInput,
+} from '../../utils/period-labels-form.util';
 
 const DIRECTION_OPTIONS = [
   { value: 'down', label: 'Down' },
@@ -45,6 +51,10 @@ export class SportScoreboardPresetEditComponent {
     is_time: [true],
     is_playclock: [true],
     is_downdistance: [true],
+    has_timeouts: [true],
+    has_playclock: [true],
+    period_mode: ['qtr'],
+    period_labels_input: [''],
   });
 
   presetId = toSignal(
@@ -65,6 +75,25 @@ export class SportScoreboardPresetEditComponent {
 
   readonly directionOptions = DIRECTION_OPTIONS;
   readonly onStopBehaviorOptions = ON_STOP_BEHAVIOR_OPTIONS;
+  readonly periodModeOptions = PERIOD_MODE_OPTIONS;
+
+  private readonly periodMode = toSignal(this.presetForm.controls.period_mode.valueChanges, {
+    initialValue: this.presetForm.controls.period_mode.value,
+  });
+
+  private readonly periodLabelsInput = toSignal(this.presetForm.controls.period_labels_input.valueChanges, {
+    initialValue: this.presetForm.controls.period_labels_input.value,
+  });
+
+  readonly isCustomPeriodMode = computed(() => this.periodMode() === 'custom');
+
+  readonly customPeriodLabelsInvalid = computed(() => {
+    if (!this.isCustomPeriodMode()) {
+      return false;
+    }
+
+    return hasInvalidCustomPeriodLabelsInput(this.periodLabelsInput());
+  });
 
   private patchFormOnPresetChange = effect(() => {
     const preset = this.preset();
@@ -78,12 +107,16 @@ export class SportScoreboardPresetEditComponent {
         is_time: preset.is_time,
         is_playclock: preset.is_playclock,
         is_downdistance: preset.is_downdistance,
+        has_timeouts: preset.has_timeouts,
+        has_playclock: preset.has_playclock,
+        period_mode: preset.period_mode,
+        period_labels_input: serializeCustomPeriodLabelsInput(preset.period_labels_json),
       });
     }
   });
 
   onSubmit(): void {
-    if (this.presetForm.invalid) return;
+    if (this.presetForm.invalid || this.customPeriodLabelsInvalid()) return;
     const id = this.presetId();
     if (!id) return;
 
@@ -120,6 +153,22 @@ export class SportScoreboardPresetEditComponent {
     if (formData.is_downdistance !== null && formData.is_downdistance !== undefined) {
       data.is_downdistance = formData.is_downdistance;
     }
+
+    if (formData.has_timeouts !== null && formData.has_timeouts !== undefined) {
+      data.has_timeouts = formData.has_timeouts;
+    }
+
+    if (formData.has_playclock !== null && formData.has_playclock !== undefined) {
+      data.has_playclock = formData.has_playclock;
+    }
+
+    if (formData.period_mode) {
+      data.period_mode = formData.period_mode as SportScoreboardPresetUpdate['period_mode'];
+    }
+
+    data.period_labels_json = formData.period_mode === 'custom'
+      ? parseCustomPeriodLabelsInput(formData.period_labels_input)
+      : null;
 
     withUpdateAlert(
       this.alerts,

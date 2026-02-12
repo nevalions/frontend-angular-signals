@@ -1,3 +1,5 @@
+import { SportPeriodMode } from '../../matches/models/scoreboard.model';
+
 export interface SportScoreboardPreset {
   id: number;
   title: string;
@@ -8,6 +10,10 @@ export interface SportScoreboardPreset {
   is_time: boolean;
   is_playclock: boolean;
   is_downdistance: boolean;
+  has_timeouts: boolean;
+  has_playclock: boolean;
+  period_mode: SportPeriodMode;
+  period_labels_json: string[] | null;
 }
 
 export interface SportScoreboardPresetCreate {
@@ -19,6 +25,10 @@ export interface SportScoreboardPresetCreate {
   is_time?: boolean;
   is_playclock?: boolean;
   is_downdistance?: boolean;
+  has_timeouts?: boolean;
+  has_playclock?: boolean;
+  period_mode?: SportPeriodMode;
+  period_labels_json?: string[] | null;
 }
 
 export interface SportScoreboardPresetUpdate {
@@ -30,4 +40,8 @@ export interface SportScoreboardPresetUpdate {
   is_time?: boolean | null;
   is_playclock?: boolean | null;
   is_downdistance?: boolean | null;
+  has_timeouts?: boolean | null;
+  has_playclock?: boolean | null;
+  period_mode?: SportPeriodMode | null;
+  period_labels_json?: string[] | null;
 }

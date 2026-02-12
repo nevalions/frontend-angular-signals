@@ -5,7 +5,7 @@
       <button tuiButton type="button" appearance="flat" (click)="navigateToDetail()">
         Cancel
       </button>
-      <button tuiButton type="button" appearance="primary" (click)="onSubmit()" [disabled]="presetForm.invalid || loading()">
+      <button tuiButton type="button" appearance="primary" (click)="onSubmit()" [disabled]="presetForm.invalid || customPeriodLabelsInvalid() || loading()">
         Save Changes
       </button>
     </div>
@@ -105,6 +105,61 @@
             <span>Show Down & Distance</span>
           </label>
         </div>
+      </div>
+
+      <div class="preset-edit__section">
+        <h3 class="preset-edit__section-title">Capabilities</h3>
+        <div class="preset-edit__checkboxes">
+          <label class="preset-edit__checkbox">
+            <input
+              type="checkbox"
+              tuiCheckbox
+              formControlName="has_timeouts"
+            />
+            <span>Enable Timeouts</span>
+          </label>
+          <label class="preset-edit__checkbox">
+            <input
+              type="checkbox"
+              tuiCheckbox
+              formControlName="has_playclock"
+            />
+            <span>Enable Playclock</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="preset-edit__section">
+        <h3 class="preset-edit__section-title">Period Configuration</h3>
+        <div class="preset-edit__field">
+          <label class="preset-edit__label" for="period_mode">Period Mode</label>
+          <select
+            id="period_mode"
+            formControlName="period_mode"
+            class="preset-edit__select"
+          >
+            @for (option of periodModeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        @if (isCustomPeriodMode()) {
+          <div class="preset-edit__field">
+            <label class="preset-edit__label" for="period_labels_input">Custom Period Labels</label>
+            <input
+              id="period_labels_input"
+              type="text"
+              placeholder="period.leg_1, period.leg_2"
+              formControlName="period_labels_input"
+              class="preset-edit__input"
+            />
+            <p class="preset-edit__hint">Comma separated machine labels (lowercase letters/numbers with '.', '_' or '-').</p>
+            @if (customPeriodLabelsInvalid()) {
+              <p class="preset-edit__error">Custom labels contain invalid keys.</p>
+            }
+          </div>
+        }
       </div>
     </form>
   }
