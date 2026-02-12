@@ -5,6 +5,7 @@ export type { Sport };
 export interface SportCreate {
   title: string;
   description?: string | null;
+  scoreboard_preset_id?: number | null;
 }
 
 export interface SportUpdate {

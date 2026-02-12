@@ -65,7 +65,7 @@
       </div>
 
       <div class="match-form__field">
-        <label for="week" class="match-form__label">Week</label>
+        <label for="week" class="match-form__label">Week *</label>
         <input
           id="week"
           type="number"
@@ -74,6 +74,9 @@
           class="match-form__input"
           placeholder="Enter week number"
         />
+        @if (matchForm.get('week')?.touched && matchForm.get('week')?.hasError('required')) {
+          <div class="match-form__error">Week is required</div>
+        }
       </div>
 
       <div class="match-form__field">

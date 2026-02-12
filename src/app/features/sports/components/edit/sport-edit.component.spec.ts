@@ -79,19 +79,19 @@ describe('SportEditComponent', () => {
   });
 
   it('should require title field', () => {
-    component.sportForm.setValue({ title: '', description: '' });
+    component.sportForm.setValue({ title: '', description: '', scoreboard_preset_id: null });
 
     expect(component.sportForm.get('title')?.hasError('required')).toBe(true);
   });
 
   it('should allow empty description', () => {
-    component.sportForm.setValue({ title: 'Football', description: '' });
+    component.sportForm.setValue({ title: 'Football', description: '', scoreboard_preset_id: null });
 
     expect(component.sportForm.valid).toBe(true);
   });
 
   it('should have valid form with all fields filled', () => {
-    component.sportForm.setValue({ title: 'Football', description: 'Association football' });
+    component.sportForm.setValue({ title: 'Football', description: 'Association football', scoreboard_preset_id: null });
 
     expect(component.sportForm.valid).toBe(true);
   });
@@ -103,7 +103,7 @@ describe('SportEditComponent', () => {
   });
 
   it('should call updateSport on valid form submit', () => {
-    component.sportForm.setValue({ title: 'Basketball', description: 'Basketball game' });
+    component.sportForm.setValue({ title: 'Basketball', description: 'Basketball game', scoreboard_preset_id: null });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -115,7 +115,7 @@ describe('SportEditComponent', () => {
   });
 
   it('should not call updateSport on invalid form submit', () => {
-    component.sportForm.setValue({ title: '', description: '' });
+    component.sportForm.setValue({ title: '', description: '', scoreboard_preset_id: null });
     fixture.detectChanges();
 
     component.onSubmit();
@@ -124,14 +124,14 @@ describe('SportEditComponent', () => {
   });
 
   it('should show alert on successful update', () => {
-    component.sportForm.setValue({ title: 'Basketball', description: 'Basketball game' });
+    component.sportForm.setValue({ title: 'Basketball', description: 'Basketball game', scoreboard_preset_id: null });
     component.onSubmit();
 
     expect(alertsMock.open).toHaveBeenCalledWith('Sport updated successfully', expect.any(Object));
   });
 
   it('should navigate to sport detail after successful update', () => {
-    component.sportForm.setValue({ title: 'Basketball', description: 'Basketball game' });
+    component.sportForm.setValue({ title: 'Basketball', description: 'Basketball game', scoreboard_preset_id: null });
     component.onSubmit();
 
     expect(navHelperMock.toSportDetail).toHaveBeenCalledWith(1);

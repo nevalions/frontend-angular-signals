@@ -1,0 +1,49 @@
+<div class="sport-create">
+  <header class="sport-create__header">
+    <h1 class="sport-create__title">Create Sport</h1>
+    <div class="sport-create__actions">
+      <button tuiButton type="button" (click)="cancel()">Cancel</button>
+      <button tuiButton type="submit" (click)="onSubmit()" [disabled]="sportForm.invalid">Create Sport</button>
+    </div>
+  </header>
+
+  <form class="sport-create__form" [formGroup]="sportForm">
+    <div class="sport-create__field">
+      <label for="title" class="sport-create__label">Title *</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        class="sport-create__input"
+        [class.sport-create__input--invalid]="sportForm.get('title')?.touched && sportForm.get('title')?.invalid"
+      />
+      @if (sportForm.get('title')?.touched && sportForm.get('title')?.errors?.['required']) {
+        <div class="sport-create__error">Title is required</div>
+      }
+    </div>
+
+    <div class="sport-create__field">
+      <label for="description" class="sport-create__label">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="sport-create__textarea"
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="sport-create__field">
+      <label for="scoreboard_preset_id" class="sport-create__label">Scoreboard Preset</label>
+      <select
+        id="scoreboard_preset_id"
+        class="sport-create__input"
+        formControlName="scoreboard_preset_id"
+      >
+        <option [value]="null">None</option>
+        @for (preset of presets(); track preset.id) {
+          <option [value]="preset.id">{{ preset.title }}</option>
+        }
+      </select>
+    </div>
+  </form>
+</div>

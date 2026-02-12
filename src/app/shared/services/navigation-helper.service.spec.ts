@@ -62,6 +62,12 @@ describe('NavigationHelperService', () => {
     expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 1], { queryParams: { year: 2024 } });
   });
 
+  it('should navigate to sport create', () => {
+    service.toSportCreate();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/sports', 'new']);
+  });
+
   it('should navigate to persons list', () => {
     service.toPersonsList();
 

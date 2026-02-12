@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { SportListComponent } from './features/sports/components/list/sport-list.component';
 import { SportDetailComponent } from './features/sports/components/detail/sport-detail.component';
 import { SportEditComponent } from './features/sports/components/edit/sport-edit.component';
+import { SportCreateComponent } from './features/sports/components/create/sport-create.component';
 import { SportParseEeslComponent } from './features/sports/components/parse-eesl/sport-parse-eesl.component';
 import { TournamentListComponent } from './features/tournaments/components/list/tournament-list.component';
 import { TournamentDetailComponent } from './features/tournaments/components/detail/tournament-detail.component';
@@ -35,7 +36,7 @@ import { SportScoreboardPresetCreateComponent } from './features/sport-scoreboar
 import { HomeComponent } from './features/home/components/home.component';
 import { UserProfileComponent } from './features/users/components/profile/user-profile.component';
 import { SettingsComponent } from './features/settings/components/settings.component';
-import { authGuard, settingsAdminGuard } from './core/guards';
+import { adminGuard, authGuard, settingsAdminGuard } from './core/guards';
 
 export const routes: Routes = [
   {
@@ -74,6 +75,11 @@ export const routes: Routes = [
       {
         path: '',
         component: SportListComponent,
+      },
+      {
+        path: 'new',
+        component: SportCreateComponent,
+        canActivate: [adminGuard],
       },
       {
         path: ':sportId/seasons/:year/tournaments',
@@ -138,6 +144,7 @@ export const routes: Routes = [
       {
         path: ':id/edit',
         component: SportEditComponent,
+        canActivate: [adminGuard],
       },
       {
         path: ':sportId/parse-eesl',

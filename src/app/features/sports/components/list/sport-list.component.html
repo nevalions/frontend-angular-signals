@@ -1,6 +1,11 @@
 <div class="sport-list">
   <header class="sport-list__header">
     <h1 class="sport-list__title">Sports</h1>
+    @if (isAdmin()) {
+      <button tuiButton type="button" class="sport-list__add-button" (click)="navigateToCreate()">
+        Add Sport
+      </button>
+    }
   </header>
 
   @if (loading()) {

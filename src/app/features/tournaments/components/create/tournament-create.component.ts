@@ -105,7 +105,7 @@ export class TournamentCreateComponent {
       withCreateAlert(
         this.alerts,
         () => this.tournamentStore.createTournament(data),
-        () => this.cancel(),
+        () => this.navigationHelper.toSportDetail(this.sportId, this.year, 'tournaments'),
         'Tournament'
       );
     }

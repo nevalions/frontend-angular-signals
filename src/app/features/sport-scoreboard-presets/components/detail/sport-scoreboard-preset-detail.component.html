@@ -17,6 +17,26 @@
     />
 
     <div class="preset-detail__content">
+      <div class="preset-detail__overview">
+        <div class="preset-detail__overview-item">
+          <span class="preset-detail__overview-title">Period Mode</span>
+          <tui-badge appearance="neutral">{{ periodModeLabel() }}</tui-badge>
+        </div>
+        <div class="preset-detail__overview-item">
+          <span class="preset-detail__overview-title">Timeouts</span>
+          <tui-badge [appearance]="preset()!.has_timeouts ? 'success' : 'error'">
+            {{ preset()!.has_timeouts ? 'Enabled' : 'Disabled' }}
+          </tui-badge>
+        </div>
+        <div class="preset-detail__overview-item">
+          <span class="preset-detail__overview-title">Playclock</span>
+          <tui-badge [appearance]="preset()!.has_playclock ? 'success' : 'error'">
+            {{ preset()!.has_playclock ? 'Enabled' : 'Disabled' }}
+          </tui-badge>
+        </div>
+      </div>
+
+      <div class="preset-detail__grid">
       <div class="preset-detail__section">
         <h3 class="preset-detail__section-title">Gameclock Configuration</h3>
         <div class="preset-detail__fields">
@@ -26,11 +46,11 @@
           </div>
           <div class="preset-detail__field">
             <span class="preset-detail__field-label">Direction:</span>
-            <tui-badge appearance="neutral">{{ preset()!.direction }}</tui-badge>
+            <tui-badge appearance="neutral">{{ directionLabel() }}</tui-badge>
           </div>
           <div class="preset-detail__field">
             <span class="preset-detail__field-label">On Stop Behavior:</span>
-            <tui-badge appearance="neutral">{{ preset()!.on_stop_behavior }}</tui-badge>
+            <tui-badge appearance="neutral">{{ onStopBehaviorLabel() }}</tui-badge>
           </div>
         </div>
       </div>
@@ -66,6 +86,47 @@
       </div>
 
       <div class="preset-detail__section">
+        <h3 class="preset-detail__section-title">Preset Capabilities</h3>
+        <div class="preset-detail__fields">
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Has Timeouts:</span>
+            <tui-badge [appearance]="preset()!.has_timeouts ? 'success' : 'error'">
+              {{ preset()!.has_timeouts ? 'Yes' : 'No' }}
+            </tui-badge>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Has Playclock:</span>
+            <tui-badge [appearance]="preset()!.has_playclock ? 'success' : 'error'">
+              {{ preset()!.has_playclock ? 'Yes' : 'No' }}
+            </tui-badge>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-detail__section">
+        <h3 class="preset-detail__section-title">Period Configuration</h3>
+        <div class="preset-detail__fields">
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Period Mode:</span>
+            <tui-badge appearance="neutral">{{ periodModeLabel() }}</tui-badge>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Custom Period Labels:</span>
+            @if (customPeriodLabels().length > 0) {
+              <div class="preset-detail__labels">
+                @for (label of customPeriodLabels(); track label) {
+                  <tui-badge appearance="neutral">{{ label }}</tui-badge>
+                }
+              </div>
+            } @else {
+              <span class="preset-detail__field-value">N/A</span>
+            }
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="preset-detail__section">
         <h3 class="preset-detail__section-title">Sports Using This Preset</h3>
         @if (sportsLoading()) {
           <div class="preset-detail__sports-loading">
@@ -83,7 +144,7 @@
                 tuiCell="l"
                 [routerLink]="['/sports', sport.id]"
               >
-                <div class="preset-detail__sport-name">{{ sport.title }}</div>
+                <div class="preset-detail__sport-name">{{ sport.title | uppercase }}</div>
               </a>
             }
           </div>

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { UpperCasePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { of } from 'rxjs';
@@ -16,7 +17,7 @@ import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
   selector: 'app-sport-scoreboard-preset-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EntityHeaderComponent, RouterLink, TuiBadge, TuiCardLarge, TuiCell, TuiLoader],
+  imports: [EntityHeaderComponent, RouterLink, UpperCasePipe, TuiBadge, TuiCardLarge, TuiCell, TuiLoader],
   templateUrl: './sport-scoreboard-preset-detail.component.html',
   styleUrl: './sport-scoreboard-preset-detail.component.less',
 })
@@ -62,6 +63,28 @@ export class SportScoreboardPresetDetailComponent {
   });
   sportsLoading = computed(() => this.sportsResource.isLoading());
 
+  readonly directionLabel = computed(() => this.toTitle(this.preset()?.direction));
+
+  readonly onStopBehaviorLabel = computed(() => this.toTitle(this.preset()?.on_stop_behavior));
+
+  readonly periodModeLabel = computed(() => {
+    const mode = this.preset()?.period_mode;
+    if (!mode) return 'N/A';
+
+    const labels: Record<string, string> = {
+      qtr: 'Quarter',
+      period: 'Period',
+      half: 'Half',
+      set: 'Set',
+      inning: 'Inning',
+      custom: 'Custom',
+    };
+
+    return labels[mode] ?? mode;
+  });
+
+  readonly customPeriodLabels = computed(() => this.preset()?.period_labels_json ?? []);
+
   navigateBack(): void {
     this.navigationHelper.toSportScoreboardPresetList();
   }
@@ -89,5 +112,13 @@ export class SportScoreboardPresetDetailComponent {
       () => this.navigateBack(),
       'Preset'
     );
+  }
+
+  private toTitle(value: string | null | undefined): string {
+    if (!value) return 'N/A';
+    return value
+      .split('_')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 }

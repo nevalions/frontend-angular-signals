@@ -33,6 +33,10 @@ export class NavigationHelperService {
     this.router.navigate(['/sports', sportId, 'edit']);
   }
 
+  toSportCreate(): void {
+    this.router.navigate(['/sports', 'new']);
+  }
+
   toSportsList(): void {
     this.router.navigate(['/sports']);
   }

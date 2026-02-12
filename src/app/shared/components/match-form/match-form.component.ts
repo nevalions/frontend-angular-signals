@@ -50,7 +50,7 @@ export class MatchFormComponent {
     team_a_id: [null as number | null, [Validators.required]],
     team_b_id: [null as number | null, [Validators.required]],
     match_date: [null as string | null],
-    week: [null as number | null],
+    week: [1 as number | null, [Validators.min(1)]],
     match_eesl_id: [null as number | null],
     main_sponsor_id: [null as number | null],
     sponsor_line_id: [null as number | null],
@@ -88,6 +88,18 @@ export class MatchFormComponent {
         sponsor_line_id: match.sponsor_line_id,
       });
     }
+  });
+
+  private setWeekValidationByMode = effect(() => {
+    const weekControl = this.matchForm.get('week');
+    if (!weekControl) return;
+
+    weekControl.setValidators([Validators.required, Validators.min(1)]);
+    if (this.mode() === 'create' && (weekControl.value === null || weekControl.value === undefined)) {
+      weekControl.setValue(1, { emitEvent: false });
+    }
+
+    weekControl.updateValueAndValidity({ emitEvent: false });
   });
 
   getTeamById(id: number | null | undefined): Team | null {
@@ -148,7 +160,7 @@ export class MatchFormComponent {
           team_b_id: formData.team_b_id as number,
           tournament_id: this.tournamentId() || undefined,
           match_date: formData.match_date || null,
-          week: formData.week || null,
+          week: (formData.week ?? 1) as number,
           match_eesl_id: formData.match_eesl_id || null,
           main_sponsor_id: formData.main_sponsor_id || null,
           sponsor_line_id: formData.sponsor_line_id || null,

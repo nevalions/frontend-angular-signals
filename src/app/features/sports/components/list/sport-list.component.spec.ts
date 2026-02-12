@@ -4,6 +4,7 @@ import { SportListComponent } from './sport-list.component';
 import { SportStoreService } from '../../services/sport-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { Sport } from '../../models/sport.model';
+import { AuthService } from '../../../auth/services/auth.service';
 
 interface SportStoreMock {
   sports: ReturnType<typeof vi.fn>;
@@ -14,12 +15,18 @@ interface SportStoreMock {
 describe('SportListComponent', () => {
   let component: SportListComponent;
   let fixture: ComponentFixture<SportListComponent>;
-  let navigationHelperMock: { toSportDetail: ReturnType<typeof vi.fn> };
+  let navigationHelperMock: { toSportDetail: ReturnType<typeof vi.fn>; toSportCreate: ReturnType<typeof vi.fn> };
+  let authServiceMock: { currentUser: ReturnType<typeof vi.fn> };
   let storeMock: SportStoreMock;
 
   beforeEach(() => {
     navigationHelperMock = {
       toSportDetail: vi.fn(),
+      toSportCreate: vi.fn(),
+    };
+
+    authServiceMock = {
+      currentUser: vi.fn(() => ({ id: 1, roles: ['admin'] })),
     };
 
     const mockSports: Sport[] = [
@@ -37,6 +44,7 @@ describe('SportListComponent', () => {
       providers: [
         { provide: NavigationHelperService, useValue: navigationHelperMock },
         { provide: SportStoreService, useValue: storeMock },
+        { provide: AuthService, useValue: authServiceMock },
       ],
     });
 
@@ -67,6 +75,23 @@ describe('SportListComponent', () => {
     const loading = component.loading();
 
     expect(loading).toBe(false);
+  });
+
+  it('should expose admin state from auth service', () => {
+    expect(component.isAdmin()).toBe(true);
+  });
+
+  it('should navigate to create sport', () => {
+    component.navigateToCreate();
+
+    expect(navigationHelperMock.toSportCreate).toHaveBeenCalled();
+  });
+
+  it('should return false for non-admin users', () => {
+    authServiceMock.currentUser = vi.fn(() => ({ id: 2, roles: [] }));
+    const newComponent = TestBed.createComponent(SportListComponent).componentInstance;
+
+    expect(newComponent.isAdmin()).toBe(false);
   });
 
   it('should expose error state from store', () => {

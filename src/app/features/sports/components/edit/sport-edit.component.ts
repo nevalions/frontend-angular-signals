@@ -63,31 +63,31 @@ export class SportEditComponent {
   });
 
   onSubmit(): void {
-    if (this.sportForm.valid) {
-      const id = this.sportId();
-      if (!id) return;
+    if (!this.sportForm.valid) return;
 
-      const formData = this.sportForm.value;
+    const id = this.sportId();
+    if (!id) return;
 
-      const data: SportUpdate = {
-        title: formData.title as string,
-      };
+    const formData = this.sportForm.value;
 
-      if (formData.description) {
-        data.description = formData.description as string;
-      }
+    const updateData: SportUpdate = {
+      title: formData.title as string,
+    };
 
-      if (formData.scoreboard_preset_id !== null && formData.scoreboard_preset_id !== undefined) {
-        data.scoreboard_preset_id = formData.scoreboard_preset_id as number | null;
-      }
-
-      withUpdateAlert(
-        this.alerts,
-        () => this.sportStore.updateSport(id, data),
-        () => this.cancel(),
-        'Sport'
-      );
+    if (formData.description) {
+      updateData.description = formData.description as string;
     }
+
+    if (formData.scoreboard_preset_id !== null && formData.scoreboard_preset_id !== undefined) {
+      updateData.scoreboard_preset_id = formData.scoreboard_preset_id as number | null;
+    }
+
+    withUpdateAlert(
+      this.alerts,
+      () => this.sportStore.updateSport(id, updateData),
+      () => this.cancel(),
+      'Sport'
+    );
   }
 
   cancel(): void {

@@ -140,7 +140,7 @@ export class MatchStoreService {
   }
 
   deleteMatch(matchId: number): Observable<void> {
-    return this.apiService.delete('/api/matches/', matchId);
+    return this.apiService.delete('/api/matches', matchId);
   }
 
   updateMatch(matchId: number, data: MatchUpdate): Observable<Match> {

@@ -1,6 +1,6 @@
-# Sport Edit Page Schema
+# Sport Create Page Schema
 
-**Route**: `/sports/:id/edit`
+**Route**: `/sports/new`
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -8,62 +8,47 @@
 │                    │    NAVBAR       │                      │
 │                    └─────────────────┘                      │
 └─────────────────────────────────────────────────────────────┘
-                                                              │
+
 ┌─────────────────────────────────────────────────────────────┐
-│  Edit Sport                                  [Cancel] [Save]│
+│ Create Sport                               [Cancel] [Create]│
 └─────────────────────────────────────────────────────────────┘
-                                                              │
+
 ┌─────────────────────────────────────────────────────────────┐
-│  Title *                                                   │
-│  [Current sport title]                                     │
+│ Sport Title *                                               │
+│ [_____________________________]                             │
 │                                                             │
-│  Description                                               │
-│  [Current sport description]                               │
-│  [                                                  ]       │
-│  [                                                  ]       │
-│  [                                                  ]       │
-│  [                                                  ]       │
+│ Description (optional)                                      │
+│ [_____________________________]                             │
 │                                                             │
-│  Scoreboard Preset                                         │
-│  [Select preset ▼]                                        │
+│ Scoreboard Preset (optional)                                │
+│ [None v]                                                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## What's on the page
 
-- Page title: "Edit Sport"
-- "Cancel" button → Navigate back to `/sports/:id` (sport detail)
-- "Save Changes" button → Submit form
+- Page title: "Create Sport"
+- "Cancel" button -> Navigate back to sports list
+- "Create" button -> Submit form
 - Form with:
-  - Title field (required, pre-filled)
-  - Description field (optional, pre-filled, 4 rows)
+  - Sport title (required)
+  - Description (optional)
   - Scoreboard preset selector (optional)
 
 ## What we need from backend
 
-**To get sport details:**
-- Sport id
-- Sport title
-- Sport description (optional)
-- [Interface: `Sport`](../../../src/app/features/sports/models/sport.model.ts)
-- [Backend Schema: `SportSchema`](../../../../statsboards-backend/src/sports/schemas.py)
-- **Backend API Endpoint:** `GET /api/sports/id/{sport_id}/`
-
-**To update sport:**
+**To create sport:**
 - Sport title
 - Sport description (optional)
 - Scoreboard preset id (optional)
-- [Interface: `SportUpdate`](../../../src/app/features/sports/models/sport.model.ts)
-- [Backend Schema: `SportSchemaUpdate`](../../../../statsboards-backend/src/sports/schemas.py)
-- **Backend API Endpoint:** `PUT /api/sports/{item_id}/`
-
-**To delete sport:**
-- [Interface: `Sport`](../../../src/app/features/sports/models/sport.model.ts)
-- **Backend API Endpoint:** `DELETE /api/sports/id/{sport_id}` (from BaseRouter)
+- [Interface: `SportCreate`](../../../src/app/features/sports/models/sport.model.ts)
+- [Backend Schema: `SportSchemaCreate`](../../../../statsboards-backend/src/sports/schemas.py)
+- **Backend API Endpoint:** `POST /api/sports/`
 
 **To populate scoreboard preset selector:**
 - Preset id
 - Preset title
+- Current scoreboard configuration (period mode, gameclock direction, etc.)
 - [Interface: `SportScoreboardPreset`](../../../src/app/features/sport-scoreboard-presets/models/sport-scoreboard-preset.model.ts)
+- [Backend Schema: `SportScoreboardPresetSchema`](../../../../statsboards-backend/src/sport_scoreboard_presets/schemas.py)
 - **Backend API Endpoint:** `GET /api/sport-scoreboard-presets/`
-
