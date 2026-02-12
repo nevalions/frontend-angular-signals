@@ -49,10 +49,10 @@ export class TimeFormsComponent {
    playClockLocked = input(false);
 
    // Local state for manual time entry
-   protected readonly manualMinutes = signal<number>(12);
-   protected readonly manualSeconds = signal<number>(0);
-   protected readonly maxMinutes = signal<number>(12);
-   protected readonly isEditingTime = signal<boolean>(false);
+    protected readonly manualMinutes = signal<number>(0);
+    protected readonly manualSeconds = signal<number>(0);
+    protected readonly maxMinutes = signal<number>(0);
+    protected readonly isEditingTime = signal<boolean>(false);
    
    // Flag to prevent sync from overwriting input immediately after Set is clicked
    private readonly pendingSetUpdate = signal<boolean>(false);
@@ -72,30 +72,35 @@ export class TimeFormsComponent {
 
    protected readonly gameClockReady = computed(() => Boolean(this.gameClock()?.id));
 
-   // Sync manual time inputs with websocket gameclock when not editing
-   private syncWithGameClock = effect(() => {
-     if (!this.isEditingTime() && !this.pendingSetUpdate()) {
-       const seconds = this.gameClockSeconds();
-       const mins = Math.floor(seconds / 60);
-       const secs = seconds % 60;
-       this.manualMinutes.set(mins);
-       this.manualSeconds.set(secs);
-     }
-   });
+    // Sync manual time inputs with websocket gameclock when not editing
+    private syncWithGameClock = effect(() => {
+      const gc = this.gameClock();
+      if (!this.isEditingTime() && !this.pendingSetUpdate() && gc) {
+        const seconds = this.gameClockSeconds();
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        this.manualMinutes.set(mins);
+        this.manualSeconds.set(secs);
+
+        // Initialize maxMinutes from gameclock_max
+        const maxSeconds = gc.gameclock_max ?? 0;
+        this.maxMinutes.set(Math.floor(maxSeconds / 60));
+      }
+    });
 
    // Disable inputs when gameclock is running
    protected readonly inputsDisabled = computed(() => {
      return this.gameClockRunning() || this.gameClockLocked();
    });
 
-   protected readonly currentMaxMinutes = computed(() => {
-     const gc = this.gameClock();
-     const maxSeconds = gc?.gameclock_max ?? 720;
-     if (gc && gc.gameclock_max == null) {
-       console.warn('[TimeFormsComponent] gameclock_max is null/undefined, using fallback 720 seconds (12 min). Backend should provide gameclock_max based on sport configuration.');
-     }
-     return Math.floor(maxSeconds / 60);
-   });
+    protected readonly currentMaxMinutes = computed(() => {
+      const gc = this.gameClock();
+      const maxSeconds = gc?.gameclock_max ?? 0;
+      if (gc && gc.gameclock_max == null) {
+        console.warn('[TimeFormsComponent] gameclock_max is null/undefined. Backend should provide gameclock_max based on sport configuration.');
+      }
+      return Math.floor(maxSeconds / 60);
+    });
 
     protected readonly gameClockDisplay = computed(() => {
        const seconds = this.gameClockSeconds();

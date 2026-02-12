@@ -35,6 +35,11 @@ export class ScoreboardClockService implements OnDestroy {
   private playClockLockTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly actionLockMs = 500;
 
+  private clampClockValue(value: number, max?: number): number {
+    const clamped = Math.max(0, value);
+    return max != null ? Math.min(max, clamped) : clamped;
+  }
+
   private gameClockPredictor: ClockPredictor;
   private playClockPredictor: ClockPredictor;
 
@@ -72,9 +77,10 @@ export class ScoreboardClockService implements OnDestroy {
     this.gameClock.set(clock);
 
     const rtt = this.wsService.lastRtt() ?? 100;
+    const maxSeconds = clock.gameclock_max;
     this.gameClockPredictor.sync({
       gameclock: clock.gameclock ?? 0,
-      gameclock_max: clock.gameclock_max ?? 720,
+      gameclock_max: maxSeconds ?? 0,
       started_at_ms: clock.started_at_ms ?? null,
       server_time_ms: clock.server_time_ms ?? null,
       status: clock.gameclock_status ?? 'stopped',
@@ -139,9 +145,10 @@ export class ScoreboardClockService implements OnDestroy {
           this.gameClock.set(merged);
 
           const rtt = this.wsService.lastRtt() ?? 100;
+          const maxSeconds = merged.gameclock_max;
           this.gameClockPredictor.sync({
             gameclock: merged.gameclock ?? 0,
-            gameclock_max: merged.gameclock_max ?? 720,
+            gameclock_max: maxSeconds ?? 0,
             started_at_ms: merged.started_at_ms ?? null,
             server_time_ms: merged.server_time_ms ?? null,
             status: merged.gameclock_status ?? 'stopped',
@@ -165,9 +172,10 @@ export class ScoreboardClockService implements OnDestroy {
           this.gameClock.set(merged);
 
           const rtt = this.wsService.lastRtt() ?? 100;
+          const maxSeconds = merged.gameclock_max;
           this.gameClockPredictor.sync({
             gameclock: merged.gameclock ?? 0,
-            gameclock_max: merged.gameclock_max ?? 720,
+            gameclock_max: maxSeconds ?? 0,
             started_at_ms: merged.started_at_ms ?? null,
             server_time_ms: merged.server_time_ms ?? null,
             status: merged.gameclock_status ?? 'stopped',
@@ -187,10 +195,13 @@ export class ScoreboardClockService implements OnDestroy {
       return;
     }
 
-    const maxSeconds = gc.gameclock_max ?? 720;
     if (gc.gameclock_max == null) {
-      console.warn('[ClockService][ACTION] resetGameClock - gameclock_max is null/undefined, using fallback 720 seconds (12 min). Backend should provide gameclock_max based on sport configuration.');
+      console.error('[ClockService][ACTION] resetGameClock - gameclock_max is null/undefined. Cannot reset without knowing max time. Backend should provide gameclock_max based on sport configuration.');
+      this.debugLog('[ClockService][ACTION] resetGameClock ABORTED - no gameclock_max');
+      return;
     }
+
+    const maxSeconds = gc.gameclock_max;
     this.debugLog('[ClockService][ACTION] resetGameClock - maxSeconds:', maxSeconds);
     this.applyGameClockUpdate({
       gameclock_status: 'stopped',
@@ -208,9 +219,10 @@ export class ScoreboardClockService implements OnDestroy {
           this.gameClock.set(merged);
 
           const rtt = this.wsService.lastRtt() ?? 100;
+          const maxSeconds = merged.gameclock_max;
           this.gameClockPredictor.sync({
             gameclock: merged.gameclock ?? 0,
-            gameclock_max: merged.gameclock_max ?? maxSeconds,
+            gameclock_max: maxSeconds ?? 0,
             started_at_ms: merged.started_at_ms ?? null,
             server_time_ms: merged.server_time_ms ?? null,
             status: merged.gameclock_status ?? 'stopped',
@@ -243,9 +255,10 @@ export class ScoreboardClockService implements OnDestroy {
           this.gameClock.set(merged);
 
           const rtt = this.wsService.lastRtt() ?? 100;
+          const maxSeconds = merged.gameclock_max;
           this.gameClockPredictor.sync({
             gameclock: merged.gameclock ?? 0,
-            gameclock_max: merged.gameclock_max ?? 720,
+            gameclock_max: maxSeconds ?? 0,
             started_at_ms: merged.started_at_ms ?? null,
             server_time_ms: merged.server_time_ms ?? null,
             status: merged.gameclock_status ?? 'stopped',
@@ -406,9 +419,10 @@ export class ScoreboardClockService implements OnDestroy {
 
     // Sync predictor immediately for optimistic UI update
     const rtt = this.wsService.lastRtt() ?? 100;
+    const maxSeconds = updated.gameclock_max;
     this.gameClockPredictor.sync({
       gameclock: updated.gameclock ?? 0,
-      gameclock_max: updated.gameclock_max ?? 720,
+      gameclock_max: maxSeconds ?? 0,
       started_at_ms: updated.started_at_ms ?? null,
       server_time_ms: updated.server_time_ms ?? null,
       status: updated.gameclock_status ?? 'stopped',
