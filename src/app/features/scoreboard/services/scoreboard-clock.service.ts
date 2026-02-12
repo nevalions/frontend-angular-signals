@@ -166,6 +166,13 @@ export class ScoreboardClockService implements OnDestroy {
     const gc = this.gameClock();
     if (!gc) return;
 
+    const currentPredicted = this.predictedGameClock();
+    this.applyGameClockUpdate({
+      gameclock_status: 'paused',
+      gameclock: currentPredicted,
+      started_at_ms: null,
+    });
+
     this.scoreboardStore.pauseGameClock(gc.id).subscribe({
       next: (updated) => {
         const current = this.gameClock();
@@ -204,15 +211,15 @@ export class ScoreboardClockService implements OnDestroy {
       return;
     }
 
-    const maxSeconds = gc.gameclock_max;
-    this.debugLog('[ClockService][ACTION] resetGameClock - maxSeconds:', maxSeconds);
+    const resetValue = gc.direction === 'up' ? 0 : gc.gameclock_max;
+    this.debugLog('[ClockService][ACTION] resetGameClock - direction:', gc.direction, 'resetValue:', resetValue);
     this.applyGameClockUpdate({
       gameclock_status: 'stopped',
-      gameclock: maxSeconds,
+      gameclock: resetValue,
     });
 
-    this.debugLog('[ClockService][ACTION] resetGameClock - calling API for gc.id:', gc.id, 'maxSeconds:', maxSeconds);
-    this.scoreboardStore.resetGameClock(gc.id, maxSeconds).subscribe({
+    this.debugLog('[ClockService][ACTION] resetGameClock - calling API for gc.id:', gc.id, 'resetValue:', resetValue);
+    this.scoreboardStore.resetGameClock(gc.id, resetValue).subscribe({
       next: (updated) => {
         this.debugLog('[ClockService][ACTION] resetGameClock API response:', JSON.stringify(updated, null, 2));
         const current = this.gameClock();
