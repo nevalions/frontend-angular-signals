@@ -80,9 +80,10 @@ export class ScoreboardAdminFacade implements OnDestroy {
   readonly showTimeoutControls = computed(() => {
     const sb = this.scoreboard();
     // WORKAROUND: has_timeouts doesn't exist in Match scoreboard schema
-    // Use is_timeout_team_a or is_timeout_team_b as proxy
-    const hasTimeouts = (sb?.is_timeout_team_a !== null) || (sb?.is_timeout_team_b !== null);
-    console.log('[Facade] showTimeoutControls - is_timeout_team_a:', sb?.is_timeout_team_a, 'is_timeout_team_b:', sb?.is_timeout_team_b, 'hasTimeouts:', hasTimeouts);
+    // Backend sets is_timeout_team_a/b to False (disabled) for sports without timeouts
+    // We should only show timeout controls when they're explicitly enabled (true)
+    const hasTimeouts = (sb?.is_timeout_team_a === true) || (sb?.is_timeout_team_b === true);
+    console.log('[Facade] showTimeoutControls - is_timeout_team_a:', sb?.is_timeout_team_a, 'is_timeout_team_b:', sb?.is_timeout_team_b, 'hasTimeouts:', hasTimeouts, 'FULL SB:', JSON.stringify(sb));
     return hasTimeouts;
   });
   readonly showPlayClockSection = computed(() => {
