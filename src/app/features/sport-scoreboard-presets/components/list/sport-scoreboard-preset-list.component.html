@@ -28,6 +28,7 @@
             <div class="preset-list__name">{{ preset.title }}</div>
             <div class="preset-list__meta">
               <span>Max Gameclock: {{ preset.gameclock_max ?? 'N/A' }}s</span>
+              <span>Init: {{ getInitialTimeLabel(preset.initial_time_mode, preset.initial_time_min_seconds) }}</span>
               <span>Direction: {{ preset.direction }}</span>
               <span>Stop: {{ preset.on_stop_behavior }}</span>
             </div>
