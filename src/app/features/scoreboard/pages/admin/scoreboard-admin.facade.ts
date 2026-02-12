@@ -72,41 +72,11 @@ export class ScoreboardAdminFacade implements OnDestroy {
   });
 
   // Form visibility signals based on sport preset settings
-  readonly showDownDistanceForm = computed(() => {
-    const sb = this.scoreboard();
-    console.log('[Facade] showDownDistanceForm - is_downdistance:', sb?.is_downdistance);
-    return sb?.is_downdistance ?? false;
-  });
-  readonly showTimeoutControls = computed(() => {
-    const sb = this.scoreboard();
-    // WORKAROUND: Backend is_timeout_team_a/b defaults to False (schema default)
-    // We need to distinguish:
-    //   - null/undefined: use preset/capability available
-    //   - false: sport doesn't support timeouts (capability guard disabled)
-    //   - true: timeouts are supported/enabled
-    const useSportPreset = sb?.use_sport_preset ?? true;
-    const sportHasTimeouts = (sb as any)?.has_timeouts ?? false;
-    const show = (useSportPreset && sportHasTimeouts) ||
-                sb?.is_timeout_team_a === true ||
-                sb?.is_timeout_team_b === true;
-    console.log('[Facade] showTimeoutControls - use_sport_preset:', useSportPreset, 'has_timeouts:', sportHasTimeouts, 'is_timeout_team_a:', sb?.is_timeout_team_a, 'show:', show, 'FULL SB:', JSON.stringify(sb));
-    return show;
-  });
-  readonly showPlayClockSection = computed(() => {
-    const sb = this.scoreboard();
-    console.log('[Facade] showPlayClockSection - has_playclock:', sb?.has_playclock);
-    return sb?.has_playclock ?? false;
-  });
-  readonly showQuarterSelector = computed(() => {
-    const sb = this.scoreboard();
-    console.log('[Facade] showQuarterSelector - is_qtr:', sb?.is_qtr);
-    return sb?.is_qtr ?? false;
-  });
-  readonly showGameClockSection = computed(() => {
-    const sb = this.scoreboard();
-    console.log('[Facade] showGameClockSection - is_time:', sb?.is_time);
-    return sb?.is_time ?? false;
-  });
+  readonly showDownDistanceForm = computed(() => this.scoreboard()?.is_downdistance ?? false);
+  readonly showTimeoutControls = computed(() => (this.scoreboard() as any)?.has_timeouts ?? false);
+  readonly showPlayClockSection = computed(() => this.scoreboard()?.has_playclock ?? false);
+  readonly showQuarterSelector = computed(() => this.scoreboard()?.is_qtr ?? false);
+  readonly showGameClockSection = computed(() => this.scoreboard()?.is_time ?? false);
 
   // UI state
   readonly hideAllForms = signal(false);
