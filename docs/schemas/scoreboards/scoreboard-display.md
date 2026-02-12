@@ -99,6 +99,7 @@ Each team displays:
   - 3 timeout boxes: `●` (white, 81% opacity) / `○` (black, 30% opacity)
   - Displayed from `timeout_team_a` / `timeout_team_b` string (e.g., "●●●")
   - Shown when `is_timeout_team_a` / `is_timeout_team_b` is true
+  - Hidden entirely when `has_timeouts=false`
   - Hidden when goal is shown
 
 - **Goal/Touchdown Indicator**:
@@ -121,8 +122,10 @@ Each team displays:
 
 ### Game Display Area (Right Column)
 
-**Quarter Display** (`is_qtr`):
-- Quarter from `qtr` (e.g., "1st", "2nd", "3rd", "4th")
+**Period Display** (`is_qtr`):
+- Display value from `qtr`
+- Label formatting follows `period_mode` and `period_labels_json` when provided
+- Falls back to legacy quarter labeling when period metadata is missing
 - Width: 70px
 - Font size: 26px
 - Animated on quarter change
@@ -138,6 +141,7 @@ Each team displays:
 - Color: Orange (#ffc710) normally, Red when ≤ 5 seconds
 - Width: 60px
 - Font size: 30px
+- Hidden entirely when `has_playclock=false`
 
 **Down & Distance** (`is_downdistance`):
 - Format: `{down} & {distance}` (e.g., "1st & 10")
@@ -204,7 +208,7 @@ Media queries adjust layout at breakpoints:
   - Match: id, team_a_id, team_b_id
   - Teams Data: team_a, team_b (id, title, team_logo_web_url)
   - Match Data: score_team_a, score_team_b, qtr, down, distance, timeout_team_a, timeout_team_b
-  - Scoreboard Data: All visibility flags, team colors/titles/logos, scaling factors, indicators
+  - Scoreboard Data: All visibility flags, team colors/titles/logos, scaling factors, indicators, capability flags (`has_playclock`, `has_timeouts`), period settings (`period_mode`, `period_labels_json`)
   - Player IDs for lower displays: `player_match_lower_id`, `football_qb_full_stats_match_lower_id`
 
 - `ITournament`: id, tournament_logo_web_url

@@ -1,3 +1,5 @@
+export type SportPeriodMode = 'qtr' | 'period' | 'half' | 'set' | 'inning' | 'custom';
+
 export interface Scoreboard {
   id: number;
   use_sport_preset: boolean;
@@ -39,6 +41,10 @@ export interface Scoreboard {
   is_goal_team_b?: boolean | null;
   is_timeout_team_a?: boolean | null;
   is_timeout_team_b?: boolean | null;
+  has_timeouts?: boolean | null;
+  has_playclock?: boolean | null;
+  period_mode?: SportPeriodMode | null;
+  period_labels_json?: string[] | null;
   match_id?: number | null;
   player_match_lower_id?: number | null;
   football_qb_full_stats_match_lower_id?: number | null;
@@ -84,6 +90,10 @@ export interface ScoreboardCreate {
   is_goal_team_b?: boolean | null;
   is_timeout_team_a?: boolean | null;
   is_timeout_team_b?: boolean | null;
+  has_timeouts?: boolean | null;
+  has_playclock?: boolean | null;
+  period_mode?: SportPeriodMode | null;
+  period_labels_json?: string[] | null;
   match_id?: number | null;
   player_match_lower_id?: number | null;
   football_qb_full_stats_match_lower_id?: number | null;
@@ -129,6 +139,10 @@ export interface ScoreboardUpdate {
   is_goal_team_b?: boolean | null;
   is_timeout_team_a?: boolean | null;
   is_timeout_team_b?: boolean | null;
+  has_timeouts?: boolean | null;
+  has_playclock?: boolean | null;
+  period_mode?: SportPeriodMode | null;
+  period_labels_json?: string[] | null;
   player_match_lower_id?: number | null;
   football_qb_full_stats_match_lower_id?: number | null;
 }

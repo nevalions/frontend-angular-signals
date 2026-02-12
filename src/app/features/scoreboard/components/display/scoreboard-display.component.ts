@@ -26,6 +26,7 @@ import {
   selectTournamentSponsorLine,
 } from '../../../matches/utils/sponsors-data.util';
 import { ScoreboardTranslationService } from '../../services/scoreboard-translation.service';
+import { formatPeriodLabel } from '../../utils/period-label.util';
 
 export type ScoreboardDisplayMode = 'scoreboard' | 'fullhd-scoreboard';
 
@@ -182,7 +183,13 @@ export class ScoreboardDisplayComponent {
   // Game info computed values
   protected readonly quarter = computed(() => {
     const d = this.data();
-    return this.translations.getQuarterLabel(d?.match_data?.qtr ?? '1st');
+    const sb = this.scoreboard();
+    return formatPeriodLabel({
+      value: d?.match_data?.qtr ?? '1st',
+      mode: sb?.period_mode,
+      customLabels: sb?.period_labels_json,
+      translateQuarter: (value) => this.translations.getQuarterLabel(value),
+    });
   });
 
   protected readonly down = computed(() => {
@@ -225,15 +232,23 @@ export class ScoreboardDisplayComponent {
   // Visibility flags
   protected readonly showQuarter = computed(() => this.scoreboard()?.is_qtr ?? true);
   protected readonly showTime = computed(() => this.scoreboard()?.is_time ?? true);
-  protected readonly showPlayClock = computed(() => this.scoreboard()?.is_playclock ?? true);
+  protected readonly supportsPlayClock = computed(() => this.scoreboard()?.has_playclock ?? true);
+  protected readonly supportsTimeouts = computed(() => this.scoreboard()?.has_timeouts ?? true);
+  protected readonly showPlayClock = computed(() => {
+    return this.supportsPlayClock() && (this.scoreboard()?.is_playclock ?? true);
+  });
   protected readonly showDownDistance = computed(() => this.scoreboard()?.is_downdistance ?? true);
   protected readonly showTournamentLogo = computed(() => this.scoreboard()?.is_tournament_logo ?? true);
   protected readonly showMainSponsor = computed(() => this.scoreboard()?.is_main_sponsor ?? true);
   protected readonly showFlag = computed(() => this.scoreboard()?.is_flag ?? false);
   protected readonly showGoalTeamA = computed(() => this.scoreboard()?.is_goal_team_a ?? false);
   protected readonly showGoalTeamB = computed(() => this.scoreboard()?.is_goal_team_b ?? false);
-  protected readonly showTimeoutTeamA = computed(() => this.scoreboard()?.is_timeout_team_a ?? false);
-  protected readonly showTimeoutTeamB = computed(() => this.scoreboard()?.is_timeout_team_b ?? false);
+  protected readonly showTimeoutTeamA = computed(() => {
+    return this.supportsTimeouts() && (this.scoreboard()?.is_timeout_team_a ?? false);
+  });
+  protected readonly showTimeoutTeamB = computed(() => {
+    return this.supportsTimeouts() && (this.scoreboard()?.is_timeout_team_b ?? false);
+  });
   protected readonly showSponsorLine = computed(() => this.scoreboard()?.is_sponsor_line ?? false);
   protected readonly showMatchSponsorLine = computed(() => this.scoreboard()?.is_match_sponsor_line ?? false);
 

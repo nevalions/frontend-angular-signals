@@ -42,11 +42,13 @@
           }
         </div>
 
-        <div class="timeout-dots">
-          @for (used of timeoutAIndicators(); track $index) {
-            <span class="timeout-dot" [class.used]="used"></span>
-          }
-        </div>
+        @if (supportsTimeouts()) {
+          <div class="timeout-dots">
+            @for (used of timeoutAIndicators(); track $index) {
+              <span class="timeout-dot" [class.used]="used"></span>
+            }
+          </div>
+        }
       </div>
 
       <div class="team-logo">
@@ -83,11 +85,13 @@
           }
         </div>
 
-        <div class="timeout-dots">
-          @for (used of timeoutBIndicators(); track $index) {
-            <span class="timeout-dot" [class.used]="used"></span>
-          }
-        </div>
+        @if (supportsTimeouts()) {
+          <div class="timeout-dots">
+            @for (used of timeoutBIndicators(); track $index) {
+              <span class="timeout-dot" [class.used]="used"></span>
+            }
+          </div>
+        }
       </div>
 
       <div class="team-logo">
@@ -124,15 +128,17 @@
       </div>
     }
 
-    <div
-      class="info-box play-clock"
-      [class.warning]="showPlayClock() && playClockWarning()"
-      [class.play-clock-off]="!(showPlayClock() && playClock() !== null)"
-    >
-      @if (showPlayClock() && playClock() !== null) {
-        <span class="info-value" [@infoValueChange]="true">{{ playClockDisplay() }}</span>
-      }
-    </div>
+    @if (showPlayClock()) {
+      <div
+        class="info-box play-clock"
+        [class.warning]="playClockWarning()"
+        [class.play-clock-off]="playClock() === null"
+      >
+        @if (playClock() !== null) {
+          <span class="info-value" [@infoValueChange]="true">{{ playClockDisplay() }}</span>
+        }
+      </div>
+    }
 
     @if (showDownDistance()) {
       <div class="info-box down-distance">

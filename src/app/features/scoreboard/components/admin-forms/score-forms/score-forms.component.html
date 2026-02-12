@@ -4,15 +4,15 @@
       <!-- Quarter Selection -->
       <div class="quarter-section">
         <tui-textfield tuiChevron class="quarter-select" [stringify]="quarterStringify">
-          <label tuiLabel>Quarter</label>
+          <label tuiLabel>{{ periodFieldLabel() }}</label>
           <input
             tuiSelect
             [ngModel]="selectedQtr()"
             (ngModelChange)="selectedQtr.set($event)"
-            placeholder="Select quarter"
+            [placeholder]="'Select ' + periodFieldLabel().toLowerCase()"
           />
           <tui-data-list *tuiTextfieldDropdown size="l">
-            @for (qtr of quarterOptions; track qtr) {
+            @for (qtr of periodOptions(); track qtr) {
               <button new tuiOption type="button" [value]="qtr">{{ quarterStringify(qtr) }}</button>
             }
           </tui-data-list>
@@ -49,6 +49,7 @@
                   class="to-toggle-button"
                   [class.to-active]="team.timeoutCalled()"
                   (click)="team.toggleTimeout()"
+                  [style.visibility]="supportsTimeouts() ? 'visible' : 'hidden'"
                 >
                   <span class="to-icon">⏱️</span>
                   <span class="to-text">TO</span>
@@ -81,58 +82,60 @@
             </div>
 
             <!-- Timeout Controls -->
-            <div class="timeout-controls">
-              <div class="timeout-indicators">
-                @for (available of (team.key === 'a' ? indicatorsTeamA() : indicatorsTeamB()); track $index) {
-                  <span
-                    class="timeout-indicator"
-                    [class.available]="available"
-                    [class.used]="!available"
-                  ></span>
-                }
+            @if (supportsTimeouts()) {
+              <div class="timeout-controls">
+                <div class="timeout-indicators">
+                  @for (available of (team.key === 'a' ? indicatorsTeamA() : indicatorsTeamB()); track $index) {
+                    <span
+                      class="timeout-indicator"
+                      [class.available]="available"
+                      [class.used]="!available"
+                    ></span>
+                  }
+                </div>
+
+                <div class="timeout-buttons">
+                  <button
+                    tuiButton
+                    type="button"
+                    appearance="destructive"
+                    size="s"
+                    [disabled]="(team.key === 'a' ? timeoutsTeamA() : timeoutsTeamB()) === 0"
+                    (click)="onUseTimeout(team.key)"
+                    title="Use Timeout"
+                    [class.pulse-minus]="(lastPulse()?.kind === 'timeout') && (lastPulse()?.team === team.key) && (lastPulse()?.delta === -1)"
+                  >
+                    <tui-icon icon="@tui.minus" />
+                    TO
+                  </button>
+
+                  <button
+                    tuiButton
+                    type="button"
+                    appearance="secondary"
+                    size="s"
+                    [disabled]="(team.key === 'a' ? timeoutsTeamA() : timeoutsTeamB()) === 3"
+                    (click)="onRestoreTimeout(team.key)"
+                    title="Restore Timeout"
+                    [class.pulse-plus]="(lastPulse()?.kind === 'timeout') && (lastPulse()?.team === team.key) && (lastPulse()?.delta === 1)"
+                  >
+                    <tui-icon icon="@tui.plus" />
+                    TO
+                  </button>
+
+                  <button
+                    tuiButton
+                    type="button"
+                    appearance="outline"
+                    size="s"
+                    (click)="onResetTimeouts(team.key)"
+                    title="Reset All Timeouts"
+                  >
+                    Reset
+                  </button>
+                </div>
               </div>
-
-              <div class="timeout-buttons">
-                <button
-                  tuiButton
-                  type="button"
-                  appearance="destructive"
-                  size="s"
-                  [disabled]="(team.key === 'a' ? timeoutsTeamA() : timeoutsTeamB()) === 0"
-                  (click)="onUseTimeout(team.key)"
-                  title="Use Timeout"
-                  [class.pulse-minus]="(lastPulse()?.kind === 'timeout') && (lastPulse()?.team === team.key) && (lastPulse()?.delta === -1)"
-                >
-                  <tui-icon icon="@tui.minus" />
-                  TO
-                </button>
-
-                <button
-                  tuiButton
-                  type="button"
-                  appearance="secondary"
-                  size="s"
-                  [disabled]="(team.key === 'a' ? timeoutsTeamA() : timeoutsTeamB()) === 3"
-                  (click)="onRestoreTimeout(team.key)"
-                  title="Restore Timeout"
-                  [class.pulse-plus]="(lastPulse()?.kind === 'timeout') && (lastPulse()?.team === team.key) && (lastPulse()?.delta === 1)"
-                >
-                  <tui-icon icon="@tui.plus" />
-                  TO
-                </button>
-
-                <button
-                  tuiButton
-                  type="button"
-                  appearance="outline"
-                  size="s"
-                  (click)="onResetTimeouts(team.key)"
-                  title="Reset All Timeouts"
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
+            }
           </div>
         }
       </div>

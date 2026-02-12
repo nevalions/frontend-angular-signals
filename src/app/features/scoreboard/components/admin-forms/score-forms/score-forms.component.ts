@@ -7,6 +7,7 @@ import { MatchData } from '../../../../matches/models/match-data.model';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 import { ScoreboardTranslationService } from '../../../services/scoreboard-translation.service';
+import { formatPeriodLabel, getPeriodFieldLabel, getPeriodOptions } from '../../../utils/period-label.util';
 
 export interface ScoreChangeEvent {
   team: 'a' | 'b';
@@ -66,17 +67,27 @@ export class ScoreFormsComponent {
   /** Emits when scoreboard indicator changes (touchdown/timeout called) */
   scoreboardIndicatorChange = output<Partial<ScoreboardUpdate>>();
 
-  /** Available quarter options */
-  protected readonly quarterOptions = [
-    '1st',
-    '2nd',
-    '3rd',
-    '4th',
-    'OT',
-  ] as const;
+  protected readonly supportsTimeouts = computed(() => this.scoreboard()?.has_timeouts ?? true);
+
+  protected readonly periodFieldLabel = computed(() => {
+    return getPeriodFieldLabel(this.scoreboard()?.period_mode);
+  });
+
+  protected readonly periodOptions = computed(() => {
+    return getPeriodOptions(
+      this.scoreboard()?.period_mode,
+      this.scoreboard()?.period_labels_json,
+      this.selectedQtr(),
+    );
+  });
 
   protected readonly quarterStringify: TuiStringHandler<string> = (value) => {
-    return this.translations.getQuarterLabel(value);
+    return formatPeriodLabel({
+      value,
+      mode: this.scoreboard()?.period_mode,
+      customLabels: this.scoreboard()?.period_labels_json,
+      translateQuarter: (input) => this.translations.getQuarterLabel(input),
+    });
   };
 
   /** Selected quarter (local state) */
@@ -278,6 +289,10 @@ export class ScoreFormsComponent {
    * Stored in Scoreboard as is_timeout_team_a / is_timeout_team_b.
    */
   onTimeoutIndicatorToggle(team: 'a' | 'b'): void {
+    if (!this.supportsTimeouts()) {
+      return;
+    }
+
     const sb = this.scoreboard();
 
     const current = team === 'a'
@@ -319,6 +334,10 @@ export class ScoreFormsComponent {
    * Add timeout for a team (decrease remaining)
    */
   onUseTimeout(team: 'a' | 'b'): void {
+    if (!this.supportsTimeouts()) {
+      return;
+    }
+
     const current = team === 'a' ? this.timeoutsTeamA() : this.timeoutsTeamB();
     if (current > 0) {
       this.pulse('timeout', team, -1);
@@ -333,6 +352,10 @@ export class ScoreFormsComponent {
    * Restore timeout for a team (increase remaining)
    */
   onRestoreTimeout(team: 'a' | 'b'): void {
+    if (!this.supportsTimeouts()) {
+      return;
+    }
+
     const current = team === 'a' ? this.timeoutsTeamA() : this.timeoutsTeamB();
     if (current < 3) {
       this.pulse('timeout', team, +1);
@@ -347,6 +370,10 @@ export class ScoreFormsComponent {
      * Reset all timeouts for a team
      */
   onResetTimeouts(team: 'a' | 'b'): void {
+    if (!this.supportsTimeouts()) {
+      return;
+    }
+
     this.timeoutChange.emit({
       team,
       timeouts: 'ooo',

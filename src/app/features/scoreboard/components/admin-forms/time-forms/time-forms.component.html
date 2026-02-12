@@ -131,52 +131,54 @@
         </div>
       </div>
 
-      <!-- Play Clock Section -->
-      <div class="time-section play-clock-section">
-        <h4 class="section-title">Play Clock</h4>
+      @if (supportsPlayClock()) {
+        <!-- Play Clock Section -->
+        <div class="time-section play-clock-section">
+          <h4 class="section-title">Play Clock</h4>
 
-        <div class="clock-display play-clock-display" [class.warning]="playClockWarning()">
-          <span class="clock-value">{{ playClockDisplay() ?? '' }}</span>
-          <span class="clock-status" [class.running]="playClockRunning()">
-            {{ playClockRunning() ? 'Running' : 'Stopped' }}
-          </span>
+          <div class="clock-display play-clock-display" [class.warning]="playClockWarning()">
+            <span class="clock-value">{{ playClockDisplay() ?? '' }}</span>
+            <span class="clock-status" [class.running]="playClockRunning()">
+              {{ playClockRunning() ? 'Running' : 'Stopped' }}
+            </span>
+          </div>
+
+          <div class="play-clock-buttons">
+            <button
+              tuiButton
+              type="button"
+              appearance="primary"
+              size="m"
+              (click)="onPlayClockStart(40)"
+              [disabled]="!playClockReady() || playClockRunning() || playClockLocked()"
+            >
+              40 sec
+            </button>
+
+            <button
+              tuiButton
+              type="button"
+              appearance="primary"
+              size="m"
+              (click)="onPlayClockStart(25)"
+              [disabled]="!playClockReady() || playClockRunning() || playClockLocked()"
+            >
+              25 sec
+            </button>
+
+            <button
+              tuiButton
+              type="button"
+              appearance="secondary"
+              size="m"
+              (click)="onPlayClockReset()"
+              [disabled]="!playClockReady() || playClockLocked()"
+            >
+              Reset
+            </button>
+          </div>
         </div>
-
-        <div class="play-clock-buttons">
-          <button
-            tuiButton
-            type="button"
-            appearance="primary"
-            size="m"
-            (click)="onPlayClockStart(40)"
-            [disabled]="!playClockReady() || playClockRunning() || playClockLocked()"
-          >
-            40 sec
-          </button>
-
-          <button
-            tuiButton
-            type="button"
-            appearance="primary"
-            size="m"
-            (click)="onPlayClockStart(25)"
-            [disabled]="!playClockReady() || playClockRunning() || playClockLocked()"
-          >
-            25 sec
-          </button>
-
-          <button
-            tuiButton
-            type="button"
-            appearance="secondary"
-            size="m"
-            (click)="onPlayClockReset()"
-            [disabled]="!playClockReady() || playClockLocked()"
-          >
-            Reset
-          </button>
-        </div>
-      </div>
+      }
     </div>
   </ng-template>
 </app-collapsible-section>

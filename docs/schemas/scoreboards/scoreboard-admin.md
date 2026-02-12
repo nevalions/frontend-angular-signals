@@ -201,18 +201,20 @@
 - **Collapsible form sections** with toggle buttons:
   - **Score Inputs** → Manually enter scores for home/away
   - **Score Buttons** → Increment/decrement scores (+6, +1, +3, -1)
-  - **Quarter Forms** → Select/update quarter (1st, 2nd, 3rd, 4th)
+  - **Quarter Forms** → Select/update period value
+    - Label/value mapping follows `period_mode` and `period_labels_json` when provided
+    - Falls back to legacy quarter values when period metadata is not provided
   - **Time Forms** → Control game clock and play clock
     - Set max game time (minutes)
     - Set game time (minutes:seconds)
     - Start/Pause/Reset game clock
-    - Start play clock (40s or 25s) or reset
+    - Start play clock (40s or 25s) or reset (only when `has_playclock=true`)
    - **Down & Distance Forms** → Set down and distance
      - Current display shows "Down & Distance" format (e.g., "1st & 10")
      - Down selection buttons (1st, 2nd, 3rd, 4th) with flag toggle
      - Distance dropdown with preset quick buttons (INCH, GOAL, 10)
      - Special game states (PAT 1, PAT 2, FG, KICK OFF) - when selected, down is hidden and only special state displays
-  - **Timeout Forms** → Manage timeouts for each team
+  - **Timeout Forms** → Manage timeouts for each team (only when `has_timeouts=true`)
   - **Change Teams Forms** → Select different teams for the match
    - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility and team settings:
        - **Use Sport Preset toggle**: When enabled, match inherits all settings from sport's default scoreboard preset. When disabled, match uses custom scoreboard settings independent of sport preset.
@@ -279,7 +281,7 @@
 - Match Data: score_team_a, score_team_b, qtr, down, distance, ball_on, timeout_team_a, timeout_team_b, game_status, field_length
 - Gameclock: id, gameclock, gameclock_max, gameclock_status
 - Playclock: id, playclock, playclock_status
-- Scoreboard settings: visibility toggles, team colors, team titles/logos usage, scaling factors, flag/goal/timeout indicators, use_sport_preset toggle
+- Scoreboard settings: visibility toggles, team colors, team titles/logos usage, scaling factors, flag/goal/timeout indicators, use_sport_preset toggle, capability flags (`has_playclock`, `has_timeouts`), period settings (`period_mode`, `period_labels_json`)
 - Players in match (home and away rosters) with: id, player number, position, is_start, team_id, match_id
 - Main tournament sponsor (id, title, logo icon URL, logo web URL)
 - Football events in match with all player assignments and stats data

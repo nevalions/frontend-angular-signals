@@ -43,6 +43,8 @@ export class TimeFormsComponent {
   /** Emits play clock actions */
   playClockAction = output<PlayClockActionEvent>();
 
+  supportsPlayClock = input(true);
+
   gameClockLocked = input(false);
    playClockLocked = input(false);
 
@@ -111,7 +113,9 @@ export class TimeFormsComponent {
       return pc?.playclock_status === 'running';
     });
 
-    protected readonly playClockReady = computed(() => Boolean(this.playClock()?.id));
+    protected readonly playClockReady = computed(() => {
+      return this.supportsPlayClock() && Boolean(this.playClock()?.id);
+    });
 
     protected readonly playClockDisplay = signal<number | null>(null);
 
