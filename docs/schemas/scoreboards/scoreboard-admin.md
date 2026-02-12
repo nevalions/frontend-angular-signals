@@ -4,6 +4,25 @@
 
 **Parent**: Tournament Detail (Matches tab)
 
+## Sport Preset-Based Dynamic Visibility
+
+**IMPORTANT**: The admin page shows/hides forms based on the sport's scoreboard preset configuration. When a match uses a sport preset (default), certain features are hidden to match the sport's capabilities:
+
+| Sport Preset Setting | Effect on Admin Page |
+|---------------------|----------------------|
+| `has_timeouts = false` | Timeout buttons and controls hidden in Score Forms |
+| `has_playclock = false` | Play Clock section hidden in Time Forms |
+| `is_qtr = false` | Quarter selector hidden (e.g., tennis uses sets) |
+| `is_time = false` | Game Clock section hidden in Time Forms |
+| `is_downdistance = false` | Down & Distance forms completely hidden |
+| `period_mode = 'half'` | Quarter label shows as "Half" |
+| `period_mode = 'set'` | Quarter label shows as "Set" |
+| `period_mode = 'inning'` | Quarter label shows as "Inning" |
+
+Users can override these settings by:
+1. **Toggling "Use Sport Preset" off** in Display Settings to show all controls
+2. **Manually toggling individual display elements** when sport preset is disabled
+
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │  Back to Match Details                                       │
@@ -37,48 +56,50 @@
 │  └────────────────────────────────────────────────────────────┘     │
 └──────────────────────────────────────────────────────────────────────┘
 
-┌──────────────────────────────────────────────────────────────────────┐
-│  [👁️🗑️] Quarter Forms                                      │
-│  ┌────────────────────────────────────────────────────────────┐     │
-│  │  Quarter: [1st ▼]                    [Submit]         │     │
-│  └────────────────────────────────────────────────────────────┘     │
-└──────────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────────┐
-│  [👁️🗑️] Time Forms                                          │
-│  ┌────────────────────────────────────────────────────────────┐     │
-│  │  Max Minutes: [12] [▲] [▼]            [Submit]       │     │
-│  │  Game Time:  [12]:[00]              [Submit]        │     │
-│  │  [Start Clock] [Pause Clock] [Reset Clock]             │     │
-│  │                                                         │     │
-│  │  Play Time:  [40]  [Reset Timer]                       │     │
-│  │              [25]                                        │     │
-│  └────────────────────────────────────────────────────────────┘     │
-└──────────────────────────────────────────────────────────────────────┘
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │  [👁️🗑️] Quarter Forms (hidden if `is_qtr=false`)         │
+ │  ┌────────────────────────────────────────────────────────────┐     │
+ │  │  {{Quarter/Half/Period/Set/Inning}}: [1st ▼]  │     │
+ │  │                                      [Submit]         │     │
+ │  └────────────────────────────────────────────────────────────┘     │
+ └──────────────────────────────────────────────────────────────────────┘
 
  ┌──────────────────────────────────────────────────────────────────────┐
- │  [👁️🗑️] Down & Distance Forms                               │
+ │  [👁️🗑️] Time Forms                                          │
  │  ┌────────────────────────────────────────────────────────────┐     │
- │  │  Current: 1st & 10                                    │     │
+ │  │  Game Clock (hidden if `is_time=false`)               │     │
+ │  │  Max Minutes: [12] [▲] [▼]            [Submit]       │
+ │  │  Game Time:  [12]:[00]              [Submit]        │
+ │  │  [Start Clock] [Pause Clock] [Reset Clock]             │
+ │  │                                                         │     │
+ │  │  Play Clock (hidden if `has_playclock=false`)           │     │
+ │  │  [40 sec] [25 sec] [Reset Timer]                       │     │
+ │  └────────────────────────────────────────────────────────────┘     │
+ └──────────────────────────────────────────────────────────────────────┘
+
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │  [👁️🗑️] Down & Distance Forms (hidden if `is_downdistance=false`) │
+ │  ┌────────────────────────────────────────────────────────────┐     │
+ │  │  Current:1st & 10                                    │     │
  │  │                                                         │     │
  │  │  Down:                                                  │     │
  │  │  [1st] [2nd] [3rd] [4th] [🚩]                      │     │
  │  │                                                         │     │
- │  │  Distance: [10 ▼]                         [Submit]     │     │
-  │  │  Quick: [INCH] [GOAL] [1&10]                          │     │
+ │  │  Distance: [10 ▼]                         [Submit]     │
+ │   │  │  Quick: [INCH] [GOAL] [1&10]                          │     │
  │  │                                                         │     │
  │  │  Special States:                                       │     │
  │  │  [PAT 1] [PAT 2] [FG] [KICK OFF]                     │     │
  │  └────────────────────────────────────────────────────────────┘     │
  └──────────────────────────────────────────────────────────────────────┘
 
-┌──────────────────────────────────────────────────────────────────────┐
-│  [👁️🗑️] Timeout Forms                                      │
-│  ┌────────────────────────────────────────────────────────────┐     │
-│  │  Home Timeout: [●●●]              [Submit]             │     │
-│  │  Away Timeout: [●●●]              [Submit]             │     │
-│  └────────────────────────────────────────────────────────────┘     │
-└──────────────────────────────────────────────────────────────────────┘
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │  [👁️🗑️] Timeout Forms (hidden if `has_timeouts=false`)      │
+ │  ┌────────────────────────────────────────────────────────────┐     │
+ │  │  Home Timeout: [●●●]              [Submit]             │     │
+ │  │  Away Timeout: [●●●]              [Submit]             │     │
+ │  └────────────────────────────────────────────────────────────┘     │
+ └──────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────────┐
 │  [👁️🗑️] Change Teams Forms                                  │
@@ -89,24 +110,24 @@
 └──────────────────────────────────────────────────────────────────────┘
 
  ┌──────────────────────────────────────────────────────────────────────┐
-  │  [👁️🗑️] Scoreboard Settings Forms                            │
-  │  ┌────────────────────────────────────────────────────────────┐     │
-  │  │  [✓] Use Sport Preset       [Toggle] Inherit settings │
-  │  │                                 from sport's default │
-  │  │                                 preset              │
-  │  │  [Show/Hide] Qtr Field              [Submit]          │
-  │  │  [Show/Hide] Game Time Field         [Submit]          │
-  │  │  [Show/Hide] Play Clock            [Submit]          │
-  │  │  [Show/Hide] Down & Distance Field  [Submit]          │
-  │  │  [Show/Hide] Tournament Logo       [Submit]          │
-  │  │  [Show/Hide] Sponsor Logo          [Submit]          │
-  │  │  [Show/Hide] Sponsor Line          [Submit]          │
-  │  │  [✓] Use Match Sponsors    [Toggle] Use match instead of │
-  │  │                                 tournament sponsors     │
-  │  │  Tournament Logo Scale: [Slider 0.5-2.0]                │
-  │  │  Sponsor Scale:         [Slider 0.5-2.0]                │
-  │  │                           (affects logo and line)       │
-  │  └────────────────────────────────────────────────────────────┘     │
+   │  [👁️🗑️] Scoreboard Settings Forms                            │
+   │  ┌────────────────────────────────────────────────────────────┐     │
+   │  │  [✓] Use Sport Preset       [Toggle] Inherit settings │
+   │  │                                 from sport's default │
+   │  │                                 preset              │
+   │  │  [Show/Hide] {{Quarter/Half/Period/Set/Inning}} Field [Submit]     │
+   │  │  [Show/Hide] Game Time Field         [Submit]          │
+   │  │  [Show/Hide] Play Clock (only if sport has playclock) [Submit]  │
+   │  │  [Show/Hide] Down & Distance Field (only if sport has it) [Submit] │
+   │  │  [Show/Hide] Tournament Logo       [Submit]          │
+   │  │  [Show/Hide] Sponsor Logo          [Submit]          │
+   │  │  [Show/Hide] Sponsor Line          [Submit]          │
+   │  │  [✓] Use Match Sponsors    [Toggle] Use match instead of │
+   │  │                                 tournament sponsors     │
+   │  │  Tournament Logo Scale: [Slider 0.5-2.0]                │
+   │  │  Sponsor Scale:         [Slider 0.5-2.0]                │
+   │  │                           (affects logo and line)       │
+   │  └────────────────────────────────────────────────────────────┘     │
 
 │  ┌────────────────────────────────────────────────────────────┐     │
 │  │  HOME TEAM                                              │
@@ -198,29 +219,35 @@
 - **Back button** → Navigate back to match detail
 - **Scoreboard preview** → Live preview of scoreboard display
 - **"Collapse All / Expand All" button** → Toggle all collapsible sections at once, users can still individually toggle each section
-- **Collapsible form sections** with toggle buttons:
-  - **Score Inputs** → Manually enter scores for home/away
-  - **Score Buttons** → Increment/decrement scores (+6, +1, +3, -1)
-  - **Quarter Forms** → Select/update period value
-    - Label/value mapping follows canonical period config: `period_mode`, `period_count`, and `period_labels_json` (custom mode)
-    - UI posts both legacy `qtr` and canonical `period_key` during backend transition
-    - Falls back to legacy quarter values when period metadata is not provided
-  - **Time Forms** → Control game clock and play clock
-    - Set max game time (minutes)
-    - Set game time (minutes:seconds)
-    - Start/Pause/Reset game clock
-    - Start play clock (40s or 25s) or reset (only when `has_playclock=true`)
-   - **Down & Distance Forms** → Set down and distance
+   - **Collapsible form sections** with toggle buttons:
+   - **Score Inputs** → Manually enter scores for home/away
+   - **Score Buttons** → Increment/decrement scores (+6, +1, +3, -1)
+   - **Quarter Forms** → Select/update period value (hidden if `is_qtr=false`)
+     - Label dynamically changes based on `period_mode`: Quarter/Half/Period/Set/Inning
+     - Label/value mapping follows canonical period config: `period_mode`, `period_count`, and `period_labels_json` (custom mode)
+     - UI posts both legacy `qtr` and canonical `period_key` during backend transition
+     - Falls back to legacy quarter values when period metadata is not provided
+   - **Time Forms** → Control game clock and play clock
+     - Set max game time (minutes) - hidden if `is_time=false`
+     - Set game time (minutes:seconds) - hidden if `is_time=false`
+     - Start/Pause/Reset game clock - hidden if `is_time=false`
+     - Start play clock (40s or 25s) or reset (only when `has_playclock=true`) - hidden if `has_playclock=false`
+   - **Down & Distance Forms** → Set down and distance (hidden if `is_downdistance=false`)
      - Current display shows "Down & Distance" format (e.g., "1st & 10")
      - Down selection buttons (1st, 2nd, 3rd, 4th) with flag toggle
-     - Distance dropdown with preset quick buttons (INCH, GOAL, 10)
-     - Special game states (PAT 1, PAT 2, FG, KICK OFF) - when selected, down is hidden and only special state displays
-  - **Timeout Forms** → Manage timeouts for each team (only when `has_timeouts=true`)
-  - **Change Teams Forms** → Select different teams for the match
-   - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility and team settings:
-       - **Use Sport Preset toggle**: When enabled, match inherits all settings from sport's default scoreboard preset. When disabled, match uses custom scoreboard settings independent of sport preset.
-       - Display toggles: Qtr, Time, Play Clock, Down/Distance
-       - Team settings (Home and Away):
+      - Distance dropdown with preset quick buttons (INCH, GOAL, 10)
+      - Special game states (PAT 1, PAT 2, FG, KICK OFF) - when selected, down is hidden and only special state displays
+   - **Timeout Forms** → Manage timeouts for each team (hidden if `has_timeouts=false`)
+   - **Change Teams Forms** → Select different teams for the match
+    - **Scoreboard Settings Forms** → Toggle scoreboard elements visibility and team settings:
+        - **Use Sport Preset toggle**: When enabled, match inherits all settings from sport's default scoreboard preset. When disabled, match uses custom scoreboard settings independent of sport preset.
+        - **Dynamic display toggles** (show/hide based on sport preset):
+          - **Quarter/Half/Period/Set/Inning** - Show/hide based on `is_qtr`; label changes based on `period_mode`
+          - **Game Time** - Show/hide based on `is_time`
+          - **Play Clock** - Only shown if sport has `has_playclock=true`; toggle is hidden otherwise
+          - **Down & Distance** - Only shown if sport has `is_downdistance=true`; toggle is hidden otherwise
+        - **Other display toggles**: Tournament Logo, Sponsor Logo, Sponsor Line (always shown)
+        - Team settings (Home and Away):
          - Use game color switch + game color picker
          - Use game title switch + game title input
          - Use game logo switch + game logo upload (with preview and remove)
@@ -270,6 +297,39 @@
 - Updates arrive via `event-update`, `statistics-update`, and `match-update` messages
 - API calls (POST/PUT/DELETE to /api/football_event) trigger backend → database → WebSocket broadcast flow
 - No HTTP GET requests to reload events after create/update/delete operations
+
+## Dynamic Behavior Based on Sport Preset
+
+**How Sport Presets Control Admin Page:**
+
+1. **Initial Load**:
+   - When admin page loads, it fetches the match's scoreboard data
+   - If `use_sport_preset=true`, the scoreboard inherits `is_qtr`, `is_time`, `is_playclock`, `is_downdistance`, `has_timeouts`, `period_mode` from the sport's preset
+   - Admin page reads these values and conditionally shows/hides forms
+   - Example: Soccer match (`has_playclock=false`, `is_downdistance=false`) hides Play Clock and Down & Distance sections
+
+2. **User Toggles "Use Sport Preset"**:
+   - **On → Off**: All form toggles become visible; user can manually configure any setting
+   - **Off → On**: Backend copies sport preset values to scoreboard; admin page updates to hide irrelevant forms
+   - Changes propagate via WebSocket `scoreboardPartial` message
+
+3. **Quarter Label Dynamic Updates**:
+   - Football (`period_mode='qtr'`): Shows "Quarter" (1st, 2nd, 3rd, 4th, OT)
+   - Soccer/Hockey/Basketball (`period_mode='half'`): Shows "Half" (1H, 2H)
+   - Tennis (`period_mode='set'`): Shows "Set" (S1, S2, S3)
+   - Baseball (`period_mode='inning'`): Shows "Inning" (IN1, IN2)
+   - Custom modes: Uses `period_labels_json` array values
+
+4. **Form Visibility Reference Table**:
+
+| Sport | Forms Hidden | Quarter Label |
+|--------|--------------|----------------|
+| Football (American) | None | Quarter (1st, 2nd, 3rd, 4th, OT) |
+| Soccer | Down & Distance, Play Clock, Timeouts | Period/Time (1, 2, 3) |
+| Basketball | Down & Distance | Quarter (1, 2, 3, 4, OT) |
+| Tennis | Down & Distance, Play Clock, Timeouts | Set (S1, S2, S3) |
+| Baseball | Down & Distance, Play Clock, Timeouts | Inning (IN1, IN2, IN3) |
+| Hockey | Down & Distance | Period (1, 2, 3, OT) |
 
 ## What we need from backend
 
