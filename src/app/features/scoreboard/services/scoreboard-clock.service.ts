@@ -84,6 +84,7 @@ export class ScoreboardClockService implements OnDestroy {
       started_at_ms: clock.started_at_ms ?? null,
       server_time_ms: clock.server_time_ms ?? null,
       status: clock.gameclock_status ?? 'stopped',
+      direction: clock.direction ?? 'down',
       rttMs: rtt,
     });
   });
@@ -152,6 +153,7 @@ export class ScoreboardClockService implements OnDestroy {
             started_at_ms: merged.started_at_ms ?? null,
             server_time_ms: merged.server_time_ms ?? null,
             status: merged.gameclock_status ?? 'stopped',
+            direction: merged.direction ?? 'down',
             rttMs: rtt,
           });
         }
@@ -179,6 +181,7 @@ export class ScoreboardClockService implements OnDestroy {
             started_at_ms: merged.started_at_ms ?? null,
             server_time_ms: merged.server_time_ms ?? null,
             status: merged.gameclock_status ?? 'stopped',
+            direction: merged.direction ?? 'down',
             rttMs: rtt,
           });
         }
@@ -226,6 +229,7 @@ export class ScoreboardClockService implements OnDestroy {
             started_at_ms: merged.started_at_ms ?? null,
             server_time_ms: merged.server_time_ms ?? null,
             status: merged.gameclock_status ?? 'stopped',
+            direction: merged.direction ?? 'down',
             rttMs: rtt,
           });
         }
@@ -262,6 +266,7 @@ export class ScoreboardClockService implements OnDestroy {
             started_at_ms: merged.started_at_ms ?? null,
             server_time_ms: merged.server_time_ms ?? null,
             status: merged.gameclock_status ?? 'stopped',
+            direction: merged.direction ?? 'down',
             rttMs: rtt,
           });
         }
@@ -426,6 +431,7 @@ export class ScoreboardClockService implements OnDestroy {
       started_at_ms: updated.started_at_ms ?? null,
       server_time_ms: updated.server_time_ms ?? null,
       status: updated.gameclock_status ?? 'stopped',
+      direction: updated.direction ?? 'down',
       rttMs: rtt,
     });
   }

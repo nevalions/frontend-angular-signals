@@ -6,6 +6,7 @@ export interface ClockState {
   clientReceiveMs: number;
   frozenValue: number;
   rttMs: number;
+  direction: 'up' | 'down';
 }
 
 export class ClockPredictor {
@@ -30,6 +31,7 @@ export class ClockPredictor {
     started_at_ms: number | null;
     server_time_ms: number | null;
     status: string;
+    direction?: 'up' | 'down' | null;
     rttMs?: number;
   }): void {
     const clientReceiveMs = Date.now();
@@ -45,6 +47,7 @@ export class ClockPredictor {
       clientReceiveMs,
       frozenValue: data.gameclock,
       rttMs,
+      direction: (data.direction ?? 'down') as 'up' | 'down',
     };
 
     this.debugLog('[ClockPredictor] state after sync:', JSON.stringify(this.state, null, 2));
@@ -81,36 +84,42 @@ export class ClockPredictor {
       
       const elapsedMs = estimatedServerNow - this.state.startedAtMs;
       const elapsedSec = Math.floor(elapsedMs / 1000);
-      
-      const isResuming = this.state.frozenValue < this.state.gameclockMax;
-      const baseValue = isResuming ? this.state.frozenValue : this.state.gameclockMax;
-      const remaining = Math.max(0, baseValue - elapsedSec);
+
+      let predicted: number;
+      if (this.state.direction === 'up') {
+        predicted = Math.min(this.state.gameclockMax, this.state.frozenValue + elapsedSec);
+      } else {
+        predicted = Math.max(0, this.state.frozenValue - elapsedSec);
+      }
 
       if (this.state.status !== tickStatus || this.state.startedAtMs !== tickStartedAtMs) {
         this.debugLog('[ClockPredictor] tick() state changed during execution, discarding result');
         return;
       }
-      
+
       // Log first few ticks and every second thereafter
       tickCount++;
       if (tickCount <= 3 || tickCount % 60 === 0) {
         this.debugLog('[ClockPredictor] tick #' + tickCount + ':', {
           elapsedMs,
           elapsedSec,
-          isResuming,
-          baseValue,
-          remaining,
+          predicted,
+          direction: this.state.direction,
           startedAtMs: this.state.startedAtMs,
           estimatedServerNow,
         });
       }
-      
-      this.onTick(remaining);
 
-      if (remaining > 0) {
+      this.onTick(predicted);
+
+      const finished = this.state.direction === 'up'
+        ? predicted >= this.state.gameclockMax
+        : predicted <= 0;
+
+      if (!finished) {
         this.animationFrameId = requestAnimationFrame(tick);
       } else {
-        this.debugLog('[ClockPredictor] tick() reached 0, auto-stopping');
+        this.debugLog('[ClockPredictor] tick() finished, auto-stopping');
         this.animationFrameId = null;
         this.state!.status = 'stopped';
       }
