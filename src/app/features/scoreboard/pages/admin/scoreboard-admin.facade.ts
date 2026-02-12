@@ -56,6 +56,38 @@ export class ScoreboardAdminFacade implements OnDestroy {
     return { ...pc, playclock: predicted };
   });
 
+  // Form visibility signals based on sport preset settings
+  readonly showDownDistanceForm = computed(() => {
+    const sb = this.scoreboard();
+    const value = sb?.is_downdistance ?? false;
+    console.log('[Facade] showDownDistanceForm:', value, 'from scoreboard:', sb?.is_downdistance);
+    return value;
+  });
+  readonly showTimeoutControls = computed(() => {
+    const sb = this.scoreboard();
+    const value = sb?.has_timeouts ?? false;
+    console.log('[Facade] showTimeoutControls:', value, 'from scoreboard:', sb?.has_timeouts);
+    return value;
+  });
+  readonly showPlayClockSection = computed(() => {
+    const sb = this.scoreboard();
+    const value = sb?.has_playclock ?? false;
+    console.log('[Facade] showPlayClockSection:', value, 'from scoreboard:', sb?.has_playclock);
+    return value;
+  });
+  readonly showQuarterSelector = computed(() => {
+    const sb = this.scoreboard();
+    const value = sb?.is_qtr ?? false;
+    console.log('[Facade] showQuarterSelector:', value, 'from scoreboard:', sb?.is_qtr);
+    return value;
+  });
+  readonly showGameClockSection = computed(() => {
+    const sb = this.scoreboard();
+    const value = sb?.is_time ?? false;
+    console.log('[Facade] showGameClockSection:', value, 'from scoreboard:', sb?.is_time);
+    return value;
+  });
+
   // UI state
   readonly hideAllForms = signal(false);
 

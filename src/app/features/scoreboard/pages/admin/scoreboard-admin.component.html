@@ -54,18 +54,22 @@
         </div>
 
         <div class="forms-grid">
-          <app-down-distance-forms
-            [matchData]="data()?.match_data ?? null"
-            [scoreboard]="scoreboard()"
-            (downDistanceChange)="onDownDistanceChange($event)"
-            (flagToggle)="onFlagToggle($event)"
-          />
+          @if (showDownDistanceForm()) {
+            <app-down-distance-forms
+              [matchData]="data()?.match_data ?? null"
+              [scoreboard]="scoreboard()"
+              (downDistanceChange)="onDownDistanceChange($event)"
+              (flagToggle)="onFlagToggle($event)"
+            />
+          }
 
           <app-score-forms
             [matchData]="data()?.match_data ?? null"
             [scoreboard]="scoreboard()"
             [teamColorA]="data()?.teams?.team_a?.team_color ?? '#ffffff'"
             [teamColorB]="data()?.teams?.team_b?.team_color ?? '#ffffff'"
+            [showTimeoutControls]="showTimeoutControls()"
+            [showQuarterSelector]="showQuarterSelector()"
             (scoreChange)="onScoreChange($event)"
             (timeoutChange)="onTimeoutChange($event)"
             (qtrChange)="onQtrChange($event)"
@@ -77,7 +81,8 @@
             [playClock]="playClockWithPredictedValue()"
             [gameClockLocked]="gameClockLocked()"
             [playClockLocked]="playClockLocked()"
-            [supportsPlayClock]="scoreboard()?.has_playclock ?? true"
+            [showPlayClock]="showPlayClockSection()"
+            [showGameClock]="showGameClockSection()"
             (gameClockAction)="onGameClockAction($event)"
             (playClockAction)="onPlayClockAction($event)"
           />

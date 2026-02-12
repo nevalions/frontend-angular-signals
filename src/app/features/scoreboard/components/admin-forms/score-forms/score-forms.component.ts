@@ -62,6 +62,12 @@ export class ScoreFormsComponent {
   /** Team B color */
   teamColorB = input<string>('#ffffff');
 
+  /** Whether to show timeout controls */
+  showTimeoutControls = input(true);
+
+  /** Whether to show quarter selector */
+  showQuarterSelector = input(true);
+
   /** Emits when score changes */
   scoreChange = output<ScoreChangeEvent>();
 

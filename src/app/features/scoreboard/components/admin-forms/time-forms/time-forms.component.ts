@@ -43,6 +43,12 @@ export class TimeFormsComponent {
   /** Emits play clock actions */
   playClockAction = output<PlayClockActionEvent>();
 
+  /** Whether to show play clock section */
+  showPlayClock = input(true);
+
+  /** Whether to show game clock section */
+  showGameClock = input(true);
+
   supportsPlayClock = input(true);
 
   gameClockLocked = input(false);

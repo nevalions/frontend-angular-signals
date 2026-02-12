@@ -2,7 +2,8 @@
   <ng-template>
     <div class="time-forms">
       <!-- Game Clock Section -->
-      <div class="time-section game-clock-section">
+      @if (showGameClock()) {
+        <div class="time-section game-clock-section">
         <h4 class="section-title">Game Clock</h4>
 
         <!-- Quarter Length at top -->
@@ -128,10 +129,11 @@
               Set
             </button>
           </div>
+          </div>
         </div>
-      </div>
+      }
 
-      @if (supportsPlayClock()) {
+      @if (showPlayClock()) {
         <!-- Play Clock Section -->
         <div class="time-section play-clock-section">
           <h4 class="section-title">Play Clock</h4>
