@@ -79,12 +79,18 @@ export class ScoreboardAdminFacade implements OnDestroy {
   });
   readonly showTimeoutControls = computed(() => {
     const sb = this.scoreboard();
-    // WORKAROUND: has_timeouts doesn't exist in Match scoreboard schema
-    // Backend sets is_timeout_team_a/b to False (disabled) for sports without timeouts
-    // We should only show timeout controls when they're explicitly enabled (true)
-    const hasTimeouts = (sb?.is_timeout_team_a === true) || (sb?.is_timeout_team_b === true);
-    console.log('[Facade] showTimeoutControls - is_timeout_team_a:', sb?.is_timeout_team_a, 'is_timeout_team_b:', sb?.is_timeout_team_b, 'hasTimeouts:', hasTimeouts, 'FULL SB:', JSON.stringify(sb));
-    return hasTimeouts;
+    // WORKAROUND: Backend is_timeout_team_a/b defaults to False (schema default)
+    // We need to distinguish:
+    //   - null/undefined: use preset/capability available
+    //   - false: sport doesn't support timeouts (capability guard disabled)
+    //   - true: timeouts are supported/enabled
+    const useSportPreset = sb?.use_sport_preset ?? true;
+    const sportHasTimeouts = (sb as any)?.has_timeouts ?? false;
+    const show = (useSportPreset && sportHasTimeouts) ||
+                sb?.is_timeout_team_a === true ||
+                sb?.is_timeout_team_b === true;
+    console.log('[Facade] showTimeoutControls - use_sport_preset:', useSportPreset, 'has_timeouts:', sportHasTimeouts, 'is_timeout_team_a:', sb?.is_timeout_team_a, 'show:', show, 'FULL SB:', JSON.stringify(sb));
+    return show;
   });
   readonly showPlayClockSection = computed(() => {
     const sb = this.scoreboard();
