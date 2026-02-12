@@ -89,6 +89,9 @@
 
           <app-scoreboard-settings-forms
             [scoreboard]="scoreboard()"
+            [displaySettingsShowPlayClock]="displaySettingsShowPlayClock()"
+            [displaySettingsShowDownDistance]="displaySettingsShowDownDistance()"
+            [displaySettingsPeriodMode]="displaySettingsPeriodMode()"
             (scoreboardChange)="onScoreboardSettingsChange($event)"
           />
 

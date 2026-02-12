@@ -27,6 +27,30 @@ export function getPeriodFieldLabel(
   return resolveEffectivePeriodMode(mode, isQtr) === 'qtr' ? 'Quarter' : 'Period';
 }
 
+export function getPeriodLabelByMode(
+  mode: SportPeriodMode | null | undefined,
+  isQtr?: boolean | null | undefined,
+): string {
+  const effectiveMode = resolveEffectivePeriodMode(mode, isQtr);
+  
+  switch (effectiveMode) {
+    case 'qtr':
+      return 'Quarter';
+    case 'half':
+      return 'Half';
+    case 'period':
+      return 'Period';
+    case 'set':
+      return 'Set';
+    case 'inning':
+      return 'Inning';
+    case 'custom':
+      return 'Period';
+    default:
+      return 'Period';
+  }
+}
+
 export function getPeriodOptions(
   mode: SportPeriodMode | null | undefined,
   isQtr: boolean | null | undefined,

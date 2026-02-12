@@ -56,37 +56,17 @@ export class ScoreboardAdminFacade implements OnDestroy {
     return { ...pc, playclock: predicted };
   });
 
+  // Display settings visibility signals
+  readonly displaySettingsShowPlayClock = computed(() => this.scoreboard()?.has_playclock ?? false);
+  readonly displaySettingsShowDownDistance = computed(() => this.scoreboard()?.is_downdistance ?? false);
+  readonly displaySettingsPeriodMode = computed(() => this.scoreboard()?.period_mode ?? 'qtr');
+
   // Form visibility signals based on sport preset settings
-  readonly showDownDistanceForm = computed(() => {
-    const sb = this.scoreboard();
-    const value = sb?.is_downdistance ?? false;
-    console.log('[Facade] showDownDistanceForm:', value, 'from scoreboard:', sb?.is_downdistance);
-    return value;
-  });
-  readonly showTimeoutControls = computed(() => {
-    const sb = this.scoreboard();
-    const value = sb?.has_timeouts ?? false;
-    console.log('[Facade] showTimeoutControls:', value, 'from scoreboard:', sb?.has_timeouts);
-    return value;
-  });
-  readonly showPlayClockSection = computed(() => {
-    const sb = this.scoreboard();
-    const value = sb?.has_playclock ?? false;
-    console.log('[Facade] showPlayClockSection:', value, 'from scoreboard:', sb?.has_playclock);
-    return value;
-  });
-  readonly showQuarterSelector = computed(() => {
-    const sb = this.scoreboard();
-    const value = sb?.is_qtr ?? false;
-    console.log('[Facade] showQuarterSelector:', value, 'from scoreboard:', sb?.is_qtr);
-    return value;
-  });
-  readonly showGameClockSection = computed(() => {
-    const sb = this.scoreboard();
-    const value = sb?.is_time ?? false;
-    console.log('[Facade] showGameClockSection:', value, 'from scoreboard:', sb?.is_time);
-    return value;
-  });
+  readonly showDownDistanceForm = computed(() => this.scoreboard()?.is_downdistance ?? false);
+  readonly showTimeoutControls = computed(() => this.scoreboard()?.has_timeouts ?? false);
+  readonly showPlayClockSection = computed(() => this.scoreboard()?.has_playclock ?? false);
+  readonly showQuarterSelector = computed(() => this.scoreboard()?.is_qtr ?? false);
+  readonly showGameClockSection = computed(() => this.scoreboard()?.is_time ?? false);
 
   // UI state
   readonly hideAllForms = signal(false);

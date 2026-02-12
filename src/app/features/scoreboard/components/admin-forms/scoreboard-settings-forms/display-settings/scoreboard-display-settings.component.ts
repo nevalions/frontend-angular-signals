@@ -4,6 +4,8 @@ import { type TuiStringHandler } from '@taiga-ui/cdk';
 import { TuiDataList, TuiIcon, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect, TuiSwitch, TuiBlock } from '@taiga-ui/kit';
 import { LANGUAGE_OPTIONS, type ScoreboardLanguageCode } from '../../../../../../core/enums/scoreboard-language.enum';
+import { SportPeriodMode } from '../../../../../matches/models/scoreboard.model';
+import { getPeriodLabelByMode } from '../../../../utils/period-label.util';
 
 @Component({
   selector: 'app-scoreboard-display-settings',
@@ -20,6 +22,10 @@ export class ScoreboardDisplaySettingsComponent {
 
   localLanguageCode = input.required<ScoreboardLanguageCode>();
 
+  showPlayClockSwitch = input(true);
+  showDownDistanceSwitch = input(true);
+  periodMode = input<SportPeriodMode>('qtr');
+
   toggleQtr = output<boolean>();
   toggleTime = output<boolean>();
   togglePlayClock = output<boolean>();
@@ -28,6 +34,10 @@ export class ScoreboardDisplaySettingsComponent {
   languageChange = output<ScoreboardLanguageCode>();
 
   protected readonly languageOptions = LANGUAGE_OPTIONS;
+
+  protected readonly periodFieldLabel = computed(() => {
+    return getPeriodLabelByMode(this.periodMode());
+  });
 
   protected readonly languageContent = computed(() => {
     return this.languageStringify(this.localLanguageCode());

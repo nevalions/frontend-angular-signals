@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, ou
 import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TuiAlertService } from '@taiga-ui/core';
 import { TuiBlock, TuiSwitch } from '@taiga-ui/kit';
-import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
+import { Scoreboard, ScoreboardUpdate, SportPeriodMode } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 import { ScoreboardDisplaySettingsComponent } from './display-settings/scoreboard-display-settings.component';
 import { ScoreboardSponsorSettingsComponent } from './sponsor-settings/scoreboard-sponsor-settings.component';
@@ -41,6 +41,15 @@ export class ScoreboardSettingsFormsComponent {
 
   /** Emits partial updates to scoreboard settings */
   scoreboardChange = output<Partial<ScoreboardUpdate>>();
+
+  /** Whether to show play clock switch in display settings (from parent) */
+  displaySettingsShowPlayClock = input(true);
+
+  /** Whether to show down & distance switch in display settings (from parent) */
+  displaySettingsShowDownDistance = input(true);
+
+  /** Period mode for dynamic label */
+  displaySettingsPeriodMode = input<SportPeriodMode>('qtr');
 
   /** Whether user is actively toggling settings (to prevent effect overwrites) */
   private userIsToggling = signal(false);

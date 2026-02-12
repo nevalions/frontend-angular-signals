@@ -58,6 +58,11 @@ export class ScoreboardAdminComponent implements OnInit {
   protected readonly showQuarterSelector = this.facade.showQuarterSelector;
   protected readonly showGameClockSection = this.facade.showGameClockSection;
 
+  // Display settings visibility signals
+  protected readonly displaySettingsShowPlayClock = this.facade.displaySettingsShowPlayClock;
+  protected readonly displaySettingsShowDownDistance = this.facade.displaySettingsShowDownDistance;
+  protected readonly displaySettingsPeriodMode = this.facade.displaySettingsPeriodMode;
+
   ngOnInit(): void {
     this.facade.init();
   }

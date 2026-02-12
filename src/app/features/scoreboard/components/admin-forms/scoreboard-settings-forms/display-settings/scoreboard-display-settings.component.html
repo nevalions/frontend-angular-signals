@@ -32,8 +32,8 @@
         (ngModelChange)="toggleQtr.emit($event)"
       />
       <span tuiTitle>
-        Quarter
-        <span tuiSubtitle>Show current quarter</span>
+        {{ periodFieldLabel() }}
+        <span tuiSubtitle>Show current {{ periodFieldLabel().toLowerCase() }}</span>
       </span>
     </label>
 
@@ -51,33 +51,37 @@
       </span>
     </label>
 
-    <label tuiBlock="m" class="toggle-block">
-      <input
-        tuiSwitch
-        type="checkbox"
-        size="s"
-        [ngModel]="localShowPlayClock()"
-        (ngModelChange)="togglePlayClock.emit($event)"
-      />
-      <span tuiTitle>
-        Play Clock
-        <span tuiSubtitle>Show play clock timer</span>
-      </span>
-    </label>
+    @if (showPlayClockSwitch()) {
+      <label tuiBlock="m" class="toggle-block">
+        <input
+          tuiSwitch
+          type="checkbox"
+          size="s"
+          [ngModel]="localShowPlayClock()"
+          (ngModelChange)="togglePlayClock.emit($event)"
+        />
+        <span tuiTitle>
+          Play Clock
+          <span tuiSubtitle>Show play clock timer</span>
+        </span>
+      </label>
+    }
 
-    <label tuiBlock="m" class="toggle-block">
-      <input
-        tuiSwitch
-        type="checkbox"
-        size="s"
-        [ngModel]="localShowDownDistance()"
-        (ngModelChange)="toggleDownDistance.emit($event)"
-      />
-      <span tuiTitle>
-        Down & Distance
-        <span tuiSubtitle>Show current down info</span>
-      </span>
-    </label>
+    @if (showDownDistanceSwitch()) {
+      <label tuiBlock="m" class="toggle-block">
+        <input
+          tuiSwitch
+          type="checkbox"
+          size="s"
+          [ngModel]="localShowDownDistance()"
+          (ngModelChange)="toggleDownDistance.emit($event)"
+        />
+        <span tuiTitle>
+          Down & Distance
+          <span tuiSubtitle>Show current down info</span>
+        </span>
+      </label>
+    }
 
   </div>
 </div>
