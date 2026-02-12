@@ -44,6 +44,7 @@ export interface Scoreboard {
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
   period_mode?: SportPeriodMode | null;
+  period_count?: number | null;
   period_labels_json?: string[] | null;
   match_id?: number | null;
   player_match_lower_id?: number | null;
@@ -93,6 +94,7 @@ export interface ScoreboardCreate {
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
   period_mode?: SportPeriodMode | null;
+  period_count?: number | null;
   period_labels_json?: string[] | null;
   match_id?: number | null;
   player_match_lower_id?: number | null;
@@ -142,6 +144,7 @@ export interface ScoreboardUpdate {
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
   period_mode?: SportPeriodMode | null;
+  period_count?: number | null;
   period_labels_json?: string[] | null;
   player_match_lower_id?: number | null;
   football_qb_full_stats_match_lower_id?: number | null;

@@ -7,6 +7,7 @@ export interface MatchData {
   timeout_team_a?: string | null;
   timeout_team_b?: string | null;
   qtr?: string | null;
+  period_key?: string | null;
   ball_on?: number | null;
   down?: string | null;
   distance?: string | null;
@@ -21,6 +22,7 @@ export interface MatchDataCreate {
   timeout_team_a?: string | null;
   timeout_team_b?: string | null;
   qtr?: string | null;
+  period_key?: string | null;
   ball_on?: number | null;
   down?: string | null;
   distance?: string | null;
@@ -35,6 +37,7 @@ export interface MatchDataUpdate {
   timeout_team_a?: string | null;
   timeout_team_b?: string | null;
   qtr?: string | null;
+  period_key?: string | null;
   ball_on?: number | null;
   down?: string | null;
   distance?: string | null;

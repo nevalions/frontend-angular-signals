@@ -7,7 +7,13 @@ import { MatchData } from '../../../../matches/models/match-data.model';
 import { Scoreboard, ScoreboardUpdate } from '../../../../matches/models/scoreboard.model';
 import { CollapsibleSectionComponent } from '../collapsible-section/collapsible-section.component';
 import { ScoreboardTranslationService } from '../../../services/scoreboard-translation.service';
-import { formatPeriodLabel, getPeriodFieldLabel, getPeriodOptions } from '../../../utils/period-label.util';
+import {
+  formatPeriodLabel,
+  getPeriodFieldLabel,
+  getPeriodOptions,
+  toCanonicalPeriodKey,
+  toLegacyPeriodValue,
+} from '../../../utils/period-label.util';
 
 export interface ScoreChangeEvent {
   team: 'a' | 'b';
@@ -21,6 +27,7 @@ export interface TimeoutChangeEvent {
 
 export interface QuarterChangeEvent {
   qtr: string;
+  period_key: string;
 }
 
 @Component({
@@ -70,14 +77,16 @@ export class ScoreFormsComponent {
   protected readonly supportsTimeouts = computed(() => this.scoreboard()?.has_timeouts ?? true);
 
   protected readonly periodFieldLabel = computed(() => {
-    return getPeriodFieldLabel(this.scoreboard()?.period_mode);
+    return getPeriodFieldLabel(this.scoreboard()?.period_mode, this.scoreboard()?.is_qtr);
   });
 
   protected readonly periodOptions = computed(() => {
     return getPeriodOptions(
       this.scoreboard()?.period_mode,
+      this.scoreboard()?.is_qtr,
       this.scoreboard()?.period_labels_json,
       this.selectedQtr(),
+      this.scoreboard()?.period_count,
     );
   });
 
@@ -85,6 +94,7 @@ export class ScoreFormsComponent {
     return formatPeriodLabel({
       value,
       mode: this.scoreboard()?.period_mode,
+      isQtr: this.scoreboard()?.is_qtr,
       customLabels: this.scoreboard()?.period_labels_json,
       translateQuarter: (input) => this.translations.getQuarterLabel(input),
     });
@@ -211,7 +221,7 @@ export class ScoreFormsComponent {
       if (data) {
         this.pendingScoreTeamA.set(data.score_team_a ?? 0);
         this.pendingScoreTeamB.set(data.score_team_b ?? 0);
-        this.selectedQtr.set(data.qtr ?? '1st');
+        this.selectedQtr.set(data.qtr ?? data.period_key ?? '1st');
       }
     });
 
@@ -219,8 +229,13 @@ export class ScoreFormsComponent {
     effect(() => {
       const qtr = this.selectedQtr();
       const data = this.matchData();
-      if (data && qtr !== data.qtr) {
-        this.qtrChange.emit({ qtr });
+      const customLabels = this.scoreboard()?.period_labels_json;
+      const currentValue = data?.qtr ?? data?.period_key;
+      if (data && qtr !== currentValue) {
+        this.qtrChange.emit({
+          qtr: toLegacyPeriodValue(qtr, customLabels),
+          period_key: toCanonicalPeriodKey(qtr, customLabels),
+        });
       }
     });
   }

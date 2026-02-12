@@ -97,7 +97,7 @@
   - Team B logo (if `use_team_b_game_logo` is true, scaled by `scale_logo_b`)
   - Team B name (if `use_team_b_game_title` is true, or default to team title)
   - Team colors (if `use_team_a_game_color` / `use_team_b_game_color` is true)
-  - Period display from `qtr` (if `is_qtr` is true), formatted by `period_mode` / `period_labels_json` when provided
+  - Period display from `qtr` (if `is_qtr` is true) with compatibility fallback to `period_key`, formatted by canonical config (`period_mode`, `period_count`, `period_labels_json`) when provided
   - Game clock (if `is_time` is true)
   - Down & distance (if `is_downdistance` is true)
   - Play clock (if `is_playclock` is true and `has_playclock` is true)
@@ -148,10 +148,10 @@ All scoreboard elements update in real-time via WebSocket connection. Rosters an
 - Team A (id, title, logo icon URL)
 - Team B (id, title, logo icon URL)
 - Tournament (id, title, logo icon URL, main sponsor id)
-- Match Data: score_team_a, score_team_b, qtr, down, distance, timeout_team_a, timeout_team_b, ball_on, game_status
+- Match Data: score_team_a, score_team_b, qtr, period_key, down, distance, timeout_team_a, timeout_team_b, ball_on, game_status
 - Gameclock: id, gameclock, gameclock_max, gameclock_status
 - Playclock: id, playclock, playclock_status
-- Scoreboard settings: all visibility toggles, team colors/titles/logos, scaling factors, indicators, capability flags (`has_playclock`, `has_timeouts`), period settings (`period_mode`, `period_labels_json`)
+- Scoreboard settings: all visibility toggles, team colors/titles/logos, scaling factors, indicators, capability flags (`has_playclock`, `has_timeouts`), period settings (`period_mode`, `period_count`, `period_labels_json`)
 - Players in match (home/away offense/defense rosters) with: id, player number, position, person name, team_id, match_id
 - Main tournament sponsor: id, title, logo icon URL, logo web URL
 - Sponsor line data: id, title, is_visible, sponsors array (with position and sponsor details)

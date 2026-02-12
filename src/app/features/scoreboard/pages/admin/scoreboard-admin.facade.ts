@@ -311,7 +311,10 @@ export class ScoreboardAdminFacade implements OnDestroy {
     const matchData = this.data()?.match_data;
     if (!matchData) return;
 
-    this.scoreboardStore.updateMatchData(matchData.id, { qtr: event.qtr }).subscribe({
+    this.scoreboardStore.updateMatchData(matchData.id, {
+      qtr: event.qtr,
+      period_key: event.period_key,
+    }).subscribe({
       error: (err) => console.error('Failed to update quarter', err),
     });
   }

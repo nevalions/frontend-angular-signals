@@ -202,7 +202,8 @@
   - **Score Inputs** → Manually enter scores for home/away
   - **Score Buttons** → Increment/decrement scores (+6, +1, +3, -1)
   - **Quarter Forms** → Select/update period value
-    - Label/value mapping follows `period_mode` and `period_labels_json` when provided
+    - Label/value mapping follows canonical period config: `period_mode`, `period_count`, and `period_labels_json` (custom mode)
+    - UI posts both legacy `qtr` and canonical `period_key` during backend transition
     - Falls back to legacy quarter values when period metadata is not provided
   - **Time Forms** → Control game clock and play clock
     - Set max game time (minutes)
@@ -264,7 +265,7 @@
 - `events` → Full FootballEvent array replacement (not partial updates)
 - `statistics` → Full MatchStats object replacement
 - `scoreboardPartial` → Partial scoreboard settings updates (use_sport_preset, toggles, colors, titles, logos, scales, flags)
-- `matchDataPartial` → Partial match_data updates (scores, quarter, down/distance)
+- `matchDataPartial` → Partial match_data updates (scores, quarter/period_key, down/distance)
 - `teamsPartial` → Full teams object replacement
 - Updates arrive via `event-update`, `statistics-update`, and `match-update` messages
 - API calls (POST/PUT/DELETE to /api/football_event) trigger backend → database → WebSocket broadcast flow
@@ -278,10 +279,10 @@
 - Team A (id, title, logo icon URL, game color, game title, game logo)
 - Team B (id, title, logo icon URL, game color, game title, game logo)
 - Tournament id, title, logo icon URL, main sponsor id
-- Match Data: score_team_a, score_team_b, qtr, down, distance, ball_on, timeout_team_a, timeout_team_b, game_status, field_length
+- Match Data: score_team_a, score_team_b, qtr, period_key, down, distance, ball_on, timeout_team_a, timeout_team_b, game_status, field_length
 - Gameclock: id, gameclock, gameclock_max, gameclock_status
 - Playclock: id, playclock, playclock_status
-- Scoreboard settings: visibility toggles, team colors, team titles/logos usage, scaling factors, flag/goal/timeout indicators, use_sport_preset toggle, capability flags (`has_playclock`, `has_timeouts`), period settings (`period_mode`, `period_labels_json`)
+- Scoreboard settings: visibility toggles, team colors, team titles/logos usage, scaling factors, flag/goal/timeout indicators, use_sport_preset toggle, capability flags (`has_playclock`, `has_timeouts`), period settings (`period_mode`, `period_count`, `period_labels_json`)
 - Players in match (home and away rosters) with: id, player number, position, is_start, team_id, match_id
 - Main tournament sponsor (id, title, logo icon URL, logo web URL)
 - Football events in match with all player assignments and stats data

@@ -185,8 +185,9 @@ export class ScoreboardDisplayComponent {
     const d = this.data();
     const sb = this.scoreboard();
     return formatPeriodLabel({
-      value: d?.match_data?.qtr ?? '1st',
+      value: d?.match_data?.qtr ?? d?.match_data?.period_key ?? '1st',
       mode: sb?.period_mode,
+      isQtr: sb?.is_qtr,
       customLabels: sb?.period_labels_json,
       translateQuarter: (value) => this.translations.getQuarterLabel(value),
     });

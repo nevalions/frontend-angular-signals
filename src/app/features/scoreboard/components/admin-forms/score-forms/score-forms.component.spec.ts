@@ -286,8 +286,58 @@ describe('ScoreFormsComponent', () => {
 
   it('should emit qtrChange when quarter changes', () => {
     const emitSpy = vi.spyOn(component.qtrChange, 'emit');
-    component.qtrChange.emit({ qtr: '3rd' });
+    component.qtrChange.emit({ qtr: '3rd', period_key: 'period.3' });
 
-    expect(emitSpy).toHaveBeenCalledWith({ qtr: '3rd' });
+    expect(emitSpy).toHaveBeenCalledWith({ qtr: '3rd', period_key: 'period.3' });
+  });
+
+  it('should expose canonical period options when period_count is provided', () => {
+    component.scoreboard = vi.fn(() => ({
+      is_qtr: true,
+      period_mode: 'period',
+      period_count: 3,
+      period_labels_json: null,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    expect(component['periodOptions']()).toEqual(['period.1', 'period.2', 'period.3']);
+  });
+
+  it('should use period label when period_mode is missing but is_qtr is false', () => {
+    component.scoreboard = vi.fn(() => ({
+      is_qtr: false,
+      period_mode: null,
+      period_labels_json: null,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    expect(component['periodFieldLabel']()).toBe('Period');
+  });
+
+  it('should format legacy quarter values as halves when is_qtr is false', () => {
+    component.scoreboard = vi.fn(() => ({
+      is_qtr: false,
+      period_mode: null,
+      period_labels_json: null,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    expect(component['quarterStringify']('1st')).toBe('1H');
+    expect(component['quarterStringify']('2nd')).toBe('2H');
+  });
+
+  it('should expose only two period options in half mode', () => {
+    component.scoreboard = vi.fn(() => ({
+      is_qtr: false,
+      period_mode: null,
+      period_labels_json: null,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    expect(component['periodOptions']()).toEqual(['1st', '2nd']);
   });
 });

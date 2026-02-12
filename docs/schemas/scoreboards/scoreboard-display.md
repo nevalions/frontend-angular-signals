@@ -123,8 +123,8 @@ Each team displays:
 ### Game Display Area (Right Column)
 
 **Period Display** (`is_qtr`):
-- Display value from `qtr`
-- Label formatting follows `period_mode` and `period_labels_json` when provided
+- Display value from `qtr` with compatibility fallback to `period_key`
+- Label formatting follows canonical config: `period_mode`, `period_count`, and `period_labels_json` (custom mode)
 - Falls back to legacy quarter labeling when period metadata is missing
 - Width: 70px
 - Font size: 26px
@@ -207,8 +207,8 @@ Media queries adjust layout at breakpoints:
 - `IMatchFullDataWithScoreboard` containing:
   - Match: id, team_a_id, team_b_id
   - Teams Data: team_a, team_b (id, title, team_logo_web_url)
-  - Match Data: score_team_a, score_team_b, qtr, down, distance, timeout_team_a, timeout_team_b
-  - Scoreboard Data: All visibility flags, team colors/titles/logos, scaling factors, indicators, capability flags (`has_playclock`, `has_timeouts`), period settings (`period_mode`, `period_labels_json`)
+  - Match Data: score_team_a, score_team_b, qtr, period_key, down, distance, timeout_team_a, timeout_team_b
+  - Scoreboard Data: All visibility flags, team colors/titles/logos, scaling factors, indicators, capability flags (`has_playclock`, `has_timeouts`), period settings (`period_mode`, `period_count`, `period_labels_json`)
   - Player IDs for lower displays: `player_match_lower_id`, `football_qb_full_stats_match_lower_id`
 
 - `ITournament`: id, tournament_logo_web_url
