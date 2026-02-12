@@ -57,16 +57,49 @@ export class ScoreboardAdminFacade implements OnDestroy {
   });
 
   // Display settings visibility signals
-  readonly displaySettingsShowPlayClock = computed(() => this.scoreboard()?.has_playclock ?? false);
+  readonly displaySettingsShowPlayClock = computed(() => {
+    const sb = this.scoreboard();
+    console.log('[Facade] Full scoreboard object:', sb);
+    return sb?.has_playclock ?? false;
+  });
   readonly displaySettingsShowDownDistance = computed(() => this.scoreboard()?.is_downdistance ?? false);
   readonly displaySettingsPeriodMode = computed(() => this.scoreboard()?.period_mode ?? 'qtr');
 
+  // Workaround for missing has_timeouts in Match scoreboard schema
+  private readonly hasTimeoutsCapability = computed(() => {
+    const sb = this.scoreboard();
+    return (sb?.is_timeout_team_a !== null) || (sb?.is_timeout_team_b !== null);
+  });
+
   // Form visibility signals based on sport preset settings
-  readonly showDownDistanceForm = computed(() => this.scoreboard()?.is_downdistance ?? false);
-  readonly showTimeoutControls = computed(() => this.scoreboard()?.has_timeouts ?? false);
-  readonly showPlayClockSection = computed(() => this.scoreboard()?.has_playclock ?? false);
-  readonly showQuarterSelector = computed(() => this.scoreboard()?.is_qtr ?? false);
-  readonly showGameClockSection = computed(() => this.scoreboard()?.is_time ?? false);
+  readonly showDownDistanceForm = computed(() => {
+    const sb = this.scoreboard();
+    console.log('[Facade] showDownDistanceForm - is_downdistance:', sb?.is_downdistance);
+    return sb?.is_downdistance ?? false;
+  });
+  readonly showTimeoutControls = computed(() => {
+    const sb = this.scoreboard();
+    // WORKAROUND: has_timeouts doesn't exist in Match scoreboard schema
+    // Use is_timeout_team_a or is_timeout_team_b as proxy
+    const hasTimeouts = (sb?.is_timeout_team_a !== null) || (sb?.is_timeout_team_b !== null);
+    console.log('[Facade] showTimeoutControls - is_timeout_team_a:', sb?.is_timeout_team_a, 'is_timeout_team_b:', sb?.is_timeout_team_b, 'hasTimeouts:', hasTimeouts);
+    return hasTimeouts;
+  });
+  readonly showPlayClockSection = computed(() => {
+    const sb = this.scoreboard();
+    console.log('[Facade] showPlayClockSection - has_playclock:', sb?.has_playclock);
+    return sb?.has_playclock ?? false;
+  });
+  readonly showQuarterSelector = computed(() => {
+    const sb = this.scoreboard();
+    console.log('[Facade] showQuarterSelector - is_qtr:', sb?.is_qtr);
+    return sb?.is_qtr ?? false;
+  });
+  readonly showGameClockSection = computed(() => {
+    const sb = this.scoreboard();
+    console.log('[Facade] showGameClockSection - is_time:', sb?.is_time);
+    return sb?.is_time ?? false;
+  });
 
   // UI state
   readonly hideAllForms = signal(false);
