@@ -67,6 +67,19 @@ export class SportScoreboardPresetDetailComponent {
 
   readonly onStopBehaviorLabel = computed(() => this.toTitle(this.preset()?.on_stop_behavior));
 
+  readonly initialTimeModeLabel = computed(() => {
+    const mode = this.preset()?.initial_time_mode;
+    if (!mode) return 'N/A';
+
+    const labels: Record<string, string> = {
+      max: 'Max Time',
+      zero: 'Zero',
+      min: 'Custom Min',
+    };
+
+    return labels[mode] ?? mode;
+  });
+
   readonly periodModeLabel = computed(() => {
     const mode = this.preset()?.period_mode;
     if (!mode) return 'N/A';

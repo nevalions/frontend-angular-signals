@@ -12,6 +12,8 @@ import {
   hasInvalidCustomPeriodLabelsInput,
   parseCustomPeriodLabelsInput,
   PERIOD_MODE_OPTIONS,
+  INITIAL_TIME_MODE_OPTIONS,
+  validateInitialTimeMinSeconds,
 } from '../../utils/period-labels-form.util';
 
 const DIRECTION_OPTIONS = [
@@ -41,6 +43,8 @@ export class SportScoreboardPresetCreateComponent {
   presetForm = this.fb.group({
     title: ['', [Validators.required]],
     gameclock_max: [720],
+    initial_time_mode: ['max'],
+    initial_time_min_seconds: [null as number | null],
     direction: ['down'],
     on_stop_behavior: ['hold'],
     is_qtr: [true],
@@ -50,22 +54,35 @@ export class SportScoreboardPresetCreateComponent {
     has_timeouts: [true],
     has_playclock: [true],
     period_mode: ['qtr'],
+    period_count: [4],
     period_labels_input: [''],
+    default_playclock_seconds: [null as number | null],
   });
 
   readonly directionOptions = DIRECTION_OPTIONS;
   readonly onStopBehaviorOptions = ON_STOP_BEHAVIOR_OPTIONS;
   readonly periodModeOptions = PERIOD_MODE_OPTIONS;
+  readonly initialTimeModeOptions = INITIAL_TIME_MODE_OPTIONS;
 
   private readonly periodMode = toSignal(this.presetForm.controls.period_mode.valueChanges, {
     initialValue: this.presetForm.controls.period_mode.value,
+  });
+
+  private readonly initialTimeMode = toSignal(this.presetForm.controls.initial_time_mode.valueChanges, {
+    initialValue: this.presetForm.controls.initial_time_mode.value,
   });
 
   private readonly periodLabelsInput = toSignal(this.presetForm.controls.period_labels_input.valueChanges, {
     initialValue: this.presetForm.controls.period_labels_input.value,
   });
 
+  private readonly initialTimeMinSeconds = toSignal(this.presetForm.controls.initial_time_min_seconds.valueChanges, {
+    initialValue: this.presetForm.controls.initial_time_min_seconds.value,
+  });
+
   readonly isCustomPeriodMode = computed(() => this.periodMode() === 'custom');
+
+  readonly isCustomMinTimeMode = computed(() => this.initialTimeMode() === 'min');
 
   readonly customPeriodLabelsInvalid = computed(() => {
     if (!this.isCustomPeriodMode()) {
@@ -75,8 +92,15 @@ export class SportScoreboardPresetCreateComponent {
     return hasInvalidCustomPeriodLabelsInput(this.periodLabelsInput());
   });
 
+  readonly customMinTimeModeInvalid = computed(() => {
+    return !validateInitialTimeMinSeconds(
+      this.initialTimeMode() as 'max' | 'min' | 'zero' | null,
+      this.initialTimeMinSeconds()
+    );
+  });
+
   onSubmit(): void {
-    if (this.presetForm.invalid || this.customPeriodLabelsInvalid()) return;
+    if (this.presetForm.invalid || this.customPeriodLabelsInvalid() || this.customMinTimeModeInvalid()) return;
 
     const formData = this.presetForm.value;
     const customPeriodLabels = formData.period_mode === 'custom'
@@ -86,6 +110,8 @@ export class SportScoreboardPresetCreateComponent {
     const data: SportScoreboardPresetCreate = {
       title: formData.title as string,
       gameclock_max: formData.gameclock_max ? Number(formData.gameclock_max) : null,
+      initial_time_mode: (formData.initial_time_mode as SportScoreboardPresetCreate['initial_time_mode']) ?? 'max',
+      initial_time_min_seconds: formData.initial_time_min_seconds ? Number(formData.initial_time_min_seconds) : null,
       direction: formData.direction as 'down' | 'up',
       on_stop_behavior: formData.on_stop_behavior as 'hold' | 'reset',
       is_qtr: formData.is_qtr ?? true,
@@ -95,7 +121,9 @@ export class SportScoreboardPresetCreateComponent {
       has_timeouts: formData.has_timeouts ?? true,
       has_playclock: formData.has_playclock ?? true,
       period_mode: (formData.period_mode as SportScoreboardPresetCreate['period_mode']) ?? 'qtr',
+      period_count: formData.period_count ? Number(formData.period_count) : 4,
       period_labels_json: customPeriodLabels,
+      default_playclock_seconds: formData.default_playclock_seconds ? Number(formData.default_playclock_seconds) : null,
     };
 
     withCreateAlert(

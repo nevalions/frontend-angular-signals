@@ -15,6 +15,8 @@ import {
   parseCustomPeriodLabelsInput,
   PERIOD_MODE_OPTIONS,
   serializeCustomPeriodLabelsInput,
+  INITIAL_TIME_MODE_OPTIONS,
+  validateInitialTimeMinSeconds,
 } from '../../utils/period-labels-form.util';
 
 const DIRECTION_OPTIONS = [
@@ -45,6 +47,8 @@ export class SportScoreboardPresetEditComponent {
   presetForm = this.fb.group({
     title: ['', [Validators.required]],
     gameclock_max: [720],
+    initial_time_mode: ['max'],
+    initial_time_min_seconds: [null as number | null],
     direction: ['down'],
     on_stop_behavior: ['hold'],
     is_qtr: [true],
@@ -54,7 +58,9 @@ export class SportScoreboardPresetEditComponent {
     has_timeouts: [true],
     has_playclock: [true],
     period_mode: ['qtr'],
+    period_count: [4],
     period_labels_input: [''],
+    default_playclock_seconds: [null as number | null],
   });
 
   presetId = toSignal(
@@ -76,16 +82,27 @@ export class SportScoreboardPresetEditComponent {
   readonly directionOptions = DIRECTION_OPTIONS;
   readonly onStopBehaviorOptions = ON_STOP_BEHAVIOR_OPTIONS;
   readonly periodModeOptions = PERIOD_MODE_OPTIONS;
+  readonly initialTimeModeOptions = INITIAL_TIME_MODE_OPTIONS;
 
   private readonly periodMode = toSignal(this.presetForm.controls.period_mode.valueChanges, {
     initialValue: this.presetForm.controls.period_mode.value,
+  });
+
+  private readonly initialTimeMode = toSignal(this.presetForm.controls.initial_time_mode.valueChanges, {
+    initialValue: this.presetForm.controls.initial_time_mode.value,
   });
 
   private readonly periodLabelsInput = toSignal(this.presetForm.controls.period_labels_input.valueChanges, {
     initialValue: this.presetForm.controls.period_labels_input.value,
   });
 
+  private readonly initialTimeMinSeconds = toSignal(this.presetForm.controls.initial_time_min_seconds.valueChanges, {
+    initialValue: this.presetForm.controls.initial_time_min_seconds.value,
+  });
+
   readonly isCustomPeriodMode = computed(() => this.periodMode() === 'custom');
+
+  readonly isCustomMinTimeMode = computed(() => this.initialTimeMode() === 'min');
 
   readonly customPeriodLabelsInvalid = computed(() => {
     if (!this.isCustomPeriodMode()) {
@@ -95,12 +112,21 @@ export class SportScoreboardPresetEditComponent {
     return hasInvalidCustomPeriodLabelsInput(this.periodLabelsInput());
   });
 
+  readonly customMinTimeModeInvalid = computed(() => {
+    return !validateInitialTimeMinSeconds(
+      this.initialTimeMode() as 'max' | 'min' | 'zero' | null,
+      this.initialTimeMinSeconds()
+    );
+  });
+
   private patchFormOnPresetChange = effect(() => {
     const preset = this.preset();
     if (preset) {
       this.presetForm.patchValue({
         title: preset.title,
         gameclock_max: preset.gameclock_max ?? 720,
+        initial_time_mode: preset.initial_time_mode,
+        initial_time_min_seconds: preset.initial_time_min_seconds,
         direction: preset.direction,
         on_stop_behavior: preset.on_stop_behavior,
         is_qtr: preset.is_qtr,
@@ -110,13 +136,15 @@ export class SportScoreboardPresetEditComponent {
         has_timeouts: preset.has_timeouts,
         has_playclock: preset.has_playclock,
         period_mode: preset.period_mode,
+        period_count: preset.period_count ?? 4,
         period_labels_input: serializeCustomPeriodLabelsInput(preset.period_labels_json),
+        default_playclock_seconds: preset.default_playclock_seconds,
       });
     }
   });
 
   onSubmit(): void {
-    if (this.presetForm.invalid || this.customPeriodLabelsInvalid()) return;
+    if (this.presetForm.invalid || this.customPeriodLabelsInvalid() || this.customMinTimeModeInvalid()) return;
     const id = this.presetId();
     if (!id) return;
 
@@ -128,6 +156,14 @@ export class SportScoreboardPresetEditComponent {
 
     if (formData.gameclock_max !== null && formData.gameclock_max !== undefined) {
       data.gameclock_max = Number(formData.gameclock_max);
+    }
+
+    if (formData.initial_time_mode) {
+      data.initial_time_mode = formData.initial_time_mode as SportScoreboardPresetUpdate['initial_time_mode'];
+    }
+
+    if (formData.initial_time_min_seconds !== null && formData.initial_time_min_seconds !== undefined) {
+      data.initial_time_min_seconds = Number(formData.initial_time_min_seconds);
     }
 
     if (formData.direction) {
@@ -166,9 +202,17 @@ export class SportScoreboardPresetEditComponent {
       data.period_mode = formData.period_mode as SportScoreboardPresetUpdate['period_mode'];
     }
 
+    if (formData.period_count !== null && formData.period_count !== undefined) {
+      data.period_count = Number(formData.period_count);
+    }
+
     data.period_labels_json = formData.period_mode === 'custom'
       ? parseCustomPeriodLabelsInput(formData.period_labels_input)
       : null;
+
+    if (formData.default_playclock_seconds !== null && formData.default_playclock_seconds !== undefined) {
+      data.default_playclock_seconds = Number(formData.default_playclock_seconds);
+    }
 
     withUpdateAlert(
       this.alerts,

@@ -5,7 +5,7 @@
       <button tuiButton type="button" appearance="flat" (click)="navigateToList()">
         Cancel
       </button>
-      <button tuiButton type="button" appearance="primary" (click)="onSubmit()" [disabled]="presetForm.invalid || customPeriodLabelsInvalid()">
+      <button tuiButton type="button" appearance="primary" (click)="onSubmit()" [disabled]="presetForm.invalid || customPeriodLabelsInvalid() || customMinTimeModeInvalid()">
         Create Preset
       </button>
     </div>
@@ -38,6 +38,33 @@
           class="preset-create__input"
         />
       </div>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="initial_time_mode">Initial Time Mode</label>
+        <select
+          id="initial_time_mode"
+          formControlName="initial_time_mode"
+          class="preset-create__select"
+        >
+          @for (option of initialTimeModeOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      @if (isCustomMinTimeMode()) {
+        <div class="preset-create__field">
+          <label class="preset-create__label" for="initial_time_min_seconds">Min Gameclock (seconds) *</label>
+          <input
+            id="initial_time_min_seconds"
+            type="number"
+            placeholder="0"
+            formControlName="initial_time_min_seconds"
+            class="preset-create__input"
+          />
+          @if (customMinTimeModeInvalid()) {
+            <p class="preset-create__error">Min gameclock is required and must be >= 0 when Initial Time Mode is Custom Min.</p>
+          }
+        </div>
+      }
       <div class="preset-create__field">
         <label class="preset-create__label" for="direction">Clock Direction</label>
         <select
@@ -138,6 +165,18 @@
           }
         </select>
       </div>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="period_count">Period Count</label>
+        <input
+          id="period_count"
+          type="number"
+          min="1"
+          max="99"
+          placeholder="4"
+          formControlName="period_count"
+          class="preset-create__input"
+        />
+      </div>
 
       @if (isCustomPeriodMode()) {
         <div class="preset-create__field">
@@ -155,6 +194,20 @@
           }
         </div>
       }
+    </div>
+
+    <div class="preset-create__section">
+      <h3 class="preset-create__section-title">Playclock Configuration</h3>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="default_playclock_seconds">Default Playclock (seconds)</label>
+        <input
+          id="default_playclock_seconds"
+          type="number"
+          placeholder="40"
+          formControlName="default_playclock_seconds"
+          class="preset-create__input"
+        />
+      </div>
     </div>
   </form>
 </div>

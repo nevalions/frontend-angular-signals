@@ -11,6 +11,12 @@ export const PERIOD_MODE_OPTIONS: ReadonlyArray<{ value: SportPeriodMode; label:
   { value: 'custom', label: 'Custom' },
 ];
 
+export const INITIAL_TIME_MODE_OPTIONS: ReadonlyArray<{ value: 'max' | 'zero' | 'min'; label: string }> = [
+  { value: 'max', label: 'Max Time' },
+  { value: 'zero', label: 'Zero' },
+  { value: 'min', label: 'Custom Min' },
+] as const;
+
 export function parseCustomPeriodLabelsInput(value: string | null | undefined): string[] | null {
   if (!value) {
     return null;
@@ -39,4 +45,14 @@ export function hasInvalidCustomPeriodLabelsInput(value: string | null | undefin
   }
 
   return labels.some((label) => !MACHINE_LABEL_KEY_PATTERN.test(label));
+}
+
+export function validateInitialTimeMinSeconds(
+  initialTimeMode: 'max' | 'zero' | 'min' | null | undefined,
+  initialTimeMinSeconds: number | null | undefined
+): boolean {
+  if (initialTimeMode !== 'min') {
+    return true;
+  }
+  return initialTimeMinSeconds !== null && initialTimeMinSeconds !== undefined && initialTimeMinSeconds >= 0;
 }

@@ -45,6 +45,14 @@
             <span class="preset-detail__field-value">{{ preset()!.gameclock_max ?? 'N/A' }} seconds</span>
           </div>
           <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Initial Time Mode:</span>
+            <tui-badge appearance="neutral">{{ initialTimeModeLabel() }}</tui-badge>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Initial Min Time:</span>
+            <span class="preset-detail__field-value">{{ preset()!.initial_time_min_seconds ?? 'N/A' }} seconds</span>
+          </div>
+          <div class="preset-detail__field">
             <span class="preset-detail__field-label">Direction:</span>
             <tui-badge appearance="neutral">{{ directionLabel() }}</tui-badge>
           </div>
@@ -111,6 +119,10 @@
             <tui-badge appearance="neutral">{{ periodModeLabel() }}</tui-badge>
           </div>
           <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Period Count:</span>
+            <span class="preset-detail__field-value">{{ preset()!.period_count }}</span>
+          </div>
+          <div class="preset-detail__field">
             <span class="preset-detail__field-label">Custom Period Labels:</span>
             @if (customPeriodLabels().length > 0) {
               <div class="preset-detail__labels">
@@ -121,6 +133,16 @@
             } @else {
               <span class="preset-detail__field-value">N/A</span>
             }
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-detail__section">
+        <h3 class="preset-detail__section-title">Playclock Configuration</h3>
+        <div class="preset-detail__fields">
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Default Playclock:</span>
+            <span class="preset-detail__field-value">{{ preset()!.default_playclock_seconds ?? 'N/A' }} seconds</span>
           </div>
         </div>
       </div>
