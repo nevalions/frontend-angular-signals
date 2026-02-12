@@ -144,5 +144,50 @@ describe('GameClock Model', () => {
 
       expect(gameclockUpdate.gameclock_time_remaining).toBe(650);
     });
+
+    it('should allow non-720 gameclock values', () => {
+      const gameclock: GameClock = {
+        id: 1,
+        gameclock: 900,
+        gameclock_max: 900,
+        gameclock_status: 'running',
+        gameclock_time_remaining: 900,
+        match_id: 1,
+        server_time_ms: null,
+      };
+
+      expect(gameclock.gameclock).toBe(900);
+      expect(gameclock.gameclock_max).toBe(900);
+    });
+
+    it('should allow zero initial gameclock value', () => {
+      const gameclock: GameClock = {
+        id: 1,
+        gameclock: 0,
+        gameclock_max: 720,
+        gameclock_status: 'stopped',
+        gameclock_time_remaining: 0,
+        match_id: 1,
+        server_time_ms: null,
+      };
+
+      expect(gameclock.gameclock).toBe(0);
+      expect(gameclock.gameclock_time_remaining).toBe(0);
+    });
+
+    it('should allow custom min initial gameclock value', () => {
+      const gameclock: GameClock = {
+        id: 1,
+        gameclock: 300,
+        gameclock_max: 720,
+        gameclock_status: 'running',
+        gameclock_time_remaining: 300,
+        match_id: 1,
+        server_time_ms: null,
+      };
+
+      expect(gameclock.gameclock).toBe(300);
+      expect(gameclock.gameclock_max).toBe(720);
+    });
   });
 });

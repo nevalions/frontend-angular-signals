@@ -3,9 +3,83 @@ import {
   hasInvalidCustomPeriodLabelsInput,
   parseCustomPeriodLabelsInput,
   serializeCustomPeriodLabelsInput,
+  validateInitialTimeMinSeconds,
+  INITIAL_TIME_MODE_OPTIONS,
+  PERIOD_MODE_OPTIONS,
 } from './period-labels-form.util';
 
 describe('period labels form utils', () => {
+  describe('INITIAL_TIME_MODE_OPTIONS', () => {
+    it('should include all three modes', () => {
+      expect(INITIAL_TIME_MODE_OPTIONS).toHaveLength(3);
+      const modeValues = INITIAL_TIME_MODE_OPTIONS.map((opt) => opt.value);
+      expect(modeValues).toContain('max');
+      expect(modeValues).toContain('zero');
+      expect(modeValues).toContain('min');
+    });
+  });
+
+  describe('PERIOD_MODE_OPTIONS', () => {
+    it('should include all period modes', () => {
+      expect(PERIOD_MODE_OPTIONS).toHaveLength(6);
+      const modeValues = PERIOD_MODE_OPTIONS.map((opt) => opt.value);
+      expect(modeValues).toContain('qtr');
+      expect(modeValues).toContain('period');
+      expect(modeValues).toContain('half');
+      expect(modeValues).toContain('set');
+      expect(modeValues).toContain('inning');
+      expect(modeValues).toContain('custom');
+    });
+  });
+
+  describe('validateInitialTimeMinSeconds', () => {
+    it('returns true for max mode regardless of initial_time_min_seconds', () => {
+      expect(validateInitialTimeMinSeconds('max', null)).toBe(true);
+      expect(validateInitialTimeMinSeconds('max', undefined)).toBe(true);
+      expect(validateInitialTimeMinSeconds('max', 100)).toBe(true);
+      expect(validateInitialTimeMinSeconds('max', 0)).toBe(true);
+      expect(validateInitialTimeMinSeconds('max', -1)).toBe(true);
+    });
+
+    it('returns true for zero mode regardless of initial_time_min_seconds', () => {
+      expect(validateInitialTimeMinSeconds('zero', null)).toBe(true);
+      expect(validateInitialTimeMinSeconds('zero', undefined)).toBe(true);
+      expect(validateInitialTimeMinSeconds('zero', 100)).toBe(true);
+      expect(validateInitialTimeMinSeconds('zero', 0)).toBe(true);
+      expect(validateInitialTimeMinSeconds('zero', -1)).toBe(true);
+    });
+
+    it('returns true for min mode with valid initial_time_min_seconds', () => {
+      expect(validateInitialTimeMinSeconds('min', 0)).toBe(true);
+      expect(validateInitialTimeMinSeconds('min', 1)).toBe(true);
+      expect(validateInitialTimeMinSeconds('min', 100)).toBe(true);
+      expect(validateInitialTimeMinSeconds('min', 720)).toBe(true);
+      expect(validateInitialTimeMinSeconds('min', 900)).toBe(true);
+    });
+
+    it('returns false for min mode with null initial_time_min_seconds', () => {
+      expect(validateInitialTimeMinSeconds('min', null)).toBe(false);
+    });
+
+    it('returns false for min mode with undefined initial_time_min_seconds', () => {
+      expect(validateInitialTimeMinSeconds('min', undefined)).toBe(false);
+    });
+
+    it('returns false for min mode with negative initial_time_min_seconds', () => {
+      expect(validateInitialTimeMinSeconds('min', -1)).toBe(false);
+      expect(validateInitialTimeMinSeconds('min', -100)).toBe(false);
+    });
+
+    it('handles undefined initial_time_mode', () => {
+      expect(validateInitialTimeMinSeconds(undefined, null)).toBe(true);
+      expect(validateInitialTimeMinSeconds(undefined, 100)).toBe(true);
+    });
+
+    it('handles null initial_time_mode', () => {
+      expect(validateInitialTimeMinSeconds(null, null)).toBe(true);
+      expect(validateInitialTimeMinSeconds(null, 100)).toBe(true);
+    });
+  });
   describe('parseCustomPeriodLabelsInput', () => {
     it('returns null for empty values', () => {
       expect(parseCustomPeriodLabelsInput('')).toBeNull();
