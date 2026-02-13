@@ -1,6 +1,6 @@
 # Match Detail Page Schema
 
-**Route**: `/matches/:id`
+**Route**: `/sports/:sportId/matches/:id`
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -20,7 +20,7 @@
 │                                                          │
 │  Date: Jan 15, 2025  |  Week: 1  |  Tournament: EESL     │
 │                                                          │
-│  [Scoreboard Admin]  [Scoreboard View]                   │
+│  [Scoreboard Admin]  [Scoreboard View]  [QR]             │
 └─────────────────────────────────────────────────────────────┘
                                                                 │
 ┌─────────────────────────────────────────────────────────────┐
@@ -51,6 +51,7 @@
   - Tournament name with link → Navigate to tournament detail
   - "Scoreboard Admin" button → Navigate to `/scoreboard/match/:id/admin`
   - "Scoreboard View" button → Navigate to `/scoreboard/match/:id/hd`
+  - QR code image with absolute URL to current match detail page (`/sports/:sportId/matches/:id`)
 
  - Tab navigation: Match Players, Events, Stats
 - Tab content area → Shows data for selected tab

@@ -15,9 +15,10 @@ import { Scoreboard } from '../../models/scoreboard.model';
 import { buildStaticUrl } from '../../../../core/config/api.constants';
 import { DateService } from '../../../../core/services/date.service';
 import { WebSocketService } from '../../../../core/services/websocket.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { createNumberParamSignal, createStringParamSignal } from '../../../../core/utils/route-param-helper.util';
 import { TabsNavComponent, TabsNavItem } from '../../../../shared/components/tabs-nav/tabs-nav.component';
+import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-match-detail',
@@ -37,6 +38,7 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   private dateService = inject(DateService);
   private wsService = inject(WebSocketService);
   private destroyRef = inject(DestroyRef);
+  private document = inject(DOCUMENT);
 
   private previousMatchId: number | null = null;
 
@@ -51,6 +53,7 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
   match = signal<MatchWithDetails | null>(null);
   comprehensiveData = signal<ComprehensiveMatchData | null>(null);
   scoreboard = signal<Scoreboard | null>(null);
+  qrCodeDataUrl = signal<string | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
 
@@ -95,6 +98,18 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
       return `${md.score_team_a}:${md.score_team_b}`;
     }
     return '0:0';
+  });
+
+  matchUrl = computed(() => {
+    const sportId = this.sportId();
+    const matchId = this.matchId();
+
+    if (!sportId || !matchId) return null;
+
+    const path = `/sports/${sportId}/matches/${matchId}`;
+    const origin = this.document.location?.origin;
+
+    return origin ? `${origin}${path}` : path;
   });
 
   formattedDate = computed(() => {
@@ -347,5 +362,36 @@ export class MatchDetailComponent implements OnInit, OnDestroy {
         events: [...events],
       });
     }
+  });
+
+  private qrCodeEffect = effect((onCleanup) => {
+    const url = this.matchUrl();
+
+    if (!url) {
+      this.qrCodeDataUrl.set(null);
+      return;
+    }
+
+    let isCancelled = false;
+
+    QRCode.toDataURL(url, {
+      width: 160,
+      margin: 1,
+      errorCorrectionLevel: 'M',
+    })
+      .then((dataUrl) => {
+        if (!isCancelled) {
+          this.qrCodeDataUrl.set(dataUrl);
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          this.qrCodeDataUrl.set(null);
+        }
+      });
+
+    onCleanup(() => {
+      isCancelled = true;
+    });
   });
 }

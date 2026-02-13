@@ -61,6 +61,18 @@
           Scoreboard View
         </button>
       </div>
+
+      @if (qrCodeDataUrl(); as qrUrl) {
+        <div class="match-detail__qr">
+          <img
+            [src]="qrUrl"
+            [alt]="'QR code for ' + matchTitle()"
+            class="match-detail__qr-image"
+            width="160"
+            height="160"
+          />
+        </div>
+      }
     </div>
 
     <div class="match-detail__subnav">
