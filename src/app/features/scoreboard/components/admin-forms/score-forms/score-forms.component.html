@@ -38,8 +38,8 @@
                   [class.td-active]="team.touchdownCalled()"
                   (click)="team.toggleTouchdown()"
                 >
-                  <span class="td-icon">🏈</span>
-                  <span class="td-text">TD</span>
+                  <span class="td-icon">{{ goalButtonEmoji() }}</span>
+                  <span class="td-text">{{ goalButtonLabel() }}</span>
                 </button>
 
                 @if (showTimeoutControls()) {

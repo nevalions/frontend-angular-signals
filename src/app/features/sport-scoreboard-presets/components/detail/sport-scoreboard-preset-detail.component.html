@@ -166,6 +166,24 @@
           </div>
         </div>
       </div>
+
+      <div class="preset-detail__section">
+        <h3 class="preset-detail__section-title">Goal Metadata</h3>
+        <div class="preset-detail__fields">
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Score Form Goal Label:</span>
+            <span class="preset-detail__field-value">{{ preset()!.score_form_goal_label || 'N/A' }}</span>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Score Form Goal Emoji:</span>
+            <span class="preset-detail__field-value">{{ preset()!.score_form_goal_emoji || 'N/A' }}</span>
+          </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Scoreboard Goal Text:</span>
+            <span class="preset-detail__field-value">{{ preset()!.scoreboard_goal_text || 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
       </div>
 
       <div class="preset-detail__section">

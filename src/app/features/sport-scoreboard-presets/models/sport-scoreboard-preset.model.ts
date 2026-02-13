@@ -23,6 +23,9 @@ export interface SportScoreboardPreset {
   period_labels_json: string[] | null;
   default_playclock_seconds: number | null;
   quick_score_deltas?: number[];
+  score_form_goal_label?: string | null;
+  score_form_goal_emoji?: string | null;
+  scoreboard_goal_text?: string | null;
 }
 
 export interface SportScoreboardPresetCreate {
@@ -44,6 +47,9 @@ export interface SportScoreboardPresetCreate {
   period_labels_json?: string[] | null;
   default_playclock_seconds?: number | null;
   quick_score_deltas?: number[];
+  score_form_goal_label?: string | null;
+  score_form_goal_emoji?: string | null;
+  scoreboard_goal_text?: string | null;
 }
 
 export interface SportScoreboardPresetUpdate {
@@ -65,4 +71,7 @@ export interface SportScoreboardPresetUpdate {
   period_labels_json?: string[] | null;
   default_playclock_seconds?: number | null;
   quick_score_deltas?: number[] | null;
+  score_form_goal_label?: string | null;
+  score_form_goal_emoji?: string | null;
+  scoreboard_goal_text?: string | null;
 }

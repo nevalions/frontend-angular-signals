@@ -126,14 +126,20 @@ export class ScoreboardAdminFacade implements OnDestroy {
     const current = untracked(() => this.data());
     if (!current) return;
 
-    // Merge only scoreboard field
+    const partialScoreboard = partial as Partial<Scoreboard>;
+    const currentScoreboard = (current.scoreboard as Scoreboard | null) ?? this.scoreboard();
+    const mergedScoreboard = currentScoreboard
+      ? ({ ...currentScoreboard, ...partialScoreboard } as Scoreboard)
+      : (partial as Scoreboard);
+
+    // Merge scoreboard field to avoid losing preset-derived metadata from partial payloads
     this.data.set({
       ...current,
-      scoreboard: partial as ComprehensiveMatchData['scoreboard'],
+      scoreboard: mergedScoreboard as ComprehensiveMatchData['scoreboard'],
     });
 
     // Also update separate scoreboard signal (admin-specific)
-    this.scoreboard.set(partial as Scoreboard);
+    this.scoreboard.set(mergedScoreboard);
   });
 
   // Handle partial match updates (team IDs, dates, sponsors)
@@ -407,7 +413,8 @@ export class ScoreboardAdminFacade implements OnDestroy {
     this.scoreboardStore.updateScoreboard(sb.id, update).subscribe({
       next: (updated) => {
         console.log('[Facade] Scoreboard updated successfully:', updated);
-        this.scoreboard.set(updated);
+        const merged = { ...sb, ...(updated as Partial<Scoreboard>) };
+        this.scoreboard.set(merged);
       },
       error: (err) => {
         console.error('[Facade] Failed to update scoreboard settings', err);

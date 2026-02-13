@@ -166,12 +166,17 @@
 
 // Quick Score Buttons - Large Touch Targets
 .quick-buttons {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
+  width: 100%;
 }
 
 .quick-btn {
+  flex: 0 0 50px;
+  min-width: 50px;
+  max-width: 50px;
   min-height: 52px !important;
   height: 52px !important;
   font-weight: 700 !important;
@@ -462,7 +467,7 @@
   }
 
   .quick-buttons {
-    grid-template-columns: repeat(5, 1fr);
+    justify-content: center;
     gap: 8px;
   }
 

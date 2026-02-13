@@ -208,7 +208,10 @@ export class ScoreboardDisplayComponent {
     return this.translations.formatDownDistance(matchData?.down ?? '1st', matchData?.distance ?? '10');
   });
 
-  protected readonly goalText = computed(() => this.translations.getGoalText());
+  protected readonly goalText = computed(() => {
+    const customText = this.scoreboard()?.scoreboard_goal_text?.trim();
+    return customText && customText.length > 0 ? customText : this.translations.getGoalText();
+  });
   protected readonly flagText = computed(() => this.translations.getFlagText());
   protected readonly timeoutText = computed(() => this.translations.getTimeoutText());
 

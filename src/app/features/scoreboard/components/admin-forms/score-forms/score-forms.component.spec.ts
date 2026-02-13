@@ -103,6 +103,30 @@ describe('ScoreFormsComponent', () => {
     expect(buttons.map((btn) => btn.value)).toEqual([1, -1]);
   });
 
+  it('should expose goal button metadata from preset fields', () => {
+    component.scoreboard = vi.fn(() => ({
+      score_form_goal_label: 'GOAL',
+      score_form_goal_emoji: ':football:',
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    expect(component['goalButtonLabel']()).toBe('GOAL');
+    expect(component['goalButtonEmoji']()).toBe(':football:');
+  });
+
+  it('should fallback to legacy goal button metadata when preset fields are missing', () => {
+    component.scoreboard = vi.fn(() => ({
+      score_form_goal_label: null,
+      score_form_goal_emoji: null,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    expect(component['goalButtonLabel']()).toBe('TD');
+    expect(component['goalButtonEmoji']()).toBe('🏈');
+  });
+
   it('should apply quick score click updates using preset-driven deltas', () => {
     component.scoreboard = vi.fn(() => ({
       quick_score_deltas: [1, -1],

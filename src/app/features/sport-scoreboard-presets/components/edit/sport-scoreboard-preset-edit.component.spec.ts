@@ -304,6 +304,9 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_labels_input: 'leg_1, leg_2, leg_3',
         default_playclock_seconds: 35,
         quick_score_deltas_input: '1,-1',
+        score_form_goal_label: '',
+        score_form_goal_emoji: '',
+        scoreboard_goal_text: '',
       });
 
       const expected: SportScoreboardPresetUpdate = {
@@ -351,6 +354,9 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_labels_input: '',
         default_playclock_seconds: null,
         quick_score_deltas_input: '6,3,2,1,-1',
+        score_form_goal_label: '',
+        score_form_goal_emoji: '',
+        scoreboard_goal_text: '',
       });
 
       const expected: SportScoreboardPresetUpdate = {
@@ -396,6 +402,9 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_labels_input: '',
         default_playclock_seconds: null,
         quick_score_deltas_input: '6,3,2,1,-1',
+        score_form_goal_label: '',
+        score_form_goal_emoji: '',
+        scoreboard_goal_text: '',
       });
 
       const expected: SportScoreboardPresetUpdate = {
@@ -419,6 +428,40 @@ describe('SportScoreboardPresetEditComponent', () => {
 
       component.onSubmit();
       expect(mockPresetStore.update).toHaveBeenCalledWith(1, expected);
+    });
+
+    it('should include goal metadata fields when provided', () => {
+      component.presetForm.setValue({
+        title: 'Updated Preset',
+        gameclock_max: 720,
+        initial_time_mode: 'max',
+        initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
+        direction: 'down',
+        on_stop_behavior: 'hold',
+        is_qtr: true,
+        is_time: true,
+        is_playclock: true,
+        is_downdistance: true,
+        has_timeouts: true,
+        has_playclock: true,
+        period_mode: 'qtr',
+        period_count: 4,
+        period_labels_input: '',
+        default_playclock_seconds: null,
+        quick_score_deltas_input: '6,3,2,1,-1',
+        score_form_goal_label: 'GOAL',
+        score_form_goal_emoji: ':football:',
+        scoreboard_goal_text: 'SCORED',
+      });
+
+      component.onSubmit();
+
+      expect(mockPresetStore.update).toHaveBeenCalledWith(1, expect.objectContaining({
+        score_form_goal_label: 'GOAL',
+        score_form_goal_emoji: ':football:',
+        scoreboard_goal_text: 'SCORED',
+      }));
     });
   });
 
@@ -457,6 +500,9 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_labels_input: '',
         default_playclock_seconds: null,
         quick_score_deltas_input: '6,3,2,1,-1',
+        score_form_goal_label: '',
+        score_form_goal_emoji: '',
+        scoreboard_goal_text: '',
       });
       component.onSubmit();
       expect(mockPresetStore.update).toHaveBeenCalled();

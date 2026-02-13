@@ -134,12 +134,18 @@ private wsScoreboardPartialEffect = effect(() => {
   const current = untracked(() => this.data());
   if (!current) return;
 
+  const partialScoreboard = partial as Partial<Scoreboard>;
+  const currentScoreboard = (current.scoreboard as Scoreboard | null) ?? this.scoreboard();
+  const mergedScoreboard = currentScoreboard
+    ? ({ ...currentScoreboard, ...partialScoreboard } as Scoreboard)
+    : (partial as Scoreboard);
+
   this.data.set({
     ...current,
-    scoreboard: partial as ComprehensiveMatchData['scoreboard'],
+    scoreboard: mergedScoreboard as ComprehensiveMatchData['scoreboard'],
   });
 
-  this.scoreboard.set(partial as Scoreboard);
+  this.scoreboard.set(mergedScoreboard);
 });
 
 // Merge match updates
@@ -200,6 +206,8 @@ private wsEventsFromMatchUpdateEffect = effect(() => {
   });
 });
 ```
+
+Note: `scoreboard_data` updates can be partial. The facade merges incoming scoreboard patches with the current scoreboard state to avoid dropping fields that are not present in every message (for example preset-derived UI metadata).
 
 ## Related Documentation
 

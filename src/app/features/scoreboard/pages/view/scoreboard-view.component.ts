@@ -13,6 +13,7 @@ import { FootballQbLowerStatsDisplayComponent } from '../../components/lower-dis
 import { TeamMatchLowerFootballStatsDisplayComponent } from '../../components/lower-display/team-match-lower-football-stats-display/team-match-lower-football-stats-display.component';
 import { WebSocketService } from '../../../../core/services/websocket.service';
 import { MatchSponsorLineDisplayFlatComponent } from '../../components/sponsor-display/match-sponsor-line-display-flat.component';
+import { Scoreboard } from '../../../matches/models/scoreboard.model';
 import {
   selectMatchMainSponsor,
   selectMatchSponsorLine,
@@ -219,10 +220,16 @@ export class ScoreboardViewComponent implements OnInit, OnDestroy {
     const current = untracked(() => this.data());
     if (!current) return;
 
-    // Merge only scoreboard field
+    const partialScoreboard = partial as Partial<Scoreboard>;
+    const currentScoreboard = current.scoreboard as Scoreboard | null;
+    const mergedScoreboard = currentScoreboard
+      ? ({ ...currentScoreboard, ...partialScoreboard } as Scoreboard)
+      : (partial as Scoreboard);
+
+    // Merge scoreboard field to avoid dropping preset-derived metadata on partial updates
     this.data.set({
       ...current,
-      scoreboard: partial as ComprehensiveMatchData['scoreboard'],
+      scoreboard: mergedScoreboard as ComprehensiveMatchData['scoreboard'],
     });
   });
 

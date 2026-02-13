@@ -44,6 +44,9 @@ export interface Scoreboard {
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
   quick_score_deltas?: number[] | null;
+  score_form_goal_label?: string | null;
+  score_form_goal_emoji?: string | null;
+  scoreboard_goal_text?: string | null;
   period_mode?: SportPeriodMode | null;
   period_count?: number | null;
   period_labels_json?: string[] | null;
@@ -95,6 +98,9 @@ export interface ScoreboardCreate {
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
   quick_score_deltas?: number[] | null;
+  score_form_goal_label?: string | null;
+  score_form_goal_emoji?: string | null;
+  scoreboard_goal_text?: string | null;
   period_mode?: SportPeriodMode | null;
   period_count?: number | null;
   period_labels_json?: string[] | null;
@@ -146,6 +152,9 @@ export interface ScoreboardUpdate {
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
   quick_score_deltas?: number[] | null;
+  score_form_goal_label?: string | null;
+  score_form_goal_emoji?: string | null;
+  scoreboard_goal_text?: string | null;
   period_mode?: SportPeriodMode | null;
   period_count?: number | null;
   period_labels_json?: string[] | null;

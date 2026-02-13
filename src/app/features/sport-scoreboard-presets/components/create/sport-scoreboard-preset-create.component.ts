@@ -63,6 +63,9 @@ export class SportScoreboardPresetCreateComponent {
     period_labels_input: [''],
     default_playclock_seconds: [null as number | null],
     quick_score_deltas_input: [serializeQuickScoreDeltasInput(null)],
+    score_form_goal_label: [''],
+    score_form_goal_emoji: [''],
+    scoreboard_goal_text: [''],
   });
 
   readonly directionOptions = DIRECTION_OPTIONS;
@@ -149,6 +152,21 @@ export class SportScoreboardPresetCreateComponent {
       default_playclock_seconds: formData.default_playclock_seconds ? Number(formData.default_playclock_seconds) : null,
       quick_score_deltas: quickScoreDeltas,
     };
+
+    const scoreFormGoalLabel = formData.score_form_goal_label?.trim();
+    if (scoreFormGoalLabel) {
+      data.score_form_goal_label = scoreFormGoalLabel;
+    }
+
+    const scoreFormGoalEmoji = formData.score_form_goal_emoji?.trim();
+    if (scoreFormGoalEmoji) {
+      data.score_form_goal_emoji = scoreFormGoalEmoji;
+    }
+
+    const scoreboardGoalText = formData.scoreboard_goal_text?.trim();
+    if (scoreboardGoalText) {
+      data.scoreboard_goal_text = scoreboardGoalText;
+    }
 
     withCreateAlert(
       this.alerts,

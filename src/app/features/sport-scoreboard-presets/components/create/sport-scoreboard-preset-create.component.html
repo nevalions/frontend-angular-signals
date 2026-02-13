@@ -240,5 +240,42 @@
         }
       </div>
     </div>
+
+    <div class="preset-create__section">
+      <h3 class="preset-create__section-title">Goal Metadata</h3>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="score_form_goal_label">Score Form Goal Label</label>
+        <input
+          id="score_form_goal_label"
+          type="text"
+          placeholder="TD"
+          formControlName="score_form_goal_label"
+          class="preset-create__input"
+        />
+        <p class="preset-create__hint">Used in scoreboard admin goal button label.</p>
+      </div>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="score_form_goal_emoji">Score Form Goal Emoji</label>
+        <input
+          id="score_form_goal_emoji"
+          type="text"
+          placeholder="football emoji"
+          formControlName="score_form_goal_emoji"
+          class="preset-create__input"
+        />
+        <p class="preset-create__hint">Used in scoreboard admin goal button icon.</p>
+      </div>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="scoreboard_goal_text">Scoreboard Goal Text</label>
+        <input
+          id="scoreboard_goal_text"
+          type="text"
+          placeholder="TOUCHDOWN"
+          formControlName="scoreboard_goal_text"
+          class="preset-create__input"
+        />
+        <p class="preset-create__hint">Displayed on the scoreboard when goal indicator is active.</p>
+      </div>
+    </div>
   </form>
 </div>

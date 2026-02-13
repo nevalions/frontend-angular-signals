@@ -181,6 +181,16 @@ export class ScoreFormsComponent {
     } satisfies QuickScoreButton));
   });
 
+  protected readonly goalButtonLabel = computed(() => {
+    const label = this.scoreboard()?.score_form_goal_label?.trim();
+    return label && label.length > 0 ? label : 'TD';
+  });
+
+  protected readonly goalButtonEmoji = computed(() => {
+    const emoji = this.scoreboard()?.score_form_goal_emoji?.trim();
+    return emoji && emoji.length > 0 ? emoji : '🏈';
+  });
+
   // Team score input configurations
   protected readonly teamConfig = [
     {

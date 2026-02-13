@@ -67,6 +67,9 @@ export class SportScoreboardPresetEditComponent {
     period_labels_input: [''],
     default_playclock_seconds: [null as number | null],
     quick_score_deltas_input: [serializeQuickScoreDeltasInput(null)],
+    score_form_goal_label: [''],
+    score_form_goal_emoji: [''],
+    scoreboard_goal_text: [''],
   });
 
   presetId = toSignal(
@@ -158,6 +161,9 @@ export class SportScoreboardPresetEditComponent {
         period_labels_input: serializeCustomPeriodLabelsInput(preset.period_labels_json),
         default_playclock_seconds: preset.default_playclock_seconds,
         quick_score_deltas_input: serializeQuickScoreDeltasInput(preset.quick_score_deltas),
+        score_form_goal_label: preset.score_form_goal_label ?? '',
+        score_form_goal_emoji: preset.score_form_goal_emoji ?? '',
+        scoreboard_goal_text: preset.scoreboard_goal_text ?? '',
       });
     }
   });
@@ -243,6 +249,21 @@ export class SportScoreboardPresetEditComponent {
     }
 
     data.quick_score_deltas = quickScoreDeltas;
+
+    const scoreFormGoalLabel = formData.score_form_goal_label?.trim();
+    if (scoreFormGoalLabel) {
+      data.score_form_goal_label = scoreFormGoalLabel;
+    }
+
+    const scoreFormGoalEmoji = formData.score_form_goal_emoji?.trim();
+    if (scoreFormGoalEmoji) {
+      data.score_form_goal_emoji = scoreFormGoalEmoji;
+    }
+
+    const scoreboardGoalText = formData.scoreboard_goal_text?.trim();
+    if (scoreboardGoalText) {
+      data.scoreboard_goal_text = scoreboardGoalText;
+    }
 
     withUpdateAlert(
       this.alerts,
