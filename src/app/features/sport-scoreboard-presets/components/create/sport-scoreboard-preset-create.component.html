@@ -5,7 +5,7 @@
       <button tuiButton type="button" appearance="flat" (click)="navigateToList()">
         Cancel
       </button>
-      <button tuiButton type="button" appearance="primary" (click)="onSubmit()" [disabled]="presetForm.invalid || customPeriodLabelsInvalid() || customMinTimeModeInvalid()">
+      <button tuiButton type="button" appearance="primary" (click)="onSubmit()" [disabled]="presetForm.invalid || customPeriodLabelsInvalid() || customMinTimeModeInvalid() || quickScoreDeltasInvalid()">
         Create Preset
       </button>
     </div>
@@ -220,6 +220,24 @@
           formControlName="default_playclock_seconds"
           class="preset-create__input"
         />
+      </div>
+    </div>
+
+    <div class="preset-create__section">
+      <h3 class="preset-create__section-title">Quick Score Deltas</h3>
+      <div class="preset-create__field">
+        <label class="preset-create__label" for="quick_score_deltas_input">Value-only quick score buttons</label>
+        <input
+          id="quick_score_deltas_input"
+          type="text"
+          placeholder="6,3,2,1,-1"
+          formControlName="quick_score_deltas_input"
+          class="preset-create__input"
+        />
+        <p class="preset-create__hint">Ordered comma-separated integers. Max 10 values, no 0, range -100 to 100.</p>
+        @if (quickScoreDeltasValidationError(); as quickDeltasError) {
+          <p class="preset-create__error">{{ quickDeltasError }}</p>
+        }
       </div>
     </div>
   </form>

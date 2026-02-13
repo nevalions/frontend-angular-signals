@@ -43,6 +43,7 @@ export interface Scoreboard {
   is_timeout_team_b?: boolean | null;
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
+  quick_score_deltas?: number[] | null;
   period_mode?: SportPeriodMode | null;
   period_count?: number | null;
   period_labels_json?: string[] | null;
@@ -93,6 +94,7 @@ export interface ScoreboardCreate {
   is_timeout_team_b?: boolean | null;
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
+  quick_score_deltas?: number[] | null;
   period_mode?: SportPeriodMode | null;
   period_count?: number | null;
   period_labels_json?: string[] | null;
@@ -143,6 +145,7 @@ export interface ScoreboardUpdate {
   is_timeout_team_b?: boolean | null;
   has_timeouts?: boolean | null;
   has_playclock?: boolean | null;
+  quick_score_deltas?: number[] | null;
   period_mode?: SportPeriodMode | null;
   period_count?: number | null;
   period_labels_json?: string[] | null;

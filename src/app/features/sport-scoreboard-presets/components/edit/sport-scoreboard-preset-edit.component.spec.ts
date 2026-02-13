@@ -15,11 +15,15 @@ import { SportScoreboardPresetUpdate, SportScoreboardPreset } from '../../models
 describe('SportScoreboardPresetEditComponent', () => {
   let component: SportScoreboardPresetEditComponent;
   let fixture: ComponentFixture<SportScoreboardPresetEditComponent>;
-  let mockPresetStore: any;
-  let mockNavigationHelper: any;
-  let mockAlerts: any;
-  let mockRouter: any;
-  let mockActivatedRoute: any;
+  let mockPresetStore: {
+    presets: ReturnType<typeof signal<SportScoreboardPreset[]>>;
+    loading: ReturnType<typeof signal<boolean>>;
+    update: ReturnType<typeof vi.fn>;
+  };
+  let mockNavigationHelper: { toSportScoreboardPresetDetail: ReturnType<typeof vi.fn> };
+  let mockAlerts: { open: ReturnType<typeof vi.fn> };
+  let mockRouter: { navigate: ReturnType<typeof vi.fn> };
+  let mockActivatedRoute: { paramMap: unknown };
 
   const mockPreset: SportScoreboardPreset = {
     id: 1,
@@ -40,6 +44,7 @@ describe('SportScoreboardPresetEditComponent', () => {
     period_count: 4,
     period_labels_json: null,
     default_playclock_seconds: null,
+    quick_score_deltas: [6, 3, 2, 1, -1],
   };
 
   beforeEach(async () => {
@@ -105,6 +110,7 @@ describe('SportScoreboardPresetEditComponent', () => {
       expect(component.presetForm.value.on_stop_behavior).toBe('hold');
       expect(component.presetForm.value.period_mode).toBe('qtr');
       expect(component.presetForm.value.period_count).toBe(4);
+      expect(component.presetForm.value.quick_score_deltas_input).toBe('6,3,2,1,-1');
     });
 
     it('should have initial time mode options', () => {
@@ -132,6 +138,21 @@ describe('SportScoreboardPresetEditComponent', () => {
       expect(component.presetForm.value.on_stop_behavior).toBe(mockPreset.on_stop_behavior);
       expect(component.presetForm.value.period_mode).toBe(mockPreset.period_mode);
       expect(component.presetForm.value.period_count).toBe(mockPreset.period_count);
+      expect(component.presetForm.value.quick_score_deltas_input).toBe('6,3,2,1,-1');
+    });
+
+    it('should patch form with custom quick score deltas', () => {
+      const presetWithSoccerButtons: SportScoreboardPreset = {
+        ...mockPreset,
+        quick_score_deltas: [1, -1],
+      };
+
+      mockPresetStore.presets = signal([presetWithSoccerButtons]);
+      fixture = TestBed.createComponent(SportScoreboardPresetEditComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+
+      expect(component.presetForm.value.quick_score_deltas_input).toBe('1,-1');
     });
 
     it('should patch form with non-720 gameclock_max', () => {
@@ -188,6 +209,18 @@ describe('SportScoreboardPresetEditComponent', () => {
     it('should accept valid title', () => {
       component.presetForm.controls.title.setValue('Test Preset');
       expect(component.presetForm.controls.title.valid).toBe(true);
+    });
+
+    it('should mark quick score deltas invalid when out of range', () => {
+      component.presetForm.controls.quick_score_deltas_input.setValue('101');
+      fixture.detectChanges();
+      expect(component.quickScoreDeltasInvalid()).toBe(true);
+    });
+
+    it('should mark quick score deltas valid for soccer config', () => {
+      component.presetForm.controls.quick_score_deltas_input.setValue('1,-1');
+      fixture.detectChanges();
+      expect(component.quickScoreDeltasInvalid()).toBe(false);
     });
   });
 
@@ -270,6 +303,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_count: 3,
         period_labels_input: 'leg_1, leg_2, leg_3',
         default_playclock_seconds: 35,
+        quick_score_deltas_input: '1,-1',
       });
 
       const expected: SportScoreboardPresetUpdate = {
@@ -290,6 +324,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_count: 3,
         period_labels_json: ['leg_1', 'leg_2', 'leg_3'],
         default_playclock_seconds: 35,
+        quick_score_deltas: [1, -1],
       };
 
       component.onSubmit();
@@ -315,6 +350,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_count: 4,
         period_labels_input: '',
         default_playclock_seconds: null,
+        quick_score_deltas_input: '6,3,2,1,-1',
       });
 
       const expected: SportScoreboardPresetUpdate = {
@@ -333,6 +369,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_mode: 'qtr',
         period_count: 4,
         period_labels_json: null,
+        quick_score_deltas: [6, 3, 2, 1, -1],
       };
 
       component.onSubmit();
@@ -358,6 +395,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_count: 4,
         period_labels_input: '',
         default_playclock_seconds: null,
+        quick_score_deltas_input: '6,3,2,1,-1',
       });
 
       const expected: SportScoreboardPresetUpdate = {
@@ -376,6 +414,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_mode: 'qtr',
         period_count: 4,
         period_labels_json: null,
+        quick_score_deltas: [6, 3, 2, 1, -1],
       };
 
       component.onSubmit();
@@ -417,6 +456,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         period_count: 4,
         period_labels_input: '',
         default_playclock_seconds: null,
+        quick_score_deltas_input: '6,3,2,1,-1',
       });
       component.onSubmit();
       expect(mockPresetStore.update).toHaveBeenCalled();

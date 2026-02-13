@@ -18,6 +18,9 @@ import {
   INITIAL_TIME_MODE_OPTIONS,
   PERIOD_CLOCK_VARIANT_OPTIONS,
   validateInitialTimeMinSeconds,
+  getQuickScoreDeltasValidationError,
+  parseQuickScoreDeltasInput,
+  serializeQuickScoreDeltasInput,
 } from '../../utils/period-labels-form.util';
 
 const DIRECTION_OPTIONS = [
@@ -63,6 +66,7 @@ export class SportScoreboardPresetEditComponent {
     period_count: [4],
     period_labels_input: [''],
     default_playclock_seconds: [null as number | null],
+    quick_score_deltas_input: [serializeQuickScoreDeltasInput(null)],
   });
 
   presetId = toSignal(
@@ -103,6 +107,10 @@ export class SportScoreboardPresetEditComponent {
     initialValue: this.presetForm.controls.initial_time_min_seconds.value,
   });
 
+  private readonly quickScoreDeltasInput = toSignal(this.presetForm.controls.quick_score_deltas_input.valueChanges, {
+    initialValue: this.presetForm.controls.quick_score_deltas_input.value,
+  });
+
   readonly isCustomPeriodMode = computed(() => this.periodMode() === 'custom');
 
   readonly isCustomMinTimeMode = computed(() => this.initialTimeMode() === 'min');
@@ -121,6 +129,12 @@ export class SportScoreboardPresetEditComponent {
       this.initialTimeMinSeconds()
     );
   });
+
+  readonly quickScoreDeltasValidationError = computed(() => {
+    return getQuickScoreDeltasValidationError(this.quickScoreDeltasInput());
+  });
+
+  readonly quickScoreDeltasInvalid = computed(() => this.quickScoreDeltasValidationError() !== null);
 
   private patchFormOnPresetChange = effect(() => {
     const preset = this.preset();
@@ -143,16 +157,22 @@ export class SportScoreboardPresetEditComponent {
         period_count: preset.period_count ?? 4,
         period_labels_input: serializeCustomPeriodLabelsInput(preset.period_labels_json),
         default_playclock_seconds: preset.default_playclock_seconds,
+        quick_score_deltas_input: serializeQuickScoreDeltasInput(preset.quick_score_deltas),
       });
     }
   });
 
   onSubmit(): void {
-    if (this.presetForm.invalid || this.customPeriodLabelsInvalid() || this.customMinTimeModeInvalid()) return;
+    if (this.presetForm.invalid || this.customPeriodLabelsInvalid() || this.customMinTimeModeInvalid() || this.quickScoreDeltasInvalid()) return;
     const id = this.presetId();
     if (!id) return;
 
     const formData = this.presetForm.value;
+    const quickScoreDeltas = parseQuickScoreDeltasInput(formData.quick_score_deltas_input);
+
+    if (!quickScoreDeltas) {
+      return;
+    }
 
     const data: SportScoreboardPresetUpdate = {
       title: formData.title as string,
@@ -221,6 +241,8 @@ export class SportScoreboardPresetEditComponent {
     if (formData.default_playclock_seconds !== null && formData.default_playclock_seconds !== undefined) {
       data.default_playclock_seconds = Number(formData.default_playclock_seconds);
     }
+
+    data.quick_score_deltas = quickScoreDeltas;
 
     withUpdateAlert(
       this.alerts,

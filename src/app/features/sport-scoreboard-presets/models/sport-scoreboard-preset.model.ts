@@ -22,6 +22,7 @@ export interface SportScoreboardPreset {
   period_count: number;
   period_labels_json: string[] | null;
   default_playclock_seconds: number | null;
+  quick_score_deltas?: number[];
 }
 
 export interface SportScoreboardPresetCreate {
@@ -42,6 +43,7 @@ export interface SportScoreboardPresetCreate {
   period_count?: number;
   period_labels_json?: string[] | null;
   default_playclock_seconds?: number | null;
+  quick_score_deltas?: number[];
 }
 
 export interface SportScoreboardPresetUpdate {
@@ -62,4 +64,5 @@ export interface SportScoreboardPresetUpdate {
   period_count?: number | null;
   period_labels_json?: string[] | null;
   default_playclock_seconds?: number | null;
+  quick_score_deltas?: number[] | null;
 }

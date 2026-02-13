@@ -152,6 +152,20 @@
           </div>
         </div>
       </div>
+
+      <div class="preset-detail__section">
+        <h3 class="preset-detail__section-title">Quick Score Deltas</h3>
+        <div class="preset-detail__fields">
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Value-only buttons:</span>
+            <div class="preset-detail__labels">
+              @for (delta of quickScoreDeltas(); track $index) {
+                <tui-badge appearance="neutral">{{ delta }}</tui-badge>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
       </div>
 
       <div class="preset-detail__section">

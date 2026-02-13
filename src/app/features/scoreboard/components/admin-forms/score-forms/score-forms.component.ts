@@ -30,6 +30,14 @@ export interface QuarterChangeEvent {
   period_key: string;
 }
 
+interface QuickScoreButton {
+  label: string;
+  value: number;
+  title: string;
+}
+
+const DEFAULT_QUICK_SCORE_DELTAS: readonly number[] = [6, 3, 2, 1, -1];
+
 @Component({
   selector: 'app-score-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -162,14 +170,16 @@ export class ScoreFormsComponent {
     return this.createIndicators(this.timeoutsTeamB());
   });
 
-  // Quick score button configurations
-  protected readonly quickScoreButtons = [
-    { label: '+6', value: 6, title: 'Touchdown' },
-    { label: '+3', value: 3, title: 'Field Goal' },
-    { label: '+2', value: 2, title: '2-Point Conversion / Safety' },
-    { label: '+1', value: 1, title: 'Extra Point' },
-    { label: '-1', value: -1, title: 'Remove 1 Point' },
-  ];
+  protected readonly quickScoreButtons = computed(() => {
+    const source = this.scoreboard()?.quick_score_deltas;
+    const deltas = this.resolveQuickScoreDeltas(source);
+
+    return deltas.map((value) => ({
+      value,
+      label: value > 0 ? `+${value}` : String(value),
+      title: value > 0 ? `Add ${value} point${value === 1 ? '' : 's'}` : `Remove ${Math.abs(value)} point${Math.abs(value) === 1 ? '' : 's'}`,
+    } satisfies QuickScoreButton));
+  });
 
   // Team score input configurations
   protected readonly teamConfig = [
@@ -214,6 +224,15 @@ export class ScoreFormsComponent {
 
   private createTimeoutString(remaining: number): string {
     return 'o'.repeat(remaining) + '●'.repeat(3 - remaining);
+  }
+
+  private resolveQuickScoreDeltas(input: readonly number[] | null | undefined): readonly number[] {
+    if (!Array.isArray(input) || input.length === 0) {
+      return DEFAULT_QUICK_SCORE_DELTAS;
+    }
+
+    const deltas = input.filter((delta) => Number.isInteger(delta) && delta !== 0);
+    return deltas.length > 0 ? deltas : DEFAULT_QUICK_SCORE_DELTAS;
   }
 
   constructor() {

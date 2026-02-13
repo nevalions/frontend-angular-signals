@@ -2,10 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   hasInvalidCustomPeriodLabelsInput,
   parseCustomPeriodLabelsInput,
+  parseQuickScoreDeltasInput,
   serializeCustomPeriodLabelsInput,
+  serializeQuickScoreDeltasInput,
   validateInitialTimeMinSeconds,
+  getQuickScoreDeltasValidationError,
   INITIAL_TIME_MODE_OPTIONS,
   PERIOD_MODE_OPTIONS,
+  DEFAULT_QUICK_SCORE_DELTAS,
 } from './period-labels-form.util';
 
 describe('period labels form utils', () => {
@@ -127,6 +131,51 @@ describe('period labels form utils', () => {
 
     it('returns true for invalid labels', () => {
       expect(hasInvalidCustomPeriodLabelsInput('Period One, period.leg_2')).toBe(true);
+    });
+  });
+
+  describe('parseQuickScoreDeltasInput', () => {
+    it('returns null for empty values', () => {
+      expect(parseQuickScoreDeltasInput('')).toBeNull();
+      expect(parseQuickScoreDeltasInput('   ')).toBeNull();
+      expect(parseQuickScoreDeltasInput(null)).toBeNull();
+    });
+
+    it('parses comma separated integers', () => {
+      expect(parseQuickScoreDeltasInput('6,3,2,1,-1')).toEqual([6, 3, 2, 1, -1]);
+      expect(parseQuickScoreDeltasInput(' 6, 3, 2 , 1, -1 ')).toEqual([6, 3, 2, 1, -1]);
+    });
+
+    it('returns null for non-integer values', () => {
+      expect(parseQuickScoreDeltasInput('6,abc,1')).toBeNull();
+      expect(parseQuickScoreDeltasInput('6,1.5,-1')).toBeNull();
+    });
+  });
+
+  describe('serializeQuickScoreDeltasInput', () => {
+    it('returns defaults for nullish values', () => {
+      expect(serializeQuickScoreDeltasInput(null)).toBe(DEFAULT_QUICK_SCORE_DELTAS.join(','));
+      expect(serializeQuickScoreDeltasInput(undefined)).toBe(DEFAULT_QUICK_SCORE_DELTAS.join(','));
+      expect(serializeQuickScoreDeltasInput([])).toBe(DEFAULT_QUICK_SCORE_DELTAS.join(','));
+    });
+
+    it('serializes quick score deltas', () => {
+      expect(serializeQuickScoreDeltasInput([1, -1])).toBe('1,-1');
+    });
+  });
+
+  describe('getQuickScoreDeltasValidationError', () => {
+    it('returns null for valid deltas', () => {
+      expect(getQuickScoreDeltasValidationError('6,3,2,1,-1')).toBeNull();
+      expect(getQuickScoreDeltasValidationError('1,-1')).toBeNull();
+    });
+
+    it('returns an error for invalid input', () => {
+      expect(getQuickScoreDeltasValidationError('')).toContain('Enter at least one integer delta');
+      expect(getQuickScoreDeltasValidationError('1,0')).toContain('cannot include 0');
+      expect(getQuickScoreDeltasValidationError('101')).toContain('between -100 and 100');
+      expect(getQuickScoreDeltasValidationError('1,2,3,4,5,6,7,8,9,10,11')).toContain('No more than 10');
+      expect(getQuickScoreDeltasValidationError('1,a')).toContain('Enter at least one integer delta');
     });
   });
 });

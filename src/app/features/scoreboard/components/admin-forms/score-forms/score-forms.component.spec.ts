@@ -80,6 +80,57 @@ describe('ScoreFormsComponent', () => {
     expect(component['pendingScoreTeamA']()).toBe(6);
   });
 
+  it('should use default quick score deltas when payload is missing', () => {
+    component.scoreboard = vi.fn(() => ({
+      quick_score_deltas: null,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    const values = component['quickScoreButtons']().map((btn) => btn.value);
+    expect(values).toEqual([6, 3, 2, 1, -1]);
+  });
+
+  it('should render quick score buttons from preset deltas in configured order', () => {
+    component.scoreboard = vi.fn(() => ({
+      quick_score_deltas: [1, -1],
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    const buttons = component['quickScoreButtons']();
+    expect(buttons.map((btn) => btn.label)).toEqual(['+1', '-1']);
+    expect(buttons.map((btn) => btn.value)).toEqual([1, -1]);
+  });
+
+  it('should apply quick score click updates using preset-driven deltas', () => {
+    component.scoreboard = vi.fn(() => ({
+      quick_score_deltas: [1, -1],
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    component.matchData = vi.fn(() => ({
+      id: 1,
+      match_id: 1,
+      qtr: '1st',
+      score_team_a: 1,
+      score_team_b: 0,
+      timeout_team_a: 'ooo',
+      timeout_team_b: 'ooo',
+    } as MatchData)) as unknown as typeof component.matchData;
+
+    fixture.detectChanges();
+    component['pendingScoreTeamA'].set(1);
+
+    const emitSpy = vi.spyOn(component.scoreChange, 'emit');
+    const minusOne = component['quickScoreButtons']()[1]?.value;
+
+    expect(minusOne).toBe(-1);
+    component.onQuickScore('a', minusOne ?? -1);
+
+    expect(emitSpy).toHaveBeenCalledWith({ team: 'a', score: 0 });
+    expect(component['pendingScoreTeamA']()).toBe(0);
+  });
+
   it('should handle quick score for team B', () => {
     const matchData: MatchData = {
       id: 1,

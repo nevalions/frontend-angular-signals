@@ -12,6 +12,7 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 import { SportScoreboardPresetStoreService } from '../../services/sport-scoreboard-preset-store.service';
 import { SportScoreboardPreset } from '../../models/sport-scoreboard-preset.model';
 import { withDeleteConfirm } from '../../../../core/utils/alert-helper.util';
+import { DEFAULT_QUICK_SCORE_DELTAS } from '../../utils/period-labels-form.util';
 
 @Component({
   selector: 'app-sport-scoreboard-preset-detail',
@@ -107,6 +108,8 @@ export class SportScoreboardPresetDetailComponent {
   });
 
   readonly customPeriodLabels = computed(() => this.preset()?.period_labels_json ?? []);
+
+  readonly quickScoreDeltas = computed(() => this.preset()?.quick_score_deltas ?? DEFAULT_QUICK_SCORE_DELTAS);
 
   navigateBack(): void {
     this.navigationHelper.toSportScoreboardPresetList();

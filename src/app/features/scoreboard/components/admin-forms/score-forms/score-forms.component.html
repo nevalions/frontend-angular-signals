@@ -67,7 +67,7 @@
 
              <!-- Quick Score Buttons - Large Touch Targets -->
             <div class="quick-buttons">
-              @for (btn of quickScoreButtons; track btn.label) {
+              @for (btn of quickScoreButtons(); track $index) {
                 <button
                   tuiButton
                   type="button"

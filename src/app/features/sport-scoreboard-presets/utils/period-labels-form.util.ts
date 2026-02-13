@@ -3,6 +3,11 @@ import { PeriodClockVariant } from '../models/sport-scoreboard-preset.model';
 
 const MACHINE_LABEL_KEY_PATTERN = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
 
+export const DEFAULT_QUICK_SCORE_DELTAS: ReadonlyArray<number> = [6, 3, 2, 1, -1];
+export const MAX_QUICK_SCORE_DELTAS = 10;
+export const MIN_QUICK_SCORE_DELTA_VALUE = -100;
+export const MAX_QUICK_SCORE_DELTA_VALUE = 100;
+
 export const PERIOD_MODE_OPTIONS: ReadonlyArray<{ value: SportPeriodMode; label: string }> = [
   { value: 'qtr', label: 'Quarter' },
   { value: 'period', label: 'Period' },
@@ -61,4 +66,55 @@ export function validateInitialTimeMinSeconds(
     return true;
   }
   return initialTimeMinSeconds !== null && initialTimeMinSeconds !== undefined && initialTimeMinSeconds >= 0;
+}
+
+export function parseQuickScoreDeltasInput(value: string | null | undefined): number[] | null {
+  if (!value) {
+    return null;
+  }
+
+  const rawParts = value
+    .split(',')
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+
+  if (rawParts.length === 0) {
+    return null;
+  }
+
+  const values = rawParts.map((part) => Number(part));
+  if (values.some((delta) => !Number.isInteger(delta))) {
+    return null;
+  }
+
+  return values;
+}
+
+export function serializeQuickScoreDeltasInput(values: readonly number[] | null | undefined): string {
+  if (!values || values.length === 0) {
+    return DEFAULT_QUICK_SCORE_DELTAS.join(',');
+  }
+
+  return values.join(',');
+}
+
+export function getQuickScoreDeltasValidationError(value: string | null | undefined): string | null {
+  const deltas = parseQuickScoreDeltasInput(value);
+  if (!deltas) {
+    return 'Enter at least one integer delta (example: 6,3,2,1,-1).';
+  }
+
+  if (deltas.length > MAX_QUICK_SCORE_DELTAS) {
+    return `No more than ${MAX_QUICK_SCORE_DELTAS} deltas are allowed.`;
+  }
+
+  if (deltas.some((delta) => delta === 0)) {
+    return 'Delta values cannot include 0.';
+  }
+
+  if (deltas.some((delta) => delta < MIN_QUICK_SCORE_DELTA_VALUE || delta > MAX_QUICK_SCORE_DELTA_VALUE)) {
+    return `Delta values must be between ${MIN_QUICK_SCORE_DELTA_VALUE} and ${MAX_QUICK_SCORE_DELTA_VALUE}.`;
+  }
+
+  return null;
 }

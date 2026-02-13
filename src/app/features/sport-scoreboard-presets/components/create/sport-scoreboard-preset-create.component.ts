@@ -15,6 +15,9 @@ import {
   INITIAL_TIME_MODE_OPTIONS,
   PERIOD_CLOCK_VARIANT_OPTIONS,
   validateInitialTimeMinSeconds,
+  getQuickScoreDeltasValidationError,
+  parseQuickScoreDeltasInput,
+  serializeQuickScoreDeltasInput,
 } from '../../utils/period-labels-form.util';
 
 const DIRECTION_OPTIONS = [
@@ -59,6 +62,7 @@ export class SportScoreboardPresetCreateComponent {
     period_count: [4],
     period_labels_input: [''],
     default_playclock_seconds: [null as number | null],
+    quick_score_deltas_input: [serializeQuickScoreDeltasInput(null)],
   });
 
   readonly directionOptions = DIRECTION_OPTIONS;
@@ -83,6 +87,10 @@ export class SportScoreboardPresetCreateComponent {
     initialValue: this.presetForm.controls.initial_time_min_seconds.value,
   });
 
+  private readonly quickScoreDeltasInput = toSignal(this.presetForm.controls.quick_score_deltas_input.valueChanges, {
+    initialValue: this.presetForm.controls.quick_score_deltas_input.value,
+  });
+
   readonly isCustomPeriodMode = computed(() => this.periodMode() === 'custom');
 
   readonly isCustomMinTimeMode = computed(() => this.initialTimeMode() === 'min');
@@ -102,13 +110,24 @@ export class SportScoreboardPresetCreateComponent {
     );
   });
 
+  readonly quickScoreDeltasValidationError = computed(() => {
+    return getQuickScoreDeltasValidationError(this.quickScoreDeltasInput());
+  });
+
+  readonly quickScoreDeltasInvalid = computed(() => this.quickScoreDeltasValidationError() !== null);
+
   onSubmit(): void {
-    if (this.presetForm.invalid || this.customPeriodLabelsInvalid() || this.customMinTimeModeInvalid()) return;
+    if (this.presetForm.invalid || this.customPeriodLabelsInvalid() || this.customMinTimeModeInvalid() || this.quickScoreDeltasInvalid()) return;
 
     const formData = this.presetForm.value;
     const customPeriodLabels = formData.period_mode === 'custom'
       ? parseCustomPeriodLabelsInput(formData.period_labels_input)
       : null;
+    const quickScoreDeltas = parseQuickScoreDeltasInput(formData.quick_score_deltas_input);
+
+    if (!quickScoreDeltas) {
+      return;
+    }
 
     const data: SportScoreboardPresetCreate = {
       title: formData.title as string,
@@ -128,6 +147,7 @@ export class SportScoreboardPresetCreateComponent {
       period_count: formData.period_count ? Number(formData.period_count) : 4,
       period_labels_json: customPeriodLabels,
       default_playclock_seconds: formData.default_playclock_seconds ? Number(formData.default_playclock_seconds) : null,
+      quick_score_deltas: quickScoreDeltas,
     };
 
     withCreateAlert(
