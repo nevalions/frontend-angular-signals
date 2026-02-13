@@ -111,6 +111,12 @@ export class SportScoreboardPresetDetailComponent {
 
   readonly quickScoreDeltas = computed(() => this.preset()?.quick_score_deltas ?? DEFAULT_QUICK_SCORE_DELTAS);
 
+  readonly gameclockMaxFormatted = computed(() => this.formatSecondsToClock(this.preset()?.gameclock_max));
+
+  readonly initialTimeMinFormatted = computed(() => this.formatSecondsToClock(this.preset()?.initial_time_min_seconds));
+
+  readonly defaultPlayclockFormatted = computed(() => this.formatSecondsToClock(this.preset()?.default_playclock_seconds));
+
   navigateBack(): void {
     this.navigationHelper.toSportScoreboardPresetList();
   }
@@ -146,5 +152,17 @@ export class SportScoreboardPresetDetailComponent {
       .split('_')
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
+  }
+
+  private formatSecondsToClock(value: number | null | undefined): string {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+      return 'N/A';
+    }
+
+    const totalSeconds = Math.max(0, Math.floor(value));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 }

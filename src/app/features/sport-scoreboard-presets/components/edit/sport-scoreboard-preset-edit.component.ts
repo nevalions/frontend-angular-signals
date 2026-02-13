@@ -33,6 +33,8 @@ const ON_STOP_BEHAVIOR_OPTIONS = [
   { value: 'reset', label: 'Reset' },
 ] as const;
 
+type TimeFieldControlName = 'gameclock_max' | 'initial_time_min_seconds' | 'default_playclock_seconds';
+
 @Component({
   selector: 'app-sport-scoreboard-preset-edit',
   standalone: true,
@@ -114,9 +116,15 @@ export class SportScoreboardPresetEditComponent {
     initialValue: this.presetForm.controls.quick_score_deltas_input.value,
   });
 
+  private readonly hasPlayclock = toSignal(this.presetForm.controls.has_playclock.valueChanges, {
+    initialValue: this.presetForm.controls.has_playclock.value,
+  });
+
   readonly isCustomPeriodMode = computed(() => this.periodMode() === 'custom');
 
   readonly isCustomMinTimeMode = computed(() => this.initialTimeMode() === 'min');
+
+  readonly hasPlayclockEnabled = computed(() => this.hasPlayclock() ?? true);
 
   readonly customPeriodLabelsInvalid = computed(() => {
     if (!this.isCustomPeriodMode()) {
@@ -138,6 +146,34 @@ export class SportScoreboardPresetEditComponent {
   });
 
   readonly quickScoreDeltasInvalid = computed(() => this.quickScoreDeltasValidationError() !== null);
+
+  readonly gameclockMaxTotalSecondsPreview = computed(() => this.formatTotalSeconds(this.presetForm.controls.gameclock_max.value));
+
+  readonly initialTimeMinTotalSecondsPreview = computed(() => this.formatTotalSeconds(this.presetForm.controls.initial_time_min_seconds.value));
+
+  readonly defaultPlayclockTotalSecondsPreview = computed(() => this.formatTotalSeconds(this.presetForm.controls.default_playclock_seconds.value));
+
+  getTimeMinutes(controlName: TimeFieldControlName): number {
+    const totalSeconds = this.toNonNegativeInteger(this.presetForm.controls[controlName].value);
+    return Math.floor(totalSeconds / 60);
+  }
+
+  getTimeSeconds(controlName: TimeFieldControlName): number {
+    const totalSeconds = this.toNonNegativeInteger(this.presetForm.controls[controlName].value);
+    return totalSeconds % 60;
+  }
+
+  onTimeMinutesChange(controlName: TimeFieldControlName, rawValue: string): void {
+    const minutes = this.toNonNegativeInteger(rawValue);
+    const currentSeconds = this.getTimeSeconds(controlName);
+    this.presetForm.controls[controlName].setValue((minutes * 60) + currentSeconds);
+  }
+
+  onTimeSecondsChange(controlName: TimeFieldControlName, rawValue: string): void {
+    const seconds = this.toSecondPart(rawValue);
+    const currentMinutes = this.getTimeMinutes(controlName);
+    this.presetForm.controls[controlName].setValue((currentMinutes * 60) + seconds);
+  }
 
   private patchFormOnPresetChange = effect(() => {
     const preset = this.preset();
@@ -278,5 +314,31 @@ export class SportScoreboardPresetEditComponent {
     if (id) {
       this.navigationHelper.toSportScoreboardPresetDetail(id);
     }
+  }
+
+  private formatTotalSeconds(value: number | string | null | undefined): string {
+    if (value === null || value === undefined || value === '') {
+      return 'N/A';
+    }
+
+    const numericValue = Number(value);
+    if (Number.isNaN(numericValue)) {
+      return 'N/A';
+    }
+
+    return String(Math.max(0, Math.floor(numericValue)));
+  }
+
+  private toNonNegativeInteger(value: number | string | null | undefined): number {
+    const numericValue = Number(value);
+    if (Number.isNaN(numericValue)) {
+      return 0;
+    }
+
+    return Math.max(0, Math.floor(numericValue));
+  }
+
+  private toSecondPart(value: number | string | null | undefined): number {
+    return Math.min(59, this.toNonNegativeInteger(value));
   }
 }

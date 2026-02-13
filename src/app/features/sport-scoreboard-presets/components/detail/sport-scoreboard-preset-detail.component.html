@@ -42,7 +42,7 @@
         <div class="preset-detail__fields">
           <div class="preset-detail__field">
             <span class="preset-detail__field-label">Max Gameclock:</span>
-            <span class="preset-detail__field-value">{{ preset()!.gameclock_max ?? 'N/A' }} seconds</span>
+            <span class="preset-detail__field-value">{{ gameclockMaxFormatted() }}</span>
           </div>
           <div class="preset-detail__field">
             <span class="preset-detail__field-label">Initial Time Mode:</span>
@@ -55,7 +55,7 @@
           @if (preset()!.initial_time_mode === 'min') {
             <div class="preset-detail__field">
               <span class="preset-detail__field-label">Initial Min Time:</span>
-              <span class="preset-detail__field-value">{{ preset()!.initial_time_min_seconds ?? 'N/A' }} seconds</span>
+              <span class="preset-detail__field-value">{{ initialTimeMinFormatted() }}</span>
             </div>
           }
           <div class="preset-detail__field">
@@ -148,7 +148,7 @@
         <div class="preset-detail__fields">
           <div class="preset-detail__field">
             <span class="preset-detail__field-label">Default Playclock:</span>
-            <span class="preset-detail__field-value">{{ preset()!.default_playclock_seconds ?? 'N/A' }} seconds</span>
+            <span class="preset-detail__field-value">{{ defaultPlayclockFormatted() }}</span>
           </div>
         </div>
       </div>

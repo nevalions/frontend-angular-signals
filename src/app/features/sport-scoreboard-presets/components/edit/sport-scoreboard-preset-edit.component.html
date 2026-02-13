@@ -1,6 +1,9 @@
 <div class="preset-edit">
   <header class="preset-edit__header">
-    <h1 class="preset-edit__title">Edit Preset</h1>
+    <div>
+      <h1 class="preset-edit__title">Edit Preset</h1>
+      <p class="preset-edit__subtitle">Adjust timing rules and display settings without leaving this page.</p>
+    </div>
     <div class="preset-edit__actions">
       <button tuiButton type="button" appearance="flat" (click)="navigateToDetail()">
         Cancel
@@ -34,14 +37,36 @@
       <div class="preset-edit__section">
         <h3 class="preset-edit__section-title">Gameclock Configuration</h3>
       <div class="preset-edit__field">
-        <label class="preset-edit__label" for="gameclock_max">Max Gameclock (seconds)</label>
-        <input
-          id="gameclock_max"
-          type="number"
-          placeholder="720"
-          formControlName="gameclock_max"
-          class="preset-edit__input"
-        />
+        <label class="preset-edit__label" for="gameclock_max_minutes">Max Gameclock (min + sec)</label>
+        <div class="preset-edit__time-split">
+          <div class="preset-edit__time-part">
+            <span class="preset-edit__time-unit">Minutes</span>
+            <input
+              id="gameclock_max_minutes"
+              type="number"
+              min="0"
+              placeholder="12"
+              [value]="getTimeMinutes('gameclock_max')"
+              (input)="onTimeMinutesChange('gameclock_max', $any($event.target).value)"
+              class="preset-edit__input"
+            />
+          </div>
+          <div class="preset-edit__time-separator">:</div>
+          <div class="preset-edit__time-part">
+            <span class="preset-edit__time-unit">Seconds</span>
+            <input
+              id="gameclock_max_seconds"
+              type="number"
+              min="0"
+              max="59"
+              placeholder="00"
+              [value]="getTimeSeconds('gameclock_max')"
+              (input)="onTimeSecondsChange('gameclock_max', $any($event.target).value)"
+              class="preset-edit__input"
+            />
+          </div>
+        </div>
+        <p class="preset-edit__hint">Total seconds: <span class="preset-edit__preview-pill">{{ gameclockMaxTotalSecondsPreview() }}</span></p>
       </div>
       <div class="preset-edit__field">
         <label class="preset-edit__label" for="initial_time_mode">Initial Time Mode</label>
@@ -70,14 +95,36 @@
       </div>
       @if (isCustomMinTimeMode()) {
         <div class="preset-edit__field">
-          <label class="preset-edit__label" for="initial_time_min_seconds">Min Gameclock (seconds) *</label>
-          <input
-            id="initial_time_min_seconds"
-            type="number"
-            placeholder="0"
-            formControlName="initial_time_min_seconds"
-            class="preset-edit__input"
-          />
+          <label class="preset-edit__label" for="initial_time_min_seconds_minutes">Min Gameclock (min + sec) *</label>
+          <div class="preset-edit__time-split">
+            <div class="preset-edit__time-part">
+              <span class="preset-edit__time-unit">Minutes</span>
+              <input
+                id="initial_time_min_seconds_minutes"
+                type="number"
+                min="0"
+                placeholder="0"
+                [value]="getTimeMinutes('initial_time_min_seconds')"
+                (input)="onTimeMinutesChange('initial_time_min_seconds', $any($event.target).value)"
+                class="preset-edit__input"
+              />
+            </div>
+            <div class="preset-edit__time-separator">:</div>
+            <div class="preset-edit__time-part">
+              <span class="preset-edit__time-unit">Seconds</span>
+              <input
+                id="initial_time_min_seconds_seconds"
+                type="number"
+                min="0"
+                max="59"
+                placeholder="00"
+                [value]="getTimeSeconds('initial_time_min_seconds')"
+                (input)="onTimeSecondsChange('initial_time_min_seconds', $any($event.target).value)"
+                class="preset-edit__input"
+              />
+            </div>
+          </div>
+          <p class="preset-edit__hint">Total seconds: <span class="preset-edit__preview-pill">{{ initialTimeMinTotalSecondsPreview() }}</span></p>
           @if (customMinTimeModeInvalid()) {
             <p class="preset-edit__error">Min gameclock is required and must be >= 0 when Initial Time Mode is Custom Min.</p>
           }
@@ -128,14 +175,16 @@
             />
             <span>Show Time Display</span>
           </label>
-          <label class="preset-edit__checkbox">
-            <input
-              type="checkbox"
-              tuiCheckbox
-              formControlName="is_playclock"
-            />
-            <span>Show Playclock</span>
-          </label>
+          @if (hasPlayclockEnabled()) {
+            <label class="preset-edit__checkbox">
+              <input
+                type="checkbox"
+                tuiCheckbox
+                formControlName="is_playclock"
+              />
+              <span>Show Playclock</span>
+            </label>
+          }
           <label class="preset-edit__checkbox">
             <input
               type="checkbox"
@@ -214,19 +263,43 @@
         }
       </div>
 
-      <div class="preset-edit__section">
-        <h3 class="preset-edit__section-title">Playclock Configuration</h3>
-        <div class="preset-edit__field">
-          <label class="preset-edit__label" for="default_playclock_seconds">Default Playclock (seconds)</label>
-          <input
-            id="default_playclock_seconds"
-            type="number"
-            placeholder="40"
-            formControlName="default_playclock_seconds"
-            class="preset-edit__input"
-          />
+      @if (hasPlayclockEnabled()) {
+        <div class="preset-edit__section">
+          <h3 class="preset-edit__section-title">Playclock Configuration</h3>
+          <div class="preset-edit__field">
+            <label class="preset-edit__label" for="default_playclock_seconds_minutes">Default Playclock (min + sec)</label>
+            <div class="preset-edit__time-split">
+              <div class="preset-edit__time-part">
+                <span class="preset-edit__time-unit">Minutes</span>
+                <input
+                  id="default_playclock_seconds_minutes"
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                  [value]="getTimeMinutes('default_playclock_seconds')"
+                  (input)="onTimeMinutesChange('default_playclock_seconds', $any($event.target).value)"
+                  class="preset-edit__input"
+                />
+              </div>
+              <div class="preset-edit__time-separator">:</div>
+              <div class="preset-edit__time-part">
+                <span class="preset-edit__time-unit">Seconds</span>
+                <input
+                  id="default_playclock_seconds_seconds"
+                  type="number"
+                  min="0"
+                  max="59"
+                  placeholder="40"
+                  [value]="getTimeSeconds('default_playclock_seconds')"
+                  (input)="onTimeSecondsChange('default_playclock_seconds', $any($event.target).value)"
+                  class="preset-edit__input"
+                />
+              </div>
+            </div>
+            <p class="preset-edit__hint">Total seconds: <span class="preset-edit__preview-pill">{{ defaultPlayclockTotalSecondsPreview() }}</span></p>
+          </div>
         </div>
-      </div>
+      }
 
       <div class="preset-edit__section">
         <h3 class="preset-edit__section-title">Quick Score Deltas</h3>
