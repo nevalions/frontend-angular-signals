@@ -5,6 +5,43 @@ import { GameClock, GameClockUpdate } from '../../matches/models/gameclock.model
 import { PlayClock } from '../../matches/models/playclock.model';
 import { ClockPredictor } from '../utils/clock-predictor';
 
+export function normalizeIncomingUpClockStopSnapshot(
+  current: GameClock | null,
+  incoming: GameClock,
+): GameClock {
+  if (!current) {
+    return incoming;
+  }
+
+  const direction = incoming.direction ?? current.direction;
+  const incomingStatus = incoming.gameclock_status ?? current.gameclock_status;
+  const incomingValue = incoming.gameclock;
+  const maxSeconds = incoming.gameclock_max ?? current.gameclock_max;
+  const currentStatus = current.gameclock_status;
+  const currentValue = current.gameclock ?? 0;
+
+  const isTerminalUpStopTransition =
+    direction === 'up'
+    && incomingStatus === 'stopped'
+    && maxSeconds != null
+    && maxSeconds > 0
+    && currentStatus === 'running'
+    && currentValue >= Math.max(0, maxSeconds - 1);
+
+  const looksLikeInvalidUpStopSnapshot =
+    isTerminalUpStopTransition
+    && (incomingValue == null || incomingValue < maxSeconds);
+
+  if (!looksLikeInvalidUpStopSnapshot) {
+    return incoming;
+  }
+
+  return {
+    ...incoming,
+    gameclock: maxSeconds,
+  };
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -74,7 +111,7 @@ export class ScoreboardClockService implements OnDestroy {
       return;
     }
 
-    this.gameClock.set(clock);
+    this.gameClock.set(normalizeIncomingUpClockStopSnapshot(current, clock));
 
     const rtt = this.wsService.lastRtt() ?? 100;
     const maxSeconds = clock.gameclock_max;
@@ -386,11 +423,13 @@ export class ScoreboardClockService implements OnDestroy {
       return current;
     }
 
+    const normalizedUpdate = normalizeIncomingUpClockStopSnapshot(current, update);
+
     return {
       ...current,
-      ...update,
-      id: update.id ?? current.id,
-      match_id: update.match_id ?? current.match_id,
+      ...normalizedUpdate,
+      id: normalizedUpdate.id ?? current.id,
+      match_id: normalizedUpdate.match_id ?? current.match_id,
     };
   }
 
