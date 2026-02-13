@@ -58,7 +58,7 @@ export class TimeFormsComponent {
   protected readonly manualMinutes = signal<number>(0);
   protected readonly manualSeconds = signal<number>(0);
   protected readonly maxMinutes = signal<number>(0);
-  protected readonly isEditingTime = signal<boolean>(false);
+  protected readonly hasPendingManualChanges = signal<boolean>(false);
 
   // Flag to prevent sync from overwriting input immediately after Set is clicked
   private readonly pendingSetUpdate = signal<boolean>(false);
@@ -78,10 +78,10 @@ export class TimeFormsComponent {
 
    protected readonly gameClockReady = computed(() => Boolean(this.gameClock()?.id));
 
-    // Sync manual time inputs with websocket gameclock when not editing
+    // Sync manual time inputs with websocket gameclock until user edits values
     private syncWithGameClock = effect(() => {
       const gc = this.gameClock();
-      if (!this.isEditingTime() && !this.pendingSetUpdate() && gc) {
+      if (!this.hasPendingManualChanges() && !this.pendingSetUpdate() && gc) {
         const seconds = this.gameClockSeconds();
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
@@ -201,6 +201,7 @@ export class TimeFormsComponent {
     const totalSeconds = mins * 60 + secs;
 
     this.pendingSetUpdate.set(true);
+    this.hasPendingManualChanges.set(false);
     this.gameClockAction.emit({
       action: 'update',
       data: { gameclock: totalSeconds },
@@ -233,30 +234,16 @@ export class TimeFormsComponent {
    * Update manual minutes input
    */
   onManualMinutesChange(minutes: number): void {
-    this.isEditingTime.set(true);
     this.manualMinutes.set(minutes);
+    this.hasPendingManualChanges.set(true);
   }
 
   /**
    * Update manual seconds input
    */
   onManualSecondsChange(seconds: number): void {
-    this.isEditingTime.set(true);
     this.manualSeconds.set(seconds);
-  }
-
-  /**
-   * Handle input focus - prevent sync from overwriting user input
-   */
-  onInputFocus(): void {
-    this.isEditingTime.set(true);
-  }
-
-  /**
-   * Handle input blur - allow sync to resume
-   */
-  onInputBlur(): void {
-    setTimeout(() => this.isEditingTime.set(false), 0);
+    this.hasPendingManualChanges.set(true);
   }
 
   /**

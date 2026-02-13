@@ -97,8 +97,6 @@
                   [step]="1"
                   [disabled]="inputsDisabled()"
                   (ngModelChange)="onManualMinutesChange($event)"
-                  (focus)="onInputFocus()"
-                  (blur)="onInputBlur()"
                 />
               </tui-textfield>
             </div>
@@ -113,8 +111,6 @@
                   [step]="1"
                   [disabled]="inputsDisabled()"
                   (ngModelChange)="onManualSecondsChange($event)"
-                  (focus)="onInputFocus()"
-                  (blur)="onInputBlur()"
                 />
               </tui-textfield>
             </div>
