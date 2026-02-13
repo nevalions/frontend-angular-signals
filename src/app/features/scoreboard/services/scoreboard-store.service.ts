@@ -63,9 +63,14 @@ export class ScoreboardStoreService {
   }
 
   resetGameClock(id: number, seconds: number): Observable<GameClock> {
-    // Backend returns wrapped response { content: GameClock, status_code, success, message }
     return this.http
       .put<ApiResponseWrapper<GameClock>>(buildApiUrl(`/api/gameclock/id/${id}/stopped/${seconds}/`), null)
+      .pipe(map((response) => response.content));
+  }
+
+  resetGameClockPeriodAware(id: number): Observable<GameClock> {
+    return this.http
+      .put<ApiResponseWrapper<GameClock>>(buildApiUrl(`/api/gameclock/id/${id}/reset/`), null)
       .pipe(map((response) => response.content));
   }
 

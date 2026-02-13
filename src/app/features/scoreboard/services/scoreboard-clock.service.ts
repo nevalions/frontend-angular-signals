@@ -242,21 +242,12 @@ export class ScoreboardClockService implements OnDestroy {
       return;
     }
 
-    if (gc.gameclock_max == null) {
-      console.error('[ClockService][ACTION] resetGameClock - gameclock_max is null/undefined. Cannot reset without knowing max time. Backend should provide gameclock_max based on sport configuration.');
-      this.debugLog('[ClockService][ACTION] resetGameClock ABORTED - no gameclock_max');
-      return;
-    }
-
-    const resetValue = gc.direction === 'up' ? 0 : gc.gameclock_max;
-    this.debugLog('[ClockService][ACTION] resetGameClock - direction:', gc.direction, 'resetValue:', resetValue);
     this.applyGameClockUpdate({
       gameclock_status: 'stopped',
-      gameclock: resetValue,
     });
 
-    this.debugLog('[ClockService][ACTION] resetGameClock - calling API for gc.id:', gc.id, 'resetValue:', resetValue);
-    this.scoreboardStore.resetGameClock(gc.id, resetValue).subscribe({
+    this.debugLog('[ClockService][ACTION] resetGameClock - calling period-aware reset API for gc.id:', gc.id);
+    this.scoreboardStore.resetGameClockPeriodAware(gc.id).subscribe({
       next: (updated) => {
         this.debugLog('[ClockService][ACTION] resetGameClock API response:', JSON.stringify(updated, null, 2));
         const current = this.gameClock();
