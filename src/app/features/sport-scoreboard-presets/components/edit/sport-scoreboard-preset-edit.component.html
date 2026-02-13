@@ -55,6 +55,19 @@
           }
         </select>
       </div>
+      <div class="preset-edit__field">
+        <label class="preset-edit__label" for="period_clock_variant">Period Clock Behavior</label>
+        <select
+          id="period_clock_variant"
+          formControlName="period_clock_variant"
+          class="preset-edit__select"
+        >
+          @for (option of periodClockVariantOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        <p class="preset-edit__hint">Soccer example: cumulative keeps half 2 running from 45 to 90 instead of resetting to 45.</p>
+      </div>
       @if (isCustomMinTimeMode()) {
         <div class="preset-edit__field">
           <label class="preset-edit__label" for="initial_time_min_seconds">Min Gameclock (seconds) *</label>

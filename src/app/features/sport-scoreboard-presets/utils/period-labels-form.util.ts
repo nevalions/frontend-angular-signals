@@ -1,4 +1,5 @@
 import { SportPeriodMode } from '../../matches/models/scoreboard.model';
+import { PeriodClockVariant } from '../models/sport-scoreboard-preset.model';
 
 const MACHINE_LABEL_KEY_PATTERN = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
 
@@ -15,6 +16,11 @@ export const INITIAL_TIME_MODE_OPTIONS: ReadonlyArray<{ value: 'max' | 'zero' | 
   { value: 'max', label: 'Max Time' },
   { value: 'zero', label: 'Zero' },
   { value: 'min', label: 'Custom Min' },
+] as const;
+
+export const PERIOD_CLOCK_VARIANT_OPTIONS: ReadonlyArray<{ value: PeriodClockVariant; label: string }> = [
+  { value: 'per_period', label: 'Per Period Reset' },
+  { value: 'cumulative', label: 'Cumulative Across Periods' },
 ] as const;
 
 export function parseCustomPeriodLabelsInput(value: string | null | undefined): string[] | null {

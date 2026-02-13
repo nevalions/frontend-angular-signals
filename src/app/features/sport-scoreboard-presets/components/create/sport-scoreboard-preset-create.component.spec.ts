@@ -69,6 +69,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
       expect(component.presetForm.value.gameclock_max).toBe(720);
       expect(component.presetForm.value.initial_time_mode).toBe('max');
       expect(component.presetForm.value.initial_time_min_seconds).toBeNull();
+      expect(component.presetForm.value.period_clock_variant).toBe('per_period');
       expect(component.presetForm.value.direction).toBe('down');
       expect(component.presetForm.value.on_stop_behavior).toBe('hold');
       expect(component.presetForm.value.period_mode).toBe('qtr');
@@ -193,6 +194,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -212,6 +214,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -236,6 +239,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'zero',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -255,6 +259,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'zero',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -279,6 +284,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'min',
         initial_time_min_seconds: 300,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -298,6 +304,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'min',
         initial_time_min_seconds: 300,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -322,6 +329,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 900,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -341,6 +349,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 900,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -365,6 +374,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -384,6 +394,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -424,6 +435,7 @@ describe('SportScoreboardPresetCreateComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,

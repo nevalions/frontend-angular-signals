@@ -1,6 +1,7 @@
 import { SportPeriodMode } from '../../matches/models/scoreboard.model';
 
 export type InitialTimeMode = 'max' | 'zero' | 'min';
+export type PeriodClockVariant = 'per_period' | 'cumulative';
 
 export interface SportScoreboardPreset {
   id: number;
@@ -8,6 +9,7 @@ export interface SportScoreboardPreset {
   gameclock_max: number | null;
   initial_time_mode: InitialTimeMode;
   initial_time_min_seconds: number | null;
+  period_clock_variant: PeriodClockVariant;
   direction: 'down' | 'up';
   on_stop_behavior: 'hold' | 'reset';
   is_qtr: boolean;
@@ -27,6 +29,7 @@ export interface SportScoreboardPresetCreate {
   gameclock_max?: number | null;
   initial_time_mode?: InitialTimeMode;
   initial_time_min_seconds?: number | null;
+  period_clock_variant?: PeriodClockVariant;
   direction?: 'down' | 'up';
   on_stop_behavior?: 'hold' | 'reset';
   is_qtr?: boolean;
@@ -46,6 +49,7 @@ export interface SportScoreboardPresetUpdate {
   gameclock_max?: number | null;
   initial_time_mode?: InitialTimeMode | null;
   initial_time_min_seconds?: number | null;
+  period_clock_variant?: PeriodClockVariant | null;
   direction?: 'down' | 'up' | null;
   on_stop_behavior?: 'hold' | 'reset' | null;
   is_qtr?: boolean | null;

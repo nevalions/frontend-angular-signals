@@ -48,6 +48,10 @@
             <span class="preset-detail__field-label">Initial Time Mode:</span>
             <tui-badge appearance="neutral">{{ initialTimeModeLabel() }}</tui-badge>
           </div>
+          <div class="preset-detail__field">
+            <span class="preset-detail__field-label">Period Clock Behavior:</span>
+            <tui-badge appearance="neutral">{{ periodClockVariantLabel() }}</tui-badge>
+          </div>
           @if (preset()!.initial_time_mode === 'min') {
             <div class="preset-detail__field">
               <span class="preset-detail__field-label">Initial Min Time:</span>

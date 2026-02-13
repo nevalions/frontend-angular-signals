@@ -291,6 +291,33 @@ describe('ScoreFormsComponent', () => {
     expect(emitSpy).toHaveBeenCalledWith({ qtr: '3rd', period_key: 'period.3' });
   });
 
+  it('emits canonical period change payload without clock max recalculation fields', () => {
+    component.matchData = vi.fn(() => ({
+      id: 1,
+      match_id: 1,
+      qtr: '1st',
+      score_team_a: 0,
+      score_team_b: 0,
+      timeout_team_a: 'ooo',
+      timeout_team_b: 'ooo',
+    } as MatchData)) as unknown as typeof component.matchData;
+
+    component.scoreboard = vi.fn(() => ({
+      is_qtr: true,
+      period_mode: 'half',
+      period_labels_json: null,
+    } as unknown as Scoreboard)) as unknown as typeof component.scoreboard;
+
+    fixture.detectChanges();
+
+    const emitSpy = vi.spyOn(component.qtrChange, 'emit');
+    component['selectedQtr'].set('period.2');
+
+    expect(emitSpy).toHaveBeenCalledWith({ qtr: '2nd', period_key: 'period.2' });
+    const payload = emitSpy.mock.calls[0][0] as { qtr: string; period_key: string } & Record<string, unknown>;
+    expect(payload).not.toHaveProperty('gameclock_max');
+  });
+
   it('should expose canonical period options when period_count is provided', () => {
     component.scoreboard = vi.fn(() => ({
       is_qtr: true,

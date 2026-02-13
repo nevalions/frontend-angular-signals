@@ -16,6 +16,7 @@ import {
   PERIOD_MODE_OPTIONS,
   serializeCustomPeriodLabelsInput,
   INITIAL_TIME_MODE_OPTIONS,
+  PERIOD_CLOCK_VARIANT_OPTIONS,
   validateInitialTimeMinSeconds,
 } from '../../utils/period-labels-form.util';
 
@@ -49,6 +50,7 @@ export class SportScoreboardPresetEditComponent {
     gameclock_max: [720],
     initial_time_mode: ['max'],
     initial_time_min_seconds: [null as number | null],
+    period_clock_variant: ['per_period'],
     direction: ['down'],
     on_stop_behavior: ['hold'],
     is_qtr: [true],
@@ -83,6 +85,7 @@ export class SportScoreboardPresetEditComponent {
   readonly onStopBehaviorOptions = ON_STOP_BEHAVIOR_OPTIONS;
   readonly periodModeOptions = PERIOD_MODE_OPTIONS;
   readonly initialTimeModeOptions = INITIAL_TIME_MODE_OPTIONS;
+  readonly periodClockVariantOptions = PERIOD_CLOCK_VARIANT_OPTIONS;
 
   private readonly periodMode = toSignal(this.presetForm.controls.period_mode.valueChanges, {
     initialValue: this.presetForm.controls.period_mode.value,
@@ -127,6 +130,7 @@ export class SportScoreboardPresetEditComponent {
         gameclock_max: preset.gameclock_max ?? 720,
         initial_time_mode: preset.initial_time_mode,
         initial_time_min_seconds: preset.initial_time_min_seconds,
+        period_clock_variant: preset.period_clock_variant ?? 'per_period',
         direction: preset.direction,
         on_stop_behavior: preset.on_stop_behavior,
         is_qtr: preset.is_qtr,
@@ -168,6 +172,10 @@ export class SportScoreboardPresetEditComponent {
 
     if (formData.direction) {
       data.direction = formData.direction as 'down' | 'up';
+    }
+
+    if (formData.period_clock_variant) {
+      data.period_clock_variant = formData.period_clock_variant as SportScoreboardPresetUpdate['period_clock_variant'];
     }
 
     if (formData.on_stop_behavior) {

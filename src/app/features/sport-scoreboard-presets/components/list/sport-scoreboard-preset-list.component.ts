@@ -4,7 +4,7 @@ import { TuiButton, TuiLoader } from '@taiga-ui/core';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { SportScoreboardPresetStoreService } from '../../services/sport-scoreboard-preset-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
-import { InitialTimeMode } from '../../models/sport-scoreboard-preset.model';
+import { InitialTimeMode, PeriodClockVariant } from '../../models/sport-scoreboard-preset.model';
 
 @Component({
   selector: 'app-sport-scoreboard-preset-list',
@@ -29,6 +29,15 @@ export class SportScoreboardPresetListComponent {
       min: minSeconds ? `Custom Min (${minSeconds}s)` : 'Custom Min',
     };
     return labels[mode];
+  }
+
+  getPeriodClockVariantLabel(variant: PeriodClockVariant | null | undefined): string {
+    const labels: Record<PeriodClockVariant, string> = {
+      per_period: 'Per Period Reset',
+      cumulative: 'Cumulative',
+    };
+
+    return labels[variant ?? 'per_period'];
   }
 
   navigateToCreate(): void {

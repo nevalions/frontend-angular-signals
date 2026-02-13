@@ -80,6 +80,16 @@ export class SportScoreboardPresetDetailComponent {
     return labels[mode] ?? mode;
   });
 
+  readonly periodClockVariantLabel = computed(() => {
+    const variant = this.preset()?.period_clock_variant ?? 'per_period';
+    const labels: Record<string, string> = {
+      per_period: 'Per Period Reset',
+      cumulative: 'Cumulative Across Periods',
+    };
+
+    return labels[variant] ?? variant;
+  });
+
   readonly periodModeLabel = computed(() => {
     const mode = this.preset()?.period_mode;
     if (!mode) return 'N/A';

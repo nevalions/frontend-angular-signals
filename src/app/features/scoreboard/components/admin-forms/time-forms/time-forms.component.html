@@ -8,14 +8,15 @@
 
         <!-- Quarter Length at top -->
         <div class="max-time-setting">
-          <span class="setting-label">Quarter Length (min)</span>
+          <span class="setting-label">Clock Max (min)</span>
+          <p class="setting-hint">Backend applies the effective max for each period (per-period reset or cumulative progression).</p>
           <div class="max-time-row">
             <tui-textfield [tuiTextfieldCleaner]="false" tuiTextfieldSize="m" class="time-input">
               <input
                 tuiInputNumber
-                [ngModel]="currentMaxMinutes()"
+                [ngModel]="maxMinutes()"
                 [min]="1"
-                [max]="20"
+                [max]="999"
                 [step]="1"
                 [disabled]="inputsDisabled()"
                 (ngModelChange)="onMaxMinutesChange($event)"

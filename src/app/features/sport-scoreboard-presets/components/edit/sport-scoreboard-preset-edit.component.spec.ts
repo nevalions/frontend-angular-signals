@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -26,6 +27,7 @@ describe('SportScoreboardPresetEditComponent', () => {
     gameclock_max: 720,
     initial_time_mode: 'max',
     initial_time_min_seconds: null,
+    period_clock_variant: 'per_period',
     direction: 'down',
     on_stop_behavior: 'hold',
     is_qtr: true,
@@ -98,6 +100,7 @@ describe('SportScoreboardPresetEditComponent', () => {
       expect(component.presetForm.value.gameclock_max).toBe(720);
       expect(component.presetForm.value.initial_time_mode).toBe('max');
       expect(component.presetForm.value.initial_time_min_seconds).toBeNull();
+      expect(component.presetForm.value.period_clock_variant).toBe('per_period');
       expect(component.presetForm.value.direction).toBe('down');
       expect(component.presetForm.value.on_stop_behavior).toBe('hold');
       expect(component.presetForm.value.period_mode).toBe('qtr');
@@ -124,6 +127,7 @@ describe('SportScoreboardPresetEditComponent', () => {
       expect(component.presetForm.value.gameclock_max).toBe(mockPreset.gameclock_max);
       expect(component.presetForm.value.initial_time_mode).toBe(mockPreset.initial_time_mode);
       expect(component.presetForm.value.initial_time_min_seconds).toBe(mockPreset.initial_time_min_seconds);
+      expect(component.presetForm.value.period_clock_variant).toBe(mockPreset.period_clock_variant);
       expect(component.presetForm.value.direction).toBe(mockPreset.direction);
       expect(component.presetForm.value.on_stop_behavior).toBe(mockPreset.on_stop_behavior);
       expect(component.presetForm.value.period_mode).toBe(mockPreset.period_mode);
@@ -253,6 +257,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         gameclock_max: 900,
         initial_time_mode: 'min',
         initial_time_min_seconds: 300,
+        period_clock_variant: 'cumulative',
         direction: 'up',
         on_stop_behavior: 'reset',
         is_qtr: false,
@@ -272,6 +277,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         gameclock_max: 900,
         initial_time_mode: 'min',
         initial_time_min_seconds: 300,
+        period_clock_variant: 'cumulative',
         direction: 'up',
         on_stop_behavior: 'reset',
         is_qtr: false,
@@ -296,6 +302,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -312,6 +319,20 @@ describe('SportScoreboardPresetEditComponent', () => {
 
       const expected: SportScoreboardPresetUpdate = {
         title: 'Updated Title',
+        gameclock_max: 720,
+        initial_time_mode: 'max',
+        period_clock_variant: 'per_period',
+        direction: 'down',
+        on_stop_behavior: 'hold',
+        is_qtr: true,
+        is_time: true,
+        is_playclock: true,
+        is_downdistance: true,
+        has_timeouts: true,
+        has_playclock: true,
+        period_mode: 'qtr',
+        period_count: 4,
+        period_labels_json: null,
       };
 
       component.onSubmit();
@@ -324,6 +345,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         gameclock_max: 900,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
@@ -341,6 +363,19 @@ describe('SportScoreboardPresetEditComponent', () => {
       const expected: SportScoreboardPresetUpdate = {
         title: 'Test Preset',
         gameclock_max: 900,
+        initial_time_mode: 'max',
+        period_clock_variant: 'per_period',
+        direction: 'down',
+        on_stop_behavior: 'hold',
+        is_qtr: true,
+        is_time: true,
+        is_playclock: true,
+        is_downdistance: true,
+        has_timeouts: true,
+        has_playclock: true,
+        period_mode: 'qtr',
+        period_count: 4,
+        period_labels_json: null,
       };
 
       component.onSubmit();
@@ -369,6 +404,7 @@ describe('SportScoreboardPresetEditComponent', () => {
         gameclock_max: 720,
         initial_time_mode: 'max',
         initial_time_min_seconds: null,
+        period_clock_variant: 'per_period',
         direction: 'down',
         on_stop_behavior: 'hold',
         is_qtr: true,
