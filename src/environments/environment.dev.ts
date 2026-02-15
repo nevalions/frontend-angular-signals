@@ -2,7 +2,7 @@
 // let apiUrl = 'statsboard.ru';
 
 let protocol = 'https';
-let apiUrl = 'statsboard.ru';
+let apiUrl = 'butakov.su';
 
 export const environment = {
   production: true,
@@ -15,4 +15,5 @@ export const environment = {
   wsProtocol: 'wss',
   apiUrl: apiUrl,
   backendUrl: protocol + '://' + apiUrl,
+  timeFormat: '24h',
 };

@@ -2,7 +2,7 @@
 // let apiUrl = 'statsboard.ru';
 
 let protocol = 'https';
-let apiUrl = 'butakov.su';
+let apiUrl = 'statsboard.ru';
 
 export const environment = {
   production: true,

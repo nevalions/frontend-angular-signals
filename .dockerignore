@@ -1,0 +1,40 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build output
+dist
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test outputs
+coverage
+test-results
+playwright-report
+output
+
+# Angular cache
+.angular
+
+# Misc
+*.log
+*.md
+!README.md
+.editorconfig
+eslint.config.js
+vitest.config.*.ts
+playwright.config.ts
+e2e
+docs

@@ -1,0 +1,31 @@
+version: '3.8'
+
+networks:
+  frontend-network:
+    external: true
+  backend-network:
+    external: true
+
+services:
+  angular-frontend:
+    container_name: statsboards-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_CONFIG: production
+    ports:
+      - "8383:8383"
+    networks:
+      - frontend-network
+      - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8383/front-nginx-health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: always
+    labels:
+      logging: "promtail"
+      logging_jobname: "statsboards_frontend_prod_logs"

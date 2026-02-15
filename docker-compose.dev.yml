@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  angular-frontend-dev:
+    container_name: statsboards-frontend-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_CONFIG: development
+    ports:
+      - "8384:8383"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8383/front-nginx-health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
