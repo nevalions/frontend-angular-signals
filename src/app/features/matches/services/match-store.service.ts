@@ -174,7 +174,10 @@ export class MatchStoreService {
   }
 
   parseEESLTournamentMatches(eeslTournamentId: number): Observable<Match[]> {
-    return this.http.get<Match[]>(buildApiUrl(`/api/matches/pars_and_create/tournament/${eeslTournamentId}`));
+    return this.http.post<Match[]>(
+      buildApiUrl(`/api/matches/pars_and_create/tournament/${eeslTournamentId}`),
+      null
+    );
   }
 
   parseAndUpdateMatchFromEesl(eeslMatchId: number): Observable<Match> {
