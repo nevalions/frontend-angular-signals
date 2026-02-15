@@ -8,8 +8,6 @@ on:
 jobs:
   build-and-push:
     runs-on: arc-runner-set
-    container:
-      image: gcr.io/kaniko-project/executor:latest
 
     steps:
     - name: Checkout code
@@ -24,29 +22,33 @@ jobs:
         echo "tag=$TAG" >> $GITHUB_OUTPUT
         echo "Git tag: $TAG"
 
-    - name: Configure Docker Hub credentials
-      run: |
-        mkdir -p /kaniko/.docker
-        echo '{"auths":{"https://index.docker.io/v1/":{"auth":"'$(echo -n "${{ secrets.DOCKERHUB_USERNAME }}:${{ secrets.DOCKERHUB_TOKEN }}" | base64 -w0)'"}}}' > /kaniko/.docker/config.json
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
     - name: Build and push Docker image (production)
-      run: |
-        /kaniko/executor \
-          --dockerfile=Dockerfile \
-          --context=. \
-          --destination=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:latest \
-          --destination=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:${{ steps.get_tag.outputs.tag }} \
-          --destination=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:prod \
-          --build-arg BUILD_CONFIG=production \
-          --cache=true \
-          --cache-repo=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:buildcache
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:${{ steps.get_tag.outputs.tag }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:prod
+        build-args: BUILD_CONFIG=production
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:buildcache
+        cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:buildcache,mode=max
 
     - name: Build and push Docker image (development)
-      run: |
-        /kaniko/executor \
-          --dockerfile=Dockerfile \
-          --context=. \
-          --destination=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:dev \
-          --build-arg BUILD_CONFIG=development \
-          --cache=true \
-          --cache-repo=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:buildcache
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:dev
+        build-args: BUILD_CONFIG=development
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/statsboards-frontend:buildcache
