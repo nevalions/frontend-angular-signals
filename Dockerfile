@@ -1,8 +1,8 @@
 # Build stage - use full image for Angular build requirements
 FROM node:22 AS builder
 
-# Build configuration: 'production' or 'development'
-ARG BUILD_CONFIG=production
+# Build configuration: 'production', 'development', or 'k8s'
+ARG BUILD_CONFIG=k8s
 
 WORKDIR /app
 
