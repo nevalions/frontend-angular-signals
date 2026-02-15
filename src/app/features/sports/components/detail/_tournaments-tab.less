@@ -1,0 +1,67 @@
+.sport-detail {
+  &__tournament-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__tournament-card {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    text-align: left;
+    border: 1px solid var(--tui-border-normal);
+    border-radius: 0.75rem;
+    background: var(--tui-background-base);
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--tui-background-accent-1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+  }
+
+  &__tournament-icon {
+    flex-shrink: 0;
+  }
+
+  &__tournament-avatar {
+    --tui-avatar-text: var(--tui-text-tertiary);
+    background: var(--tui-background-elevation-2);
+  }
+
+  &__tournament-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__tournament-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--tui-text-primary);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__tournament-description {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--tui-text-secondary);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
