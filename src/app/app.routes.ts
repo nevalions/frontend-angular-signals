@@ -95,6 +95,7 @@ export const routes: Routes = [
       {
         path: ':sportId/seasons/:year/tournaments/:id/edit',
         component: TournamentEditComponent,
+        canActivate: [authGuard],
       },
       {
         path: ':sportId/seasons/:year/tournaments/:id',
@@ -121,6 +122,7 @@ export const routes: Routes = [
       {
         path: ':sportId/teams/:teamId/edit',
         component: TeamEditComponent,
+        canActivate: [authGuard],
       },
       {
         path: ':sportId/teams/:teamId',
@@ -134,6 +136,7 @@ export const routes: Routes = [
       {
         path: ':sportId/matches/:id/edit',
         component: MatchEditComponent,
+        canActivate: [authGuard],
       },
       {
         path: ':sportId/matches/:id',
@@ -178,6 +181,7 @@ export const routes: Routes = [
       {
         path: ':id/edit',
         component: PersonEditComponent,
+        canActivate: [authGuard],
       },
     ],
   },
@@ -193,6 +197,7 @@ export const routes: Routes = [
   {
     path: 'sponsors/:id/edit',
     component: SponsorEditComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'sponsors/:id',
@@ -205,6 +210,7 @@ export const routes: Routes = [
   {
     path: 'sponsor-lines/:id/edit',
     component: SponsorLineEditComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'sponsor-lines/:id',
