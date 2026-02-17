@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { EMPTY, Observable, throwError } from 'rxjs';
@@ -12,7 +12,7 @@ import { SportStoreService } from '../../../sports/services/sport-store.service'
 import { TeamStoreService } from '../../../teams/services/team-store.service';
 import { SponsorStoreService } from '../../../sponsors/services/sponsor-store.service';
 import { TournamentUpdate, MoveTournamentToSportResponse } from '../../models/tournament.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
@@ -20,6 +20,7 @@ import { ImageUploadComponent, type ImageUrls } from '../../../../shared/compone
 import { TournamentMoveDialogComponent, type TournamentMoveDialogData } from './tournament-move-dialog.component';
 import type { Sponsor } from '../../../../shared/types';
 import type { SponsorLine } from '../../../sponsors/models/sponsor-line.model';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-tournament-edit',
@@ -31,6 +32,7 @@ import type { SponsorLine } from '../../../sponsors/models/sponsor-line.model';
 })
 export class TournamentEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private navigationHelper = inject(NavigationHelperService);
   private tournamentStore = inject(TournamentStoreService);
   private teamStore = inject(TeamStoreService);
@@ -39,6 +41,7 @@ export class TournamentEditComponent implements OnInit {
   private sponsorStore = inject(SponsorStoreService);
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
+  private authService = inject(AuthService);
 
   private readonly moveDialog = tuiDialog(TournamentMoveDialogComponent, {
     size: 'm',
@@ -98,6 +101,23 @@ export class TournamentEditComponent implements OnInit {
   season = this.seasonStore.seasonByYear().get(Number(this.year)) || null;
   tournament = this.tournamentStore.tournaments().find((t) => t.id === Number(this.tournamentId)) || null;
   loading = this.tournamentStore.loading;
+
+  currentUser = this.authService.currentUser;
+
+  canEdit = computed(() => {
+    const currentUser = this.currentUser();
+    const tournamentIdNum = Number(this.tournamentId);
+    const tournament = this.tournamentStore.tournaments().find((t) => t.id === tournamentIdNum);
+    return currentUser?.roles?.includes('admin')
+      || currentUser?.roles?.includes('editor')
+      || tournament?.user_id === currentUser?.id;
+  });
+
+  private checkAccess = effect(() => {
+    if (!this.canEdit()) {
+      this.router.navigate(['/home']);
+    }
+  });
 
   ngOnInit(): void {
     if (this.tournament) {

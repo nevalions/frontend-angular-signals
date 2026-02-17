@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map, of } from 'rxjs';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { TuiAlertService, TuiButton } from '@taiga-ui/core';
@@ -9,6 +9,7 @@ import { SponsorStoreService } from '../../services/sponsor-store.service';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import type { SponsorLineUpdate } from '../../models/sponsor-line.model';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-sponsor-line-edit',
@@ -21,8 +22,10 @@ export class SponsorLineEditComponent {
   private sponsorStore = inject(SponsorStoreService);
   private navigationHelper = inject(NavigationHelperService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
+  private authService = inject(AuthService);
 
   sponsorLineForm = this.fb.group({
     title: ['', [Validators.required]],
@@ -49,6 +52,20 @@ export class SponsorLineEditComponent {
 
   sponsorLine = computed(() => this.sponsorLineResource.value());
   loading = computed(() => this.sponsorLineResource.isLoading());
+
+  currentUser = this.authService.currentUser;
+
+  canEdit = computed(() => {
+    const currentUser = this.currentUser();
+    return currentUser?.roles?.includes('admin')
+      || currentUser?.roles?.includes('editor');
+  });
+
+  private checkAccess = effect(() => {
+    if (!this.canEdit()) {
+      this.router.navigate(['/home']);
+    }
+  });
 
   private patchFormOnSponsorLineChange = effect(() => {
     const sponsorLine = this.sponsorLine();

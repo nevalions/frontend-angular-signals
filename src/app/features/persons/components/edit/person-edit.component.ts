@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiAlertService, TuiButton } from '@taiga-ui/core';
@@ -11,6 +11,7 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
 import { ImageUploadComponent, type ImageUrls } from '../../../../shared/components/image-upload/image-upload.component';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-person-edit',
@@ -22,10 +23,12 @@ import { ImageUploadComponent, type ImageUrls } from '../../../../shared/compone
 })
 export class PersonEditComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private navigationHelper = inject(NavigationHelperService);
   private personStore = inject(PersonStoreService);
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
+  private authService = inject(AuthService);
 
   personForm = this.fb.group({
     first_name: ['', [Validators.required]],
@@ -46,6 +49,22 @@ export class PersonEditComponent {
     const id = this.personId();
     if (!id) return null;
     return this.personStore.persons().find((p) => p.id === id) || null;
+  });
+
+  currentUser = this.authService.currentUser;
+
+  canEdit = computed(() => {
+    const person = this.person();
+    const currentUser = this.currentUser();
+    return currentUser?.roles?.includes('admin')
+      || currentUser?.roles?.includes('editor')
+      || person?.owner_user_id === currentUser?.id;
+  });
+
+  private checkAccess = effect(() => {
+    if (!this.canEdit()) {
+      this.router.navigate(['/home']);
+    }
   });
 
   loading = computed(() => this.personStore.loading());

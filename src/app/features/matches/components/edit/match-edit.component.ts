@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, effect } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TuiAlertService } from '@taiga-ui/core';
@@ -10,6 +10,7 @@ import { MatchUpdate, MatchWithDetails, Team } from '../../models/match.model';
 import { NavigationHelperService } from '../../../../shared/services/navigation-helper.service';
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { MatchFormComponent, MatchFormMode } from '../../../../shared/components/match-form/match-form.component';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-match-edit',
@@ -26,6 +27,8 @@ export class MatchEditComponent implements OnInit {
   private sponsorStore = inject(SponsorStoreService);
   private alerts = inject(TuiAlertService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(AuthService);
 
   sportId = toSignal(
     this.route.paramMap.pipe(map((params) => {
@@ -65,6 +68,22 @@ export class MatchEditComponent implements OnInit {
   sponsorLines = this.sponsorStore.sponsorLines;
   loading = signal(false);
   error = signal<string | null>(null);
+
+  currentUser = this.authService.currentUser;
+
+  canEdit = computed(() => {
+    const match = this.match();
+    const currentUser = this.currentUser();
+    return currentUser?.roles?.includes('admin')
+      || currentUser?.roles?.includes('editor')
+      || match?.user_id === currentUser?.id;
+  });
+
+  private checkAccess = effect(() => {
+    if (!this.canEdit()) {
+      this.router.navigate(['/home']);
+    }
+  });
 
   mode: MatchFormMode = 'edit';
 

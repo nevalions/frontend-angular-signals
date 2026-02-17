@@ -12,6 +12,7 @@ import { NavigationHelperService } from '../../../../shared/services/navigation-
 import { withUpdateAlert } from '../../../../core/utils/alert-helper.util';
 import { buildStaticUrl, API_BASE_URL } from '../../../../core/config/api.constants';
 import { ImageUploadComponent, type ImageUrls } from '../../../../shared/components/image-upload/image-upload.component';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-team-edit',
@@ -29,6 +30,7 @@ export class TeamEditComponent {
   private fb = inject(FormBuilder);
   private alerts = inject(TuiAlertService);
   private navigationHelper = inject(NavigationHelperService);
+  private authService = inject(AuthService);
 
   teamForm = this.fb.group({
     title: ['', [Validators.required]],
@@ -80,6 +82,22 @@ export class TeamEditComponent {
     const id = this.teamId();
     if (!id) return null;
     return this.teamStore.teams().find((t) => t.id === id) || null;
+  });
+
+  currentUser = this.authService.currentUser;
+
+  canEdit = computed(() => {
+    const team = this.team();
+    const currentUser = this.currentUser();
+    return currentUser?.roles?.includes('admin')
+      || currentUser?.roles?.includes('editor')
+      || team?.user_id === currentUser?.id;
+  });
+
+  private checkAccess = effect(() => {
+    if (!this.canEdit()) {
+      this.router.navigate(['/home']);
+    }
   });
 
   sponsorContent = computed(() => {
