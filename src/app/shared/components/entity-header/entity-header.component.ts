@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
 import { TuiActiveZone } from '@taiga-ui/cdk/directives/active-zone';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
+import { AuthService } from '../../../features/auth/services/auth.service';
 
 export interface CustomMenuItem {
   id: string;
@@ -19,12 +20,16 @@ export interface CustomMenuItem {
   styleUrl: './entity-header.component.less',
 })
 export class EntityHeaderComponent {
+  private authService = inject(AuthService);
+
   title = input.required<string>();
   logoUrl = input<string | null>();
   showEdit = input(true);
   showDelete = input(true);
   showGear = input(true);
   customMenuItems = input<CustomMenuItem[]>([]);
+
+  isAdmin = computed(() => this.authService.currentUser()?.roles?.includes('admin') ?? false);
 
   navigateBack = output<void>();
   edit = output<void>();
