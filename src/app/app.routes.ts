@@ -58,6 +58,7 @@ export const routes: Routes = [
       {
         path: 'new',
         component: SportScoreboardPresetCreateComponent,
+        canActivate: [adminGuard],
       },
       {
         path: ':id',
@@ -66,6 +67,7 @@ export const routes: Routes = [
       {
         path: ':id/edit',
         component: SportScoreboardPresetEditComponent,
+        canActivate: [adminGuard],
       },
     ],
   },
@@ -101,6 +103,7 @@ export const routes: Routes = [
       {
         path: ':sportId/seasons/:year/tournaments/:id/parse-eesl',
         component: TournamentParseEeslComponent,
+        canActivate: [adminGuard],
       },
       {
         path: ':sportId/seasons/:year/tournaments/:id/parse-matches',
@@ -152,6 +155,7 @@ export const routes: Routes = [
       {
         path: ':sportId/parse-eesl',
         component: SportParseEeslComponent,
+        canActivate: [adminGuard],
       },
     ],
   },
