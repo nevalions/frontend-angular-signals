@@ -88,6 +88,7 @@ export const routes: Routes = [
       {
         path: ':sportId/seasons/:year/tournaments/new',
         component: TournamentCreateComponent,
+        canActivate: [authGuard],
       },
       {
         path: ':sportId/seasons/:year/tournaments/:id/edit',
@@ -112,6 +113,7 @@ export const routes: Routes = [
       {
         path: ':sportId/teams/new',
         component: TeamCreateComponent,
+        canActivate: [authGuard],
       },
       {
         path: ':sportId/teams/:teamId/edit',
@@ -124,6 +126,7 @@ export const routes: Routes = [
       {
         path: ':sportId/matches/new',
         component: MatchCreateComponent,
+        canActivate: [authGuard],
       },
       {
         path: ':sportId/matches/:id/edit',
@@ -162,6 +165,7 @@ export const routes: Routes = [
       {
         path: 'new',
         component: PersonCreateComponent,
+        canActivate: [authGuard],
       },
       {
         path: ':id',
@@ -180,6 +184,7 @@ export const routes: Routes = [
   {
     path: 'sponsors/new',
     component: SponsorCreateComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'sponsors/:id/edit',
