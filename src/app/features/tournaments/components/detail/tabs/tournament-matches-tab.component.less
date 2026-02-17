@@ -113,6 +113,11 @@
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.5rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 
 .tournament-matches-tab__team {
@@ -130,6 +135,11 @@
 
   &--b {
     justify-content: flex-start;
+  }
+
+  @media (max-width: 768px) {
+    justify-content: center;
+    width: 100%;
   }
 }
 
@@ -150,6 +160,10 @@
   color: var(--tui-text-03);
   font-size: 0.875rem;
   padding: 0 0.5rem;
+
+  @media (max-width: 768px) {
+    padding: 0.25rem 0;
+  }
 }
 
 .tournament-matches-tab__eesl-id {
