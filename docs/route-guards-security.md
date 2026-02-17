@@ -58,6 +58,32 @@ canActivate: [authGuard, adminGuard]
 canActivate: [authGuard, settingsAdminGuard]
 ```
 
+### `scoreboardAdminGuard`
+**Purpose**: Scoreboard admin access with owner support
+
+**Behavior**:
+- Requires authentication
+- Allows access if user has `admin` or `editor` role
+- Allows access if user is the owner of the scoreboard (checks `match.user_id` against current user)
+- Redirects to `/home` for unauthorized access
+- Fetches match data to verify ownership when user lacks admin/editor role
+
+**Use Cases**:
+- Scoreboard admin page where owners can manage their own scoreboards
+- Routes that need to allow both admins and resource owners
+
+**Implementation**:
+```typescript
+canActivate: [scoreboardAdminGuard]
+```
+
+**How it works**:
+1. Checks if user is authenticated (redirects to `/home` if not)
+2. Checks if user has `admin` or `editor` role (grants access if true)
+3. Extracts `matchId` from route parameters
+4. Fetches match data and compares `match.user_id` with current user's ID
+5. Grants access if user is the owner, otherwise redirects to `/home`
+
 ## Protected Routes
 
 | Route | Guards | Access Requirements |
@@ -68,6 +94,12 @@ canActivate: [authGuard, settingsAdminGuard]
 | `/settings?tab=roles` | `authGuard`, `settingsAdminGuard` | Authenticated, admin |
 | `/settings?tab=global-settings` | `authGuard`, `settingsAdminGuard` | Authenticated, admin |
 | `/users/:userId` | `authGuard` | Authenticated (any role) |
+| Create routes (teams, matches, etc.) | `authGuard` | Any authenticated user |
+| Edit routes (teams, matches, etc.) | `authGuard` + component check | Owner/Editor/Admin |
+| Sports create/edit | `adminGuard` | Admin only |
+| Scoreboard presets | `adminGuard` | Admin only |
+| EESL parse | `adminGuard` | Admin only |
+| Scoreboard admin | `scoreboardAdminGuard` | Admin/Editor/Owner |
 
 ## Component-Level Access Control
 
