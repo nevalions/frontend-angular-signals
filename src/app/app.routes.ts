@@ -36,7 +36,7 @@ import { SportScoreboardPresetCreateComponent } from './features/sport-scoreboar
 import { HomeComponent } from './features/home/components/home.component';
 import { UserProfileComponent } from './features/users/components/profile/user-profile.component';
 import { SettingsComponent } from './features/settings/components/settings.component';
-import { adminGuard, authGuard, settingsAdminGuard } from './core/guards';
+import { adminGuard, authGuard, settingsAdminGuard, scoreboardAdminGuard } from './core/guards';
 
 export const routes: Routes = [
   {
@@ -226,7 +226,7 @@ export const routes: Routes = [
       import('./features/scoreboard/pages/admin/scoreboard-admin.component').then(
         (m) => m.ScoreboardAdminComponent
       ),
-    canActivate: [authGuard],
+    canActivate: [scoreboardAdminGuard],
   },
   {
     path: 'scoreboard/match/:matchId/hd',
