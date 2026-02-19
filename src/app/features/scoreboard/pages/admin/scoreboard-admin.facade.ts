@@ -58,7 +58,9 @@ export class ScoreboardAdminFacade implements OnDestroy {
 
   // Display settings visibility signals
   readonly displaySettingsShowPlayClock = computed(() => this.scoreboard()?.has_playclock ?? false);
-  readonly displaySettingsShowDownDistance = computed(() => this.scoreboard()?.is_downdistance ?? false);
+  // TODO: Backend should provide has_downdistance capability flag like has_playclock/has_timeouts
+  // Defaulting to true so toggle doesn't disappear when is_downdistance is false
+  readonly displaySettingsShowDownDistance = computed(() => true);
   readonly displaySettingsPeriodMode = computed(() => this.scoreboard()?.period_mode ?? 'qtr');
 
   // Form visibility signals based on sport preset settings
